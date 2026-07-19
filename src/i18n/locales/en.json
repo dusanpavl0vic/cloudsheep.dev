@@ -1,0 +1,202 @@
+{
+  "common": {
+    "appName": "CloudSheep",
+    "appNameLower": "cloudsheep",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "theme": {
+    "switchToDark": "Switch to dark theme",
+    "switchToLight": "Switch to light theme"
+  },
+  "language": {
+    "label": "Language"
+  },
+  "nav": {
+    "label": "Main navigation",
+    "home": "Home",
+    "work": "Work",
+    "services": "Services",
+    "pricing": "Pricing",
+    "process": "Process",
+    "studio": "Studio",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "hire": "Hire me"
+  },
+  "hero": {
+    "eyebrow": "// cloudsheep · the studio of dušan pavlović · niš, serbia",
+    "command": "whoami",
+    "commandResult": "one-person studio · design + web + mobile",
+    "description": "Product design, full-stack web and native-quality mobile apps — designed, built and shipped by the same pair of hands. No handoffs, no telephone game.",
+    "primaryCta": "Start a project",
+    "secondaryCta": "See the work",
+    "scroll": "scroll ↓"
+  },
+  "studio": {
+    "index": "01",
+    "title": "The studio",
+    "availability": "taking projects for Q3",
+    "lead": "CloudSheep is the one-person product studio of Dušan Pavlović — engineer of electrical engineering and computing, University of Niš.",
+    "body": "You work directly with the person who designs the interface, writes the code and answers for the result. One brain holding the whole product means decisions are fast, context never gets lost, and quality has a single owner.",
+    "stats": {
+      "yearsValue": "6+",
+      "yearsLabel": "years shipping",
+      "productsValue": "20+",
+      "productsLabel": "products built",
+      "platformsValue": "3",
+      "platformsLabel": "platforms",
+      "personValue": "1",
+      "personLabel": "person accountable"
+    },
+    "stack": {
+      "frontend": "frontend",
+      "backend": "backend",
+      "mobile": "mobile",
+      "design": "design",
+      "devops": "devops"
+    }
+  },
+  "services": {
+    "eyebrow": "// 02 · what the studio does",
+    "title": "Four disciplines, one desk.",
+    "design": {
+      "title": "Product Design",
+      "description": "UX flows, UI systems and clickable prototypes that are designed to be built — not just admired."
+    },
+    "web": {
+      "title": "Web Development",
+      "description": "Fast, maintainable web apps — from marketing sites to dashboards with real data models."
+    },
+    "mobile": {
+      "title": "Mobile Apps — iOS & Android",
+      "description": "One codebase or fully native — chosen per project, shipped to both stores."
+    },
+    "ops": {
+      "title": "Backend, APIs & Care",
+      "description": "The unglamorous part done right: APIs, deployments, monitoring and long-term maintenance."
+    }
+  },
+  "process": {
+    "eyebrow": "// 03 · how a project runs",
+    "title": "A process with no surprises.",
+    "discover": {
+      "title": "Discover",
+      "description": "A call and a written brief. We define what success looks like before anything is drawn.",
+      "meta": "→ brief · estimate · timeline"
+    },
+    "design": {
+      "title": "Design",
+      "description": "Wireframes to hi-fi, quickly. You review a clickable prototype, not a PDF.",
+      "meta": "→ wireframe · hi-fi · prototype"
+    },
+    "build": {
+      "title": "Build",
+      "description": "Weekly shippable increments on a staging link. You watch the product grow, not wait for it.",
+      "meta": "→ weekly staging releases"
+    },
+    "ship": {
+      "title": "Ship & care",
+      "description": "Launch, monitoring and support. The studio stays reachable after the invoice.",
+      "meta": "→ launch · monitoring · support"
+    }
+  },
+  "work": {
+    "eyebrow": "// 04 · selected work",
+    "title": "Proof, not promises.",
+    "allCases": "All case studies →",
+    "readCase": "Read case →",
+    "atlas": {
+      "title": "Atlas Analytics",
+      "meta": "2025 · full-stack",
+      "description": "Analytics dashboard for a fintech team — 40k events/min ingested, sub-second queries, designed and built end-to-end in 14 weeks.",
+      "caption": "Atlas Analytics — dashboard screenshot"
+    },
+    "transit": {
+      "title": "Niš Transit",
+      "meta": "2024 · mobile",
+      "description": "Real-time bus tracking for the city of Niš — live vehicle positions, offline timetables, 12k monthly riders on iOS and Android.",
+      "caption": "Niš Transit — app screens"
+    },
+    "forge": {
+      "title": "Forge CMS",
+      "meta": "2024 · open source",
+      "description": "Block-based headless CMS with a drag-and-drop page builder — 1.2k GitHub stars and counting.",
+      "caption": "Forge CMS — editor screenshot"
+    }
+  },
+  "pricing": {
+    "eyebrow": "// 05 · ways to work together",
+    "title": "Three ways in.",
+    "note": "// exact numbers after a short discovery call — every project is scoped individually",
+    "fixed": {
+      "title": "Fixed-scope build",
+      "price": "project-based quote",
+      "description": "A defined product, designed and built to a fixed scope and date.",
+      "feature1": "discovery included",
+      "feature2": "design → build, one owner",
+      "feature3": "30 days of post-launch support"
+    },
+    "monthly": {
+      "title": "Monthly partner",
+      "price": "monthly retainer",
+      "description": "An ongoing seat at your table — product work shipped every week.",
+      "feature1": "rolling backlog, your priorities",
+      "feature2": "weekly releases",
+      "feature3": "priority response",
+      "badge": "most popular"
+    },
+    "sprint": {
+      "title": "Design sprint",
+      "price": "1–2 weeks · fixed fee",
+      "description": "From idea to a tested, clickable prototype — fast.",
+      "feature1": "workshop + brief",
+      "feature2": "hi-fi clickable prototype",
+      "feature3": "dev-ready handoff"
+    }
+  },
+  "faq": {
+    "eyebrow": "// 06 · questions",
+    "title": "Asked before, answered here.",
+    "onePerson": {
+      "q": "Is it really just one person?",
+      "a": "Yes. Design, frontend, backend and deployment are all done by me. For larger scopes I bring in trusted collaborators, but you always have one point of contact and one person accountable for the result."
+    },
+    "designDev": {
+      "q": "Do you do design and development together?",
+      "a": "That is the point of the studio. The person drawing the interface is the person building it, so nothing gets lost in a handoff and nothing gets designed that cannot be built."
+    },
+    "platforms": {
+      "q": "Both iOS and Android?",
+      "a": "Yes. Depending on the project we use React Native for one shared codebase, or fully native Kotlin and Swift when the product needs it. The choice is made per project, not per habit."
+    },
+    "duration": {
+      "q": "How long does a project take?",
+      "a": "A design sprint is one to two weeks. A typical fixed-scope product runs eight to sixteen weeks from discovery to launch. You get a written estimate after the first call."
+    },
+    "ownership": {
+      "q": "Who owns the code?",
+      "a": "You do. Everything is delivered in your repository, with documentation, and the license is yours from day one. No lock-in and no rented infrastructure."
+    },
+    "location": {
+      "q": "Where are you based — and what about timezones?",
+      "a": "Niš, Serbia (CET). That overlaps the whole European working day and mornings in North America. Async by default, calls whenever they are actually useful."
+    }
+  },
+  "contact": {
+    "title": "One studio. One person. Whole product.",
+    "cta": "Start a project"
+  },
+  "footer": {
+    "tagline": "A one-person product studio — design, web and mobile from a single pair of hands.",
+    "groupSite": "Site",
+    "groupStudio": "Studio",
+    "groupElsewhere": "Elsewhere",
+    "github": "GitHub ↗",
+    "linkedin": "LinkedIn ↗",
+    "email": "Email",
+    "copyright": "© 2026 CloudSheep · cloudsheep.dev",
+    "builtIn": "Designed & built in Niš, Serbia"
+  }
+}

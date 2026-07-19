@@ -1,0 +1,202 @@
+{
+  "common": {
+    "appName": "CloudSheep",
+    "appNameLower": "cloudsheep",
+    "loading": "Učitavanje...",
+    "save": "Sačuvaj",
+    "cancel": "Otkaži"
+  },
+  "theme": {
+    "switchToDark": "Prebaci na tamnu temu",
+    "switchToLight": "Prebaci na svetlu temu"
+  },
+  "language": {
+    "label": "Jezik"
+  },
+  "nav": {
+    "label": "Glavna navigacija",
+    "home": "Početna",
+    "work": "Radovi",
+    "services": "Usluge",
+    "pricing": "Cene",
+    "process": "Proces",
+    "studio": "Studio",
+    "faq": "Pitanja",
+    "contact": "Kontakt",
+    "hire": "Angažuj me"
+  },
+  "hero": {
+    "eyebrow": "// cloudsheep · studio dušana pavlovića · niš, srbija",
+    "command": "whoami",
+    "commandResult": "studio jednog čoveka · dizajn + web + mobilne",
+    "description": "Dizajn proizvoda, full-stack web i mobilne aplikacije native kvaliteta — osmišljene, izgrađene i isporučene istim rukama. Bez primopredaja i bez gluvih telefona.",
+    "primaryCta": "Pokreni projekat",
+    "secondaryCta": "Pogledaj radove",
+    "scroll": "skroluj ↓"
+  },
+  "studio": {
+    "index": "01",
+    "title": "Studio",
+    "availability": "primam projekte za Q3",
+    "lead": "CloudSheep je jednočlani produktni studio Dušana Pavlovića — inženjera elektrotehnike i računarstva, Univerzitet u Nišu.",
+    "body": "Radiš direktno sa osobom koja dizajnira interfejs, piše kod i odgovara za rezultat. Kada jedan čovek drži ceo proizvod, odluke su brze, kontekst se ne gubi, a kvalitet ima jednog vlasnika.",
+    "stats": {
+      "yearsValue": "6+",
+      "yearsLabel": "godina rada",
+      "productsValue": "20+",
+      "productsLabel": "izgrađenih proizvoda",
+      "platformsValue": "3",
+      "platformsLabel": "platforme",
+      "personValue": "1",
+      "personLabel": "odgovorna osoba"
+    },
+    "stack": {
+      "frontend": "frontend",
+      "backend": "backend",
+      "mobile": "mobilne",
+      "design": "dizajn",
+      "devops": "devops"
+    }
+  },
+  "services": {
+    "eyebrow": "// 02 · čime se studio bavi",
+    "title": "Četiri discipline, jedan sto.",
+    "design": {
+      "title": "Dizajn proizvoda",
+      "description": "UX tokovi, UI sistemi i klikabilni prototipovi napravljeni da se izgrade — a ne samo da lepo izgledaju."
+    },
+    "web": {
+      "title": "Web razvoj",
+      "description": "Brze web aplikacije koje se lako održavaju — od prezentacionih sajtova do dashboarda sa stvarnim modelima podataka."
+    },
+    "mobile": {
+      "title": "Mobilne aplikacije — iOS i Android",
+      "description": "Jedan kod ili potpuno native — bira se po projektu, isporučuje na obe prodavnice."
+    },
+    "ops": {
+      "title": "Backend, API-ji i održavanje",
+      "description": "Neglamurozni deo urađen kako treba: API-ji, deploy, monitoring i dugoročno održavanje."
+    }
+  },
+  "process": {
+    "eyebrow": "// 03 · kako teče projekat",
+    "title": "Proces bez iznenađenja.",
+    "discover": {
+      "title": "Otkrivanje",
+      "description": "Poziv i pisani brief. Definišemo kako izgleda uspeh pre nego što se bilo šta nacrta.",
+      "meta": "→ brief · procena · rokovi"
+    },
+    "design": {
+      "title": "Dizajn",
+      "description": "Od wireframe-a do hi-fi verzije, brzo. Pregledaš klikabilni prototip, ne PDF.",
+      "meta": "→ wireframe · hi-fi · prototip"
+    },
+    "build": {
+      "title": "Izrada",
+      "description": "Nedeljni upotrebljivi inkrementi na staging linku. Gledaš kako proizvod raste, ne čekaš ga.",
+      "meta": "→ nedeljna staging izdanja"
+    },
+    "ship": {
+      "title": "Lansiranje i briga",
+      "description": "Lansiranje, monitoring i podrška. Studio ostaje dostupan i posle fakture.",
+      "meta": "→ lansiranje · monitoring · podrška"
+    }
+  },
+  "work": {
+    "eyebrow": "// 04 · izabrani radovi",
+    "title": "Dokazi, ne obećanja.",
+    "allCases": "Sve studije slučaja →",
+    "readCase": "Pročitaj →",
+    "atlas": {
+      "title": "Atlas Analytics",
+      "meta": "2025 · full-stack",
+      "description": "Analitički dashboard za fintech tim — 40k događaja u minuti, upiti ispod sekunde, dizajniran i izgrađen od početka do kraja za 14 nedelja.",
+      "caption": "Atlas Analytics — snimak dashboarda"
+    },
+    "transit": {
+      "title": "Niš Transit",
+      "meta": "2024 · mobilne",
+      "description": "Praćenje autobusa u realnom vremenu za grad Niš — pozicije vozila uživo, offline red vožnje, 12k mesečnih korisnika na iOS-u i Androidu.",
+      "caption": "Niš Transit — ekrani aplikacije"
+    },
+    "forge": {
+      "title": "Forge CMS",
+      "meta": "2024 · otvoreni kod",
+      "description": "Headless CMS zasnovan na blokovima sa drag-and-drop graditeljem stranica — 1.2k zvezdica na GitHub-u i raste.",
+      "caption": "Forge CMS — snimak editora"
+    }
+  },
+  "pricing": {
+    "eyebrow": "// 05 · načini saradnje",
+    "title": "Tri načina da uđemo u posao.",
+    "note": "// tačni iznosi posle kratkog uvodnog poziva — svaki projekat se procenjuje pojedinačno",
+    "fixed": {
+      "title": "Projekat fiksnog obima",
+      "price": "ponuda po projektu",
+      "description": "Definisan proizvod, dizajniran i izgrađen do fiksnog obima i datuma.",
+      "feature1": "uvodna analiza uključena",
+      "feature2": "dizajn → izrada, jedan vlasnik",
+      "feature3": "30 dana podrške posle lansiranja"
+    },
+    "monthly": {
+      "title": "Mesečni partner",
+      "price": "mesečni angažman",
+      "description": "Stalno mesto za tvojim stolom — produktni rad isporučen svake nedelje.",
+      "feature1": "pokretni backlog, tvoji prioriteti",
+      "feature2": "nedeljna izdanja",
+      "feature3": "prioritetan odgovor",
+      "badge": "najpopularnije"
+    },
+    "sprint": {
+      "title": "Dizajn sprint",
+      "price": "1–2 nedelje · fiksna cena",
+      "description": "Od ideje do testiranog, klikabilnog prototipa — brzo.",
+      "feature1": "radionica + brief",
+      "feature2": "hi-fi klikabilni prototip",
+      "feature3": "primopredaja spremna za razvoj"
+    }
+  },
+  "faq": {
+    "eyebrow": "// 06 · pitanja",
+    "title": "Pitano ranije, odgovoreno ovde.",
+    "onePerson": {
+      "q": "Da li je stvarno samo jedna osoba?",
+      "a": "Jeste. Dizajn, frontend, backend i deploy radim ja. Za veće obime uključujem proverene saradnike, ali uvek imaš jednu tačku kontakta i jednu osobu odgovornu za rezultat."
+    },
+    "designDev": {
+      "q": "Radiš li dizajn i razvoj zajedno?",
+      "a": "To je i poenta studija. Osoba koja crta interfejs je osoba koja ga i gradi, pa se ništa ne gubi u primopredaji i ništa se ne dizajnira što se ne može izgraditi."
+    },
+    "platforms": {
+      "q": "I iOS i Android?",
+      "a": "Da. U zavisnosti od projekta koristimo React Native za jedan zajednički kod, ili potpuno native Kotlin i Swift kada proizvod to zahteva. Izbor se pravi po projektu, ne po navici."
+    },
+    "duration": {
+      "q": "Koliko traje projekat?",
+      "a": "Dizajn sprint traje jednu do dve nedelje. Tipičan projekat fiksnog obima traje osam do šesnaest nedelja od analize do lansiranja. Pisanu procenu dobijaš posle prvog poziva."
+    },
+    "ownership": {
+      "q": "Ko je vlasnik koda?",
+      "a": "Ti. Sve se isporučuje u tvom repozitorijumu, sa dokumentacijom, a licenca je tvoja od prvog dana. Bez zaključavanja i bez iznajmljene infrastrukture."
+    },
+    "location": {
+      "q": "Gde se nalaziš — i šta sa vremenskim zonama?",
+      "a": "Niš, Srbija (CET). To pokriva ceo evropski radni dan i prepodneva u Severnoj Americi. Async po pravilu, pozivi kad su zaista korisni."
+    }
+  },
+  "contact": {
+    "title": "Jedan studio. Jedan čovek. Ceo proizvod.",
+    "cta": "Pokreni projekat"
+  },
+  "footer": {
+    "tagline": "Jednočlani produktni studio — dizajn, web i mobilne aplikacije iz jednog para ruku.",
+    "groupSite": "Sajt",
+    "groupStudio": "Studio",
+    "groupElsewhere": "Drugde",
+    "github": "GitHub ↗",
+    "linkedin": "LinkedIn ↗",
+    "email": "Email",
+    "copyright": "© 2026 CloudSheep · cloudsheep.dev",
+    "builtIn": "Dizajnirano i napravljeno u Nišu, Srbija"
+  }
+}

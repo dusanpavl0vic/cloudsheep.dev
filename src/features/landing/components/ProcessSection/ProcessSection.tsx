@@ -1,0 +1,31 @@
+import { useTranslation } from 'react-i18next'
+
+import { ProcessCard } from '@/components/ProcessCard'
+import { SectionBlock } from '@/components/SectionBlock'
+import { SECTION_IDS } from '@/constants/navigation'
+import { PROCESS_STEPS } from '@/features/landing/landing.constants'
+
+export const ProcessSection = () => {
+  const { t } = useTranslation()
+
+  return (
+    <SectionBlock
+      id={SECTION_IDS.PROCESS}
+      eyebrow={t('process.eyebrow')}
+      title={t('process.title')}
+    >
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {PROCESS_STEPS.map((step) => (
+          <ProcessCard
+            key={step.id}
+            index={step.index}
+            title={t(step.titleKey)}
+            description={t(step.descriptionKey)}
+            meta={t(step.metaKey)}
+            tone={'tone' in step ? 'accent' : 'primary'}
+          />
+        ))}
+      </div>
+    </SectionBlock>
+  )
+}

@@ -1,0 +1,1 @@
+export { DisciplineRow } from './DisciplineRow'

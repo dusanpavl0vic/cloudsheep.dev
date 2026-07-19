@@ -1,0 +1,146 @@
+@import 'tailwindcss';
+@import './fonts.css';
+
+/* Tamna tema se aktivira preko data-theme atributa na <html> (postavlja ga themeSlice/listener) */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ===== Dizajn tokeni — jedini izvor istine za boje =====
+   Komponente NIKAD ne koriste sirove boje (bg-blue-500) — samo semantičke klase.
+
+   Paleta iz Figma dizajna (cloudSheep.dev):
+   Ecru White #F3F3E0 · Bianca #FBFBF2 · Downriver #0B1F45 · Chathams Blue #133E87
+   Chambray #3B568F · Lynch #6E7EA3 · Bali Hai #8794B3 · Pigeon Post #B9C4DE
+   Tulip Tree #E8A838 · Cola #2A1C00 · Jungle Green #2DBE7E · Moon Mist #D8D8C4 · Ash #C2C2AC */
+
+:root {
+  --radius: 0.625rem;
+
+  /* Svetla tema (podrazumevana) */
+  --background: #f3f3e0; /* Ecru White */
+  --foreground: #0b1f45; /* Downriver */
+  --card: #fbfbf2; /* Bianca */
+  --card-foreground: #0b1f45;
+  --popover: #fbfbf2;
+  --popover-foreground: #0b1f45;
+  --primary: #133e87; /* Chathams Blue */
+  --primary-foreground: #fbfbf2;
+  --secondary: #b9c4de; /* Pigeon Post */
+  --secondary-foreground: #0b1f45;
+  --muted: #d8d8c4; /* Moon Mist */
+  --muted-foreground: #6e7ea3; /* Lynch */
+  --accent: #e8a838; /* Tulip Tree */
+  --accent-foreground: #2a1c00; /* Cola */
+  --success: #2dbe7e; /* Jungle Green */
+  --success-foreground: #0b1f45;
+  --destructive: #d64545;
+  --destructive-foreground: #ffffff;
+  --border: #d8d8c4; /* Moon Mist */
+  --input: #c2c2ac; /* Ash */
+  --ring: #133e87;
+
+  /* Inverzna površina — tamna traka (CTA, footer) unutar svetle teme */
+  --inverse: #0b1f45;
+  --inverse-foreground: #f3f3e0;
+  --inverse-muted: #8794b3;
+  --inverse-border: #f3f3e01f;
+}
+
+/* Tamna tema — override samo boja (azure skala iz iste palete) */
+[data-theme='dark'] {
+  --background: #0b1f45; /* Downriver */
+  --foreground: #f3f3e0; /* Ecru White */
+  --card: #133e87; /* Chathams Blue */
+  --card-foreground: #f3f3e0;
+  --popover: #133e87;
+  --popover-foreground: #f3f3e0;
+  --primary: #b9c4de; /* Pigeon Post */
+  --primary-foreground: #0b1f45;
+  --secondary: #3b568f; /* Chambray */
+  --secondary-foreground: #f3f3e0;
+  --muted: #3b568f;
+  --muted-foreground: #8794b3; /* Bali Hai */
+  --accent: #e8a838; /* Tulip Tree */
+  --accent-foreground: #2a1c00; /* Cola */
+  --success: #2dbe7e;
+  --success-foreground: #0b1f45;
+  --destructive: #e06c6c;
+  --destructive-foreground: #1b0f0f;
+  --border: #3b568f;
+  --input: #3b568f;
+  --ring: #b9c4de;
+
+  --inverse: #061530;
+  --inverse-foreground: #f3f3e0;
+  --inverse-muted: #8794b3;
+  --inverse-border: #f3f3e01f;
+}
+
+/* Mapiranje tokena na Tailwind klase (bg-background, text-primary, border-border...) */
+@theme inline {
+  --font-sans: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-heading: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-inverse: var(--inverse);
+  --color-inverse-foreground: var(--inverse-foreground);
+  --color-inverse-muted: var(--inverse-muted);
+  --color-inverse-border: var(--inverse-border);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    color-scheme: light;
+  }
+
+  [data-theme='dark'] {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    transition:
+      background-color 250ms ease,
+      color 250ms ease;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading;
+  }
+
+  #root {
+    @apply flex min-h-dvh flex-col;
+  }
+}
