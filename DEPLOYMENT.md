@@ -1,14 +1,14 @@
 # Deployment
 
-Kako su podeljene grane, okruženja i Vercel instance.
+Kako su podeljene grane, okruženja i Vercel okruženja.
 
 ## 1. Grane
 
-| Grana  | Okruženje   | Namena                                      | Deploy            |
-| ------ | ----------- | ------------------------------------------- | ----------------- |
-| `dev`  | development | Default grana, integracija feature-a        | ne deployuje se   |
-| `main` | test        | Testna instanca (QA, deljenje sa klijentom) | Vercel projekt #2 |
-| `prod` | production  | Živa produkcija                             | Vercel projekt #1 |
+| Grana  | Okruženje   | Namena                                      | Deploy na Vercelu     |
+| ------ | ----------- | ------------------------------------------- | --------------------- |
+| `dev`  | development | Default grana, integracija feature-a        | Preview (bez env var) |
+| `main` | test        | Testna instanca (QA, deljenje sa klijentom) | Preview               |
+| `prod` | production  | Živa produkcija                             | Production            |
 
 Tok promena je uvek u jednom smeru:
 
@@ -47,71 +47,72 @@ cp .env.example .env
 
 ### Na Vercelu
 
-Vrednosti se ne komituju, nego se postavljaju u svakom projektu:
-**Settings → Environment Variables**, scope **Production**.
+Vrednosti se ne komituju, nego se postavljaju u
+**Settings → Environment Variables**. Vercelove env promenljive imaju prioritet
+nad `.env` fajlovima u repou, pa je dashboard izvor istine za deployovana
+okruženja.
 
-Vercelove env promenljive imaju prioritet nad `.env` fajlovima u repou, pa je
-dashboard izvor istine za deployovana okruženja.
+Trenutno postavljeno:
 
-## 3. Vercel — dve instance
+| Promenljiva    | Vrednost     | Scope                  |
+| -------------- | ------------ | ---------------------- |
+| `VITE_APP_ENV` | `production` | Production             |
+| `VITE_APP_ENV` | `test`       | Preview → grana `main` |
 
-Jedan repo, dva Vercel projekta. Razlog: Vercel ima **jednu production granu
-po projektu**, pa je drugi projekt jedini način da `main` bude prava instanca
-(svoj domen, svoje env varijable, bez preview zaštite) a ne preview deployment.
+Za `dev` grana namerno nema svoju vrednost — `APP_CONFIG` pada na
+`'development'` (`src/constants/config.ts`).
 
-Build config za oba dolazi iz `vercel.json` u repou (`framework: vite`,
-`buildCommand: npm run build`, `outputDirectory: dist`, SPA rewrite), tako da
-ga ne treba podešavati po projektu — i ne može da se razmine sa kodom.
+Kad backend dobije adrese, dodaj `VITE_API_URL` na isti način (Production za
+`prod`, Preview + grana `main` za test).
 
-### Projekt #1 — produkcija
+## 3. Vercel — jedan projekat, dva okruženja
 
-| Setting                            | Vrednost                  |
-| ---------------------------------- | ------------------------- |
-| Settings → Git → Production Branch | `prod`                    |
-| Domains                            | `cloudsheep.dev`          |
-| Env vars (Production)              | `VITE_APP_ENV=production` |
+Projekat: **`cloudsheep`** (`dusanpavl0vics-projects`), vezan na
+`dusanpavl0vic/cloudsheep.dev`.
 
-### Projekt #2 — test
+| Okruženje  | Branch Tracking  | Čemu služi                           |
+| ---------- | ---------------- | ------------------------------------ |
+| Production | `prod`           | produkcija                           |
+| Preview    | sve ostale grane | test (`main`), pregled feature grana |
 
-| Setting                            | Vrednost              |
-| ---------------------------------- | --------------------- |
-| Settings → Git → Production Branch | `main`                |
-| Domains                            | `test.cloudsheep.dev` |
-| Env vars (Production)              | `VITE_APP_ENV=test`   |
+Build config dolazi iz `vercel.json` u repou (`framework: vite`,
+`buildCommand: npm run build`, `outputDirectory: dist`, SPA rewrite).
+`vercel.json` ima prioritet nad dashboard podešavanjima, pa se build ne može
+razminuti sa kodom.
 
-### Da se ne duplaju build-ovi
+### Zašto test nije imenovano okruženje
 
-Po defaultu svaki projekt gradi **svaku** granu (production granu kao
-production, ostale kao preview). Bez ovoga bi push na `dev` pokretao build u
-oba projekta. U **Settings → Git → Ignored Build Step** svakog projekta
-stavi Command:
+Vercel ima **Create Environment** (custom environments), čime bi `test` bio
+prvorazredno imenovano okruženje sa svojim domenom. To je **Pro funkcija** — na
+Hobby planu dialog nudi samo „Upgrade to Pro". Zato test radi kroz Preview
+okruženje vezano na `main`, sa env varijablom scope-ovanom na tu granu.
 
-Projekt #1 (produkcija):
+Praktična razlika: test nema sopstveni lep domen, nego stabilan Vercelov
+branch URL za `main` (vidi ga na strani deployment-a posle prvog builda). Ako
+zatreba lep domen, može se dodati custom domen vezan za granu `main` u
+**Settings → Domains**.
 
-```bash
-[ "$VERCEL_GIT_COMMIT_REF" = "prod" ] && exit 1 || exit 0
-```
+### Pristup test instanci
 
-Projekt #2 (test):
+**Settings → Deployment Protection → Vercel Authentication** je uključen
+(Standard Protection). To znači da preview deployment-i — dakle i test —
+traže Vercel login. Za tebe radi bez problema; ako test treba da otvori neko
+van naloga (klijent, tester), isključi Vercel Authentication. Namerno nije
+dirano jer bi ih to učinilo javno dostupnim.
 
-```bash
-[ "$VERCEL_GIT_COMMIT_REF" = "main" ] && exit 1 || exit 0
-```
+### Ako pređeš na Pro
 
-Semantika je obrnuta od očekivane: **exit 1 = gradi, exit 0 = preskoči.**
-
-### Alternativa (jedan projekt)
-
-Ako ne želiš dva projekta: jedan projekt sa Production Branch = `prod`, a
-`main` dobija preview deployment kojem se dodeli fiksan domen (Domains → dodaj
-domen → veži za granu `main`). Manje podešavanja, ali preview deployment-i su
-na Vercelu podrazumevano zaštićeni login-om i env varijable se dele između
-svih preview grana (osim ako se ne prave per-branch override-i).
+Napravi custom environment `test` sa Branch Tracking = `main`, prebaci
+`VITE_APP_ENV=test` sa Preview/`main` na to okruženje i zakači mu domen.
+Ostalo (grane, `vercel.json`, kod) ostaje isto.
 
 ## 4. Redosled prvog puštanja
 
 1. Merge PR-a sa `vercel.json` u `dev`.
-2. Merge `dev → main` (na `main` trenutno stoji samo `README.md`).
-3. Merge `main → prod`.
-4. Podesi oba Vercel projekta po tabelama iznad.
-5. Redeploy **bez** build cache-a u oba.
+2. Merge `dev → main` (na `main` je do sad stajao samo `README.md`) → prvi
+   test deployment.
+3. Merge `main → prod` → prvi produkcioni deployment.
+4. Redeploy **bez** build cache-a ako build koristi staru konfiguraciju.
+
+Napomena: posle preimenovanja projekta stari alias `cloudsheep-dev.vercel.app`
+ostaje zakačen uz nove domene — Vercel ne briše stare aliase sam.
