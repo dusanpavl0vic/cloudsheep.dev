@@ -11,7 +11,14 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
     asChild?: boolean
   }
 
-export const Button = ({ className, variant, size, asChild = false, ...props }: ButtonProps) => {
+export const Button = ({
+  className,
+  variant,
+  size,
+  shape,
+  asChild = false,
+  ...props
+}: ButtonProps) => {
   const Comp = asChild ? Slot : 'button'
-  return <Comp className={cn(buttonVariants({ variant, size }), className)} {...props} />
+  return <Comp className={cn(buttonVariants({ variant, size, shape }), className)} {...props} />
 }

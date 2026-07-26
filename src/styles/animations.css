@@ -1,0 +1,214 @@
+/* ===== Animacije i mikro-interakcije iz dizajna =====
+   Efekti koji se ne mogu izraziti čistim Tailwind utility klasama (pseudo-elementi,
+   keyframe petlje, maske) žive ovde kao semantičke klase. Sve poštuje prefers-reduced-motion. */
+
+/* --- Reveal on scroll: element uleti odozdo kad uđe u viewport (IntersectionObserver) --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-left {
+  transform: translateX(-56px);
+}
+.reveal-right {
+  transform: translateX(56px);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Sjaj koji prelazi preko dugmeta na hover --- */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgb(255 255 255 / 0.4), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+.btn-shine:hover::after {
+  left: 135%;
+}
+
+/* --- Podvlačenje nav linka koje raste sleva na hover --- */
+.nav-underline {
+  position: relative;
+}
+.nav-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-underline:hover::after,
+.nav-underline[aria-current='page']::after {
+  transform: scaleX(1);
+}
+
+/* --- Trepćući kurzor u terminalskim redovima --- */
+@keyframes cs-blink {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0;
+  }
+}
+.caret {
+  display: inline-block;
+  width: 8px;
+  height: 1.05em;
+  background: var(--primary);
+  animation: cs-blink 1.1s steps(1) infinite;
+}
+
+/* --- Puls oko tačke dostupnosti --- */
+@keyframes cs-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgb(45 190 126 / 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgb(45 190 126 / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(45 190 126 / 0);
+  }
+}
+.pulse-dot {
+  animation: cs-pulse 2.4s ease-out infinite;
+}
+
+/* --- Logo koji se sam iscrtava: crta → drži → briše (petlja ~9s) --- */
+@keyframes cs-draw {
+  0% {
+    stroke-dashoffset: 1;
+  }
+  30% {
+    stroke-dashoffset: 0;
+  }
+  64% {
+    stroke-dashoffset: 0;
+  }
+  84% {
+    stroke-dashoffset: 1;
+  }
+  100% {
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes cs-eye {
+  0%,
+  30% {
+    opacity: 0;
+  }
+  40%,
+  62% {
+    opacity: 0.9;
+  }
+  74%,
+  100% {
+    opacity: 0;
+  }
+}
+.spiral-draw path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: cs-draw 9s cubic-bezier(0.55, 0, 0.35, 1) infinite;
+}
+.spiral-draw path:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.spiral-draw path:nth-child(3) {
+  animation-delay: 0.24s;
+}
+.spiral-draw path:nth-child(4) {
+  animation-delay: 0.36s;
+}
+.spiral-draw path:nth-child(5) {
+  animation-delay: 0.48s;
+}
+.spiral-draw .spiral-eye {
+  opacity: 0;
+  animation: cs-eye 9s ease infinite;
+}
+
+/* --- Otvaranje padajućeg menija / akordeona (fade + slide) --- */
+@keyframes cs-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.menu-in {
+  transform-origin: top right;
+  animation: cs-drop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+details[open] > .dropdown-content {
+  animation: cs-drop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --- Oblaci koji lagano promiču u hero pozadini --- */
+@keyframes cs-drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 88px 66px;
+  }
+}
+.cs-clouds {
+  animation: cs-drift 46s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .btn-shine::after,
+  .caret {
+    animation: none;
+    display: none;
+  }
+  .pulse-dot,
+  .cs-clouds,
+  .menu-in,
+  details[open] > .dropdown-content {
+    animation: none;
+  }
+  .spiral-draw path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .spiral-draw .spiral-eye {
+    animation: none;
+    opacity: 0.9;
+  }
+}

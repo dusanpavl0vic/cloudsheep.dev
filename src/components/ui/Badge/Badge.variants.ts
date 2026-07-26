@@ -5,15 +5,16 @@ export const badgeVariants = cva(
   {
     variants: {
       variant: {
-        outline: 'border border-input text-muted-foreground',
+        outline: 'border border-border-strong text-muted-foreground',
+        soft: 'border border-border bg-background text-muted-foreground',
         solid: 'bg-primary text-primary-foreground',
         accent: 'bg-accent text-accent-foreground',
-        plain: 'text-muted-foreground',
+        plain: 'text-faint',
         inverse: 'border border-inverse-border text-inverse-muted',
       },
       size: {
         sm: 'px-3 py-1 text-xs',
-        md: 'px-4 py-1.5 text-sm',
+        md: 'px-3.5 py-1.5 text-[13px]',
       },
       shape: {
         pill: 'rounded-full',
@@ -36,7 +37,7 @@ export const badgeVariants = cva(
 export const badgeDotVariants = cva('size-2 shrink-0 rounded-full', {
   variants: {
     tone: {
-      success: 'bg-success shadow-[0_0_0_4px] shadow-success/20',
+      success: 'bg-success pulse-dot',
       accent: 'bg-accent shadow-[0_0_0_4px] shadow-accent/20',
     },
   },

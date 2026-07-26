@@ -1,23 +1,35 @@
 import { cva } from 'class-variance-authority'
 
-export const heroVariants = cva('relative w-full overflow-hidden py-24 md:py-32')
+export const heroVariants = cva(
+  'relative flex min-h-[calc(100svh-72px)] w-full flex-col items-center justify-center overflow-hidden bg-background px-5 py-20 text-center',
+)
 
-export const heroWatermarkVariants = cva(
-  'pointer-events-none absolute -top-10 -right-32 hidden h-[560px] w-auto text-primary/10 lg:block',
+export const heroCloudsVariants = cva('cs-clouds pointer-events-none absolute inset-0')
+
+export const heroSpiralVariants = cva(
+  'pointer-events-none absolute top-1/2 left-1/2 z-0 h-auto w-[min(600px,88vw)] -translate-x-1/2 -translate-y-[56%] text-primary',
+)
+
+export const heroMonoVariants = cva(
+  'relative z-10 mb-2.5 font-mono text-[clamp(1.05rem,1.9vw,1.4rem)] font-semibold tracking-wide text-foreground',
 )
 
 export const heroTitleVariants = cva(
-  'font-heading text-6xl leading-[0.95] font-bold tracking-tight text-primary sm:text-8xl lg:text-[176px]',
+  'relative z-10 m-0 font-heading text-[clamp(2.9rem,8.5vw,6.8rem)] leading-[0.94] font-bold tracking-[-0.05em] text-balance text-display',
+)
+
+export const heroTextVariants = cva(
+  'relative z-10 mt-7 max-w-[600px] text-[clamp(1.05rem,1.6vw,1.3rem)] leading-relaxed text-pretty text-muted-foreground',
 )
 
 export const heroTerminalVariants = cva(
-  'inline-flex items-center gap-2 rounded-full border border-input px-4 py-2 font-mono text-xs text-muted-foreground',
+  'relative z-10 mt-6 inline-flex items-center gap-2 font-mono text-[clamp(12px,1.4vw,14px)] text-muted-foreground',
 )
 
-export const heroTerminalCaretVariants = cva('inline-block h-4 w-[7px] animate-pulse bg-primary')
-
-export const heroTextVariants = cva('max-w-[560px] text-lg leading-relaxed text-muted-foreground')
+export const heroCtaVariants = cva(
+  'relative z-10 mt-7 flex flex-wrap items-center justify-center gap-3.5',
+)
 
 export const heroScrollVariants = cva(
-  'pt-10 font-mono text-xs tracking-wide lowercase text-muted-foreground',
+  'absolute bottom-7 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1.5 font-mono text-[11px] tracking-[0.16em] text-faint',
 )

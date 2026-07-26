@@ -24,10 +24,10 @@ export const StudioSection = () => {
   return (
     <section id={SECTION_IDS.STUDIO} className="py-24">
       <Container className={studioGridVariants()}>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           <span className={studioIndexVariants()}>{t('studio.index')}</span>
           <h2 className={studioTitleVariants()}>{t('studio.title')}</h2>
-          <Badge dot="success" className="self-start">
+          <Badge dot="success" className="mt-1 self-start">
             {t('studio.availability')}
           </Badge>
         </div>
@@ -51,7 +51,7 @@ export const StudioSection = () => {
             {TECH_STACK.map((row) => (
               <div key={row.id} className={studioStackRowVariants()}>
                 <span className={studioStackLabelVariants()}>{t(row.labelKey)}</span>
-                <TagList tags={row.tags} font="sans" />
+                <TagList tags={row.tags} variant="outline" font="sans" />
               </div>
             ))}
           </div>

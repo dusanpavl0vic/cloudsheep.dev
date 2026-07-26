@@ -38,13 +38,13 @@ export const PricingCard = ({
         {badge}
       </Badge>
     )}
-    <h3 className={pricingTitleVariants()}>{title}</h3>
-    <span className={pricingPriceVariants()}>{price}</span>
-    <p className={pricingTextVariants()}>{description}</p>
+    <h3 className={pricingTitleVariants({ featured })}>{title}</h3>
+    <span className={pricingPriceVariants({ featured })}>{price}</span>
+    <p className={pricingTextVariants({ featured })}>{description}</p>
     <ul className={pricingFeatureListVariants()}>
       {features.map((feature) => (
-        <li key={feature} className={pricingFeatureVariants()}>
-          <span aria-hidden className="text-success">
+        <li key={feature} className={pricingFeatureVariants({ featured })}>
+          <span aria-hidden className="font-semibold text-primary">
             ✓
           </span>
           {feature}

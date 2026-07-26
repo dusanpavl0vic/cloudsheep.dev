@@ -1,10 +1,10 @@
 import { cva } from 'class-variance-authority'
 
-export const processCardVariants = cva('flex flex-col gap-3 border-t-2 pt-5', {
+export const processCardVariants = cva('flex flex-col gap-2.5 border-t-2 pt-4.5', {
   variants: {
     tone: {
-      primary: 'border-primary',
-      accent: 'border-accent',
+      primary: 'border-foreground',
+      accent: 'border-primary',
     },
   },
   defaultVariants: {
@@ -12,20 +12,10 @@ export const processCardVariants = cva('flex flex-col gap-3 border-t-2 pt-5', {
   },
 })
 
-export const processIndexVariants = cva('font-mono text-xs tracking-wide text-muted-foreground')
+export const processIndexVariants = cva('font-mono text-xs tracking-wide text-primary')
 
-export const processTitleVariants = cva('font-heading text-lg font-semibold text-primary')
+export const processTitleVariants = cva('font-heading text-xl font-semibold text-foreground')
 
-export const processTextVariants = cva('flex-1 text-sm leading-relaxed text-muted-foreground')
+export const processTextVariants = cva('flex-1 text-[15px] leading-relaxed text-muted-foreground')
 
-export const processMetaVariants = cva('font-mono text-xs tracking-wide lowercase', {
-  variants: {
-    tone: {
-      primary: 'text-primary',
-      accent: 'text-accent',
-    },
-  },
-  defaultVariants: {
-    tone: 'primary',
-  },
-})
+export const processMetaVariants = cva('font-mono text-[11px] tracking-wide lowercase text-faint')

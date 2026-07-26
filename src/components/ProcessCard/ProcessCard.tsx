@@ -30,6 +30,6 @@ export const ProcessCard = ({
     <span className={processIndexVariants()}>{index}</span>
     <h3 className={processTitleVariants()}>{title}</h3>
     <p className={processTextVariants()}>{description}</p>
-    <span className={processMetaVariants({ tone })}>{meta}</span>
+    <span className={processMetaVariants()}>{meta}</span>
   </article>
 )

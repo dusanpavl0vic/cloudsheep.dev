@@ -1,6 +1,9 @@
+import { Reveal } from '@/components/Reveal'
+
 import { ContactSection } from './components/ContactSection'
 import { FaqSection } from './components/FaqSection'
 import { HeroSection } from './components/HeroSection'
+import { InsightSection } from './components/InsightSection'
 import { PricingSection } from './components/PricingSection'
 import { ProcessSection } from './components/ProcessSection'
 import { ServicesSection } from './components/ServicesSection'
@@ -10,12 +13,27 @@ import { WorkSection } from './components/WorkSection'
 export const LandingPage = () => (
   <>
     <HeroSection />
-    <StudioSection />
-    <ServicesSection />
-    <ProcessSection />
-    <WorkSection />
-    <PricingSection />
-    <FaqSection />
-    <ContactSection />
+    <InsightSection />
+    <Reveal>
+      <StudioSection />
+    </Reveal>
+    <Reveal>
+      <ServicesSection />
+    </Reveal>
+    <Reveal>
+      <ProcessSection />
+    </Reveal>
+    <Reveal>
+      <WorkSection />
+    </Reveal>
+    <Reveal>
+      <PricingSection />
+    </Reveal>
+    <Reveal>
+      <FaqSection />
+    </Reveal>
+    <Reveal>
+      <ContactSection />
+    </Reveal>
   </>
 )

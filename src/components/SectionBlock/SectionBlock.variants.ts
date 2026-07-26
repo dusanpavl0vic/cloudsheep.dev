@@ -3,8 +3,8 @@ import { cva } from 'class-variance-authority'
 export const sectionBlockVariants = cva('w-full', {
   variants: {
     spacing: {
-      default: 'py-24',
-      compact: 'py-16',
+      default: 'py-20',
+      compact: 'py-14',
       none: 'py-0',
     },
     tone: {
@@ -27,7 +27,7 @@ export const sectionBlockTitleVariants = cva(
   {
     variants: {
       tone: {
-        default: 'text-primary',
+        default: 'text-foreground',
         inverse: 'text-inverse-foreground',
       },
       align: {

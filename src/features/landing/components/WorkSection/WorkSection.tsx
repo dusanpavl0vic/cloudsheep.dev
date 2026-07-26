@@ -1,10 +1,14 @@
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
 
 import { SectionBlock } from '@/components/SectionBlock'
+import { TextLink } from '@/components/TextLink'
 import { WorkItem } from '@/components/WorkItem'
-import { Button } from '@/components/ui/Button'
-import { CONTACT_EMAIL, SECTION_IDS } from '@/constants/navigation'
-import { WORK_ITEMS } from '@/features/landing/landing.constants'
+import { SECTION_IDS } from '@/constants/navigation'
+import { ROUTES, projectPath } from '@/constants/routes'
+import { FEATURED_PROJECTS } from '@/features/projects/projects.constants'
+
+const WORK_INDEXES = ['/ 01', '/ 02', '/ 03']
 
 export const WorkSection = () => {
   const { t } = useTranslation()
@@ -15,26 +19,27 @@ export const WorkSection = () => {
       eyebrow={t('work.eyebrow')}
       title={t('work.title')}
       action={
-        <Button asChild variant="link" size="sm">
-          <a href={`mailto:${CONTACT_EMAIL}`}>{t('work.allCases')}</a>
-        </Button>
+        <TextLink asChild>
+          <Link to={ROUTES.PROJECTS}>{t('work.allCases')} →</Link>
+        </TextLink>
       }
     >
       <div className="flex flex-col gap-20">
-        {WORK_ITEMS.map((item, itemIndex) => (
+        {FEATURED_PROJECTS.map((project, index) => (
           <WorkItem
-            key={item.id}
-            index={item.index}
-            title={t(item.titleKey)}
-            meta={t(item.metaKey)}
-            description={t(item.descriptionKey)}
-            imageCaption={t(item.captionKey)}
-            tags={item.tags}
-            media={itemIndex % 2 === 0 ? 'start' : 'end'}
+            key={project.slug}
+            index={WORK_INDEXES[index]}
+            title={t(`projects.items.${project.key}.title`)}
+            meta={`${project.year} · ${t(`projects.items.${project.key}.cat`)}`}
+            description={t(`projects.items.${project.key}.desc`)}
+            imageCaption={t(`projects.items.${project.key}.caption`)}
+            tags={project.tech}
+            to={projectPath(project.slug)}
+            media={index % 2 === 0 ? 'start' : 'end'}
             action={
-              <Button asChild variant="link" size="sm" className="self-start px-0">
-                <a href={`mailto:${CONTACT_EMAIL}`}>{t('work.readCase')}</a>
-              </Button>
+              <TextLink asChild className="mt-1">
+                <Link to={projectPath(project.slug)}>{t('work.readCase')} →</Link>
+              </TextLink>
             }
           />
         ))}

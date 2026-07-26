@@ -1,45 +1,28 @@
 /**
  * Sadržaj landing stranice kao podaci — sekcije ga renderuju kroz `.map()`.
  * Tekstovi idu preko i18n ključeva; tehnološke oznake su nazivi alata (ne prevode se).
+ * Portfolio radovi žive u `features/projects/projects.constants.ts`.
  */
 
+export const HERO_TERMINAL_KEYS = [
+  'hero.term1',
+  'hero.term2',
+  'hero.term3',
+  'hero.term4',
+] as const
+
 export const HERO_STATS = [
-  {
-    id: 'years',
-    valueKey: 'studio.stats.yearsValue',
-    labelKey: 'studio.stats.yearsLabel',
-    tone: 'primary',
-  },
-  {
-    id: 'products',
-    valueKey: 'studio.stats.productsValue',
-    labelKey: 'studio.stats.productsLabel',
-    tone: 'primary',
-  },
-  {
-    id: 'platforms',
-    valueKey: 'studio.stats.platformsValue',
-    labelKey: 'studio.stats.platformsLabel',
-    tone: 'primary',
-  },
-  {
-    id: 'person',
-    valueKey: 'studio.stats.personValue',
-    labelKey: 'studio.stats.personLabel',
-    tone: 'accent',
-  },
+  { id: 'years', valueKey: 'studio.stats.yearsValue', labelKey: 'studio.stats.yearsLabel', tone: 'primary' },
+  { id: 'products', valueKey: 'studio.stats.productsValue', labelKey: 'studio.stats.productsLabel', tone: 'primary' },
+  { id: 'platforms', valueKey: 'studio.stats.platformsValue', labelKey: 'studio.stats.platformsLabel', tone: 'primary' },
+  { id: 'person', valueKey: 'studio.stats.personValue', labelKey: 'studio.stats.personLabel', tone: 'accent' },
 ] as const
 
 export const TECH_STACK = [
   { id: 'frontend', labelKey: 'studio.stack.frontend', tags: ['React', 'Next.js', 'TypeScript'] },
   { id: 'backend', labelKey: 'studio.stack.backend', tags: ['Node.js', 'PostgreSQL', 'MongoDB'] },
   { id: 'mobile', labelKey: 'studio.stack.mobile', tags: ['React Native', 'Kotlin', 'Swift'] },
-  {
-    id: 'design',
-    labelKey: 'studio.stack.design',
-    tags: ['Figma', 'Design systems', 'Prototyping'],
-  },
-  { id: 'devops', labelKey: 'studio.stack.devops', tags: ['Docker', 'CI/CD', 'AWS'] },
+  { id: 'design', labelKey: 'studio.stack.design', tags: ['Figma', 'Design systems', 'Prototyping'] },
 ] as const
 
 export const DISCIPLINES = [
@@ -105,36 +88,6 @@ export const PROCESS_STEPS = [
   },
 ] as const
 
-export const WORK_ITEMS = [
-  {
-    id: 'atlas',
-    index: '/ 01',
-    titleKey: 'work.atlas.title',
-    metaKey: 'work.atlas.meta',
-    descriptionKey: 'work.atlas.description',
-    captionKey: 'work.atlas.caption',
-    tags: ['React', 'TypeScript', 'PostgreSQL', 'ClickHouse'],
-  },
-  {
-    id: 'transit',
-    index: '/ 02',
-    titleKey: 'work.transit.title',
-    metaKey: 'work.transit.meta',
-    descriptionKey: 'work.transit.description',
-    captionKey: 'work.transit.caption',
-    tags: ['React Native', 'Kotlin', 'Swift'],
-  },
-  {
-    id: 'forge',
-    index: '/ 03',
-    titleKey: 'work.forge.title',
-    metaKey: 'work.forge.meta',
-    descriptionKey: 'work.forge.description',
-    captionKey: 'work.forge.caption',
-    tags: ['Node.js', 'TypeScript', 'GraphQL'],
-  },
-] as const
-
 export const PRICING_PLANS = [
   {
     id: 'fixed',
@@ -148,11 +101,7 @@ export const PRICING_PLANS = [
     titleKey: 'pricing.monthly.title',
     priceKey: 'pricing.monthly.price',
     descriptionKey: 'pricing.monthly.description',
-    featureKeys: [
-      'pricing.monthly.feature1',
-      'pricing.monthly.feature2',
-      'pricing.monthly.feature3',
-    ],
+    featureKeys: ['pricing.monthly.feature1', 'pricing.monthly.feature2', 'pricing.monthly.feature3'],
     badgeKey: 'pricing.monthly.badge',
     featured: true,
   },

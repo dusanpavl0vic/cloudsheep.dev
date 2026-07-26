@@ -1,12 +1,19 @@
 import type { VariantProps } from 'class-variance-authority'
-import type { HTMLAttributes } from 'react'
+import type { HTMLAttributes, ReactNode } from 'react'
 
 import { cn } from '@/lib/cn'
 
-import { eyebrowVariants } from './Eyebrow.variants'
+import { eyebrowMarkerVariants, eyebrowVariants } from './Eyebrow.variants'
 
-type EyebrowProps = HTMLAttributes<HTMLSpanElement> & VariantProps<typeof eyebrowVariants>
+type EyebrowProps = HTMLAttributes<HTMLSpanElement> &
+  VariantProps<typeof eyebrowVariants> & {
+    /** Obojena oznaka ispred teksta (podrazumevano "//"). `null` je uklanja. */
+    marker?: ReactNode
+  }
 
-export const Eyebrow = ({ className, tone, ...props }: EyebrowProps) => (
-  <span className={cn(eyebrowVariants({ tone }), className)} {...props} />
+export const Eyebrow = ({ className, tone, marker = '//', children, ...props }: EyebrowProps) => (
+  <span className={cn(eyebrowVariants({ tone }), className)} {...props}>
+    {marker !== null && <span className={eyebrowMarkerVariants({ tone })}>{marker}</span>}
+    {children}
+  </span>
 )

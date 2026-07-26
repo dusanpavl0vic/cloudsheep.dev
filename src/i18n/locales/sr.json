@@ -23,16 +23,32 @@
     "studio": "Studio",
     "faq": "Pitanja",
     "contact": "Kontakt",
-    "hire": "Angažuj me"
+    "uses": "Alati",
+    "caseStudy": "Studija slučaja",
+    "getStarted": "Započni"
   },
   "hero": {
-    "eyebrow": "// cloudsheep · studio dušana pavlovića · niš, srbija",
-    "command": "whoami",
-    "commandResult": "studio jednog čoveka · dizajn + web + mobilne",
-    "description": "Dizajn proizvoda, full-stack web i mobilne aplikacije native kvaliteta — osmišljene, izgrađene i isporučene istim rukama. Bez primopredaja i bez gluvih telefona.",
+    "titleTop": "Ceo proizvod,",
+    "titleBottom": "gradi ga",
+    "titleHighlight": "jedan",
+    "description": "Dizajn, web i mobilne aplikacije — osmišljene, nacrtane, kodirane i isporučene iz jednog para ruku. Bez primopredaja, bez gluvih telefona, jedan vlasnik od prve skice do lansiranja.",
+    "term1": "whoami → jednočlani studio",
+    "term2": "stack → dizajn · web · mobilne",
+    "term3": "status → slobodan za Q3",
+    "term4": "ls ./radovi → 20+ proizvoda",
     "primaryCta": "Pokreni projekat",
     "secondaryCta": "Pogledaj radove",
-    "scroll": "skroluj ↓"
+    "scroll": "SKROLUJ"
+  },
+  "insight": {
+    "haveProject": "Imaš projekat?",
+    "getInTouch": "Javi se",
+    "badge": "Uvidi",
+    "title": "Pouzdanost: Uptime u produkciji",
+    "seeWork": "Pogledaj radove",
+    "uptime": "uptime",
+    "body": "Svaki proizvod je napravljen da radi bez prekida — nadgledan, održavan i pokriven podrškom, dugo posle lansiranja.",
+    "waysToWork": "Načini saradnje"
   },
   "studio": {
     "index": "01",
@@ -54,12 +70,11 @@
       "frontend": "frontend",
       "backend": "backend",
       "mobile": "mobilne",
-      "design": "dizajn",
-      "devops": "devops"
+      "design": "dizajn"
     }
   },
   "services": {
-    "eyebrow": "// 02 · čime se studio bavi",
+    "eyebrow": "02 · čime se studio bavi",
     "title": "Četiri discipline, jedan sto.",
     "design": {
       "title": "Dizajn proizvoda",
@@ -79,7 +94,7 @@
     }
   },
   "process": {
-    "eyebrow": "// 03 · kako teče projekat",
+    "eyebrow": "03 · kako teče projekat",
     "title": "Proces bez iznenađenja.",
     "discover": {
       "title": "Otkrivanje",
@@ -103,33 +118,88 @@
     }
   },
   "work": {
-    "eyebrow": "// 04 · izabrani radovi",
+    "eyebrow": "04 · izabrani radovi",
     "title": "Dokazi, ne obećanja.",
-    "allCases": "Sve studije slučaja →",
-    "readCase": "Pročitaj →",
-    "atlas": {
-      "title": "Atlas Analytics",
-      "meta": "2025 · full-stack",
-      "description": "Analitički dashboard za fintech tim — 40k događaja u minuti, upiti ispod sekunde, dizajniran i izgrađen od početka do kraja za 14 nedelja.",
-      "caption": "Atlas Analytics — snimak dashboarda"
+    "allCases": "Svi projekti",
+    "readCase": "Pogledaj projekat"
+  },
+  "projects": {
+    "eyebrow": "arhiva · ažurirano jul 2026",
+    "title": "Radovi",
+    "subtitle": "Svaki projekat ovde je dizajnirala, izgradila i isporučila jedna osoba. Manje, dublje studije slučaja umesto zida sličica.",
+    "empty": "u ovoj kategoriji još nema ničega — svrati ponovo uskoro",
+    "filters": {
+      "all": "Sve",
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "fullStack": "Full-Stack",
+      "openSource": "Open Source"
     },
-    "transit": {
-      "title": "Niš Transit",
-      "meta": "2024 · mobilne",
-      "description": "Praćenje autobusa u realnom vremenu za grad Niš — pozicije vozila uživo, offline red vožnje, 12k mesečnih korisnika na iOS-u i Androidu.",
-      "caption": "Niš Transit — ekrani aplikacije"
-    },
-    "forge": {
-      "title": "Forge CMS",
-      "meta": "2024 · otvoreni kod",
-      "description": "Headless CMS zasnovan na blokovima sa drag-and-drop graditeljem stranica — 1.2k zvezdica na GitHub-u i raste.",
-      "caption": "Forge CMS — snimak editora"
+    "items": {
+      "atlas": {
+        "title": "Atlas Analytics",
+        "cat": "full-stack",
+        "desc": "Analitički dashboard za fintech tim — 40k događaja u minuti, upiti ispod sekunde, isporučen za 14 nedelja.",
+        "caption": "Atlas Analytics — snimak dashboarda"
+      },
+      "transit": {
+        "title": "Niš Transit",
+        "cat": "frontend · mobilne",
+        "desc": "Praćenje autobusa u realnom vremenu za grad Niš — 12k mesečnih korisnika na iOS-u i Androidu.",
+        "caption": "Niš Transit — ekrani aplikacije"
+      },
+      "forge": {
+        "title": "Forge CMS",
+        "cat": "otvoreni kod",
+        "desc": "Headless CMS zasnovan na blokovima sa drag-and-drop graditeljem stranica — 1.2k zvezdica na GitHub-u.",
+        "caption": "Forge CMS — snimak editora"
+      },
+      "pulse": {
+        "title": "Pulse API",
+        "cat": "backend",
+        "desc": "API za prikupljanje zdravstvenih metrika — 99.98% uptime kroz dve godine produkcije.",
+        "caption": "Pulse API — dokumentacija / dashboard"
+      },
+      "meridian": {
+        "title": "Meridian",
+        "cat": "full-stack",
+        "desc": "Platforma za rezervacije za berlinski studio — sinhronizacija kalendara, plaćanja, višejezični UI.",
+        "caption": "Meridian — tok rezervacije"
+      }
     }
   },
+  "caseStudy": {
+    "allProjects": "svi projekti",
+    "highlightsLabel": "Ključno — šta je napravilo razliku",
+    "highlight1": "40.000 događaja u minuti uz upite na dashboardu ispod sekunde",
+    "highlight2": "Vreme do uvida smanjeno sa 2 dana (tabele) na ispod 1 minuta",
+    "highlight3": "Dizajniran, izgrađen i isporučen od početka do kraja za 14 nedelja — jedna osoba",
+    "highlight4": "99.95% uptime tokom prvih 12 meseci u produkciji",
+    "heroCaption": "glavni dashboard — tok događaja uživo, sačuvani prikazi, upozorenja",
+    "gridCaption": "graditelj upita · konfiguracija upozorenja",
+    "problemTitle": "Problem",
+    "problem1": "Beogradski fintech tim je radio naslepo, između nedeljnih izvoza u tabelama. Produktne odluke su danima čekale podatke koji su već postojali — samo nisu imali gde da žive. Trebao im je pregled ponašanja korisnika u realnom vremenu, bez kupovine analitike od šest cifara.",
+    "problem2": "Zadatak: jedan dashboard, sve ključne metrike, dovoljno brz da se pogleda između dva gutljaja kafe.",
+    "decisionsTitle": "Ključne odluke",
+    "decisions1": "Događaji sleću u ClickHouse, ne u Postgres — kolonarni skladišni sistem omogućio je agregaciju ispod sekunde na običnom hardveru. Postgres radi ono u čemu je dobar: korisnici, sačuvani prikazi, pravila upozorenja.",
+    "decisions2": "Sa strane dizajna: bez zoološkog vrta grafikona. Četiri tipa prikaza, dosledna svuda, pa tim čita svaki ekran na isti način. Gustina gde je bitno, prazan prostor gde nije.",
+    "outcomeTitle": "Rezultat",
+    "outcome1": "Dashboard je u potpunosti zamenio ritual nedeljnog izvoza. Godinu dana kasnije, radi sa 99.95% uptime-a i postao je prvi tab koji tim otvori svakog jutra. Odluke o funkcijama koje su nekad čekale petak sad se donose na standup-u.",
+    "stat1Value": "40k",
+    "stat1Label": "događaja u minuti",
+    "stat2Value": "<1s",
+    "stat2Label": "p95 vreme upita",
+    "stat3Value": "14",
+    "stat3Label": "nedelja, ideja → produkcija",
+    "github": "GitHub",
+    "liveDemo": "Demo uživo",
+    "demoNote": "pristupni podaci za demo na zahtev",
+    "nextUp": "sledeće"
+  },
   "pricing": {
-    "eyebrow": "// 05 · načini saradnje",
+    "eyebrow": "05 · načini saradnje",
     "title": "Tri načina da uđemo u posao.",
-    "note": "// tačni iznosi posle kratkog uvodnog poziva — svaki projekat se procenjuje pojedinačno",
+    "note": "tačni iznosi posle kratkog uvodnog poziva — svaki projekat se procenjuje pojedinačno",
     "fixed": {
       "title": "Projekat fiksnog obima",
       "price": "ponuda po projektu",
@@ -157,46 +227,116 @@
     }
   },
   "faq": {
-    "eyebrow": "// 06 · pitanja",
+    "eyebrow": "06 · pitanja",
     "title": "Pitano ranije, odgovoreno ovde.",
     "onePerson": {
       "q": "Da li je stvarno samo jedna osoba?",
-      "a": "Jeste. Dizajn, frontend, backend i deploy radim ja. Za veće obime uključujem proverene saradnike, ali uvek imaš jednu tačku kontakta i jednu osobu odgovornu za rezultat."
+      "a": "Da — jedan inženjer-dizajner koji radi promišljanje, piksele i kod. Za specijalizovane potrebe uključujem proverene saradnike, ali odgovornost nikad ne napušta ovaj sto."
     },
     "designDev": {
       "q": "Radiš li dizajn i razvoj zajedno?",
-      "a": "To je i poenta studija. Osoba koja crta interfejs je osoba koja ga i gradi, pa se ništa ne gubi u primopredaji i ništa se ne dizajnira što se ne može izgraditi."
+      "a": "To je i cela poenta. Ništa se ne gubi između dizajnerovog fajla i developerove izrade, jer su ista osoba."
     },
     "platforms": {
       "q": "I iOS i Android?",
-      "a": "Da. U zavisnosti od projekta koristimo React Native za jedan zajednički kod, ili potpuno native Kotlin i Swift kada proizvod to zahteva. Izbor se pravi po projektu, ne po navici."
+      "a": "Da. Obično jedan React Native kod za obe prodavnice; potpuno native (Kotlin/Swift) kada proizvod to zahteva."
     },
     "duration": {
       "q": "Koliko traje projekat?",
-      "a": "Dizajn sprint traje jednu do dve nedelje. Tipičan projekat fiksnog obima traje osam do šesnaest nedelja od analize do lansiranja. Pisanu procenu dobijaš posle prvog poziva."
+      "a": "Dizajn sprint: 1–2 nedelje. Tipičan proizvod: 8–16 nedelja, isporučen u nedeljnim inkrementima koje vidiš na staging-u."
     },
     "ownership": {
       "q": "Ko je vlasnik koda?",
-      "a": "Ti. Sve se isporučuje u tvom repozitorijumu, sa dokumentacijom, a licenca je tvoja od prvog dana. Bez zaključavanja i bez iznajmljene infrastrukture."
+      "a": "Ti — 100%, od prvog dana. Repozitorijumi žive u tvojoj organizaciji; nema zaključavanja i ništa nije zarobljeno."
     },
     "location": {
-      "q": "Gde se nalaziš — i šta sa vremenskim zonama?",
-      "a": "Niš, Srbija (CET). To pokriva ceo evropski radni dan i prepodneva u Severnoj Americi. Async po pravilu, pozivi kad su zaista korisni."
+      "q": "Gde se nalaziš?",
+      "a": "Niš, Srbija (CET) — udoban preklop sa celom Evropom i prepodnevima u SAD. Radni jezici: engleski i srpski."
     }
   },
   "contact": {
-    "title": "Jedan studio. Jedan čovek. Ceo proizvod.",
-    "cta": "Pokreni projekat"
+    "eyebrow": "kontakt",
+    "pageTitle": "Započni razgovor.",
+    "pageLead": "Reci mi šta gradiš — dovoljan je jedan pasus. Odgovor stiže u roku od 48 sati, obično mnogo brže.",
+    "emailLabel": "Email",
+    "baseLabel": "Baza",
+    "baseValue": "Niš, Srbija · CET · EN / SR",
+    "elsewhereLabel": "Drugde",
+    "titleTop": "Jedan studio. Jedan čovek.",
+    "titleBottom": "Ceo proizvod.",
+    "cta": "Pošalji poruku",
+    "form": {
+      "name": "Ime",
+      "namePh": "Tvoje ime",
+      "nameError": "Molim te unesi ime",
+      "email": "Email",
+      "emailPh": "ti@kompanija.com",
+      "emailError": "Taj email ne izgleda ispravno",
+      "subject": "Naslov",
+      "subjectPh": "Novi projekat, pitanje, pozdrav…",
+      "message": "Poruka",
+      "messagePh": "Šta gradiš, otprilike kada, i kako izgleda uspeh?",
+      "messageError": "Rečenica ili dve pomažu da odgovorim korisno",
+      "note": "odgovor u roku od 48h",
+      "submit": "Pošalji poruku",
+      "sentTitle": "Poruka poslata.",
+      "sentBody": "Hvala — stigla je u sanduče studija. Očekuj odgovor u roku od 48 sati.",
+      "sendAnother": "Pošalji još jednu"
+    }
+  },
+  "uses": {
+    "eyebrow": "$ cat uses.md",
+    "title": "Alati",
+    "subtitle": "Sto, editor i stack iza svakog CloudSheep projekta. Dosadni alati, izoštreni svakodnevno.",
+    "desk": {
+      "title": "Sto i hardver",
+      "item1": "studio, sažet",
+      "item2": "jedan ekran, nula distrakcija",
+      "item3": "niskoprofilna, braon prekidači",
+      "item4": "pravi uređaji, pravo testiranje"
+    },
+    "editor": {
+      "title": "Editor i terminal",
+      "item1": "sa vim prečicama",
+      "item2": "isti font koji vidiš ovde",
+      "item3": "brz terminal, podešen prompt",
+      "item4": "git bez ceremonije"
+    },
+    "stack": {
+      "title": "Stack i frameworci",
+      "item1": "podrazumevano za web proizvode",
+      "item2": "jedan kod, obe prodavnice",
+      "item3": "relaciono jezgro, dokumenti gde odgovaraju",
+      "item4": "API-ji, workeri, alati"
+    },
+    "tools": {
+      "title": "Alati i servisi",
+      "item1": "dizajn, prototipovi, primopredaja",
+      "item2": "ista kutija svuda, CI/CD",
+      "item3": "pošteno hostovanje, brze ivice",
+      "item4": "analitika bez uhođenja"
+    }
+  },
+  "notFound": {
+    "terminal": "nema takvog fajla ili direktorijuma",
+    "body": "Ova ovca je odlutala sa oblaka. Stranica koju tražiš se preselila, ili nikad nije ni postojala.",
+    "home": "Nazad na početnu",
+    "work": "Pogledaj radove"
   },
   "footer": {
-    "tagline": "Jednočlani produktni studio — dizajn, web i mobilne aplikacije iz jednog para ruku.",
+    "tagline": "Jednočlani produktni studio — dizajn, web i mobilne aplikacije iz jednog para ruku, sa sedištem u Nišu, Srbija.",
+    "ctaLead": "Napravimo nešto",
+    "ctaHighlight": "zajedno.",
     "groupSite": "Sajt",
     "groupStudio": "Studio",
-    "groupElsewhere": "Drugde",
+    "groupContact": "Javi se",
     "github": "GitHub ↗",
     "linkedin": "LinkedIn ↗",
     "email": "Email",
-    "copyright": "© 2026 CloudSheep · cloudsheep.dev",
-    "builtIn": "Dizajnirano i napravljeno u Nišu, Srbija"
+    "base": "Niš, Srbija · CET",
+    "reply": "Odgovor u roku od 48h",
+    "copyright": "© 2026 CloudSheep · Dizajnirano i napravljeno u Nišu, Srbija",
+    "copyrightLong": "© 2026 CloudSheep · Dizajnirano i napravljeno u Nišu, Srbija · cloudsheep.dev",
+    "backToTop": "na vrh"
   }
 }

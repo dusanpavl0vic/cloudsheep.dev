@@ -1,29 +1,39 @@
 import { cva } from 'class-variance-authority'
 
-export const logoVariants = cva('inline-flex items-center gap-3', {
+export const logoVariants = cva('inline-flex items-center gap-2.5')
+
+export const logoMarkVariants = cva('shrink-0', {
   variants: {
     tone: {
       default: 'text-primary',
-      inverse: 'text-inverse-foreground',
+      inverse: 'text-inverse-primary',
+    },
+    size: {
+      sm: 'size-[34px]',
+      md: 'size-10',
+      lg: 'size-14',
     },
   },
   defaultVariants: {
     tone: 'default',
+    size: 'sm',
   },
 })
 
-// Marka nije kvadratna (160×137) — dimenzionišemo po visini, širina se računa sama
-export const logoMarkVariants = cva('w-auto shrink-0', {
+export const logoWordmarkVariants = cva('font-heading leading-none font-bold tracking-tight', {
   variants: {
+    tone: {
+      default: 'text-foreground',
+      inverse: 'text-inverse-foreground',
+    },
     size: {
-      sm: 'h-8',
-      md: 'h-9',
-      lg: 'h-[480px] max-w-full',
+      sm: 'text-[19px]',
+      md: 'text-[23px]',
+      lg: 'text-2xl',
     },
   },
   defaultVariants: {
-    size: 'md',
+    tone: 'default',
+    size: 'sm',
   },
 })
-
-export const logoWordmarkVariants = cva('font-heading text-xl leading-none font-bold tracking-tight')

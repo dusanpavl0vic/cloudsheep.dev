@@ -1,23 +1,85 @@
+import { Check, ChevronDown } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { cn } from '@/lib/cn'
+
 import { LANGUAGE_OPTIONS } from './LanguageSwitcher.constants'
-import { languageOptionVariants, languageSwitcherVariants } from './LanguageSwitcher.variants'
+import {
+  languageMenuVariants,
+  languageOptionVariants,
+  languageSwitcherVariants,
+  languageTriggerVariants,
+} from './LanguageSwitcher.variants'
 
 export const LanguageSwitcher = () => {
   const { i18n, t } = useTranslation()
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  const current =
+    LANGUAGE_OPTIONS.find((option) => option.code === i18n.resolvedLanguage) ?? LANGUAGE_OPTIONS[0]
+
+  // Zatvaranje na klik van menija i na Escape — subscribe na DOM evente (PROJECT_GUIDE 2.1)
+  useEffect(() => {
+    if (!open) return
+    const onPointerDown = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false)
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open])
+
+  const select = (code: string) => {
+    void i18n.changeLanguage(code)
+    setOpen(false)
+  }
 
   return (
-    <div role="group" aria-label={t('language.label')} className={languageSwitcherVariants()}>
-      {LANGUAGE_OPTIONS.map((option) => (
-        <button
-          key={option.code}
-          type="button"
-          onClick={() => void i18n.changeLanguage(option.code)}
-          className={languageOptionVariants({ active: i18n.resolvedLanguage === option.code })}
-        >
-          {option.label}
-        </button>
-      ))}
+    <div ref={ref} className={languageSwitcherVariants()}>
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label={t('language.label')}
+        onClick={() => setOpen((value) => !value)}
+        className={languageTriggerVariants()}
+      >
+        {current.label}
+        <ChevronDown
+          aria-hidden
+          className={cn('size-3.5 transition-transform duration-200', open && 'rotate-180')}
+        />
+      </button>
+
+      {open && (
+        <ul role="listbox" aria-label={t('language.label')} className={languageMenuVariants()}>
+          {LANGUAGE_OPTIONS.map((option) => {
+            const active = option.code === current.code
+            return (
+              <li key={option.code}>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={active}
+                  onClick={() => select(option.code)}
+                  className={languageOptionVariants({ active })}
+                >
+                  {option.name}
+                  {active && <Check aria-hidden className="size-3.5 text-primary" />}
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      )}
     </div>
   )
 }

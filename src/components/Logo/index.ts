@@ -1,1 +1,1 @@
-export { Logo, LogoMark } from './Logo'
+export { Logo, SpiralMark } from './Logo'

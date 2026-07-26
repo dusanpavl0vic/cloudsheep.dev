@@ -1,13 +1,13 @@
 import { cva } from 'class-variance-authority'
 
 export const siteHeaderVariants = cva(
-  'sticky top-0 z-50 w-full border-b border-border bg-background/85 backdrop-blur',
+  'sticky top-0 z-60 w-full border-b border-border bg-background/85 backdrop-blur-md',
 )
 
-export const siteHeaderInnerVariants = cva('flex h-16 items-center justify-between gap-6')
+export const siteHeaderInnerVariants = cva('flex h-[72px] items-center gap-7')
 
-export const siteNavVariants = cva('hidden items-center gap-8 lg:flex')
+export const siteNavVariants = cva('ml-auto hidden items-center gap-7 md:flex')
 
 export const siteNavLinkVariants = cva(
-  'font-mono text-xs tracking-wide lowercase text-muted-foreground transition-colors hover:text-primary',
+  'nav-underline text-[15px] font-medium text-muted-foreground transition-colors hover:text-foreground',
 )
