@@ -87,10 +87,23 @@ prvorazredno imenovano okruženje sa svojim domenom. To je **Pro funkcija** — 
 Hobby planu dialog nudi samo „Upgrade to Pro". Zato test radi kroz Preview
 okruženje vezano na `main`, sa env varijablom scope-ovanom na tu granu.
 
-Praktična razlika: test nema sopstveni lep domen, nego stabilan Vercelov
-branch URL za `main` (vidi ga na strani deployment-a posle prvog builda). Ako
-zatreba lep domen, može se dodati custom domen vezan za granu `main` u
-**Settings → Domains**.
+`main` se ne „dodaje" u Preview — Preview hvata svaku granu koja ne pripada
+drugom okruženju, pa je `main` automatski unutra. Branch Tracking polje za
+Preview je fiksirano na „All unassigned branches" i ne menja se.
+
+Praktična razlika prema imenovanom okruženju: test nema sopstveni lep domen,
+nego stabilan Vercelov branch URL za `main` (vidi ga na strani deployment-a
+posle prvog builda).
+
+### Domen za test
+
+Domen se može zakačiti na `main` i bez Pro plana:
+**Settings → Environments → Preview → Domains → Add Domain**, gde se pored
+domena bira i **Preview Branch = `main`**.
+
+Uslov je da domen postoji u nalogu — trenutno je Domains lista projekta prazna,
+pa `cloudsheep.dev` prvo treba dodati (**Add Existing** uz preusmeravanje DNS-a
+na Vercel, ili **Buy** kroz Vercel). Tek onda ima šta da se veže za granu.
 
 ### Pristup test instanci
 
