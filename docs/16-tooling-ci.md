@@ -1,7 +1,6 @@
 # 16 — Tooling i CI
 
 > Status: active | Last review: 2026-08-15
-> Sekcije 2–5 (lint pravila, CI pipeline, enforcement) se popunjavaju u F1/F3.
 > Sekcija 1 je rezultat F0 — verifikovana `registry.npmjs.org` upitom 2026-08-15.
 
 ## 1. Pinovane verzije
@@ -146,3 +145,111 @@ pnpm outdated -r                    # isto, kroz pnpm, po workspace-u
 
 Pinovi žive u `pnpm-workspace.yaml` pod `catalog:` — jedna verzija za ceo monorepo,
 paketi je referišu sa `"react": "catalog:"`. Promena verzije = izmena na jednom mestu.
+
+---
+
+## 2. Enforcement — pravilo bez lint rule je želja
+
+**Najveći rizik ovog repoa nije stek nego drift.** Dokumentacija koja se ne proverava mašinski
+je dokumentacija koja se ignoriše. Zato svako pravilo iz `docs/` ima svoj mehanizam:
+
+| Pravilo | Doc | Mehanizam |
+|---|---|---|
+| Granice slojeva | [`01`](01-architecture.md) | `import/no-restricted-paths` |
+| Import samo iz barrel-a | [`01`](01-architecture.md) | `import/no-internal-modules` |
+| Hook pravila + React Compiler | [`07`](07-performance.md) | `eslint-plugin-react-hooks` v7 |
+| Bez literal stringova u UI | [`09`](09-i18n.md) | `eslint-plugin-i18next/no-literal-string` |
+| A11y | [`15`](15-accessibility.md) | `eslint-plugin-jsx-a11y` (error) |
+| Bez `any`, bez `!` | [`03`](03-naming-conventions.md) | `typescript-eslint` strict-type-checked |
+| Max 2 `useState` | [`07`](07-performance.md) §4 | **custom rule** `max-usestate` |
+| `// effect:` komentar | [`07`](07-performance.md) §3 | **custom rule** `require-effect-comment` |
+| Bundle budžet | [`07`](07-performance.md) §6 | `size-limit` u CI |
+| Lighthouse | [`07`](07-performance.md) §7 | `@lhci/cli` assertions |
+| Coverage pragovi | [`12`](12-testing.md) | Vitest thresholds |
+| i18n rupe | [`09`](09-i18n.md) | `i18next-parser` + diff check |
+| Commit format | — | `commitlint` |
+
+### Custom pravila
+
+Žive u `packages/config/eslint-config/rules/`. SPEC ih eksplicitno traži jer standardni
+plugini ne pokrivaju ova dva zahteva.
+
+```js
+// max-usestate — prijavljuje 3+ useState poziva u jednoj komponenti
+'@app/max-usestate': ['error', { max: 2 }]
+
+// require-effect-comment — traži komentar koji počinje sa "effect:" iznad useEffect-a
+'@app/require-effect-comment': 'error'
+```
+
+Oba imaju sopstvene testove (`RuleTester`) — lint pravilo bez testa je isto što i kod bez testa.
+
+### Zone granica
+
+```js
+'import/no-restricted-paths': ['error', { zones: [
+  { target: './src/features/*', from: './src/features/*', except: ['./index.ts'] },
+  { target: './src/components', from: './src/features' },
+  { target: './src/lib',        from: ['./src/features', './src/pages'] },
+]}]
+```
+
+Da ovo stvarno radi dokazuje se testom u F7: namerno kršenje granice **obara build**.
+
+---
+
+## 3. CI (GitHub Actions)
+
+```
+install (pnpm cache)
+  → typecheck → lint → test (+coverage) → build
+  → size-limit → lighthouse-ci → e2e (playwright)
+  → changesets release
+```
+
+Turborepo gradi **samo promenjeno**:
+
+```bash
+turbo run build --filter=[origin/dev]
+```
+
+| Gate | Prag | Gde je definisan |
+|---|---|---|
+| Coverage `packages/utils` | 100% | `vitest.config.ts` |
+| Coverage `features/*/hooks` | ≥ 90% | isto |
+| Coverage ukupno | ≥ 80% | isto |
+| Initial JS | ≤ 150 KB gzip | `.size-limit.json` |
+| CSS | ≤ 20 KB gzip | isto |
+| Po ruti | ≤ 60 KB gzip | isto |
+| Lighthouse performance | ≥ 0.95 | `lighthouserc.json` |
+| Lighthouse a11y / best-practices / SEO | 1.0 | isto |
+| axe violations | 0 | Vitest + Playwright |
+
+## 4. Env
+
+`packages/utils/src/env` sa zod šemom — **build pada ako fali obavezna varijabla**.
+
+```ts
+export const env = envSchema.parse(import.meta.env);
+```
+
+**Nikad `import.meta.env.X` direktno.** `VITE_` prefiks znači da je vrednost **javno vidljiva**
+u bundle-u — nikad tajne. Vidi [`20-security.md`](20-security.md).
+
+## 5. Git hooks
+
+| Hook | Radi |
+|---|---|
+| `pre-commit` | `lint-staged` — ESLint `--fix` + Prettier na staged fajlovima |
+| `commit-msg` | `commitlint` — conventional commits |
+| `pre-push` | `pnpm typecheck` |
+
+Changesets za verzionisanje paketa: `/changeset` pravi changeset iz git diff-a.
+
+## Checklist
+
+- [ ] Novo pravilo u `docs/` ima svoj red u tabeli §2
+- [ ] Novo lint pravilo ima `RuleTester` test
+- [ ] Nova verzija paketa je u `catalog:`, ne u pojedinačnom `package.json`
+- [ ] Novi CI gate ima prag zapisan ovde
+- [ ] `pnpm validate` prolazi lokalno pre push-a

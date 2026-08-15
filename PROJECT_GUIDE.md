@@ -1,8 +1,35 @@
 # CloudSheep — Vodič za frontend projekat
 
-> Ovaj fajl je izvor istine za arhitekturu, konvencije i pravila projekta.
-> Svaka nova komponenta, feature ili izmena mora da prati ova pravila.
-> Kada se donese nova arhitektonska odluka, ovaj fajl se ažurira u istom trenutku.
+> # ⚠️ ZASTARELO — nije više izvor istine
+>
+> Sadržaj ovog fajla je prenet u **[`docs/`](docs/)**. Gde god se ovaj fajl razilazi
+> sa `docs/*.md`, **važi `docs/`**.
+>
+> Fajl se privremeno zadržava samo zato što ga 10 komentara u `src/` još referiše.
+> **Briše se u F5**, kad se kod migrira u `apps/web/` i ti komentari se preusmere.
+>
+> Mapa gde je šta otišlo:
+>
+> | Sekcija ovde | Novo mesto |
+> |---|---|
+> | 1. Tehnološki stek | [`docs/00-overview.md`](docs/00-overview.md), [`docs/16-tooling-ci.md`](docs/16-tooling-ci.md) |
+> | 2.1 Što manje `useEffect`-a | [`docs/07-performance.md`](docs/07-performance.md) §3 |
+> | 2.2 Komponenta = folder | [`docs/02-folder-structure.md`](docs/02-folder-structure.md), [`docs/adr/0007`](docs/adr/0007-ui-flat-vs-folder.md) |
+> | 2.3–2.4 Male komponente, konstante | [`docs/02`](docs/02-folder-structure.md), [`docs/03`](docs/03-naming-conventions.md) |
+> | 2.5 Feature-first | [`docs/01-architecture.md`](docs/01-architecture.md) |
+> | 2.6 Sadržaj je podatak | [`apps/web/CLAUDE.md`](apps/web/CLAUDE.md) |
+> | 2.7 Prvo platforma | [`docs/08-styling-ui.md`](docs/08-styling-ui.md) |
+> | 3. Struktura projekta | [`docs/02-folder-structure.md`](docs/02-folder-structure.md) |
+> | 4. Teme i tokeni | [`docs/08-styling-ui.md`](docs/08-styling-ui.md), [`docs/adr/0008`](docs/adr/0008-theme-data-attribute.md) |
+> | 5. Prevodi | [`docs/09-i18n.md`](docs/09-i18n.md) |
+> | 6. RTK Query | [`docs/11-data-fetching.md`](docs/11-data-fetching.md) |
+> | 7. Imenovanje | [`docs/03-naming-conventions.md`](docs/03-naming-conventions.md) |
+> | 8. Performanse | [`docs/07-performance.md`](docs/07-performance.md), [`apps/web/CLAUDE.md`](apps/web/CLAUDE.md) |
+> | 9–10. Komande, checklist | [`CLAUDE.md`](CLAUDE.md), [`docs/19`](docs/19-code-review-checklist.md) |
+>
+> ---
+>
+> *Original ispod, radi konteksta:*
 
 ---
 
