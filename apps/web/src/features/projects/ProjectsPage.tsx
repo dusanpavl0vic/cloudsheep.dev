@@ -1,10 +1,8 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { PageHeader } from '@/components/PageHeader'
-import { Reveal } from '@/components/Reveal'
-import { Container } from '@/components/ui/Container'
-import { cn } from '@/lib/cn'
+import { Container, PageHeader, Reveal, cn } from '@app/ui'
+
 
 import { ProjectCard } from './components/ProjectCard'
 import { PROJECT_CATEGORIES, PROJECTS, type ProjectCategory } from './projects.constants'

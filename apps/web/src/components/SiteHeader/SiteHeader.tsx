@@ -4,11 +4,9 @@ import { Link, NavLink } from 'react-router'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { Logo } from '@/components/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { Button } from '@/components/ui/Button'
-import { Container } from '@/components/ui/Container'
 import { MAIN_NAV } from '@/constants/navigation'
 import { ROUTES } from '@/constants/routes'
-import { cn } from '@/lib/cn'
+import { Button, Container, cn } from '@app/ui'
 
 import {
   siteHeaderInnerVariants,

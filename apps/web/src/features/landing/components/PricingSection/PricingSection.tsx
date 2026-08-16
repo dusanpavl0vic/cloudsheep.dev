@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next'
 
-import { Eyebrow } from '@/components/Eyebrow'
 import { PricingCard } from '@/components/PricingCard'
-import { SectionBlock } from '@/components/SectionBlock'
 import { SECTION_IDS } from '@/constants/navigation'
 import { PRICING_PLANS } from '@/features/landing/landing.constants'
+import { Eyebrow, SectionBlock } from '@app/ui'
 
 export const PricingSection = () => {
   const { t } = useTranslation()

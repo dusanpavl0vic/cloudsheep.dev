@@ -2,9 +2,9 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { SpiralMark } from '@/components/Logo'
-import { TagList } from '@/components/TagList'
 import { projectPath } from '@/constants/routes'
 import type { Project } from '@/features/projects/projects.constants'
+import { TagList } from '@app/ui'
 
 import {
   projectBodyVariants,

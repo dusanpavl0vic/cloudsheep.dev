@@ -1,4 +1,4 @@
-import { Reveal } from '@/components/Reveal'
+import { Reveal } from '@app/ui'
 
 import { ContactSection } from './components/ContactSection'
 import { FaqSection } from './components/FaqSection'

@@ -1,7 +1,7 @@
 import type { VariantProps } from 'class-variance-authority'
 
-import { Badge } from '@/components/ui/Badge'
-import { cn } from '@/lib/cn'
+import { Badge, cn } from '@app/ui'
+
 
 import {
   pricingBadgeVariants,

@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { SpiralMark } from '@/components/Logo'
-import { Button } from '@/components/ui/Button'
 import { SECTION_IDS } from '@/constants/navigation'
 import { ROUTES } from '@/constants/routes'
 import { HERO_TERMINAL_KEYS } from '@/features/landing/landing.constants'
 import { useTypewriter } from '@/hooks/useTypewriter'
+import { Button } from '@app/ui'
 
 import { CLOUD_DIM, CLOUD_LIT, CLOUD_SIZE, SPOTLIGHT_MASK } from './HeroSection.constants'
 import {

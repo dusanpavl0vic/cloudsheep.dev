@@ -1,11 +1,8 @@
 import { useTranslation } from 'react-i18next'
 
-import { StatItem } from '@/components/StatItem'
-import { TagList } from '@/components/TagList'
-import { Badge } from '@/components/ui/Badge'
-import { Container } from '@/components/ui/Container'
 import { SECTION_IDS } from '@/constants/navigation'
 import { HERO_STATS, TECH_STACK } from '@/features/landing/landing.constants'
+import { Badge, Container, StatItem, TagList } from '@app/ui'
 
 import {
   studioGridVariants,

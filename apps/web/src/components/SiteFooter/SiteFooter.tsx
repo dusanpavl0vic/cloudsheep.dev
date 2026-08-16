@@ -5,9 +5,9 @@ import { Link } from 'react-router'
 
 import { GithubIcon, LinkedinIcon } from '@/components/BrandIcon'
 import { Logo } from '@/components/Logo'
-import { Container } from '@/components/ui/Container'
 import { CONTACT_EMAIL, FOOTER_NAV, SOCIAL_LINKS } from '@/constants/navigation'
 import { ROUTES } from '@/constants/routes'
+import { Container } from '@app/ui'
 
 import {
   footerBottomTextVariants,

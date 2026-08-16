@@ -1,9 +1,9 @@
 import { Moon, Sun } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import { Button } from '@/components/ui/Button'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { THEMES, themeToggled } from '@/store/slices/themeSlice'
+import { Button } from '@app/ui'
 
 export const ThemeToggle = () => {
   const { t } = useTranslation()

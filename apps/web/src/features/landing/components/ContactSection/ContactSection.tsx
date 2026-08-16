@@ -2,10 +2,9 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { SpiralMark } from '@/components/Logo'
-import { Button } from '@/components/ui/Button'
-import { Container } from '@/components/ui/Container'
 import { CONTACT_EMAIL, SECTION_IDS } from '@/constants/navigation'
 import { ROUTES } from '@/constants/routes'
+import { Button, Container } from '@app/ui'
 
 import {
   contactBannerVariants,

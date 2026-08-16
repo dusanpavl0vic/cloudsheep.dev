@@ -1,7 +1,7 @@
 import type { VariantProps } from 'class-variance-authority'
 
-import { TagList } from '@/components/TagList'
-import { cn } from '@/lib/cn'
+import { TagList, cn } from '@app/ui'
+
 
 import {
   disciplineArrowVariants,

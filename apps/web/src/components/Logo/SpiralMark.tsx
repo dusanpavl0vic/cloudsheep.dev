@@ -1,6 +1,7 @@
 import type { SVGProps } from 'react'
 
-import { cn } from '@/lib/cn'
+import { cn } from '@app/ui'
+
 
 type SpiralMarkProps = SVGProps<SVGSVGElement> & {
   /** Uključuje petlju iscrtavanja (crta → drži → briše). Za statične upotrebe ostaviti false. */

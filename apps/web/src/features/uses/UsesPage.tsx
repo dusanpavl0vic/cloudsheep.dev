@@ -2,9 +2,8 @@ import { Cog, Keyboard, LayoutGrid, SquareTerminal } from 'lucide-react'
 import type { ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { PageHeader } from '@/components/PageHeader'
-import { Reveal } from '@/components/Reveal'
-import { Container } from '@/components/ui/Container'
+import { Container, PageHeader, Reveal } from '@app/ui'
+
 
 import type { UsesIcon } from './uses.constants'
 import { USES_GROUPS } from './uses.constants'

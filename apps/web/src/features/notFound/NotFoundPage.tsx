@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { SpiralMark } from '@/components/Logo'
-import { Button } from '@/components/ui/Button'
 import { ROUTES } from '@/constants/routes'
+import { Button } from '@app/ui'
 
 const GRID_MASK = 'radial-gradient(ellipse 65% 75% at 50% 45%, #000 25%, transparent 72%)'
 

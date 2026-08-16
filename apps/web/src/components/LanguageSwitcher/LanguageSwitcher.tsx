@@ -2,7 +2,8 @@ import { Check, ChevronDown } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { cn } from '@/lib/cn'
+import { cn } from '@app/ui'
+
 
 import { DEFAULT_LANGUAGE_OPTION, LANGUAGE_OPTIONS } from './LanguageSwitcher.constants'
 import {

@@ -3,9 +3,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 
 import { SpiralMark } from '@/components/Logo'
-import { Reveal } from '@/components/Reveal'
-import { TagList } from '@/components/TagList'
-import { cn } from '@/lib/cn'
+import { Reveal, TagList, cn } from '@app/ui'
 
 import {
   workBodyVariants,

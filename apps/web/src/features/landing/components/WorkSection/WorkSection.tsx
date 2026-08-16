@@ -1,12 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
-import { SectionBlock } from '@/components/SectionBlock'
-import { TextLink } from '@/components/TextLink'
 import { WorkItem } from '@/components/WorkItem'
 import { SECTION_IDS } from '@/constants/navigation'
 import { ROUTES, projectPath } from '@/constants/routes'
 import { FEATURED_PROJECTS } from '@/features/projects/projects.constants'
+import { SectionBlock, TextLink } from '@app/ui'
 
 const WORK_INDEXES = ['/ 01', '/ 02', '/ 03']
 

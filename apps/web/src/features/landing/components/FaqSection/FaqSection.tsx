@@ -1,10 +1,9 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { SectionBlock } from '@/components/SectionBlock'
-import { Accordion } from '@/components/ui/Accordion'
 import { SECTION_IDS } from '@/constants/navigation'
 import { FAQ_ITEMS } from '@/features/landing/landing.constants'
+import { Accordion, SectionBlock } from '@app/ui'
 
 export const FaqSection = () => {
   const { t } = useTranslation()

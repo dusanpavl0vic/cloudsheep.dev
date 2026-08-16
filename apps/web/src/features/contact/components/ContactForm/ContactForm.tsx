@@ -4,10 +4,8 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 
-import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Label } from '@/components/ui/Label'
-import { Textarea } from '@/components/ui/Textarea'
+import { Button, Input, Label, Textarea } from '@app/ui'
+
 
 const schema = z.object({
   name: z.string().trim().min(1),

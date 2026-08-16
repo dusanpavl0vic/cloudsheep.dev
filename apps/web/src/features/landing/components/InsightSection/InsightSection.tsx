@@ -1,12 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
-import { Reveal } from '@/components/Reveal'
-import { TextLink } from '@/components/TextLink'
-import { Badge } from '@/components/ui/Badge'
-import { Container } from '@/components/ui/Container'
 import { SECTION_IDS } from '@/constants/navigation'
 import { ROUTES } from '@/constants/routes'
+import { Badge, Container, Reveal, TextLink } from '@app/ui'
 
 import {
   gaugeCoreVariants,

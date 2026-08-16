@@ -2,12 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 
 import { SpiralMark } from '@/components/Logo'
-import { Reveal } from '@/components/Reveal'
-import { TagList } from '@/components/TagList'
-import { TextLink } from '@/components/TextLink'
-import { Button } from '@/components/ui/Button'
-import { Container } from '@/components/ui/Container'
 import { ROUTES, projectPath } from '@/constants/routes'
+import { Button, Container, Reveal, TagList, TextLink } from '@app/ui'
 
 import {
   CASE_STUDY_HIGHLIGHTS,

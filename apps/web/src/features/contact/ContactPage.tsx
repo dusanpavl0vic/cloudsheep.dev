@@ -1,10 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
-import { Eyebrow } from '@/components/Eyebrow'
-import { Reveal } from '@/components/Reveal'
-import { Container } from '@/components/ui/Container'
-import { Label } from '@/components/ui/Label'
 import { CONTACT_EMAIL } from '@/constants/navigation'
+import { Container, Eyebrow, Label, Reveal } from '@app/ui'
 
 import { ContactForm } from './components/ContactForm'
 

@@ -7,6 +7,7 @@ packages:
 # Novi paket koji traži build biće prijavljen pri instalaciji, ne tiho izvršen (docs/20-security.md).
 allowBuilds:
   esbuild: true # bundler koji koriste vite i vitest
+  msw: true # postinstall kopira mockServiceWorker.js (potreban samo za browser mod)
   unrs-resolver: true # native resolver za eslint-import-resolver-typescript
 
 # Jedna verzija za ceo monorepo. Paketi referišu sa "react": "catalog:".
