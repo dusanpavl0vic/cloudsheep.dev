@@ -86,22 +86,6 @@
   animation: cs-blink 1.1s steps(1) infinite;
 }
 
-/* --- Puls oko tačke dostupnosti --- */
-@keyframes cs-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgb(45 190 126 / 0.45);
-  }
-  70% {
-    box-shadow: 0 0 0 7px rgb(45 190 126 / 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgb(45 190 126 / 0);
-  }
-}
-.pulse-dot {
-  animation: cs-pulse 2.4s ease-out infinite;
-}
-
 /* --- Otvaranje padajućeg menija / akordeona (fade + slide) --- */
 @keyframes cs-drop {
   from {
@@ -135,20 +119,6 @@ details[open] > .dropdown-content {
 }
 .cs-scroll-hint {
   animation: cs-scroll-hint 1.8s ease-in-out infinite;
-}
-
-/* --- Tragač u ProgressRing-u: vrti se dok se prsten puni --- */
-@keyframes cs-ring-sweep {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-.cs-ring-sweep {
-  transform-origin: center;
-  animation: cs-ring-sweep 1.1s linear infinite;
 }
 
 /* --- Traka sa logotipima --- */
@@ -215,8 +185,6 @@ details[open] > .dropdown-content {
     animation: none;
     display: none;
   }
-  .pulse-dot,
-  .cs-ring-sweep,
   .cs-scroll-hint,
   .cs-marquee,
   .menu-in,

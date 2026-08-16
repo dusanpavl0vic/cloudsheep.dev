@@ -14,15 +14,12 @@
   },
   "dependencies": {
     "@app/core": "workspace:*",
-    "@app/hooks": "workspace:*",
     "@app/i18n": "workspace:*",
     "@app/ui": "workspace:*",
     "@app/utils": "workspace:*",
     "@hookform/resolvers": "catalog:",
-    "@radix-ui/react-dialog": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "i18next": "catalog:",
-    "lucide-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-hook-form": "catalog:",
@@ -34,7 +31,6 @@
   "devDependencies": {
     "@app/eslint-config": "workspace:*",
     "@app/tailwind-config": "workspace:*",
-    "@app/testing": "workspace:*",
     "@app/typescript-config": "workspace:*",
     "@app/vite-config": "workspace:*",
     "@tailwindcss/vite": "catalog:",

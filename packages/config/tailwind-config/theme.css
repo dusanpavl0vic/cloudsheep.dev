@@ -32,7 +32,6 @@
   --card: oklch(99.35% 0.0026 106.45); /* Ivory */
   --card-foreground: oklch(38.13% 0.1312 260.45);
   --popover: oklch(99.35% 0.0026 106.45);
-  --popover-foreground: oklch(38.13% 0.1312 260.45);
   --primary: oklch(51.04% 0.2178 263.62); /* Accent blue — CTA */
   --primary-foreground: oklch(97.83% 0.004 106.47);
   --primary-hover: oklch(43.05% 0.1867 263.92); /* Accent-deep */
@@ -90,7 +89,6 @@
   --mark-violet: oklch(55% 0.19 295);
   --mark-teal: oklch(56% 0.11 195);
   --mark-rose: oklch(58% 0.17 15);
-  --mark-lime: oklch(58% 0.14 135);
 }
 
 /* Tamna tema — izvedena iz iste palete (override samo boja) */
@@ -101,7 +99,6 @@
   --card: oklch(27.68% 0.0805 261.52);
   --card-foreground: oklch(95.79% 0.0099 267.36);
   --popover: oklch(27.68% 0.0805 261.52);
-  --popover-foreground: oklch(95.79% 0.0099 267.36);
   --primary: oklch(61.23% 0.2092 263.53);
   --primary-foreground: oklch(20.07% 0.058 260.54);
   --primary-hover: oklch(67.08% 0.1737 263.53);
@@ -132,7 +129,6 @@
   --mark-violet: oklch(72% 0.16 295);
   --mark-teal: oklch(72% 0.1 195);
   --mark-rose: oklch(73% 0.15 15);
-  --mark-lime: oklch(74% 0.13 135);
 }
 
 /* Mapiranje tokena na Tailwind klase (bg-background, text-primary, border-border...) */
@@ -151,7 +147,6 @@
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-hover: var(--primary-hover);
@@ -172,7 +167,6 @@
   --color-mark-violet: var(--mark-violet);
   --color-mark-teal: var(--mark-teal);
   --color-mark-rose: var(--mark-rose);
-  --color-mark-lime: var(--mark-lime);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);

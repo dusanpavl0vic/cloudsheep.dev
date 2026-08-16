@@ -25,10 +25,6 @@
     "lint": {
       "outputs": []
     },
-    "size": {
-      "dependsOn": ["build"],
-      "outputs": []
-    },
     "lighthouse": {
       "dependsOn": ["build"],
       "outputs": [".lighthouseci/**"]

@@ -1,10 +1,7 @@
 {
   "common": {
     "appName": "CloudSheep",
-    "appNameLower": "cloudsheep",
-    "loading": "Loading...",
-    "save": "Save",
-    "cancel": "Cancel"
+    "appNameLower": "cloudsheep"
   },
   "theme": {
     "switchToDark": "Switch to dark theme",
@@ -20,7 +17,6 @@
     "services": "Services",
     "pricing": "Pricing",
     "process": "Process",
-    "studio": "Studio",
     "faq": "FAQ",
     "contact": "Contact",
     "uses": "Uses",

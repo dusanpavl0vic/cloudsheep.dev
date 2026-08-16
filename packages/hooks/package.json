@@ -14,9 +14,7 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf .turbo coverage node_modules"
   },
-  "dependencies": {
-    "@app/utils": "workspace:*"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "react": "catalog:"
   },

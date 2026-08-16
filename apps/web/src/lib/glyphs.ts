@@ -8,10 +8,6 @@
 export const GLYPHS = {
   /** Potvrda — lista osobina, poruka o uspehu */
   CHECK: '✓',
-  /** Akcenat uz naslov u insight sekciji */
-  SPARKLE: '✦',
-  /** Oznaka ispred badge teksta */
-  BLOCKS: '▚',
   /** Prompt iz terminala — koristi ga hero i status badge umesto tačkice */
   PROMPT: '$',
 } as const

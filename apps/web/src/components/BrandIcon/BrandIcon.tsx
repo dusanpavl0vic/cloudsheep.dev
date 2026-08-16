@@ -1,11 +1,17 @@
 import type { SVGProps } from 'react'
 
 /**
- * Brend ikone kao inline SVG.
+ * Ikone ljuske kao inline SVG.
  *
- * lucide-react je u 1.0 uklonio brend ikone (Github, Linkedin) zbog žigova. Umesto dodavanja
- * druge icon biblioteke zbog dva glifa — inline SVG sa `currentColor`, kako docs/08-styling-ui.md
- * ionako propisuje za SVG iz dizajna. Tema radi sama, ništa ne ulazi u bundle.
+ * Počelo je od brend ikona: lucide-react je u 1.0 uklonio Github i Linkedin zbog žigova, pa
+ * su nacrtane ovde umesto da se doda druga biblioteka zbog dva glifa.
+ *
+ * Kasnije su im se pridružile i ikone iz zaglavlja i podnožja, i to iz merljivog razloga:
+ * `LanguageSwitcher`, `ThemeToggle` i `SiteFooter` žive u ljusci, pa je njihovih pet lucide
+ * ikonica vuklo `createLucideIcon` i pet modula u **početno učitavanje** — na budžetu koji je
+ * bio probijen. Ikonice na lazy rutama (`UsesPage`) i dalje idu iz lucide-a; tamo ne smetaju.
+ *
+ * Sve kroz `currentColor`, kako docs/08-styling-ui.md ionako propisuje: tema radi sama.
  */
 
 type BrandIconProps = Omit<SVGProps<SVGSVGElement>, 'children' | 'viewBox' | 'fill'>
@@ -13,6 +19,18 @@ type BrandIconProps = Omit<SVGProps<SVGSVGElement>, 'children' | 'viewBox' | 'fi
 const base = {
   viewBox: '0 0 24 24',
   fill: 'currentColor',
+  'aria-hidden': true,
+  focusable: false,
+} as const
+
+/** Linijske ikone — isti viewBox, ali obris umesto popune, kao lucide original. */
+const stroke = {
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 2,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
   'aria-hidden': true,
   focusable: false,
 } as const
@@ -26,5 +44,37 @@ export const GithubIcon = ({ className, ...props }: BrandIconProps) => (
 export const LinkedinIcon = ({ className, ...props }: BrandIconProps) => (
   <svg {...base} className={className} {...props}>
     <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13Zm1.78 13.02H3.55V9h3.57v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z" />
+  </svg>
+)
+
+export const SunIcon = ({ className, ...props }: BrandIconProps) => (
+  <svg {...stroke} className={className} {...props}>
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+  </svg>
+)
+
+export const MoonIcon = ({ className, ...props }: BrandIconProps) => (
+  <svg {...stroke} className={className} {...props}>
+    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+  </svg>
+)
+
+export const CheckIcon = ({ className, ...props }: BrandIconProps) => (
+  <svg {...stroke} className={className} {...props}>
+    <path d="m20 6-11 11-5-5" />
+  </svg>
+)
+
+export const ChevronDownIcon = ({ className, ...props }: BrandIconProps) => (
+  <svg {...stroke} className={className} {...props}>
+    <path d="m6 9 6 6 6-6" />
+  </svg>
+)
+
+export const MailIcon = ({ className, ...props }: BrandIconProps) => (
+  <svg {...stroke} className={className} {...props}>
+    <rect width="20" height="16" x="2" y="4" rx="2" />
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
   </svg>
 )

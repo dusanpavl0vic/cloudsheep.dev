@@ -1,6 +1,6 @@
-import { Moon, Sun } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { MoonIcon, SunIcon } from '@/components/BrandIcon'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { THEMES, themeToggled } from '@/store/slices/themeSlice'
 
@@ -31,8 +31,14 @@ export const ThemeToggle = () => {
       className={themeToggleVariants()}
     >
       <span aria-hidden className={themeGlowVariants({ state: isDark ? 'visible' : 'hidden' })} />
-      <Sun aria-hidden className={themeIconVariants({ state: isDark ? 'visible' : 'hidden' })} />
-      <Moon aria-hidden className={themeIconVariants({ state: isDark ? 'hidden' : 'visible' })} />
+      <SunIcon
+        aria-hidden
+        className={themeIconVariants({ state: isDark ? 'visible' : 'hidden' })}
+      />
+      <MoonIcon
+        aria-hidden
+        className={themeIconVariants({ state: isDark ? 'hidden' : 'visible' })}
+      />
     </button>
   )
 }

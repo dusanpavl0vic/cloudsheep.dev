@@ -1,9 +1,8 @@
-import { Mail } from 'lucide-react'
 import type { ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
-import { GithubIcon, LinkedinIcon } from '@/components/BrandIcon'
+import { GithubIcon, LinkedinIcon, MailIcon } from '@/components/BrandIcon'
 import { Logo } from '@/components/Logo'
 import { CONTACT_EMAIL, FOOTER_NAV, SOCIAL_LINKS } from '@/lib/navigation'
 import { ROUTES } from '@/lib/routes'
@@ -27,7 +26,7 @@ import {
 const SOCIAL_ICONS: Record<string, ComponentType<{ className?: string }>> = {
   github: GithubIcon,
   linkedin: LinkedinIcon,
-  email: Mail,
+  email: MailIcon,
 }
 
 /** Tačkasta tekstura panela — statična (docs/22 §6). */
@@ -64,8 +63,7 @@ export const SiteFooter = ({ variant = 'full' }: SiteFooterProps) => {
           <div className="flex flex-col gap-6">
             <Logo tone="default" size="md" label={t('common.appNameLower')} />
             <h2 className={footerHeadlineVariants()}>
-              {t('footer.ctaLead')}{' '}
-              <span className="text-primary">{t('footer.ctaHighlight')}</span>
+              {t('footer.ctaLead')} <span className="text-primary">{t('footer.ctaHighlight')}</span>
             </h2>
           </div>
         </div>
@@ -113,11 +111,11 @@ export const SiteFooter = ({ variant = 'full' }: SiteFooterProps) => {
             <h3 className={footerGroupTitleVariants()}>{t('footer.groupContact')}</h3>
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="font-mono text-[14.5px] text-primary transition-colors hover:brightness-110"
+              className="text-primary font-mono text-[14.5px] transition-colors hover:brightness-110"
             >
               {CONTACT_EMAIL}
             </a>
-            <p className="mt-3 text-[14px] leading-relaxed text-muted-foreground">
+            <p className="text-muted-foreground mt-3 text-[14px] leading-relaxed">
               {t('footer.base')}
               <br />
               {t('footer.reply')}

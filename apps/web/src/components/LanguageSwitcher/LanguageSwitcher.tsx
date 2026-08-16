@@ -1,9 +1,8 @@
-import { Check, ChevronDown } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { CheckIcon, ChevronDownIcon } from '@/components/BrandIcon'
 import { cn } from '@app/ui'
-
 
 import { DEFAULT_LANGUAGE_OPTION, LANGUAGE_OPTIONS } from './LanguageSwitcher.constants'
 import {
@@ -52,11 +51,13 @@ export const LanguageSwitcher = () => {
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={t('language.label')}
-        onClick={() => { setOpen((value) => !value); }}
+        onClick={() => {
+          setOpen((value) => !value)
+        }}
         className={languageTriggerVariants()}
       >
         {current.label}
-        <ChevronDown
+        <ChevronDownIcon
           aria-hidden
           className={cn('size-3.5 transition-transform duration-200', open && 'rotate-180')}
         />
@@ -72,11 +73,13 @@ export const LanguageSwitcher = () => {
                   type="button"
                   role="option"
                   aria-selected={active}
-                  onClick={() => { select(option.code); }}
+                  onClick={() => {
+                    select(option.code)
+                  }}
                   className={languageOptionVariants({ active })}
                 >
                   {option.name}
-                  {active && <Check aria-hidden className="size-3.5 text-primary" />}
+                  {active && <CheckIcon aria-hidden className="text-primary size-3.5" />}
                 </button>
               </li>
             )

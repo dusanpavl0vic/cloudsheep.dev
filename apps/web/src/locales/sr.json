@@ -1,10 +1,7 @@
 {
   "common": {
     "appName": "CloudSheep",
-    "appNameLower": "cloudsheep",
-    "loading": "Učitavanje...",
-    "save": "Sačuvaj",
-    "cancel": "Otkaži"
+    "appNameLower": "cloudsheep"
   },
   "theme": {
     "switchToDark": "Prebaci na tamnu temu",
@@ -20,7 +17,6 @@
     "services": "Usluge",
     "pricing": "Cene",
     "process": "Proces",
-    "studio": "Studio",
     "faq": "Pitanja",
     "contact": "Kontakt",
     "uses": "Alati",

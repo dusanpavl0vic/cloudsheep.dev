@@ -19,10 +19,8 @@
     "@app/ui": "workspace:*",
     "@app/utils": "workspace:*",
     "@hookform/resolvers": "catalog:",
-    "@radix-ui/react-slot": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "class-variance-authority": "catalog:",
-    "clsx": "catalog:",
     "i18next": "catalog:",
     "i18next-browser-languagedetector": "catalog:",
     "lucide-react": "catalog:",
@@ -32,7 +30,6 @@
     "react-i18next": "catalog:",
     "react-redux": "catalog:",
     "react-router": "catalog:",
-    "tailwind-merge": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -51,7 +48,6 @@
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "@vitest/coverage-v8": "catalog:",
-    "axe-core": "catalog:",
     "eslint": "catalog:",
     "jest-axe": "catalog:",
     "jsdom": "catalog:",

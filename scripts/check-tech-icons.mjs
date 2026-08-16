@@ -21,8 +21,11 @@ const unused = files.filter((f) => !ids.includes(f))
 
 console.log(`${String(ids.length)} tehnologija · ${String(files.length)} logotipa`)
 
-if (missing.length) console.log(`\n❌ nema logotip: ${missing.join(', ')}`)
-if (unused.length) console.log(`\n⚠  logotip bez unosa u spisku: ${unused.join(', ')}`)
+if (missing.length) console.error(`\n❌ nema logotip: ${missing.join(', ')}`)
+if (unused.length) console.error(`\n❌ logotip bez unosa u spisku: ${unused.join(', ')}`)
 if (!missing.length && !unused.length) console.log('\n✅ spisak i fajlovi se poklapaju')
 
-process.exit(missing.length ? 1 : 0)
+// Siroče je greška, ne upozorenje. Ranije je ovde stajao `exit(missing.length ? 1 : 0)`,
+// pa je `gmail.svg` mesecima stajao u `public/` i putovao u svaki deploy — skripta ga je
+// uredno prijavljivala i uredno završavala uspehom, tako da ga niko nije video.
+process.exit(missing.length || unused.length ? 1 : 0)

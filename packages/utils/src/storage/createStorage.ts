@@ -1,5 +1,3 @@
-import type { z } from 'zod'
-
 /**
  * Tipizirani omotač nad `localStorage`.
  *
@@ -8,12 +6,26 @@ import type { z } from 'zod'
  *  2. Zastareo ili pokvaren unos obara app umesto da se ponaša kao „nema vrednosti"
  *  3. U Safari private modu `setItem` baca — čitanje teme ne sme da sruši stranicu
  *
- * Zod šema je ugovor: sve što joj ne odgovara tretira se kao odsutno.
+ * Šema je ugovor: sve što joj ne odgovara tretira se kao odsutno.
  *
  * NAPOMENA: nikad za tokene. Vidi docs/20-security.md.
  */
 /** Minimalni deo Storage API-ja koji nam treba — olakšava test dubl. */
 export type StorageLike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
+
+/**
+ * Sve što ume `safeParse` — zod šema, ili ručna provera od tri reda.
+ *
+ * Ranije je ovde stajalo `z.ZodType<T>`. Tip je bio samo tip (`import type`), ali je
+ * **terao svakog pozivaoca da uveze zod kao vrednost** da bi šemu uopšte napravio.
+ * `themeSlice` je tako povukao 15.5 KB zod-a u shell zarad provere jednog stringa
+ * (`'light' | 'dark'`) — 10% celog budžeta za početno učitavanje.
+ *
+ * Zod šeme i dalje odgovaraju ovom obliku, pa se ništa na strani pozivaoca ne lomi.
+ */
+export interface StorageSchema<T> {
+  safeParse: (value: unknown) => { success: true; data: T } | { success: false }
+}
 
 /** Storage iz browsera, ili `null` van njega (SSR, test bez jsdom-a). */
 export const browserStorage = (): StorageLike | null =>
@@ -27,7 +39,7 @@ export interface TypedStorage<T> {
 
 export function createStorage<T>(
   key: string,
-  schema: z.ZodType<T>,
+  schema: StorageSchema<T>,
   storage: StorageLike | null,
 ): TypedStorage<T> {
   return {

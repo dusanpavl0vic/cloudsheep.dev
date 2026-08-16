@@ -55,7 +55,7 @@ plave stvari, dve su suvišne.
 
 ### 4b. Boja na oznakama, ne na površinama
 
-Pored plave postoji pet `mark-*` tokena (`amber`, `violet`, `teal`, `rose`, `lime`).
+Pored plave postoje četiri `mark-*` tokena (`amber`, `violet`, `teal`, `rose`).
 Oni nose **šarenilo na sitnim površinama**: ikonice, brojevi koraka, tanke niti, tagovi.
 
 > **Nikad na dugmetu ni na punoj kartici.** Plava ostaje jedina boja akcije (§4).

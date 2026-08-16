@@ -1,5 +1,4 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import { z } from 'zod'
 
 import { STORAGE_KEYS } from '@/lib/storageKeys'
 import { browserStorage, createStorage } from '@app/utils'
@@ -11,14 +10,20 @@ export const THEMES = {
 
 export type Theme = (typeof THEMES)[keyof typeof THEMES]
 
+const isTheme = (value: unknown): value is Theme => value === THEMES.LIGHT || value === THEMES.DARK
+
 /**
  * Storage ide kroz `createStorage`, ne kroz goli `localStorage`: zastareo ili pokvaren
  * unos se tretira kao odsutan umesto da obori app, a Safari private mod ne baca
  * pri upisu (docs/14-helpers-utils.md).
+ *
+ * Provera je ručna, ne `z.enum`. Zod je ovde bio jedini razlog zbog kog je cela biblioteka
+ * (15.5 KB gzip) ulazila u **početno učitavanje** — desetina budžeta, zarad poređenja dva
+ * stringa. Na `/contact` ruti zod i dalje radi svoj posao, ali se tamo i učitava.
  */
 const themeStorage = createStorage(
   STORAGE_KEYS.THEME,
-  z.enum([THEMES.LIGHT, THEMES.DARK]),
+  { safeParse: (value) => (isTheme(value) ? { success: true, data: value } : { success: false }) },
   browserStorage(),
 )
 

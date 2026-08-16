@@ -22,6 +22,22 @@ const SCOPES = [
   { dir: `${APP}/features/projects`, locales: [`${APP}/features/projects/locales/sr.json`, `${APP}/locales/sr.json`] },
   { dir: `${APP}/features/contact`, locales: [`${APP}/features/contact/locales/sr.json`, `${APP}/locales/sr.json`] },
   { dir: `${APP}/features/uses`, locales: [`${APP}/features/uses/locales/sr.json`, `${APP}/locales/sr.json`] },
+
+  // `pages/` i `components/` su dugo nedostajali, iako sve četiri stranice zovu `t()`.
+  // Zaštita koja pokriva pola mesta daje lažan osećaj sigurnosti. Obe mape učitavaju
+  // više namespace-a (`['projects','common']`, `['contact','common']`…), pa im je
+  // na raspolaganju unija svih rečnika — provera je time labavija nego kod feature-a,
+  // ali i dalje hvata ključ koji ne postoji nigde.
+  {
+    dir: `${APP}/pages`,
+    locales: [
+      `${APP}/locales/sr.json`,
+      `${APP}/features/projects/locales/sr.json`,
+      `${APP}/features/contact/locales/sr.json`,
+      `${APP}/features/uses/locales/sr.json`,
+    ],
+  },
+  { dir: `${APP}/components`, locales: [`${APP}/locales/sr.json`] },
 ]
 
 const tsxFiles = (dir) => {

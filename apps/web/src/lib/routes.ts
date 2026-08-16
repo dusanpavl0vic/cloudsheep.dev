@@ -7,7 +7,5 @@ export const ROUTES = {
   NOT_FOUND: '*',
 } as const
 
-export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES]
-
 /** Putanja ka pojedinačnoj studiji slučaja. */
 export const projectPath = (slug: string) => `/projects/${slug}`

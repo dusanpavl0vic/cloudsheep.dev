@@ -1,1 +1,9 @@
-export { GithubIcon, LinkedinIcon } from './BrandIcon'
+export {
+  CheckIcon,
+  ChevronDownIcon,
+  GithubIcon,
+  LinkedinIcon,
+  MailIcon,
+  MoonIcon,
+  SunIcon,
+} from './BrandIcon'
