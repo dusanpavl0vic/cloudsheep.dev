@@ -27,7 +27,7 @@ export const heroTaskRowVariants = cva('flex items-center gap-2.5 py-1.5')
 
 export const heroTaskLabelVariants = cva('flex-1 text-[12.5px] text-muted-foreground')
 
-/** Traka napretka — statična; punjenje je već zauzeto u ProgressRing-u (docs/22 §6). */
+/** Traka napretka — statična ilustracija, ne stvarni napredak. */
 export const heroTaskBarVariants = cva('h-1.5 w-16 overflow-hidden rounded-full bg-muted')
 
 export const heroTaskFillVariants = cva('h-full rounded-full', {

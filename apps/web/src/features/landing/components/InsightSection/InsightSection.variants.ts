@@ -1,22 +1,31 @@
 import { cva } from 'class-variance-authority'
 
-export const insightGridVariants = cva('grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[1fr_1.7fr]')
+/**
+ * Traka sa brojkama (docs/22).
+ *
+ * Ranije je ovde bila bento mreža: plava CTA kartica plus panel sa prstenom. Kartica je
+ * ponavljala poziv koji `ContactSection` na dnu već nosi — dva CTA-a na istoj stranici se
+ * međusobno poništavaju. Prsten je nosio jednu brojku i tražio pola sekcije za nju.
+ *
+ * Sada je jedan red: četiri brojke razdvojene tankim uspravnim linijama, bez ijedne kartice.
+ */
+export const statStripVariants = cva('grid grid-cols-2 gap-y-10 lg:grid-cols-4 lg:gap-y-0')
 
-export const insightBlueCardVariants = cva(
-  'group relative flex min-h-[280px] flex-col justify-between overflow-hidden rounded-[20px] bg-primary p-7 text-primary-foreground transition-transform duration-300 hover:-translate-y-1',
+/**
+ * Razdelnik je `::before` na stavci, ne `border-l` — tako prva u redu ostaje bez linije
+ * na svakom breakpointu, a da se ne računa indeks u JSX-u.
+ */
+export const statItemVariants = cva(
+  "relative flex flex-col items-center gap-1.5 px-4 text-center before:absolute before:inset-y-1 before:left-0 before:w-px before:bg-border before:content-[''] [&:nth-child(odd)]:before:hidden lg:[&:nth-child(odd)]:before:block lg:[&:first-child]:before:hidden",
 )
 
-export const insightPanelVariants = cva(
-  'flex flex-wrap items-center gap-9 rounded-[20px] border border-border bg-card p-8',
+export const statValueVariants = cva(
+  'font-heading text-[clamp(2.1rem,4vw,2.9rem)] leading-none font-bold tracking-[-0.03em] tabular-nums text-display',
 )
 
-export const insightHeadingVariants = cva(
-  'font-heading text-[26px] leading-tight font-bold tracking-tight text-foreground',
+/** Sufiks (`%`, `h`, `+`) je prigušen da broj ostane nosilac. */
+export const statSuffixVariants = cva('text-faint')
+
+export const statLabelVariants = cva(
+  'font-mono text-[11.5px] tracking-[0.1em] text-faint lowercase',
 )
-
-export const insightTextVariants = cva('text-[16px] leading-relaxed text-muted-foreground')
-
-/** Prsten iskorišćenosti (uptime) — konusni gradijent + tamno jezgro. */
-export const gaugeValueVariants = cva('font-heading text-[26px] leading-none font-bold')
-
-export const gaugeLabelVariants = cva('mt-1 font-mono text-[10.5px] text-inverse-faint')

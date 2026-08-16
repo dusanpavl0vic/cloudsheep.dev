@@ -6,9 +6,7 @@ import { cva } from 'class-variance-authority'
  * Ranije je bio tamni navy blok. Pošto ContactSection iznad njega već nosi tamni CTA panel,
  * dva tamna bloka jedan do drugog su se slila u jedan — footer je gubio granicu.
  */
-export const siteFooterVariants = cva(
-  'relative w-full overflow-hidden bg-muted/55 text-foreground',
-)
+export const siteFooterVariants = cva('relative w-full overflow-hidden bg-muted/55 text-foreground')
 
 /** Dekorativna dot-grid tekstura na navy podlozi (boja iz tokena). */
 export const footerDotGridVariants = cva(
@@ -40,10 +38,12 @@ export const footerLinkVariants = cva(
   "inline-flex items-center gap-2 text-[14.5px] text-muted-foreground transition-colors before:text-faint before:transition-transform before:content-['→'] hover:text-display hover:before:translate-x-0.5",
 )
 
-export const footerTextVariants = cva('max-w-[290px] text-[14.5px] leading-relaxed text-muted-foreground')
+export const footerTextVariants = cva(
+  'max-w-[290px] text-[14.5px] leading-relaxed text-muted-foreground',
+)
 
 export const footerSocialVariants = cva(
-  'inline-flex size-[42px] items-center justify-center rounded-xl border border-border text-muted-foreground transition-[transform,background-color,color,border-color] duration-200 hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground [&_svg]:size-[18px]',
+  'inline-flex size-[42px] items-center justify-center rounded-xl border border-border text-muted-foreground transition-[background-color,color,border-color] duration-200 hover:border-primary hover:bg-primary hover:text-primary-foreground [&_svg]:size-[18px]',
 )
 
 export const footerBottomVariants = cva(

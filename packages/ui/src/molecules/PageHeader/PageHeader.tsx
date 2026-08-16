@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 
 import {
+  pageHeaderBackVariants,
+  pageHeaderMutedVariants,
   pageHeaderSubtitleVariants,
   pageHeaderTitleVariants,
   pageHeaderVariants,
@@ -8,21 +10,46 @@ import {
 import { Eyebrow } from '../../atoms/Eyebrow'
 import { cn } from '../../lib/cn'
 
-
 interface PageHeaderProps {
-  eyebrow: ReactNode
-  /** Tačkica ispred labele. Dekoracija — podrazumevano uključena. */
-  marker?: boolean
+  /** Labela u zagradama. Izostavlja se kad stranica ima `backLink`. */
+  eyebrow?: ReactNode
   title: ReactNode
+  /** Prigušeni nastavak naslova (docs/22 §1). */
+  muted?: ReactNode
   subtitle?: ReactNode
+  /** Povratni link umesto labele — case study. */
+  backLink?: ReactNode
   className?: string
 }
 
-/** Zaglavlje podstranice: eyebrow + gigant naslov + podnaslov. */
-export const PageHeader = ({ eyebrow, marker, title, subtitle, className }: PageHeaderProps) => (
+/**
+ * Zaglavlje podstranice: labela (ili povratni link) + naslov + podnaslov.
+ *
+ * Sve podstranice idu kroz njega. Ranije su `ContactPage` i `ProjectPage` imale sopstveni
+ * markup sa sopstvenom `clamp` skalom, pa su tri stranice imale tri veličine naslova.
+ */
+export const PageHeader = ({
+  eyebrow,
+  title,
+  muted,
+  subtitle,
+  backLink,
+  className,
+}: PageHeaderProps) => (
   <header className={cn(pageHeaderVariants(), className)}>
-    <Eyebrow {...(marker === undefined ? {} : { marker })}>{eyebrow}</Eyebrow>
-    <h1 className={pageHeaderTitleVariants()}>{title}</h1>
+    {backLink && <div className={pageHeaderBackVariants()}>{backLink}</div>}
+    {!backLink && eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+
+    <h1 className={pageHeaderTitleVariants()}>
+      {title}
+      {muted && (
+        <>
+          {' '}
+          <span className={pageHeaderMutedVariants()}>{muted}</span>
+        </>
+      )}
+    </h1>
+
     {subtitle && <p className={pageHeaderSubtitleVariants()}>{subtitle}</p>}
   </header>
 )

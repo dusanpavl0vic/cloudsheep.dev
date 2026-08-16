@@ -25,3 +25,6 @@ test-results
 logs
 *.log
 npm-debug.log*
+
+# macOS
+.DS_Store

@@ -1,91 +1,66 @@
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router'
 
-import { ProgressRing } from '@/features/landing/components/ProgressRing'
-import { GLYPHS } from '@/lib/glyphs'
+import { STUDIO_METRICS, type StudioMetric } from '@/features/landing/landing.constants'
 import { SECTION_IDS } from '@/lib/navigation'
-import { ROUTES } from '@/lib/routes'
-import { Badge, Container, Reveal, TextLink } from '@app/ui'
+import { useCountUp, useIntersection, useMediaQuery } from '@app/hooks'
+import { SectionBlock } from '@app/ui'
 
 import {
-  gaugeLabelVariants,
-  insightBlueCardVariants,
-  insightGridVariants,
-  insightHeadingVariants,
-  insightPanelVariants,
-  insightTextVariants,
+  statItemVariants,
+  statLabelVariants,
+  statStripVariants,
+  statSuffixVariants,
+  statValueVariants,
 } from './InsightSection.variants'
 
-/** Popunjenost prstena se izvodi iz iste vrednosti — nema drugog izvora istine. */
-const UPTIME_PERCENT = 99.95
-
 /**
- * Prsten prikazuje opseg 99–100%, ne 0–100%.
+ * Jedna brojka.
  *
- * Na punoj skali 99.95% daje procep od 0.21px — prsten izgleda pun i ne saopštava
- * ništa. Na opsegu 99–100 ista vrednost popunjava 95% luka, pa se razlika vidi.
+ * Odbrojava tek kad traka uđe u viewport — brojač koji se odvrti van ekrana niko ne vidi.
+ * `useCountUp` i `useIntersection` već postoje u `@app/hooks` i testirani su.
  */
-const UPTIME_DOMAIN = [99, 100] as const
+function Stat({ metric, active }: { metric: StudioMetric; active: boolean }) {
+  const { t } = useTranslation('landing')
+  const prefersReduced = useMediaQuery('(prefers-reduced-motion: reduce)')
 
-export const InsightSection = () => {
-  const { t } = useTranslation(['landing', 'common'])
+  const shown = useCountUp(metric.value, {
+    active,
+    decimals: metric.decimals,
+    immediate: prefersReduced,
+  })
 
   return (
-    <Reveal as="section" className="pt-8">
-      <Container>
-        <div className={insightGridVariants()}>
-          <Link to={ROUTES.CONTACT} className={insightBlueCardVariants()}>
-            <span
-              aria-hidden
-              className="flex size-10 items-center justify-center rounded-full border border-primary-foreground/40 bg-primary-foreground/15 text-[15px]"
-            >
-              {GLYPHS.SPARKLE}
-            </span>
-            <span className="flex flex-col gap-4">
-              <span className="font-heading text-[27px] leading-tight font-semibold tracking-tight">
-                {t('insight.haveProject')}
-              </span>
-              <span className="w-fit border-b-2 border-primary-foreground/60 pb-0.5 text-[15px] font-semibold">
-                {t('insight.getInTouch')} →
-              </span>
-            </span>
-          </Link>
+    <div className={statItemVariants()}>
+      <p className={statValueVariants()}>
+        {shown.toFixed(metric.decimals)}
+        <span className={statSuffixVariants()}>{metric.suffix}</span>
+      </p>
+      <p className={statLabelVariants()}>{t(metric.labelKey)}</p>
+    </div>
+  )
+}
 
-          <div className={insightPanelVariants()}>
-            <div className="min-w-[200px] flex-1">
-              <Badge variant="soft" className="mb-4">
-                <span aria-hidden className="text-primary">
-                  {GLYPHS.BLOCKS}
-                </span>
-                {t('insight.badge')}
-              </Badge>
-              <h2 className={insightHeadingVariants()}>{t('insight.title')}</h2>
-              <TextLink asChild className="mt-4">
-                <Link to={`${ROUTES.HOME}#${SECTION_IDS.WORK}`}>{t('insight.seeWork')} →</Link>
-              </TextLink>
-            </div>
+/** Traka sa brojkama koje govore kako studio radi. */
+export const InsightSection = () => {
+  const { t } = useTranslation('landing')
+  const ref = useRef<HTMLDivElement>(null)
+  const isVisible = useIntersection(ref, { once: true, threshold: 0.3 })
 
-            <div className="flex flex-col items-center gap-2">
-              <ProgressRing
-                value={UPTIME_PERCENT}
-                domain={UPTIME_DOMAIN}
-                decimals={2}
-                size="lg"
-                tone="inverse"
-                ariaLabel={`${String(UPTIME_PERCENT)}% ${t('insight.uptime')}`}
-              />
-              <span className={gaugeLabelVariants()}>{t('insight.uptime')}</span>
-            </div>
-
-            <div className="min-w-[170px] flex-1">
-              <p className={insightTextVariants()}>{t('insight.body')}</p>
-              <TextLink asChild className="mt-3.5">
-                <Link to={`${ROUTES.HOME}#${SECTION_IDS.PRICING}`}>{t('insight.waysToWork')} →</Link>
-              </TextLink>
-            </div>
-          </div>
-        </div>
-      </Container>
-    </Reveal>
+  return (
+    <SectionBlock
+      id={SECTION_IDS.INSIGHT}
+      eyebrow={t('insight.eyebrow')}
+      title={t('insight.title')}
+      muted={t('insight.titleMuted')}
+      subtitle={t('insight.body')}
+      align="center"
+    >
+      <div ref={ref} className={statStripVariants()}>
+        {STUDIO_METRICS.map((metric) => (
+          <Stat key={metric.id} metric={metric} active={isVisible} />
+        ))}
+      </div>
+    </SectionBlock>
   )
 }

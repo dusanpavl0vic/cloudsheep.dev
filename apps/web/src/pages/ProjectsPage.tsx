@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-
-
 import { ProjectCard } from '@/features/projects/components/ProjectCard'
-import { PROJECT_CATEGORIES, PROJECTS, type ProjectCategory } from '@/features/projects/projects.constants'
+import {
+  PROJECT_CATEGORIES,
+  PROJECTS,
+  type ProjectCategory,
+} from '@/features/projects/projects.constants'
 import { Container, PageHeader, Reveal, cn } from '@app/ui'
 
 const filterButtonClass = (active: boolean) =>
@@ -27,7 +29,7 @@ export const ProjectsPage = () => {
 
   return (
     <>
-      <Container width="content" className="pt-22 pb-10">
+      <Container width="content" className="pt-20 pb-10">
         <Reveal>
           <PageHeader
             eyebrow={t('projects.eyebrow')}
@@ -37,13 +39,15 @@ export const ProjectsPage = () => {
         </Reveal>
       </Container>
 
-      <div className="sticky top-[71px] z-50 border-y border-border bg-background/86 backdrop-blur-md">
+      <div className="border-border bg-background/86 sticky top-[71px] z-50 border-y backdrop-blur-md">
         <Container width="content" className="flex flex-wrap gap-2.5 py-3.5">
           {PROJECT_CATEGORIES.map((category) => (
             <button
               key={category}
               type="button"
-              onClick={() => { setActive(category); }}
+              onClick={() => {
+                setActive(category)
+              }}
               className={filterButtonClass(category === active)}
             >
               {t(`projects.filters.${category}`)}
@@ -62,7 +66,7 @@ export const ProjectsPage = () => {
             ))}
           </div>
         ) : (
-          <p className="py-20 text-center font-mono text-sm text-faint">{t('projects.empty')}</p>
+          <p className="text-faint py-20 text-center font-mono text-sm">{t('projects.empty')}</p>
         )}
       </Container>
     </>

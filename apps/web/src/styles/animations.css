@@ -102,68 +102,6 @@
   animation: cs-pulse 2.4s ease-out infinite;
 }
 
-/* --- Logo koji se sam iscrtava: crta → drži → briše (petlja ~9s) --- */
-@keyframes cs-draw {
-  0% {
-    stroke-dashoffset: 1;
-    opacity: 0;
-  }
-  12% {
-    opacity: 1;
-  }
-  30% {
-    stroke-dashoffset: 0;
-    opacity: 1;
-  }
-  64% {
-    stroke-dashoffset: 0;
-    opacity: 1;
-  }
-  84% {
-    stroke-dashoffset: 1;
-    opacity: 0;
-  }
-  100% {
-    stroke-dashoffset: 1;
-    opacity: 0;
-  }
-}
-@keyframes cs-eye {
-  0%,
-  30% {
-    opacity: 0;
-  }
-  40%,
-  62% {
-    opacity: 0.9;
-  }
-  74%,
-  100% {
-    opacity: 0;
-  }
-}
-.spiral-draw path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: cs-draw 9s cubic-bezier(0.55, 0, 0.35, 1) infinite;
-}
-.spiral-draw path:nth-child(2) {
-  animation-delay: 0.12s;
-}
-.spiral-draw path:nth-child(3) {
-  animation-delay: 0.24s;
-}
-.spiral-draw path:nth-child(4) {
-  animation-delay: 0.36s;
-}
-.spiral-draw path:nth-child(5) {
-  animation-delay: 0.48s;
-}
-.spiral-draw .spiral-eye {
-  opacity: 0;
-  animation: cs-eye 9s ease infinite;
-}
-
 /* --- Otvaranje padajućeg menija / akordeona (fade + slide) --- */
 @keyframes cs-drop {
   from {
@@ -181,20 +119,6 @@
 }
 details[open] > .dropdown-content {
   animation: cs-drop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* --- Hero watermark: povrh iscrtavanja i lagano „diše" po prozirnosti --- */
-@keyframes cs-breathe {
-  0%,
-  100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 0.85;
-  }
-}
-.spiral-hero {
-  animation: cs-breathe 9s ease-in-out infinite;
 }
 
 /* --- Strelica ispod SCROLL dugmeta --- */
@@ -245,6 +169,41 @@ details[open] > .dropdown-content {
   animation-play-state: paused;
 }
 
+/* --- FAQ akordeon: animirano otvaranje --- */
+/* Rotacija `+` u `×` i fade sadržaja već postoje kroz cva klase i `cs-drop`.
+   Ovde se dodaje ono što je nedostajalo: visina. Native `<details>` skoči na punu
+   visinu odjednom, jer `height: auto` nije animabilan.
+
+   `interpolate-size: allow-keywords` to menja — dozvoljava prelaz ka `auto`.
+   Stoji u `@supports`, pa browser bez podrške zadržava postojeći fade umesto da
+   ostane bez ičega. `transition-behavior: allow-discrete` je nužan jer
+   `content-visibility` prelazi diskretno i bez njega prelaz ne krene. */
+@supports (interpolate-size: allow-keywords) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+
+  details::details-content {
+    block-size: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      block-size 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+      content-visibility 0.32s allow-discrete,
+      opacity 0.24s ease-out;
+  }
+
+  details[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+
+  /* Fade iz `cs-drop` bi se sudarao sa prelazom visine — jedan pokret, ne dva. */
+  details[open] > .dropdown-content {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;
@@ -264,21 +223,12 @@ details[open] > .dropdown-content {
   details[open] > .dropdown-content {
     animation: none;
   }
+  details::details-content,
+  details[open]::details-content {
+    transition: none;
+  }
   .cs-scroll-hint {
     opacity: 1;
     transform: none;
-  }
-  .spiral-hero {
-    animation: none;
-    opacity: 0.7;
-  }
-  .spiral-draw path {
-    animation: none;
-    stroke-dashoffset: 0;
-    opacity: 1;
-  }
-  .spiral-draw .spiral-eye {
-    animation: none;
-    opacity: 0.9;
   }
 }

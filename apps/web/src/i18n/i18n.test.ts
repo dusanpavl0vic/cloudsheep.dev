@@ -5,7 +5,7 @@ import { i18n, loadFeatureNamespace } from './index'
 /**
  * Ovaj test postoji zbog konkretne regresije: namespace-ovi su bili podeljeni po feature-u,
  * ali `loadFeatureNamespace` nije bio pozvan ni sa jedne rute. Typecheck je bio čist,
- * testovi su prolazili, a na ekranu je pisalo `insight.uptime` umesto teksta.
+ * testovi su prolazili, a na ekranu je pisalo `insight.stats.uptime` umesto teksta.
  *
  * Zaključavamo ponašanje: svaki feature namespace mora da se učita i da razreši svoje ključeve.
  */
@@ -28,8 +28,8 @@ describe('i18n namespace-ovi', () => {
   it('landing ključevi se razrešavaju u tekst, ne u sam ključ', async () => {
     await loadFeatureNamespace('landing')
 
-    const uptime = i18n.t('insight.uptime', { ns: 'landing', lng: 'sr' })
-    expect(uptime).not.toBe('insight.uptime')
+    const uptime = i18n.t('insight.stats.uptime', { ns: 'landing', lng: 'sr' })
+    expect(uptime).not.toBe('insight.stats.uptime')
     expect(uptime).toBeTruthy()
 
     const heroTitle = i18n.t('hero.titleTop', { ns: 'landing', lng: 'sr' })

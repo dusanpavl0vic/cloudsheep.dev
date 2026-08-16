@@ -9,6 +9,7 @@ export const containerVariants = cva('mx-auto w-full px-6', {
     width: {
       /** Puna širina sadržaja — 1400px */
       wide: 'max-w-[1400px]',
+      /** Alias za `wide`; zadržan jer ga koristi većina stranica. */
       content: 'max-w-[1400px]',
       /** Uži tok za dugačak tekst — čitljivost pada preko ~80 znakova po redu */
       article: 'max-w-[1040px]',

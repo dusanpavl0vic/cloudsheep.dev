@@ -11,18 +11,17 @@ import {
 } from '@/features/projects/projects.constants'
 import { GLYPHS } from '@/lib/glyphs'
 import { ROUTES, projectPath } from '@/lib/routes'
-import { Button, Container, Reveal, TagList, TextLink } from '@app/ui'
-
+import { Button, Container, PageHeader, Reveal, TagList, TextLink } from '@app/ui'
 
 const MediaFrame = ({ ratio, caption }: { ratio: string; caption?: string }) => (
   <figure className="m-0">
-    <div className="overflow-hidden rounded-xl border border-border bg-card">
-      <div className={`flex ${ratio} items-center justify-center text-faint`}>
-        <SpiralMark aria-hidden className="size-10 text-primary/40" />
+    <div className="border-border bg-card overflow-hidden rounded-xl border">
+      <div className={`flex ${ratio} text-faint items-center justify-center`}>
+        <SpiralMark aria-hidden className="text-primary/40 size-10" />
       </div>
     </div>
     {caption && (
-      <figcaption className="mt-3 text-center font-mono text-xs text-faint">{caption}</figcaption>
+      <figcaption className="text-faint mt-3 text-center font-mono text-xs">{caption}</figcaption>
     )}
   </figure>
 )
@@ -35,7 +34,7 @@ export const ProjectPage = () => {
   if (!project) {
     return (
       <Container width="article" className="py-32 text-center">
-        <p className="font-mono text-sm text-faint">{t('projects.empty')}</p>
+        <p className="text-faint font-mono text-sm">{t('projects.empty')}</p>
         <TextLink asChild className="mt-6">
           <Link to={ROUTES.PROJECTS}>{t('caseStudy.allProjects')}</Link>
         </TextLink>
@@ -51,15 +50,17 @@ export const ProjectPage = () => {
   const next = PROJECTS[(currentIndex + 1) % PROJECTS.length] ?? project
 
   return (
-    <Container as="article" width="article" className="pt-16 pb-24">
-      <TextLink asChild className="border-b-0 text-[13px] text-muted-foreground hover:text-foreground">
-        <Link to={ROUTES.PROJECTS}>← {t('caseStudy.allProjects')}</Link>
-      </TextLink>
-
-      <h1 className="mt-5 mb-4 font-heading text-[clamp(2.6rem,6vw,5rem)] leading-[0.96] font-bold tracking-[-0.045em] text-foreground">
-        {t(`${base}.title`)}
-      </h1>
-      <div className="mb-4 flex flex-wrap items-center gap-3 font-mono text-[13px] text-faint">
+    <Container as="article" width="article" className="pt-20 pb-24">
+      <PageHeader
+        title={t(`${base}.title`)}
+        backLink={
+          <TextLink asChild className="border-b-0">
+            <Link to={ROUTES.PROJECTS}>← {t('caseStudy.allProjects')}</Link>
+          </TextLink>
+        }
+        className="mb-4"
+      />
+      <div className="text-faint mb-4 flex flex-wrap items-center gap-3 font-mono text-[13px]">
         <span className="text-primary">{t(`${base}.cat`)}</span>
         <span>·</span>
         <span>{project.year}</span>
@@ -68,14 +69,14 @@ export const ProjectPage = () => {
       </div>
       <TagList tags={project.tech} variant="outline" font="sans" className="mb-11" />
 
-      <div className="mb-14 rounded-xl border border-border bg-card p-7 sm:px-8">
-        <div className="mb-4 font-mono text-[11.5px] tracking-[0.1em] uppercase text-faint">
+      <div className="border-border bg-card mb-14 rounded-xl border p-7 sm:px-8">
+        <div className="text-faint mb-4 font-mono text-[11.5px] tracking-[0.1em] uppercase">
           {t('caseStudy.highlightsLabel')}
         </div>
         <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
           {CASE_STUDY_HIGHLIGHTS.map((key) => (
-            <div key={key} className="flex gap-2.5 text-[15.5px] leading-snug text-foreground">
-              <span aria-hidden className="font-bold text-primary">
+            <div key={key} className="text-foreground flex gap-2.5 text-[15.5px] leading-snug">
+              <span aria-hidden className="text-primary font-bold">
                 {GLYPHS.CHECK}
               </span>
               <span>{t(key)}</span>
@@ -90,11 +91,14 @@ export const ProjectPage = () => {
 
       {CASE_STUDY_SECTIONS.slice(0, 2).map((section) => (
         <Reveal as="section" key={section.id} className="mx-auto mb-14 max-w-[720px]">
-          <h2 className="mb-4 font-heading text-[30px] font-bold tracking-tight text-foreground">
+          <h2 className="font-heading text-foreground mb-4 text-[30px] font-bold tracking-tight">
             {t(section.titleKey)}
           </h2>
           {section.bodyKeys.map((key) => (
-            <p key={key} className="mb-3.5 text-[17px] leading-relaxed text-muted-foreground text-pretty">
+            <p
+              key={key}
+              className="text-muted-foreground mb-3.5 text-[17px] leading-relaxed text-pretty"
+            >
               {t(key)}
             </p>
           ))}
@@ -105,9 +109,9 @@ export const ProjectPage = () => {
         <MediaFrame ratio="aspect-[4/3]" />
         <MediaFrame ratio="aspect-[4/3]" />
       </div>
-      <p className="mb-14 text-center font-mono text-xs text-faint">{t('caseStudy.gridCaption')}</p>
+      <p className="text-faint mb-14 text-center font-mono text-xs">{t('caseStudy.gridCaption')}</p>
 
-      <div className="relative mb-14 overflow-hidden rounded-xl bg-inverse p-11">
+      <div className="bg-inverse relative mb-14 overflow-hidden rounded-xl p-11">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0"
@@ -119,21 +123,21 @@ export const ProjectPage = () => {
         <div className="relative grid grid-cols-1 gap-8 text-center sm:grid-cols-3">
           {CASE_STUDY_STATS.map((stat) => (
             <div key={stat.id}>
-              <div className="font-heading text-[44px] font-bold text-inverse-primary">
+              <div className="font-heading text-inverse-primary text-[44px] font-bold">
                 {t(stat.valueKey)}
               </div>
-              <div className="mt-1 font-mono text-xs text-inverse-muted">{t(stat.labelKey)}</div>
+              <div className="text-inverse-muted mt-1 font-mono text-xs">{t(stat.labelKey)}</div>
             </div>
           ))}
         </div>
       </div>
 
       <Reveal as="section" className="mx-auto mb-16 max-w-[720px]">
-        <h2 className="mb-4 font-heading text-[30px] font-bold tracking-tight text-foreground">
+        <h2 className="font-heading text-foreground mb-4 text-[30px] font-bold tracking-tight">
           {t(CASE_STUDY_SECTIONS[2].titleKey)}
         </h2>
         {CASE_STUDY_SECTIONS[2].bodyKeys.map((key) => (
-          <p key={key} className="text-[17px] leading-relaxed text-muted-foreground text-pretty">
+          <p key={key} className="text-muted-foreground text-[17px] leading-relaxed text-pretty">
             {t(key)}
           </p>
         ))}
@@ -146,14 +150,14 @@ export const ProjectPage = () => {
         <Button asChild shape="pill" size="sm">
           <a href="#top">{t('caseStudy.liveDemo')} ↗</a>
         </Button>
-        <span className="font-mono text-xs text-faint">{t('caseStudy.demoNote')}</span>
+        <span className="text-faint font-mono text-xs">{t('caseStudy.demoNote')}</span>
       </div>
 
-      <div className="flex items-center justify-between gap-4 border-t border-border pt-8">
-        <span className="font-mono text-xs text-faint">{t('caseStudy.nextUp')}</span>
+      <div className="border-border flex items-center justify-between gap-4 border-t pt-8">
+        <span className="text-faint font-mono text-xs">{t('caseStudy.nextUp')}</span>
         <Link
           to={projectPath(next.slug)}
-          className="font-heading text-[22px] font-semibold tracking-tight text-foreground transition-colors hover:text-primary"
+          className="font-heading text-foreground hover:text-primary text-[22px] font-semibold tracking-tight transition-colors"
         >
           {t(`projects.items.${next.key}.title`)} →
         </Link>

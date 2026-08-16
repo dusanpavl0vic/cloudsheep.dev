@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import { SpiralMark } from '@/components/Logo'
 import { BRAND } from '@/lib/glyphs'
 import { ROUTES } from '@/lib/routes'
-import { Button } from '@app/ui'
+import { Button, Container } from '@app/ui'
 
 const GRID_MASK = 'radial-gradient(ellipse 65% 75% at 50% 45%, #000 25%, transparent 72%)'
 
@@ -12,7 +12,10 @@ export const NotFoundPage = () => {
   const { t } = useTranslation('common')
 
   return (
-    <section className="relative flex flex-1 items-center justify-center overflow-hidden px-6 py-24">
+    <Container
+      as="section"
+      className="relative flex flex-1 items-center justify-center overflow-hidden pt-20 pb-24"
+    >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-50"
@@ -26,21 +29,21 @@ export const NotFoundPage = () => {
       />
       <SpiralMark
         aria-hidden
-        className="pointer-events-none absolute -right-16 -bottom-24 size-[420px] text-primary/[0.07]"
+        className="text-primary/[0.07] pointer-events-none absolute -right-16 -bottom-24 size-[420px]"
       />
 
       <div className="relative max-w-[640px] text-center">
-        <div className="mb-7 inline-flex flex-wrap items-center justify-center gap-2 font-mono text-[13px] text-foreground">
+        <div className="text-foreground mb-7 inline-flex flex-wrap items-center justify-center gap-2 font-mono text-[13px]">
           <span className="text-primary">$</span>
           <span>{BRAND.NOT_FOUND_COMMAND}</span>
           <span className="text-faint">→</span>
           <span className="text-destructive">{t('notFound.terminal')}</span>
           <span aria-hidden className="caret" />
         </div>
-        <h1 className="m-0 mb-4 font-heading text-[clamp(6rem,18vw,12rem)] leading-[0.9] font-bold tracking-[-0.055em] text-foreground">
+        <h1 className="font-heading text-foreground m-0 mb-4 text-[clamp(6rem,18vw,12rem)] leading-[0.9] font-bold tracking-[-0.055em]">
           404
         </h1>
-        <p className="mb-8 text-[18px] leading-relaxed text-muted-foreground text-pretty">
+        <p className="text-muted-foreground mb-8 text-[18px] leading-relaxed text-pretty">
           {t('notFound.body')}
         </p>
         <div className="flex flex-wrap justify-center gap-3.5">
@@ -52,6 +55,6 @@ export const NotFoundPage = () => {
           </Button>
         </div>
       </div>
-    </section>
+    </Container>
   )
 }

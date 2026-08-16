@@ -13,7 +13,7 @@
     "test": "turbo run test",
     "test:cov": "turbo run test -- --coverage",
     "e2e": "turbo run e2e",
-    "lint": "turbo run lint",
+    "lint": "node scripts/check-css.mjs && node scripts/check-i18n-keys.mjs && turbo run lint",
     "lint:fix": "turbo run lint -- --fix",
     "typecheck": "turbo run typecheck",
     "format": "prettier --write .",
@@ -26,7 +26,9 @@
     "clean": "turbo run clean && rm -rf node_modules",
     "changeset": "changeset",
     "prepare": "husky",
-    "check:icons": "node scripts/check-tech-icons.mjs"
+    "check:icons": "node scripts/check-tech-icons.mjs",
+    "check:css": "node scripts/check-css.mjs",
+    "check:i18n": "node scripts/check-i18n-keys.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",

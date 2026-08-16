@@ -3,7 +3,7 @@ import { cva } from 'class-variance-authority'
 export const workItemVariants = cva('grid grid-cols-1 items-center gap-10 md:grid-cols-2 md:gap-14')
 
 export const workMediaVariants = cva(
-  'group/media flex aspect-[16/10] w-full items-center justify-center overflow-hidden rounded-xl border border-border bg-card text-faint shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-inverse/15',
+  'group/media flex aspect-[16/10] w-full items-center justify-center overflow-hidden rounded-xl border border-border bg-card text-faint shadow-sm transition-shadow duration-300 hover:shadow-xl hover:shadow-inverse/15',
 )
 
 export const workBodyVariants = cva('flex flex-col gap-2')

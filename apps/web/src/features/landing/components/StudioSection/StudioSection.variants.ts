@@ -1,27 +1,24 @@
 import { cva } from 'class-variance-authority'
 
-export const studioGridVariants = cva('grid grid-cols-1 gap-12 lg:grid-cols-[340px_1fr] lg:gap-16')
-
-export const studioIndexVariants = cva(
-  'font-heading text-7xl leading-none font-bold text-transparent [-webkit-text-stroke:1.5px_var(--border-strong)] lg:text-[104px]',
+/**
+ * Status dostupnosti — istaknut red, ne sitan badge sa strane.
+ *
+ * To je jedini podatak u sekciji koji zastareva i jedini na koji posetilac reaguje,
+ * pa dobija svoju liniju i zelenu tačku umesto da stoji kao fusnota.
+ */
+export const availabilityVariants = cva(
+  'inline-flex items-center gap-2.5 rounded-full bg-success/10 px-4 py-2 font-mono text-[13px] text-success ring-1 ring-success/20 ring-inset',
 )
 
-export const studioTitleVariants = cva(
-  'font-heading text-4xl font-bold tracking-tight text-foreground lg:text-[44px]',
-)
+export const availabilityDotVariants = cva('pulse-dot size-2 shrink-0 rounded-full bg-success')
+
+/** Uži tok za pasuse — preko ~80 znakova po redu čitljivost pada (docs/22). */
+export const studioBodyVariants = cva('mx-auto flex max-w-[680px] flex-col gap-5 text-center')
 
 export const studioLeadVariants = cva(
-  'font-heading text-[23px] leading-snug font-medium tracking-tight text-foreground text-pretty',
+  'text-[clamp(1.05rem,1.7vw,1.28rem)] leading-relaxed text-pretty text-foreground',
 )
 
 export const studioTextVariants = cva(
-  'max-w-[640px] text-[16.5px] leading-relaxed text-muted-foreground text-pretty',
-)
-
-export const studioStatsVariants = cva('grid grid-cols-2 gap-6 pt-2 md:grid-cols-4')
-
-export const studioStackRowVariants = cva('flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-4')
-
-export const studioStackLabelVariants = cva(
-  'w-[78px] shrink-0 font-mono text-[11.5px] tracking-wide lowercase text-faint',
+  'text-[16.5px] leading-relaxed text-pretty text-muted-foreground',
 )

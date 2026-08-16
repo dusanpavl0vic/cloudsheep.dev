@@ -4,6 +4,7 @@ import { ROUTES, projectPath } from './routes'
 export const SECTION_IDS = {
   TOP: 'top',
   STUDIO: 'studio',
+  INSIGHT: 'insight',
   SERVICES: 'services',
   PROCESS: 'process',
   WORK: 'work',
@@ -29,10 +30,28 @@ export const FEATURED_PROJECT_SLUG = 'atlas-analytics'
  * (vidi `useActiveSection`); rute nemaju sekciju i koriste `NavLink` aktivno stanje.
  */
 export const MAIN_NAV = [
-  { id: 'services', labelKey: 'nav.services', to: landingHash(SECTION_IDS.SERVICES), route: false, sectionId: SECTION_IDS.SERVICES },
-  { id: 'process', labelKey: 'nav.process', to: landingHash(SECTION_IDS.PROCESS), route: false, sectionId: SECTION_IDS.PROCESS },
+  {
+    id: 'services',
+    labelKey: 'nav.services',
+    to: landingHash(SECTION_IDS.SERVICES),
+    route: false,
+    sectionId: SECTION_IDS.SERVICES,
+  },
+  {
+    id: 'process',
+    labelKey: 'nav.process',
+    to: landingHash(SECTION_IDS.PROCESS),
+    route: false,
+    sectionId: SECTION_IDS.PROCESS,
+  },
   { id: 'work', labelKey: 'nav.work', to: ROUTES.PROJECTS, route: true, sectionId: null },
-  { id: 'pricing', labelKey: 'nav.pricing', to: landingHash(SECTION_IDS.PRICING), route: false, sectionId: SECTION_IDS.PRICING },
+  {
+    id: 'pricing',
+    labelKey: 'nav.pricing',
+    to: landingHash(SECTION_IDS.PRICING),
+    route: false,
+    sectionId: SECTION_IDS.PRICING,
+  },
   { id: 'contact', labelKey: 'nav.contact', to: ROUTES.CONTACT, route: true, sectionId: null },
 ] as const
 

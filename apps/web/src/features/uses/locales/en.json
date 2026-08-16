@@ -1,6 +1,6 @@
 {
   "uses": {
-    "eyebrow": "$ cat uses.md",
+    "eyebrow": "uses",
     "title": "Uses",
     "subtitle": "The desk, the editor and the stack behind every CloudSheep project. Boring tools, sharpened daily.",
     "desk": {

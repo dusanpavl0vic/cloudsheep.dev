@@ -26,37 +26,24 @@
     }
   },
   "insight": {
-    "haveProject": "Imaš projekat?",
-    "getInTouch": "Javi se",
-    "badge": "Uvidi",
-    "title": "Pouzdanost: Uptime u produkciji",
-    "seeWork": "Pogledaj radove",
-    "uptime": "uptime",
-    "body": "Svaki proizvod je napravljen da radi bez prekida — nadgledan, održavan i pokriven podrškom, dugo posle lansiranja.",
-    "waysToWork": "Načini saradnje"
+    "eyebrow": "pouzdanost",
+    "title": "Napravljeno da radi,",
+    "titleMuted": "i posle lansiranja.",
+    "body": "Proizvod se ne završava na predaji. Prati se, održava i odgovara se za njega.",
+    "stats": {
+      "uptime": "uptime u produkciji",
+      "response": "vreme odgovora",
+      "products": "isporučenih proizvoda",
+      "years": "godina iskustva"
+    }
   },
   "studio": {
-    "index": "01",
-    "title": "Studio",
-    "availability": "primam projekte za Q3",
+    "eyebrow": "studio",
+    "titleTop": "Jedan čovek,",
+    "titleMuted": "ceo proizvod.",
     "lead": "CloudSheep je jednočlani produktni studio Dušana Pavlovića — inženjera elektrotehnike i računarstva, Univerzitet u Nišu.",
     "body": "Radiš direktno sa osobom koja dizajnira interfejs, piše kod i odgovara za rezultat. Kada jedan čovek drži ceo proizvod, odluke su brze, kontekst se ne gubi, a kvalitet ima jednog vlasnika.",
-    "stats": {
-      "yearsValue": "6+",
-      "yearsLabel": "godina rada",
-      "productsValue": "20+",
-      "productsLabel": "izgrađenih proizvoda",
-      "platformsValue": "3",
-      "platformsLabel": "platforme",
-      "personValue": "1",
-      "personLabel": "odgovorna osoba"
-    },
-    "stack": {
-      "frontend": "frontend",
-      "backend": "backend",
-      "mobile": "mobilne",
-      "design": "dizajn"
-    }
+    "availability": "primam projekte za Q3"
   },
   "services": {
     "eyebrow": "Usluge",
@@ -121,7 +108,6 @@
     "eyebrow": "Cene",
     "title": "Tri načina",
     "titleMuted": "da uđemo u posao.",
-    "note": "tačni iznosi posle kratkog uvodnog poziva — svaki projekat se procenjuje pojedinačno",
     "fixed": {
       "title": "Projekat fiksnog obima",
       "price": "ponuda po projektu",
@@ -176,5 +162,10 @@
       "q": "Gde se nalaziš?",
       "a": "Niš, Srbija (CET) — udoban preklop sa celom Evropom i prepodnevima u SAD. Radni jezici: engleski i srpski."
     }
+  },
+  "contact": {
+    "titleTop": "Jedan studio. Jedan čovek.",
+    "titleBottom": "Ceo proizvod.",
+    "cta": "Pošalji poruku"
   }
 }

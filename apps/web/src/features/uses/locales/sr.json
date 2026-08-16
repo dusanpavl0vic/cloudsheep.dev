@@ -1,6 +1,6 @@
 {
   "uses": {
-    "eyebrow": "$ cat uses.md",
+    "eyebrow": "uses",
     "title": "Alati",
     "subtitle": "Sto, editor i stack iza svakog CloudSheep projekta. Dosadni alati, izoštreni svakodnevno.",
     "desk": {

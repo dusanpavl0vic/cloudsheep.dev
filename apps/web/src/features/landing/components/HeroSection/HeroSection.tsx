@@ -81,7 +81,11 @@ export const HeroSection = () => {
       <div aria-hidden className={heroDotsVariants()} />
 
       {/* Statični ambijentalni sjaj — nema šare i ništa se ne pomera samo od sebe */}
-      <div aria-hidden className={heroAmbientVariants()} style={{ backgroundImage: AMBIENT_GLOW }} />
+      <div
+        aria-hidden
+        className={heroAmbientVariants()}
+        style={{ backgroundImage: AMBIENT_GLOW }}
+      />
 
       {/* Svetlo oko kursora — jedini pokretan sloj */}
       <div
@@ -93,7 +97,7 @@ export const HeroSection = () => {
 
       <HeroCards />
 
-      <SpiralMark aria-hidden animated className={heroSpiralVariants()} />
+      <SpiralMark aria-hidden className={heroSpiralVariants()} />
 
       <p className={heroMonoVariants()}>{BRAND.DOMAIN}</p>
 

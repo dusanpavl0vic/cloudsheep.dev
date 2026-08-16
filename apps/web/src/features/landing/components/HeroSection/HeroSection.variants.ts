@@ -21,7 +21,7 @@ export const heroCursorGlowVariants = cva(
 )
 
 export const heroSpiralVariants = cva(
-  'spiral-hero pointer-events-none absolute top-1/2 left-1/2 z-0 h-auto w-[min(600px,88vw)] -translate-x-1/2 -translate-y-[56%] text-primary',
+  'pointer-events-none absolute top-1/2 left-1/2 z-0 h-auto w-[min(600px,88vw)] -translate-x-1/2 -translate-y-[56%] text-primary opacity-[0.55]',
 )
 
 export const heroMonoVariants = cva(

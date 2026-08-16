@@ -1,59 +1,44 @@
 import { useTranslation } from 'react-i18next'
 
-import { HERO_STATS, TECH_STACK } from '@/features/landing/landing.constants'
 import { SECTION_IDS } from '@/lib/navigation'
-import { Badge, Container, StatItem, TagList } from '@app/ui'
+import { SectionBlock } from '@app/ui'
 
 import {
-  studioGridVariants,
-  studioIndexVariants,
+  availabilityDotVariants,
+  availabilityVariants,
+  studioBodyVariants,
   studioLeadVariants,
-  studioStackLabelVariants,
-  studioStackRowVariants,
-  studioStatsVariants,
   studioTextVariants,
-  studioTitleVariants,
 } from './StudioSection.variants'
 
+/**
+ * Ko drži proizvod.
+ *
+ * Ranije je sekcija nosila i četiri brojke i četiri reda tagova. Oboje je izašlo: brojke
+ * su prešle u traku ispod hero-a, tehnologije u mrežu logotipa. Isti podatak na tri mesta
+ * nije naglasak nego šum, a sekcija je zbog njega gubila ono jedino što samo ona ima —
+ * rečenicu o tome ko radi posao.
+ */
 export const StudioSection = () => {
-  const { t } = useTranslation(['landing', 'common'])
+  const { t } = useTranslation('landing')
 
   return (
-    <section id={SECTION_IDS.STUDIO} className="py-24">
-      <Container className={studioGridVariants()}>
-        <div className="flex flex-col gap-3">
-          <span className={studioIndexVariants()}>{t('studio.index')}</span>
-          <h2 className={studioTitleVariants()}>{t('studio.title')}</h2>
-          <Badge marker="success" variant="plain" className="mt-1 self-start px-0">
-            {t('studio.availability')}
-          </Badge>
-        </div>
+    <SectionBlock
+      id={SECTION_IDS.STUDIO}
+      eyebrow={t('studio.eyebrow')}
+      title={t('studio.titleTop')}
+      muted={t('studio.titleMuted')}
+      align="center"
+    >
+      <div className={studioBodyVariants()}>
+        <p className={studioLeadVariants()}>{t('studio.lead')}</p>
+        <p className={studioTextVariants()}>{t('studio.body')}</p>
 
-        <div className="flex flex-col gap-5">
-          <p className={studioLeadVariants()}>{t('studio.lead')}</p>
-          <p className={studioTextVariants()}>{t('studio.body')}</p>
-
-          <div className={studioStatsVariants()}>
-            {HERO_STATS.map((stat) => (
-              <StatItem
-                key={stat.id}
-                value={t(stat.valueKey)}
-                label={t(stat.labelKey)}
-                tone={stat.tone}
-              />
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-3 pt-6">
-            {TECH_STACK.map((row) => (
-              <div key={row.id} className={studioStackRowVariants()}>
-                <span className={studioStackLabelVariants()}>{t(row.labelKey)}</span>
-                <TagList tags={row.tags} variant="outline" font="sans" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </Container>
-    </section>
+        <p className={availabilityVariants()}>
+          <span aria-hidden className={availabilityDotVariants()} />
+          {t('studio.availability')}
+        </p>
+      </div>
+    </SectionBlock>
   )
 }

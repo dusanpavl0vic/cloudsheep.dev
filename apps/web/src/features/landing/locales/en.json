@@ -26,37 +26,24 @@
     }
   },
   "insight": {
-    "haveProject": "Have a project?",
-    "getInTouch": "Get in touch",
-    "badge": "Insights",
-    "title": "Reliability: Uptime in prod",
-    "seeWork": "See the work",
-    "uptime": "uptime",
-    "body": "Every product is built to keep running — monitored, maintained and answered for, long after launch.",
-    "waysToWork": "Ways to work"
+    "eyebrow": "reliability",
+    "title": "Built to keep running,",
+    "titleMuted": "long after launch.",
+    "body": "A product does not end at handover. It gets monitored, maintained and answered for.",
+    "stats": {
+      "uptime": "uptime in prod",
+      "response": "response time",
+      "products": "products shipped",
+      "years": "years of experience"
+    }
   },
   "studio": {
-    "index": "01",
-    "title": "The studio",
-    "availability": "taking projects for Q3",
+    "eyebrow": "studio",
+    "titleTop": "One person,",
+    "titleMuted": "the whole product.",
     "lead": "CloudSheep is the one-person product studio of Dušan Pavlović — engineer of electrical engineering and computing, University of Niš.",
     "body": "You work directly with the person who designs the interface, writes the code and answers for the result. One brain holding the whole product means fast decisions, no lost context, and a single owner for quality.",
-    "stats": {
-      "yearsValue": "6+",
-      "yearsLabel": "years shipping",
-      "productsValue": "20+",
-      "productsLabel": "products built",
-      "platformsValue": "3",
-      "platformsLabel": "platforms",
-      "personValue": "1",
-      "personLabel": "person accountable"
-    },
-    "stack": {
-      "frontend": "frontend",
-      "backend": "backend",
-      "mobile": "mobile",
-      "design": "design"
-    }
+    "availability": "taking projects for Q3"
   },
   "services": {
     "eyebrow": "Services",
@@ -121,7 +108,6 @@
     "eyebrow": "Pricing",
     "title": "Three ways",
     "titleMuted": "to start working.",
-    "note": "exact numbers after a short discovery call — every project is scoped individually",
     "fixed": {
       "title": "Fixed-scope build",
       "price": "project-based quote",
@@ -176,5 +162,10 @@
       "q": "Where are you based?",
       "a": "Niš, Serbia (CET) — a comfortable overlap with all of Europe and US mornings. Working languages: English and Serbian."
     }
+  },
+  "contact": {
+    "titleTop": "One studio. One person.",
+    "titleBottom": "Whole product.",
+    "cta": "Send a message"
   }
 }

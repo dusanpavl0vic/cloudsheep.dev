@@ -4,26 +4,7 @@
  * Portfolio radovi žive u `features/projects/projects.constants.ts`.
  */
 
-export const HERO_TERMINAL_KEYS = [
-  'hero.term1',
-  'hero.term2',
-  'hero.term3',
-  'hero.term4',
-] as const
-
-export const HERO_STATS = [
-  { id: 'years', valueKey: 'studio.stats.yearsValue', labelKey: 'studio.stats.yearsLabel', tone: 'primary' },
-  { id: 'products', valueKey: 'studio.stats.productsValue', labelKey: 'studio.stats.productsLabel', tone: 'primary' },
-  { id: 'platforms', valueKey: 'studio.stats.platformsValue', labelKey: 'studio.stats.platformsLabel', tone: 'primary' },
-  { id: 'person', valueKey: 'studio.stats.personValue', labelKey: 'studio.stats.personLabel', tone: 'accent' },
-] as const
-
-export const TECH_STACK = [
-  { id: 'frontend', labelKey: 'studio.stack.frontend', tags: ['React', 'Next.js', 'TypeScript'] },
-  { id: 'backend', labelKey: 'studio.stack.backend', tags: ['Node.js', 'PostgreSQL', 'MongoDB'] },
-  { id: 'mobile', labelKey: 'studio.stack.mobile', tags: ['React Native', 'Kotlin', 'Swift'] },
-  { id: 'design', labelKey: 'studio.stack.design', tags: ['Figma', 'Design systems', 'Prototyping'] },
-] as const
+export const HERO_TERMINAL_KEYS = ['hero.term1', 'hero.term2', 'hero.term3', 'hero.term4'] as const
 
 export const DISCIPLINES = [
   {
@@ -104,7 +85,11 @@ export const PRICING_PLANS = [
     titleKey: 'pricing.monthly.title',
     priceKey: 'pricing.monthly.price',
     descriptionKey: 'pricing.monthly.description',
-    featureKeys: ['pricing.monthly.feature1', 'pricing.monthly.feature2', 'pricing.monthly.feature3'],
+    featureKeys: [
+      'pricing.monthly.feature1',
+      'pricing.monthly.feature2',
+      'pricing.monthly.feature3',
+    ],
     badgeKey: 'pricing.monthly.badge',
     featured: true,
   },
@@ -125,3 +110,24 @@ export const FAQ_ITEMS = [
   { id: 'ownership', questionKey: 'faq.ownership.q', answerKey: 'faq.ownership.a' },
   { id: 'location', questionKey: 'faq.location.q', answerKey: 'faq.location.a' },
 ] as const
+
+/**
+ * Brojke u traci ispod hero-a.
+ *
+ * `value` je broj, ne string — traka ga odbrojava, pa mora biti računljiv.
+ * `suffix` se renderuje prigušeno da broj ostane nosilac.
+ */
+export interface StudioMetric {
+  id: string
+  value: number
+  decimals: number
+  suffix: string
+  labelKey: string
+}
+
+export const STUDIO_METRICS: readonly StudioMetric[] = [
+  { id: 'uptime', value: 99.95, decimals: 2, suffix: '%', labelKey: 'insight.stats.uptime' },
+  { id: 'response', value: 48, decimals: 0, suffix: 'h', labelKey: 'insight.stats.response' },
+  { id: 'products', value: 12, decimals: 0, suffix: '+', labelKey: 'insight.stats.products' },
+  { id: 'years', value: 6, decimals: 0, suffix: '', labelKey: 'insight.stats.years' },
+]

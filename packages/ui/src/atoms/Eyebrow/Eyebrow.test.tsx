@@ -10,19 +10,20 @@ describe('Eyebrow', () => {
     expect(screen.getByText('Usluge')).toBeInTheDocument()
   })
 
-  it('podrazumevano prikazuje tačkicu — dekoraciju, ne tekst', () => {
-    const { container } = render(<Eyebrow>Usluge</Eyebrow>)
-    expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(1)
-  })
-
-  it('tačkica se može isključiti', () => {
-    const { container } = render(<Eyebrow marker={false}>Usluge</Eyebrow>)
-    expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(0)
-  })
-
-  it('renderuje se kao pilula, ne kao goli tekst', () => {
+  it('zagrade idu kroz ::before/::after, ne kao tekst', () => {
     render(<Eyebrow>Usluge</Eyebrow>)
-    expect(screen.getByText('Usluge')).toHaveClass('rounded-full')
+
+    // Da su zagrade čvorovi, screen reader bi čitao "[ Usluge ]" umesto "Usluge"
+    expect(screen.getByText('Usluge')).toHaveTextContent(/^Usluge$/)
+    expect(screen.getByText('Usluge').className).toContain("before:content-['[']")
+  })
+
+  it('renderuje se mono fontom, malim slovima', () => {
+    render(<Eyebrow>Usluge</Eyebrow>)
+
+    const el = screen.getByText('Usluge')
+    expect(el).toHaveClass('font-mono')
+    expect(el).toHaveClass('lowercase')
   })
 
   it('tone varijanta radi na tamnoj podlozi — ista komponenta, ne druga', () => {
@@ -31,6 +32,14 @@ describe('Eyebrow', () => {
 
     rerender(<Eyebrow tone="inverse">X</Eyebrow>)
     expect(screen.getByText('X').className).not.toBe(before)
+  })
+
+  it('nema podlogu ni ivicu — pilula je uklonjena (docs/22 §2)', () => {
+    render(<Eyebrow>Usluge</Eyebrow>)
+
+    const cls = screen.getByText('Usluge').className
+    expect(cls).not.toContain('rounded-full')
+    expect(cls).not.toContain('ring-1')
   })
 
   it('nema axe povreda', async () => {

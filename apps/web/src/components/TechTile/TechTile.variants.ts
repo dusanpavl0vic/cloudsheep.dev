@@ -10,7 +10,7 @@ export const techTileVariants = cva(
     variants: {
       size: { sm: 'size-10', md: 'size-14', lg: 'size-[68px]' },
       interactive: {
-        true: 'transition-transform duration-300 hover:-translate-y-1',
+        true: 'transition-shadow duration-300 hover:shadow-[0_2px_4px_rgb(0_0_0/0.06),0_14px_28px_-10px_rgb(0_0_0/0.24)]',
         false: '',
       },
     },

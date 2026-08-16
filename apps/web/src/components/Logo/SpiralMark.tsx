@@ -1,26 +1,14 @@
 import type { SVGProps } from 'react'
 
-import { cn } from '@app/ui'
-
-
-type SpiralMarkProps = SVGProps<SVGSVGElement> & {
-  /** Uključuje petlju iscrtavanja (crta → drži → briše). Za statične upotrebe ostaviti false. */
-  animated?: boolean
-}
+type SpiralMarkProps = SVGProps<SVGSVGElement> & {}
 
 /**
  * Brend marka CloudSheep-a — oblak sa uvijenim pramenom vune (spirala).
  * Boja se nasleđuje preko `currentColor`, pa isti SVG radi na svetloj,
- * tamnoj i inverznoj podlozi. Uz `animated` sam se iscrtava u petlji.
+ * tamnoj i inverznoj podlozi.
  */
-export const SpiralMark = ({ animated = false, className, ...props }: SpiralMarkProps) => (
-  <svg
-    viewBox="0 0 48 48"
-    fill="none"
-    aria-hidden
-    className={cn(animated && 'spiral-draw', className)}
-    {...props}
-  >
+export const SpiralMark = ({ className, ...props }: SpiralMarkProps) => (
+  <svg viewBox="0 0 48 48" fill="none" aria-hidden className={className} {...props}>
     {/* Oblak */}
     <path
       pathLength={1}

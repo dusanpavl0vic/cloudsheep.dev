@@ -2,8 +2,7 @@ import { useTranslation } from 'react-i18next'
 
 import { ContactForm } from '@/features/contact/components/ContactForm'
 import { CONTACT_EMAIL } from '@/lib/navigation'
-import { Container, Eyebrow, Reveal } from '@app/ui'
-
+import { Container, PageHeader, Reveal } from '@app/ui'
 
 /** Naslov kontakt podatka — <dt> u definicionoj listi, ne <Label>: nema kontrolu na koju bi se vezao. */
 const contactTermClass = 'mb-1.5 block font-mono text-xs tracking-wide text-faint uppercase'
@@ -15,15 +14,17 @@ export const ContactPage = () => {
   const { t } = useTranslation(['contact', 'common'])
 
   return (
-    <Container width="content" className="grid grid-cols-1 items-start gap-16 py-22 lg:grid-cols-[1fr_1.1fr]">
+    <Container
+      width="content"
+      className="grid grid-cols-1 items-start gap-16 pt-20 pb-24 lg:grid-cols-[1fr_1.1fr]"
+    >
       <Reveal direction="left">
-        <Eyebrow>{t('contact.eyebrow')}</Eyebrow>
-        <h1 className="mt-3.5 mb-5 font-heading text-[clamp(2.6rem,5.5vw,4.2rem)] leading-none font-bold tracking-[-0.04em] text-foreground text-balance">
-          {t('contact.pageTitle')}
-        </h1>
-        <p className="mb-9 max-w-[440px] text-[17px] leading-relaxed text-muted-foreground text-pretty">
-          {t('contact.pageLead')}
-        </p>
+        <PageHeader
+          eyebrow={t('contact.eyebrow')}
+          title={t('contact.pageTitle')}
+          subtitle={t('contact.pageLead')}
+          className="mb-9"
+        />
 
         <dl className="flex flex-col gap-5">
           <div>
@@ -31,7 +32,7 @@ export const ContactPage = () => {
             <dd>
               <a
                 href={`mailto:${CONTACT_EMAIL}`}
-                className="w-fit border-b-2 border-primary pb-0.5 font-mono text-[16px] text-foreground transition-colors hover:text-primary"
+                className="border-primary text-foreground hover:text-primary w-fit border-b-2 pb-0.5 font-mono text-[16px] transition-colors"
               >
                 {CONTACT_EMAIL}
               </a>
@@ -39,7 +40,7 @@ export const ContactPage = () => {
           </div>
           <div>
             <dt className={contactTermClass}>{t('contact.baseLabel')}</dt>
-            <dd className="text-[15.5px] text-muted-foreground">{t('contact.baseValue')}</dd>
+            <dd className="text-muted-foreground text-[15.5px]">{t('contact.baseValue')}</dd>
           </div>
           <div>
             <dt className={contactTermClass}>{t('contact.elsewhereLabel')}</dt>
