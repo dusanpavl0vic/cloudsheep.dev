@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest'
 
 import { TECH_ITEMS } from '@/features/landing/tech.constants'
 
-import { TECH_ICONS } from './TechIcon'
 import { TechMarquee } from './TechMarquee'
 
 describe('TechMarquee', () => {
@@ -31,15 +30,20 @@ describe('TechMarquee', () => {
     expect(screen.getAllByRole('list')).toHaveLength(1)
   })
 
-  it('svaka stavka ima ikonu', () => {
+  it('svaka stavka ima logotip iz public/, ne inline SVG', () => {
     const { container } = render(<TechMarquee />)
-    // 12 tehnologija × 2 kopije = 24 ikone + 2 gradijenta na krajevima (span, ne svg)
-    expect(container.querySelectorAll('svg')).toHaveLength(TECH_ITEMS.length * 2)
+    const images = container.querySelectorAll('img')
+
+    expect(images).toHaveLength(TECH_ITEMS.length * 2)
+    expect(images[0]).toHaveAttribute('src', TECH_ITEMS[0]?.icon ?? '')
   })
 
-  it('svaki id iz konstanti ima svoju ikonu — inače bi stavka pukla u renderu', () => {
-    for (const item of TECH_ITEMS) {
-      expect(TECH_ICONS[item.id]).toBeDefined()
+  it('logotipi imaju dimenzije — bez njih CLS skače dok se učitavaju', () => {
+    const { container } = render(<TechMarquee />)
+
+    for (const img of container.querySelectorAll('img')) {
+      expect(img).toHaveAttribute('width')
+      expect(img).toHaveAttribute('height')
     }
   })
 

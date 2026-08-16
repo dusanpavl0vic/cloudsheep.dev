@@ -1,13 +1,11 @@
+import { TechTile } from '@/components/TechTile'
 import { TECH_ITEMS, type TechItem } from '@/features/landing/tech.constants'
 
-import { TECH_ICONS } from './TechIcon'
 import {
   techEdgeVariants,
   techGroupVariants,
-  techIconVariants,
   techItemVariants,
   techMarqueeVariants,
-  techTileVariants,
   techTrackVariants,
 } from './TechMarquee.variants'
 
@@ -21,18 +19,12 @@ import {
 function TechGroup({ items, duplicate }: { items: readonly TechItem[]; duplicate?: boolean }) {
   return (
     <ul className={techGroupVariants()} {...(duplicate ? { 'aria-hidden': true } : {})}>
-      {items.map((item) => {
-        const Icon = TECH_ICONS[item.id]
-
-        return (
-          <li key={item.id} className={techItemVariants()}>
-            <span aria-hidden className={techTileVariants()}>
-              <Icon className={techIconVariants()} />
-            </span>
-            {item.label}
-          </li>
-        )
-      })}
+      {items.map((item) => (
+        <li key={item.id} className={techItemVariants()}>
+          <TechTile key={item.id} label={item.label} icon={item.icon} size="sm" />
+          {item.label}
+        </li>
+      ))}
     </ul>
   )
 }
@@ -40,7 +32,7 @@ function TechGroup({ items, duplicate }: { items: readonly TechItem[]; duplicate
 /**
  * Beskonačna traka sa tehnologijama koje koristimo.
  *
- * Animacija je čist CSS (`cs-marquee`) i pomera `transform` — dakle na compositor-u, bez
+ * Animacija je čist CSS (`cs-marquee`) i pomera `transform` — na compositor-u, bez
  * relayout-a. Staje na hover i na `prefers-reduced-motion`.
  */
 export function TechMarquee() {

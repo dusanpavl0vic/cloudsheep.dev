@@ -8,6 +8,7 @@ import { ProcessSection } from '@/features/landing/components/ProcessSection'
 import { ServicesSection } from '@/features/landing/components/ServicesSection'
 import { StudioSection } from '@/features/landing/components/StudioSection'
 import { TechMarquee } from '@/features/landing/components/TechMarquee'
+import { TechSection } from '@/features/landing/components/TechSection'
 import { WorkSection } from '@/features/landing/components/WorkSection'
 import { Reveal } from '@app/ui'
 
@@ -27,6 +28,9 @@ export const LandingPage = () => (
     </Reveal>
     <Reveal>
       <WorkSection />
+    </Reveal>
+    <Reveal>
+      <TechSection />
     </Reveal>
     <Reveal>
       <PricingSection />

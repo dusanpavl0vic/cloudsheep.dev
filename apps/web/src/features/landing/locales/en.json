@@ -10,7 +10,20 @@
     "term4": "ls ./work → 20+ products",
     "primaryCta": "Start a project",
     "secondaryCta": "View work",
-    "scroll": "SCROLL"
+    "scroll": "SCROLL",
+    "cards": {
+      "note": "You talk directly to the person writing the code — no middlemen, no translation.",
+      "tasksTitle": "in progress",
+      "task": {
+        "ship": "Landing redesign",
+        "review": "Code review"
+      },
+      "deployTitle": "last deploy",
+      "deployStatus": "production",
+      "deployMeta": "2 min ago · green",
+      "stackTitle": "stack",
+      "scoreTitle": "lighthouse"
+    }
   },
   "insight": {
     "haveProject": "Have a project?",
@@ -97,6 +110,12 @@
     "titleMuted": "not promises.",
     "allCases": "See all projects",
     "readCase": "View project"
+  },
+  "stack": {
+    "eyebrow": "Stack",
+    "title": "The tools I use,",
+    "titleMuted": "and the ones I skip.",
+    "subtitle": "I pick a boring, proven stack. Something new gets in only when it solves a problem the old one could not."
   },
   "pricing": {
     "eyebrow": "Pricing",

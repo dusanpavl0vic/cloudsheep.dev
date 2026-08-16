@@ -10,7 +10,20 @@
     "term4": "ls ./radovi → 20+ proizvoda",
     "primaryCta": "Pokreni projekat",
     "secondaryCta": "Pogledaj radove",
-    "scroll": "SKROLUJ"
+    "scroll": "SKROLUJ",
+    "cards": {
+      "note": "Direktna komunikacija sa osobom koja piše kod — bez posrednika i bez prevođenja.",
+      "tasksTitle": "u toku",
+      "task": {
+        "ship": "Redizajn landinga",
+        "review": "Code review"
+      },
+      "deployTitle": "poslednji deploy",
+      "deployStatus": "produkcija",
+      "deployMeta": "pre 2 min · zeleno",
+      "stackTitle": "stack",
+      "scoreTitle": "lighthouse"
+    }
   },
   "insight": {
     "haveProject": "Imaš projekat?",
@@ -97,6 +110,12 @@
     "titleMuted": "ne obećanja.",
     "allCases": "Svi projekti",
     "readCase": "Pogledaj projekat"
+  },
+  "stack": {
+    "eyebrow": "Stack",
+    "title": "Alati koje koristim,",
+    "titleMuted": "i one koje ne.",
+    "subtitle": "Biram dosadan i proveren stack. Nova stvar ulazi tek kad reši problem koji stari nije mogao."
   },
   "pricing": {
     "eyebrow": "Cene",

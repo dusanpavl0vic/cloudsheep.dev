@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { SpiralMark } from '@/components/Logo'
+import { HeroCards } from '@/features/landing/components/HeroCards'
 import { HERO_TERMINAL_KEYS } from '@/features/landing/landing.constants'
 import { useTypewriter } from '@/hooks/useTypewriter'
 import { BRAND, GLYPHS } from '@/lib/glyphs'
@@ -89,6 +90,8 @@ export const HeroSection = () => {
         className={heroCursorGlowVariants()}
         style={{ backgroundImage: CURSOR_GLOW }}
       />
+
+      <HeroCards />
 
       <SpiralMark aria-hidden animated className={heroSpiralVariants()} />
 
