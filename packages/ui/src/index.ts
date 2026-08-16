@@ -27,7 +27,7 @@ export { TextLink } from './atoms/TextLink'
 
 // ── molecules ──
 export { PageHeader } from './molecules/PageHeader'
-export { TagList } from './molecules/TagList'
+export { TagList, type TagListItem } from './molecules/TagList'
 
 // ── layouts ──
 export { SectionBlock } from './layouts/SectionBlock'

@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import { SpiralMark } from '@/components/Logo'
 import type { Project } from '@/features/projects/projects.constants'
 import { projectPath } from '@/lib/routes'
+import { techTags } from '@/lib/tech'
 import { TagList } from '@app/ui'
 
 import {
@@ -27,7 +28,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
   return (
     <Link to={projectPath(project.slug)} className={projectCardVariants()}>
       <div className={projectMediaVariants()}>
-        <SpiralMark aria-hidden className="size-9 text-primary/40" />
+        <SpiralMark aria-hidden className="text-primary/40 size-9" />
       </div>
       <div className={projectBodyVariants()}>
         <div className="flex items-baseline justify-between gap-3">
@@ -36,7 +37,13 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
         </div>
         <div className={projectCatVariants()}>{t(`${base}.cat`)}</div>
         <p className={projectDescVariants()}>{t(`${base}.desc`)}</p>
-        <TagList tags={project.tech} variant="outline" font="sans" size="sm" className="mt-1.5" />
+        <TagList
+          tags={techTags(project.tech)}
+          variant="logo"
+          size="bare"
+          font="sans"
+          className="mt-2.5"
+        />
       </div>
     </Link>
   )

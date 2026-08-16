@@ -6,7 +6,7 @@
     "description": "Design, web and mobile apps — dreamed up, drawn, coded and shipped by a single pair of hands. No handoffs, no telephone game, one owner from first sketch to launch.",
     "term1": "whoami → one-person studio",
     "term2": "stack → design · web · mobile",
-    "term3": "status → available for Q3",
+    "term3": "status → open to new projects",
     "term4": "ls ./work → 20+ products",
     "primaryCta": "Start a project",
     "secondaryCta": "View work",
@@ -41,9 +41,12 @@
     "eyebrow": "studio",
     "titleTop": "One person,",
     "titleMuted": "the whole product.",
-    "lead": "CloudSheep is the one-person product studio of Dušan Pavlović — engineer of electrical engineering and computing, University of Niš.",
+    "lead": "CloudSheep is the one-person product studio of Dušan Pavlović.",
     "body": "You work directly with the person who designs the interface, writes the code and answers for the result. One brain holding the whole product means fast decisions, no lost context, and a single owner for quality.",
-    "availability": "taking projects for Q3"
+    "credential": {
+      "degree": "Graduate Engineer of Electrical and Computer Engineering",
+      "institution": "Faculty of Electronic Engineering · University of Niš"
+    }
   },
   "services": {
     "eyebrow": "Services",

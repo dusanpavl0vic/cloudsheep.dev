@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
 import { TechTile } from '@/components/TechTile'
-import { TECH_ITEMS } from '@/features/landing/tech.constants'
+import { TECH_ITEMS } from '@/lib/tech'
 
 import {
   heroCardTitleVariants,
@@ -68,11 +68,11 @@ export function HeroCards() {
         <p className={heroCardTitleVariants()}>{t('hero.cards.deployTitle')}</p>
         <div className="flex items-center gap-2">
           <span className={heroStatusDotVariants()} />
-          <span className="text-[13px] font-medium text-foreground">
+          <span className="text-foreground text-[13px] font-medium">
             {t('hero.cards.deployStatus')}
           </span>
         </div>
-        <p className="mt-1 font-mono text-[11px] text-faint">{t('hero.cards.deployMeta')}</p>
+        <p className="text-faint mt-1 font-mono text-[11px]">{t('hero.cards.deployMeta')}</p>
       </div>
 
       {/* Dole desno — stack u pločicama */}

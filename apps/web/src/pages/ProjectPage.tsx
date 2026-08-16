@@ -11,6 +11,7 @@ import {
 } from '@/features/projects/projects.constants'
 import { GLYPHS } from '@/lib/glyphs'
 import { ROUTES, projectPath } from '@/lib/routes'
+import { techTags } from '@/lib/tech'
 import { Button, Container, PageHeader, Reveal, TagList, TextLink } from '@app/ui'
 
 const MediaFrame = ({ ratio, caption }: { ratio: string; caption?: string }) => (
@@ -43,7 +44,6 @@ export const ProjectPage = () => {
   }
 
   const base = `projects.items.${project.key}`
-  const stack = project.tech.join(' / ').toLowerCase()
   const currentIndex = PROJECTS.findIndex((p) => p.slug === project.slug)
   // Modulo garantuje opseg, ali noUncheckedIndexedAccess to ne može da dokaže.
   // Fallback je sam projekat — jedini slučaj u kome bi pao je lista od jednog elementa.
@@ -60,14 +60,20 @@ export const ProjectPage = () => {
         }
         className="mb-4"
       />
+      {/* Stack je ranije stajao i ovde, kao `next.js / typescript / postgresql`. Izašao je
+          kad su tagovi dobili logotipe: isti spisak dvaput jedan ispod drugog. */}
       <div className="text-faint mb-4 flex flex-wrap items-center gap-3 font-mono text-[13px]">
         <span className="text-primary">{t(`${base}.cat`)}</span>
         <span>·</span>
         <span>{project.year}</span>
-        <span>·</span>
-        <span>{stack}</span>
       </div>
-      <TagList tags={project.tech} variant="outline" font="sans" className="mb-11" />
+      <TagList
+        tags={techTags(project.tech)}
+        variant="logo"
+        size="bare"
+        font="sans"
+        className="mb-11"
+      />
 
       <div className="border-border bg-card mb-14 rounded-xl border p-7 sm:px-8">
         <div className="text-faint mb-4 font-mono text-[11.5px] tracking-[0.1em] uppercase">

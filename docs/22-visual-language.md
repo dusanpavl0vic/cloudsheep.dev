@@ -3,7 +3,7 @@
 > Status: active | Last review: 2026-08-16
 
 Ovaj dokument opisuje **vizuelni sloj** koji stoji preko tokena iz
-[`08-styling-ui.md`](08-styling-ui.md). Tokeni kažu *koje su boje*; ovde piše *kako se koriste*.
+[`08-styling-ui.md`](08-styling-ui.md). Tokeni kažu _koje su boje_; ovde piše _kako se koriste_.
 
 **Poreklo:** jezik je izveden iz referentnog dizajna (ChronoTask, studio Outcrowd) koji je
 naručilac izabrao. Preuzeti su **obrasci** — dvotonski naslov, pilula-labela, meka elevacija,
@@ -68,6 +68,18 @@ podlozi u obe teme — to je prag za grafičke oznake po WCAG-u.
 Brend logotipi tehnologija su izuzetak od pravila o jednom akcentu: oni **jesu** šarenilo,
 i zato stoje u belim squircle pločicama koje ih drže odvojene od ostatka stranice.
 
+**Za tuđe logotipe fiksne boje postoji `--plate`** — jedini token koji **nema par u tamnoj
+temi**, i to namerno. Grb Elektronskog fakulteta je tamno plav sa providnom pozadinom; na
+`--card` u tamnoj temi (27.68% svetline) prosto bi nestao. Boju tuđeg znaka ne biramo mi,
+pa mu moramo dati podlogu koju biramo.
+
+> Koristi se **samo** za takve logotipe. Za sve ostalo `--card` — površina koja se ne
+> invertuje je u tamnoj temi svetla mrlja, i svaka sledeća je mrlja više.
+
+Tag sa logotipom je druga strana istog pravila: kad boju nosi znak, oko njega **nema ni
+ivice ni podloge** (`badge` varijanta `logo` + veličina `bare`). Pilula bi bila drugi sistem
+izdvajanja preko istog (§3).
+
 ### 5. Istaknuta kartica u grupi
 
 U grupi od tri (cene, planovi), srednja je **puna akcenatska**: plava podloga, beo tekst,
@@ -95,9 +107,9 @@ pa ide `aria-hidden`.
 
 ```tsx
 <SectionHeading
-  label={t('pricing.label')}      // pilula
-  title={t('pricing.title')}       // puna boja
-  muted={t('pricing.titleMuted')}  // prigušeni nastavak
+  label={t('pricing.label')} // pilula
+  title={t('pricing.title')} // puna boja
+  muted={t('pricing.titleMuted')} // prigušeni nastavak
 />
 ```
 
@@ -111,15 +123,15 @@ pa ide `aria-hidden`.
 
 ## Anti-patterns
 
-| ❌ | Zašto | ✅ |
-|---|---|---|
-| Animiran uzorak u pozadini | trza se, vuče pogled, ponovno crtanje po kadru | statična tekstura |
-| Ivica + senka na istoj kartici | dva sistema izdvajanja koja se bore | senka, bez ivice |
-| Tri različite akcenatske boje | ništa se ne ističe kad se sve ističe | jedan akcenat |
-| Naslov u dve veličine slova | lomi tipografsku skalu | dvotonski, ista veličina |
-| `//` ili drugi znak kao labela sekcije | traži da čitalac zna šifru | pilula sa rečju |
-| Tamna uska senka (`shadow-md`) | izgleda kao Bootstrap 2014 | široka i bleda |
-| Prigušen tekst nosi ključni podatak | slab kontrast, preskače se | prigušeno je dopuna |
+| ❌                                     | Zašto                                          | ✅                       |
+| -------------------------------------- | ---------------------------------------------- | ------------------------ |
+| Animiran uzorak u pozadini             | trza se, vuče pogled, ponovno crtanje po kadru | statična tekstura        |
+| Ivica + senka na istoj kartici         | dva sistema izdvajanja koja se bore            | senka, bez ivice         |
+| Tri različite akcenatske boje          | ništa se ne ističe kad se sve ističe           | jedan akcenat            |
+| Naslov u dve veličine slova            | lomi tipografsku skalu                         | dvotonski, ista veličina |
+| `//` ili drugi znak kao labela sekcije | traži da čitalac zna šifru                     | pilula sa rečju          |
+| Tamna uska senka (`shadow-md`)         | izgleda kao Bootstrap 2014                     | široka i bleda           |
+| Prigušen tekst nosi ključni podatak    | slab kontrast, preskače se                     | prigušeno je dopuna      |
 
 ---
 

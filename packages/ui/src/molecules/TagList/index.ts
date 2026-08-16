@@ -1,1 +1,1 @@
-export { TagList } from './TagList'
+export { TagList, type TagListItem } from './TagList'

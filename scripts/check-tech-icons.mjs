@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Proverava da svaka tehnologija u `tech.constants.ts` ima svoj SVG u `public/tech/`,
+ * Proverava da svaka tehnologija u `lib/tech.ts` ima svoj SVG u `public/tech/`,
  * i obrnuto — da nema zaboravljenih fajlova.
  *
  * Postoji jer je nesklad tih dveju lista nevidljiv u typecheck-u: pločica bez fajla
@@ -8,7 +8,7 @@
  */
 import { readdirSync, readFileSync } from 'node:fs'
 
-const CONSTANTS = 'apps/web/src/features/landing/tech.constants.ts'
+const CONSTANTS = 'apps/web/src/lib/tech.ts'
 const ICON_DIR = 'apps/web/public/tech'
 
 const ids = [...readFileSync(CONSTANTS, 'utf8').matchAll(/tech\('([a-z0-9]+)'/g)].map((m) => m[1])

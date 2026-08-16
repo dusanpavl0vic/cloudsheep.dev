@@ -6,7 +6,7 @@
     "description": "Dizajn, web i mobilne aplikacije — osmišljene, nacrtane, kodirane i isporučene iz jednog para ruku. Bez primopredaja, bez gluvih telefona, jedan vlasnik od prve skice do lansiranja.",
     "term1": "whoami → jednočlani studio",
     "term2": "stack → dizajn · web · mobilne",
-    "term3": "status → slobodan za Q3",
+    "term3": "status → otvoren za nove projekte",
     "term4": "ls ./radovi → 20+ proizvoda",
     "primaryCta": "Pokreni projekat",
     "secondaryCta": "Pogledaj radove",
@@ -41,9 +41,12 @@
     "eyebrow": "studio",
     "titleTop": "Jedan čovek,",
     "titleMuted": "ceo proizvod.",
-    "lead": "CloudSheep je jednočlani produktni studio Dušana Pavlovića — inženjera elektrotehnike i računarstva, Univerzitet u Nišu.",
+    "lead": "CloudSheep je jednočlani produktni studio Dušana Pavlovića.",
     "body": "Radiš direktno sa osobom koja dizajnira interfejs, piše kod i odgovara za rezultat. Kada jedan čovek drži ceo proizvod, odluke su brze, kontekst se ne gubi, a kvalitet ima jednog vlasnika.",
-    "availability": "primam projekte za Q3"
+    "credential": {
+      "degree": "Diplomirani inženjer elektrotehnike i računarstva",
+      "institution": "Elektronski fakultet · Univerzitet u Nišu"
+    }
   },
   "services": {
     "eyebrow": "Usluge",

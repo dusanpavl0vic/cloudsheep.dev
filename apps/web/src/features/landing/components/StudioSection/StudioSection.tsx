@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next'
 
+import { CredentialSeal } from '@/components/CredentialSeal'
 import { SECTION_IDS } from '@/lib/navigation'
 import { SectionBlock } from '@app/ui'
 
 import {
-  availabilityDotVariants,
-  availabilityVariants,
   studioBodyVariants,
   studioLeadVariants,
+  studioSealVariants,
   studioTextVariants,
 } from './StudioSection.variants'
 
@@ -18,6 +18,10 @@ import {
  * su prešle u traku ispod hero-a, tehnologije u mrežu logotipa. Isti podatak na tri mesta
  * nije naglasak nego šum, a sekcija je zbog njega gubila ono jedino što samo ona ima —
  * rečenicu o tome ko radi posao.
+ *
+ * Na kraju je stajala i pilula „primam projekte za Q3". Nju je zamenio pečat sa diplomom:
+ * kvartal zastari za tri meseca i sajt izgleda napušteno, a zvanje ne zastareva. Isti podatak
+ * je ranije stajao i u `studio.lead`, pa je odatle skraćen — pečat ga sada nosi jednom.
  */
 export const StudioSection = () => {
   const { t } = useTranslation('landing')
@@ -34,10 +38,12 @@ export const StudioSection = () => {
         <p className={studioLeadVariants()}>{t('studio.lead')}</p>
         <p className={studioTextVariants()}>{t('studio.body')}</p>
 
-        <p className={availabilityVariants()}>
-          <span aria-hidden className={availabilityDotVariants()} />
-          {t('studio.availability')}
-        </p>
+        <CredentialSeal
+          className={studioSealVariants()}
+          logo="/edu/elfak.webp"
+          degree={t('studio.credential.degree')}
+          institution={t('studio.credential.institution')}
+        />
       </div>
     </SectionBlock>
   )

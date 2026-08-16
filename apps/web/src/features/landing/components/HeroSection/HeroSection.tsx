@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
-import { SpiralMark } from '@/components/Logo'
 import { HeroCards } from '@/features/landing/components/HeroCards'
 import { HERO_TERMINAL_KEYS } from '@/features/landing/landing.constants'
 import { useTypewriter } from '@/hooks/useTypewriter'
@@ -21,7 +20,6 @@ import {
   heroMonoVariants,
   heroScrollArrowVariants,
   heroScrollVariants,
-  heroSpiralVariants,
   heroTerminalVariants,
   heroTextVariants,
   heroTitleMutedVariants,
@@ -96,8 +94,6 @@ export const HeroSection = () => {
       />
 
       <HeroCards />
-
-      <SpiralMark aria-hidden className={heroSpiralVariants()} />
 
       <p className={heroMonoVariants()}>{BRAND.DOMAIN}</p>
 

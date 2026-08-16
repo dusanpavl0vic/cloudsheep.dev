@@ -5,6 +5,7 @@ import { WorkItem } from '@/components/WorkItem'
 import { FEATURED_PROJECTS } from '@/features/projects/projects.constants'
 import { SECTION_IDS } from '@/lib/navigation'
 import { ROUTES, projectPath } from '@/lib/routes'
+import { techTags } from '@/lib/tech'
 import { SectionBlock, TextLink } from '@app/ui'
 
 const WORK_INDEXES = ['/ 01', '/ 02', '/ 03']
@@ -33,7 +34,7 @@ export const WorkSection = () => {
             meta={`${project.year} · ${t(`projects.items.${project.key}.cat`)}`}
             description={t(`projects.items.${project.key}.desc`)}
             imageCaption={t(`projects.items.${project.key}.caption`)}
-            tags={project.tech}
+            tags={techTags(project.tech)}
             to={projectPath(project.slug)}
             media={index % 2 === 0 ? 'start' : 'end'}
             action={

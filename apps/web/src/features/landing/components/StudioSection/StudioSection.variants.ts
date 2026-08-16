@@ -1,16 +1,13 @@
 import { cva } from 'class-variance-authority'
 
 /**
- * Status dostupnosti — istaknut red, ne sitan badge sa strane.
+ * Pečat sa diplomom stoji na mestu na kom je ranije bila pilula „primam projekte za Q3".
  *
- * To je jedini podatak u sekciji koji zastareva i jedini na koji posetilac reaguje,
- * pa dobija svoju liniju i zelenu tačku umesto da stoji kao fusnota.
+ * Zamena nije samo vizuelna: kvartal zastareva svaka tri meseca i sajt datira, a diploma ne.
+ * Odvojen je razmakom, ne linijom: grb sa svojom pločicom se već dovoljno izdvaja,
+ * a ivica bi bila drugi sistem izdvajanja preko istog (docs/22 §3).
  */
-export const availabilityVariants = cva(
-  'inline-flex items-center gap-2.5 rounded-full bg-success/10 px-4 py-2 font-mono text-[13px] text-success ring-1 ring-success/20 ring-inset',
-)
-
-export const availabilityDotVariants = cva('pulse-dot size-2 shrink-0 rounded-full bg-success')
+export const studioSealVariants = cva('mt-4 self-center')
 
 /** Uži tok za pasuse — preko ~80 znakova po redu čitljivost pada (docs/22). */
 export const studioBodyVariants = cva('mx-auto flex max-w-[680px] flex-col gap-5 text-center')

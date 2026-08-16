@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { axe } from 'jest-axe'
 import { describe, expect, it } from 'vitest'
 
-import { TECH_ITEMS } from '@/features/landing/tech.constants'
+import { TECH_ITEMS } from '@/lib/tech'
 
 import { TechMarquee } from './TechMarquee'
 

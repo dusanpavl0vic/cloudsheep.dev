@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 
 import { SpiralMark } from '@/components/Logo'
-import { Reveal, TagList, cn } from '@app/ui'
+import { Reveal, TagList, type TagListItem, cn } from '@app/ui'
 
 import {
   workBodyVariants,
@@ -21,7 +21,8 @@ type WorkItemProps = {
   title: string
   meta: string
   description: string
-  tags: readonly string[]
+  /** Tagovi već sa logotipima — mapiranje radi pozivalac, komponenta ne zna za tehnologije */
+  tags: readonly TagListItem[]
   /** Tekst ispod placeholdera dok slika ne postoji */
   imageCaption: string
   imageSrc?: string
@@ -59,7 +60,7 @@ export const WorkItem = ({
             <img src={imageSrc} alt={imageCaption} className="size-full object-cover" />
           ) : (
             <span className="flex flex-col items-center gap-3">
-              <SpiralMark className="size-9 text-primary/40" />
+              <SpiralMark className="text-primary/40 size-9" />
               <span className={workCaptionVariants()}>{imageCaption}</span>
             </span>
           )}
@@ -74,7 +75,7 @@ export const WorkItem = ({
         <h3 className={workTitleVariants()}>{title}</h3>
         <span className={workMetaVariants()}>{meta}</span>
         <p className={workTextVariants()}>{description}</p>
-        <TagList tags={tags} variant="outline" font="sans" className="pt-1 pb-2" />
+        <TagList tags={tags} variant="logo" size="bare" font="sans" className="pt-1.5 pb-2" />
         {action}
       </Reveal>
     </article>

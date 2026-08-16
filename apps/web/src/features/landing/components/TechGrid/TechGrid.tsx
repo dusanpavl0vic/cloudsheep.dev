@@ -1,5 +1,5 @@
 import { TechTile } from '@/components/TechTile'
-import { TECH_ITEMS, type TechItem } from '@/features/landing/tech.constants'
+import { TECH_ITEMS, type TechItem } from '@/lib/tech'
 
 import {
   techGridItemVariants,

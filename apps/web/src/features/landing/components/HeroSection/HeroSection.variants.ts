@@ -20,10 +20,6 @@ export const heroCursorGlowVariants = cva(
   'pointer-events-none absolute inset-0 transition-opacity duration-500',
 )
 
-export const heroSpiralVariants = cva(
-  'pointer-events-none absolute top-1/2 left-1/2 z-0 h-auto w-[min(600px,88vw)] -translate-x-1/2 -translate-y-[56%] text-primary opacity-[0.55]',
-)
-
 export const heroMonoVariants = cva(
   'relative z-10 mb-2.5 font-mono text-[clamp(1.05rem,1.9vw,1.4rem)] font-semibold tracking-wide text-foreground',
 )

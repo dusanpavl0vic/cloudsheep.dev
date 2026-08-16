@@ -11,10 +11,20 @@ export const badgeVariants = cva(
         accent: 'bg-accent text-accent-foreground',
         plain: 'text-faint',
         inverse: 'border border-inverse-border text-inverse-muted',
+        /**
+         * Oznaka koju nosi logotip, ne okvir.
+         *
+         * Bez ivice i bez podloge namerno: boja dolazi od brend logotipa, a pilula oko
+         * njega bila bi drugi sistem izdvajanja preko istog (docs/22 §3). Ide u paru
+         * sa `size: 'bare'` — sa `sm` bi imala padding oko nepostojeće podloge.
+         */
+        logo: 'gap-1.5 text-foreground',
       },
       size: {
         sm: 'px-3 py-1 text-xs',
         md: 'px-3.5 py-1.5 text-[13px]',
+        /** Bez padding-a — za oznake koje nemaju podlogu. */
+        bare: 'text-[13px]',
       },
       shape: {
         pill: 'rounded-full',
