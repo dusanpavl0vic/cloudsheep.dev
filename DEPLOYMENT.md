@@ -22,9 +22,14 @@ commit-uj direktno u `main` ili `prod`.
 
 ## 2. Env promenljive
 
-Aplikacija čita env samo na jednom mestu: `src/constants/config.ts`.
-Tipovi su u `src/vite-env.d.ts`, a ugovor (spisak svih promenljivih) u
-`.env.example`.
+Tipovi su u `apps/web/src/vite-env.d.ts`, a ugovor (spisak svih promenljivih) u
+`apps/web/.env.example`.
+
+> **Trenutno ih nijedan modul ne čita.** `lib/config.ts` je čitao `VITE_API_URL` za RTKQ,
+> ali je obrisan zajedno sa `baseApi`-jem — `apps/web` nema nijedan endpoint. Deklaracije
+> su namerno zadržane: `VITE_APP_ENV` je i dalje ugovor sa Vercelom (tabela ispod), a
+> `VITE_API_URL` čeka backend. Kad se prvi endpoint pojavi, čitanje ide kroz `createEnv`
+> iz `@app/utils` (`docs/14`), ne kroz goli `import.meta.env`.
 
 Samo promenljive sa `VITE_` prefiksom stižu do klijenta. **Te vrednosti se
 ugrađuju u JS bundle i javno su čitljive — nikad tajne u njima.**
@@ -59,8 +64,8 @@ Trenutno postavljeno:
 | `VITE_APP_ENV` | `production` | Production             |
 | `VITE_APP_ENV` | `test`       | Preview → grana `main` |
 
-Za `dev` grana namerno nema svoju vrednost — `APP_CONFIG` pada na
-`'development'` (`src/constants/config.ts`).
+Za `dev` granu namerno nema vrednosti. Dok je ne pročita nijedan modul to ništa
+ne menja; kad se čitanje uvede, `createEnv` treba da padne na `'development'`.
 
 Kad backend dobije adrese, dodaj `VITE_API_URL` na isti način (Production za
 `prod`, Preview + grana `main` za test).
@@ -75,10 +80,37 @@ Projekat: **`cloudsheep`** (`dusanpavl0vics-projects`), vezan na
 | Production | `prod`           | produkcija                           |
 | Preview    | sve ostale grane | test (`main`), pregled feature grana |
 
-Build config dolazi iz `vercel.json` u repou (`framework: vite`,
-`buildCommand: npm run build`, `outputDirectory: dist`, SPA rewrite).
+### Build config
+
+Sve stoji u **`vercel.json` na korenu repoa**, i to je jedini `vercel.json`:
+
+```json
+{
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm turbo run build --filter=web",
+  "outputDirectory": "apps/web/dist",
+  "framework": null
+}
+```
+
 `vercel.json` ima prioritet nad dashboard podešavanjima, pa se build ne može
 razminuti sa kodom.
+
+> **Root Directory na Vercelu mora ostati koren repoa** (prazno polje), ne `apps/web`.
+> Vercel čita `vercel.json` **samo iz svog Root Directory-ja** — konfiguracija u podmapi
+> se prosto ne vidi. Ovo je već jednom palo: `apps/web/vercel.json` je bio ispravan za
+> stanje pre monorepo-a, Vercel ga nije ni pročitao, sam detektovao pnpm i turbo, build
+> **uspeo**, pa se srušio na traženju `dist` na korenu — otud poruka
+> „No Output Directory named `dist` found after the Build completed".
+
+Četiri stvari koje su posledica monorepo-a i ne smeju se „pojednostaviti" nazad:
+
+| Zašto tako                       | Šta bi se desilo drugačije                                                                 |
+| -------------------------------- | ------------------------------------------------------------------------------------------ |
+| `pnpm install`, ne `npm install` | zavisnosti su `workspace:*` — to je pnpm protokol, npm ga ne razume i pada na instalaciji  |
+| `--filter=web`                   | gradi `web` i svih 9 paketa od kojih zavisi, a preskače `admin`                            |
+| `outputDirectory: apps/web/dist` | build po definiciji piše u paket, ne na koren                                              |
+| `framework: null`                | koren repoa nije Vite projekat; auto-detekcija bi tražila `vite.config` na pogrešnom mestu |
 
 ### Zašto test nije imenovano okruženje
 
