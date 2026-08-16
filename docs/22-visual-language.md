@@ -68,13 +68,37 @@ podlozi u obe teme — to je prag za grafičke oznake po WCAG-u.
 Brend logotipi tehnologija su izuzetak od pravila o jednom akcentu: oni **jesu** šarenilo,
 i zato stoje u belim squircle pločicama koje ih drže odvojene od ostatka stranice.
 
-**Za tuđe logotipe fiksne boje postoji `--plate`** — jedini token koji **nema par u tamnoj
-temi**, i to namerno. Grb Elektronskog fakulteta je tamno plav sa providnom pozadinom; na
-`--card` u tamnoj temi (27.68% svetline) prosto bi nestao. Boju tuđeg znaka ne biramo mi,
-pa mu moramo dati podlogu koju biramo.
+**Za tuđe logotipe fiksne boje postoji grupa `--plate*`** — jedini tokeni koji **nemaju par
+u tamnoj temi**, i to namerno. Grb Elektronskog fakulteta je tamno plav sa providnom
+pozadinom; na `--card` u tamnoj temi (27.68% svetline) prosto bi nestao. Boju tuđeg znaka
+ne biramo mi, pa mu moramo dati podlogu koju biramo.
 
-> Koristi se **samo** za takve logotipe. Za sve ostalo `--card` — površina koja se ne
+| Token               | Uloga                        |
+| ------------------- | ---------------------------- |
+| `--plate`           | papir / podloga logotipa     |
+| `--plate-ink`       | mastilo na papiru            |
+| `--plate-ink-muted` | prigušeno mastilo (podnožje) |
+| `--plate-line`      | linija na papiru             |
+
+**Kad se podloga ne invertuje, ne sme ni tekst na njoj.** `text-foreground` bi u tamnoj temi
+postao skoro beo i nestao sa svetlog papira — zato papir nosi svoje mastilo. Izmereno iz
+OKLCH: mastilo **9.98:1**, prigušeno **7.08:1**, linija **3.05:1**.
+
+> Koristi se **samo** za takve slučajeve. Za sve ostalo `--card` — površina koja se ne
 > invertuje je u tamnoj temi svetla mrlja, i svaka sledeća je mrlja više.
+
+### 4c. Dokument sme ivicu — i to je jedini izuzetak od §3
+
+Diploma u Studio sekciji ima **uokvireno polje sa tankom linijom**, iako §3 kaže da se
+površine izdvajaju senkom. Razlog je što ovde ivica **nije način izdvajanja nego sadržaj**:
+štampan dokument bez okvira nije dokument nego kartica.
+
+Papir se i dalje izdvaja senkom, kao svaka druga površina; linija je unutar njega.
+Prva vrednost za nju bio je `--border-strong`, koji na papiru daje **1.62:1** i praktično se
+ne vidi — otud poseban `--plate-line`.
+
+Pečat je otisnut **preko** sadržaja (`absolute`, zarotiran, `mix-blend-multiply`), ne
+poređan pored njega. Znak koji stoji uredno u koloni sa tekstom je ikonica; pečat je otisak.
 
 Tag sa logotipom je druga strana istog pravila: kad boju nosi znak, oko njega **nema ni
 ivice ni podloge** (`badge` varijanta `logo` + veličina `bare`). Pilula bi bila drugi sistem

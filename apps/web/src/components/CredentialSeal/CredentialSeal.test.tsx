@@ -5,43 +5,70 @@ import { describe, expect, it } from 'vitest'
 import { CredentialSeal } from './CredentialSeal'
 
 const props = {
+  university: 'Univerzitet u Nišu',
   degree: 'Diplomirani inženjer elektrotehnike i računarstva',
-  institution: 'Elektronski fakultet · Univerzitet u Nišu',
+  programme: 'Računarstvo i informatika',
+  faculty: 'Elektronski fakultet',
+  city: 'Niš, Srbija',
   logo: '/edu/elfak.webp',
 }
 
 describe('CredentialSeal', () => {
-  it('prikazuje zvanje i ustanovu', () => {
+  it('prikazuje svih pet podataka sa dokumenta', () => {
     render(<CredentialSeal {...props} />)
 
-    expect(screen.getByText(props.degree)).toBeInTheDocument()
-    expect(screen.getByText(props.institution)).toBeInTheDocument()
+    for (const value of [
+      props.university,
+      props.degree,
+      props.programme,
+      props.faculty,
+      props.city,
+    ]) {
+      expect(screen.getByText(value)).toBeInTheDocument()
+    }
   })
 
-  it('grb je van pristupačnog stabla — tekst pored njega nosi isto značenje', () => {
+  it('svaki podatak stoji u pristupačnom stablu tačno jednom', () => {
+    render(<CredentialSeal {...props} />)
+
+    for (const value of [
+      props.university,
+      props.degree,
+      props.programme,
+      props.faculty,
+      props.city,
+    ]) {
+      expect(screen.getAllByText(value)).toHaveLength(1)
+    }
+  })
+
+  it('pečat je van pristupačnog stabla — sve sa grba piše i u tekstu', () => {
     const { container } = render(<CredentialSeal {...props} />)
 
-    // Nijedna slika ne sme da se pojavi kao `img` uloga: alt="" + aria-hidden
     expect(screen.queryByRole('img')).not.toBeInTheDocument()
     expect(container.querySelector('img')).toHaveAttribute('alt', '')
   })
 
-  it('diploma se u pristupačnom stablu pojavljuje tačno jednom', () => {
-    render(<CredentialSeal {...props} />)
-    expect(screen.getAllByText(props.degree)).toHaveLength(1)
-  })
-
-  it('grb ima dimenzije — bez njih tekst poskoči kad se slika učita', () => {
+  it('pečat ima dimenzije — bez njih se raspored pomeri kad se slika učita', () => {
     const { container } = render(<CredentialSeal {...props} />)
     const image = container.querySelector('img')
 
+    expect(image).toHaveAttribute('src', props.logo)
     expect(image).toHaveAttribute('width')
     expect(image).toHaveAttribute('height')
   })
 
-  it('grb stoji na podlozi koja se ne invertuje — inače nestane u tamnoj temi', () => {
+  it('papir i mastilo su tokeni koji se ne invertuju', () => {
+    // Da tekst koristi text-foreground, u tamnoj temi bi nestao sa svetlog papira
     const { container } = render(<CredentialSeal {...props} />)
+
     expect(container.querySelector('.bg-plate')).toBeInTheDocument()
+    expect(container.querySelector('.text-plate-ink')).toBeInTheDocument()
+  })
+
+  it('zvanje je naslov, ne običan tekst — dokument ima hijerarhiju', () => {
+    render(<CredentialSeal {...props} />)
+    expect(screen.getByRole('heading', { name: props.degree })).toBeInTheDocument()
   })
 
   it('nema axe povreda', async () => {

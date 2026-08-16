@@ -41,8 +41,11 @@ export const StudioSection = () => {
         <CredentialSeal
           className={studioSealVariants()}
           logo="/edu/elfak.webp"
+          university={t('studio.credential.university')}
           degree={t('studio.credential.degree')}
-          institution={t('studio.credential.institution')}
+          programme={t('studio.credential.programme')}
+          faculty={t('studio.credential.faculty')}
+          city={t('studio.credential.city')}
         />
       </div>
     </SectionBlock>

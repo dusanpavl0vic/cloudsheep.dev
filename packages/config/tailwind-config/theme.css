@@ -63,12 +63,24 @@
   --inverse-primary: oklch(61.23% 0.2092 263.53); /* svetlija plava na navy podlozi */
   --inverse-border: oklch(95.91% 0.025 106.86 / 0.141);
 
-  /* Pločica koja se NAMERNO ne invertuje — jedini token bez para u tamnoj temi.
-     Za tuđe brend logotipe fiksne boje: grb fakulteta je tamno plav sa providnom
-     pozadinom, pa bi na tamnoj `--card` (27.68% svetline) prosto nestao. Isti razlog
-     zbog kog `docs/22 §4b` izuzima brend logotipe od pravila o jednom akcentu —
-     njihovu boju ne biramo mi, pa im moramo dati podlogu koju biramo. */
+  /* ── Papir ──────────────────────────────────────────────────────────────
+     Jedina grupa tokena koja se NAMERNO ne invertuje — nijedan nema par u tamnoj temi.
+
+     Za tuđe brend logotipe fiksne boje i za diplomu: grb fakulteta je tamno plav sa
+     providnom pozadinom, pa bi na tamnoj `--card` (27.68% svetline) prosto nestao.
+     Isti razlog zbog kog `docs/22 §4b` izuzima brend logotipe od pravila o jednom
+     akcentu — njihovu boju ne biramo mi, pa im moramo dati podlogu koju biramo.
+
+     Kad se podloga ne invertuje, ne sme ni mastilo na njoj: `text-foreground` bi u
+     tamnoj temi postao skoro beo i nestao sa svetlog papira. Zato papir nosi svoje
+     mastilo. Kontrast je računat iz OKLCH, ne odokativno (docs/15):
+       mastilo 9.98:1 · prigušeno 7.08:1 · linija 3.05:1 */
   --plate: oklch(99.35% 0.0026 106.45); /* Ivory */
+  --plate-ink: oklch(38.13% 0.1312 260.45); /* Royal Blue — isto kao svetli --foreground */
+  --plate-ink-muted: oklch(46% 0.0988 263.8); /* Ink-soft — podnožje dokumenta */
+  /* Linija na papiru. Svetli --border-strong je ovde davao 1.62:1 i prosto se nije
+     video; na 66% čita kao štampana linija i prelazi 3:1 za grafičke oznake. */
+  --plate-line: oklch(66% 0.03 260);
 
   /* ── Akcenti za oznake ──────────────────────────────────────────────────
      Nose boju na SITNIM površinama: ikonice, tačkice, tagovi, brojevi koraka.
@@ -153,6 +165,9 @@
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-plate: var(--plate);
+  --color-plate-ink: var(--plate-ink);
+  --color-plate-ink-muted: var(--plate-ink-muted);
+  --color-plate-line: var(--plate-line);
   --color-mark-amber: var(--mark-amber);
   --color-mark-violet: var(--mark-violet);
   --color-mark-teal: var(--mark-teal);
