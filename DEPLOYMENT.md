@@ -112,6 +112,45 @@ razminuti sa kodom.
 | `outputDirectory: apps/web/dist` | build po definiciji piše u paket, ne na koren                                              |
 | `framework: null`                | koren repoa nije Vite projekat; auto-detekcija bi tražila `vite.config` na pogrešnom mestu |
 
+### Bezbednosni headeri
+
+`vercel.json` postavlja CSP, HSTS, `nosniff`, `Referrer-Policy` i `Permissions-Policy`.
+Dve odluke koje se lako „isprave" pogrešno:
+
+- **`style-src` ima `'unsafe-inline'`, i to mora.** Pet komponenti koristi `style={{ }}`
+  (pozicije hero kartica, širine traka napretka, gradijenti) — to su inline `style` atributi
+  koje CSP inače blokira. **`script-src` je ostao strog**, jer tamo `'unsafe-inline'` čini
+  celu politiku besmislenom, i to je ono što Lighthouse zapravo meri.
+- **`https://vercel.live` je namerno dozvoljen** u `script-src`, `connect-src` i `frame-src`.
+  Bez toga preview traka prestane da radi na svakom preview deployment-u. Cena: i produkcija
+  dozvoljava taj host, iako ga tamo nema.
+
+Fontovi dobijaju `Cache-Control: immutable` na godinu dana jer **nemaju heš u imenu**
+(`dm-sans-latin.woff2`), pa ih Vercel ne kešira agresivno sam. Posledica: promena fonta traži
+promenu imena fajla.
+
+### `noindex` na preview-u je očekivan
+
+Lighthouse na preview URL-u prijavljuje „Page is blocked from indexing" zbog
+`x-robots-tag: noindex`. **To Vercel dodaje sam, svim preview deployment-ima**, da testne
+verzije ne završe u pretrazi. Na `prod` grani ga nema.
+
+Ne treba ga „popravljati" — svaki pokušaj bi značio da se testne verzije indeksiraju.
+
+### SEO fajlovi
+
+`robots.txt` **mora** postojati kao statični fajl: bez njega catch-all rewrite servira
+`index.html` na `/robots.txt`, pa crawler dobije HTML i svaku liniju prijavi kao neispravnu
+direktivu. Vercel servira postojeći fajl pre rewrite-a, pa je samo prisustvo fajla popravka.
+
+`sitemap.xml` **nije u repou** — gradi ga `scripts/build-sitemap.mjs` kao `prebuild` u
+`apps/web`, čitajući rute i slug-ove projekata iz koda. Ručno pisan bi zastario čim se doda
+projekat, i to tiho.
+
+`canonical` i `og:url` postavlja `useDocumentHead` **po ruti**. Statična vrednost u
+`index.html` bi važila za svaku rutu i rekla pretraživaču da su `/projects`, `/contact` i
+`/uses` duplikati početne — dakle izbacila ih iz indeksa.
+
 ### Zašto test nije imenovano okruženje
 
 Vercel ima **Create Environment** (custom environments), čime bi `test` bio

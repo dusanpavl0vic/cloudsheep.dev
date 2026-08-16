@@ -26,6 +26,11 @@ playwright/.cache
 test-results
 .lighthouseci
 
+# Generisani artefakti
+# sitemap.xml pravi scripts/build-sitemap.mjs iz ruta i slug-ova pri svakom buildu.
+# Commit-ovan bi bio drugi izvor istine koji tiho zastari.
+apps/web/public/sitemap.xml
+
 # Deploy
 # Vercel CLI upisuje ID projekta i organizacije — vezano za nalog, ne za repo.
 .vercel

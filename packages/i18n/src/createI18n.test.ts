@@ -8,7 +8,8 @@ const resources = {
       save: 'Sačuvaj',
       // Srpski ima TRI plural forme — ovo je razlog zašto je ICU uključen
       projects: '{count, plural, one {# projekat} few {# projekta} other {# projekata}}',
-      greeting: '{gender, select, female {Dobrodošla} male {Dobrodošao} other {Dobrodošli}}, {name}!',
+      greeting:
+        '{gender, select, female {Dobrodošla} male {Dobrodošao} other {Dobrodošli}}, {name}!',
     },
   },
   en: {
@@ -109,5 +110,30 @@ describe('fallback', () => {
     const en = make('en')
     expect(sr.t('save')).toBe('Sačuvaj')
     expect(en.t('save')).toBe('Save')
+  })
+})
+
+describe('sinhronizacija <html lang>', () => {
+  it('postavlja atribut na početni jezik', async () => {
+    const instance = make('sr')
+    await instance.changeLanguage('sr')
+
+    expect(document.documentElement.lang).toBe('sr')
+  })
+
+  it('menja atribut pri promeni jezika', async () => {
+    const instance = make('sr')
+    await instance.changeLanguage('en')
+
+    // Bez ovoga screen reader čita engleski tekst srpskim izgovorom
+    expect(document.documentElement.lang).toBe('en')
+  })
+
+  it('vraća ga nazad — nije jednosmerno', async () => {
+    const instance = make('en')
+    await instance.changeLanguage('en')
+    await instance.changeLanguage('sr')
+
+    expect(document.documentElement.lang).toBe('sr')
   })
 })

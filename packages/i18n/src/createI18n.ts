@@ -55,5 +55,35 @@ export function createI18n({
       returnNull: false,
     })
 
+  syncDocumentLang(instance)
+
   return instance
+}
+
+/**
+ * Drži `<html lang>` u koraku sa izabranim jezikom.
+ *
+ * Bez ovoga atribut ostaje na vrednosti iz `index.html` (`sr`) i kad je sajt prebačen na
+ * engleski. Posledice nisu kozmetičke: screen reader tada čita engleski tekst srpskim
+ * izgovorom, a pretraživač indeksira stranicu pod pogrešnim jezikom.
+ *
+ * Lighthouse ovo ne prijavljuje jer meri samo prvo učitavanje, pre nego što je iko dodirnuo
+ * prebacivač jezika.
+ *
+ * Stoji ovde, a ne u app-i: pravilo važi za obe app-e i vezano je za i18next instancu, ne za
+ * njihove rute. `typeof document` je zaštita za okruženja bez DOM-a (SSR, čist node test).
+ */
+function syncDocumentLang(instance: I18nInstance): void {
+  if (typeof document === 'undefined') return
+
+  const apply = (lng: string) => {
+    document.documentElement.lang = lng
+  }
+
+  // `language` je nedefinisan dok se `init` ne razreši, pa i početno postavljanje ide
+  // kroz događaj; `initialized` se okine i kad je init već gotov.
+  instance.on('initialized', () => {
+    apply(instance.language)
+  })
+  instance.on('languageChanged', apply)
 }

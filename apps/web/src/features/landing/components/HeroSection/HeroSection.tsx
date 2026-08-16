@@ -46,8 +46,31 @@ export const HeroSection = () => {
     const lit = litRef.current
     if (!section || !lit) return
 
+    /**
+     * Pravougaonik se čita JEDNOM i pamti.
+     *
+     * Ranije je `getBoundingClientRect()` stajao unutar `onMove`, dakle izvršavao se pri
+     * svakom pomeraju miša — i to odmah posle `setProperty` iz prethodnog događaja. To je
+     * layout thrashing: upis poništi stil, sledeće čitanje natera pretraživač da ponovo
+     * izračuna raspored pre nego što odgovori. Lighthouse je to izmerio kao 104 ms
+     * prisilnog preračunavanja.
+     *
+     * Sada pomeraj miša ne čita raspored uopšte; vrednost se osvežava samo kad se stvarno
+     * promeni — na skrolu i promeni veličine, i to najviše jednom po kadru.
+     */
+    let rect = section.getBoundingClientRect()
+    let queued = false
+
+    const refresh = () => {
+      if (queued) return
+      queued = true
+      requestAnimationFrame(() => {
+        rect = section.getBoundingClientRect()
+        queued = false
+      })
+    }
+
     const onMove = (event: MouseEvent) => {
-      const rect = section.getBoundingClientRect()
       lit.style.setProperty('--mx', `${String(event.clientX - rect.left)}px`)
       lit.style.setProperty('--my', `${String(event.clientY - rect.top)}px`)
     }
@@ -59,10 +82,14 @@ export const HeroSection = () => {
 
     section.addEventListener('mousemove', onMove)
     section.addEventListener('mouseleave', onLeave)
+    window.addEventListener('scroll', refresh, { passive: true })
+    window.addEventListener('resize', refresh)
 
     return () => {
       section.removeEventListener('mousemove', onMove)
       section.removeEventListener('mouseleave', onLeave)
+      window.removeEventListener('scroll', refresh)
+      window.removeEventListener('resize', refresh)
     }
   }, [prefersReduced])
 

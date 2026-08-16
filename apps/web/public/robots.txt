@@ -1,0 +1,10 @@
+# https://cloudsheep.dev
+# Ovaj fajl MORA postojati kao statični fajl. Bez njega catch-all rewrite iz vercel.json
+# ("/(.*)" -> "/index.html") servira SPA stranicu na /robots.txt, pa je crawler dobija kao
+# HTML i tretira svaku liniju kao neispravnu direktivu. Vercel servira postojeći fajl pre
+# nego što primeni rewrite, pa je prisustvo fajla cela popravka.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://cloudsheep.dev/sitemap.xml
