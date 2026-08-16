@@ -1,8 +1,8 @@
 # 06 — Modali i dijalozi
 
 > Status: active | Last review: 2026-08-15
-> ⚠ Izbor engine-a (sopstveni vs `@ebay/nice-modal-react`) se finalizuje u F4 —
-> [`adr/0006-modal-engine.md`](adr/0006-modal-engine.md). Dole je opisan sopstveni engine.
+> Engine je sopstveni, Redux-driven — odluka i dokazi u
+> [`adr/0006-modal-engine.md`](adr/0006-modal-engine.md).
 
 **Svi dijalozi se otvaraju preko Redux-a, ne preko lokalnog `isOpen` state-a.**
 

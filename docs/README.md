@@ -54,7 +54,7 @@ Odluka koja se ne može izvesti iz koda mora biti zapisana. Nova se pravi sa `/a
 | [0003](adr/0003-styling-choice.md) | Tailwind v4 umesto Panda/vanilla-extract | accepted |
 | [0004](adr/0004-feature-folders-vs-fsd.md) | Feature folders umesto kanonskog FSD-a | accepted |
 | [0005](adr/0005-barrel-files.md) | Barrel fajlovi samo na granicama | accepted |
-| [0006](adr/0006-modal-engine.md) | Sopstveni Redux modal engine vs `nice-modal-react` | **proposed** — odlučuje se u F4 |
+| [0006](adr/0006-modal-engine.md) | Sopstveni Redux modal engine vs `nice-modal-react` | accepted |
 | [0007](adr/0007-ui-flat-vs-folder.md) | `packages/ui`: flat `ui/`, folder drugde | accepted |
 | [0008](adr/0008-theme-data-attribute.md) | Tema preko `data-theme`, ne `class` | accepted |
 

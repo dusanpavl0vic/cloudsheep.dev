@@ -210,6 +210,11 @@ export function createPackageConfig({ tsconfigRootDir, react = true } = {}) {
           },
         }
       : {},
+    // Config fajlovi zahtevaju default export po ugovoru alata
+    {
+      files: ['**/*.config.{ts,js,mjs}'],
+      rules: { 'import/no-default-export': 'off' },
+    },
     {
       files: ['**/*.test.{ts,tsx}'],
       rules: {

@@ -1,7 +1,7 @@
 # ADR 0006 — Modal engine: sopstveni Redux vs `@ebay/nice-modal-react`
 
-> Status: **proposed** — odluka se donosi u F4, pre implementacije `packages/core`
-> Datum: 2026-08-15
+> Status: **accepted** — sopstveni Redux engine
+> Datum: 2026-08-16 (predlog 2026-08-15, odlučeno u F4)
 
 ## Context
 
@@ -49,14 +49,47 @@ Odlučuje se po ovim tačkama, redom:
    manje našeg koda.
 4. Ako su 1 i 2 zadovoljeni a 3 nije — opcija A, jer je Redux zahtev eksplicitan.
 
+## Decision
+
+**Opcija A — sopstveni Redux engine** u `packages/core/src/modals/`.
+
+### Dokazi na kojima je odluka doneta (provereno 2026-08-16)
+
+| Kriterijum | Nalaz za `@ebay/nice-modal-react@1.2.13` | Ishod |
+|---|---|---|
+| 1. Podržava stack? | README ne pominje stack nijednom | ✗ |
+| 2. Type-safe registracija? | Nema pominjanja TypeScript-a ni `declare module` obrasca | ✗ |
+| 3. Gubitak time-travel-a prihvatljiv? | nije se ni razmatralo — 1 i 2 već padaju | — |
+
+Presudan dodatni nalaz: **poslednja objava je 2023-10-03**, skoro tri godine pre ove odluke.
+`peerDependencies` je `react: ">16.8.0"`, napisan u doba React-a 18 — formalno propušta React 19,
+ali paket nije ažuriran ni za jednu njegovu promenu. Uvođenje neodržavane zavisnosti u srž
+sistema koji svaka app koristi je gori rizik od 150 linija sopstvenog koda.
+
+Po pravilu iz kriterijuma: 1 pada → opcija A.
+
 ## Consequences
 
-Popuniće se kad odluka bude doneta.
+### Pozitivne
+- Stack modala je prvorazredan koncept, ne zaobilaznica
+- `ModalPropsMap` čini registraciju modala bez tipa propsa **greškom u kompilaciji**
+- Redux devtools i time-travel rade za modale kao i za sve ostalo
+- Nema neodržavane zavisnosti u srži
+
+### Negativne
+- **~150 linija koda koji mi održavamo i testiramo**
+- `resolvers.ts` (Map van Redux-a) je suptilan deo — ako se `settleResolver` propusti,
+  curi memorija. Zato `closeAll` prolazi kroz ceo stack, a ne samo prazni niz
+- Pišemo bugove koje je biblioteka možda već ispravila
+
+### Neutralne
+- Radix `Dialog` i dalje nosi mehaniku (focus trap, ESC, scroll lock) — ne pišemo je sami
 
 ## Revisit when
 
-Odluka se donosi u F4. Posle toga: revidirati ako se pojavi treći kandidat ili ako se
-pokaže da stack modala nikad nije korišćen (tada je jednostavniji model dovoljan).
+- Pojavi se održavana biblioteka koja podržava i stack i type-safe registry
+- Pokaže se da stack nikad nije iskorišćen kroz godinu dana upotrebe — tada je jednostavniji
+  model dovoljan i engine se može prepoloviti
 
 ## Reference
 
