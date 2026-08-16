@@ -1,5 +1,4 @@
 import { TECH_ITEMS, type TechItem } from '@/features/landing/tech.constants'
-import { GLYPHS } from '@/lib/glyphs'
 
 import { TECH_ICONS } from './TechIcon'
 import {
@@ -8,7 +7,7 @@ import {
   techIconVariants,
   techItemVariants,
   techMarqueeVariants,
-  techSeparatorVariants,
+  techTileVariants,
   techTrackVariants,
 } from './TechMarquee.variants'
 
@@ -27,11 +26,10 @@ function TechGroup({ items, duplicate }: { items: readonly TechItem[]; duplicate
 
         return (
           <li key={item.id} className={techItemVariants()}>
-            <Icon className={techIconVariants()} />
-            {item.label}
-            <span aria-hidden className={techSeparatorVariants()}>
-              {GLYPHS.SPARKLE}
+            <span aria-hidden className={techTileVariants()}>
+              <Icon className={techIconVariants()} />
             </span>
+            {item.label}
           </li>
         )
       })}

@@ -30,17 +30,8 @@ const SOCIAL_ICONS: Record<string, ComponentType<{ className?: string }>> = {
   email: Mail,
 }
 
-/** Dot-grid tekstura preko navy podloge — boja iz inverse-border tokena. */
-const DotGrid = () => (
-  <div
-    aria-hidden
-    className={footerDotGridVariants()}
-    style={{
-      backgroundImage: 'radial-gradient(var(--inverse-border) 1px, transparent 1px)',
-      backgroundSize: '26px 26px',
-    }}
-  />
-)
+/** Tačkasta tekstura panela — statična (docs/22 §6). */
+const DotGrid = () => <div aria-hidden className={footerDotGridVariants()} />
 
 interface SiteFooterProps {
   variant?: 'full' | 'slim'
@@ -54,7 +45,7 @@ export const SiteFooter = ({ variant = 'full' }: SiteFooterProps) => {
       <footer className={siteFooterVariants()}>
         <Container width="content">
           <div className={footerSlimRowVariants()}>
-            <Logo tone="inverse" label={t('common.appNameLower')} />
+            <Logo tone="default" label={t('common.appNameLower')} />
             <span className={footerBottomTextVariants()}>{t('footer.copyright')}</span>
             <Link to={ROUTES.HOME} className={footerBottomTextVariants()}>
               ↑ {t('footer.backToTop')}
@@ -71,10 +62,10 @@ export const SiteFooter = ({ variant = 'full' }: SiteFooterProps) => {
       <Container className="relative pt-20">
         <div className={footerTopVariants()}>
           <div className="flex flex-col gap-6">
-            <Logo tone="inverse" size="md" label={t('common.appNameLower')} />
+            <Logo tone="default" size="md" label={t('common.appNameLower')} />
             <h2 className={footerHeadlineVariants()}>
               {t('footer.ctaLead')}{' '}
-              <span className="text-inverse-primary">{t('footer.ctaHighlight')}</span>
+              <span className="text-primary">{t('footer.ctaHighlight')}</span>
             </h2>
           </div>
         </div>
@@ -122,11 +113,11 @@ export const SiteFooter = ({ variant = 'full' }: SiteFooterProps) => {
             <h3 className={footerGroupTitleVariants()}>{t('footer.groupContact')}</h3>
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="font-mono text-[14.5px] text-inverse-primary transition-colors hover:brightness-110"
+              className="font-mono text-[14.5px] text-primary transition-colors hover:brightness-110"
             >
               {CONTACT_EMAIL}
             </a>
-            <p className="mt-3 text-[14px] leading-relaxed text-inverse-muted">
+            <p className="mt-3 text-[14px] leading-relaxed text-muted-foreground">
               {t('footer.base')}
               <br />
               {t('footer.reply')}

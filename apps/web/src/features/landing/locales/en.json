@@ -46,8 +46,9 @@
     }
   },
   "services": {
-    "eyebrow": "02 · what the studio does",
-    "title": "Four disciplines, one desk.",
+    "eyebrow": "Services",
+    "title": "Four disciplines,",
+    "titleMuted": "one desk.",
     "design": {
       "title": "Product Design",
       "description": "UX flows, UI systems and clickable prototypes that are designed to be built — not just admired."
@@ -66,8 +67,9 @@
     }
   },
   "process": {
-    "eyebrow": "03 · how a project runs",
-    "title": "A process with no surprises.",
+    "eyebrow": "Process",
+    "title": "A process",
+    "titleMuted": "without surprises.",
     "discover": {
       "title": "Discover",
       "description": "A call and a written brief. We define what success looks like before anything is drawn.",
@@ -90,14 +92,16 @@
     }
   },
   "work": {
-    "eyebrow": "04 · selected work",
-    "title": "Proof, not promises.",
+    "eyebrow": "Work",
+    "title": "Proof,",
+    "titleMuted": "not promises.",
     "allCases": "See all projects",
     "readCase": "View project"
   },
   "pricing": {
-    "eyebrow": "05 · ways to work together",
-    "title": "Three ways in.",
+    "eyebrow": "Pricing",
+    "title": "Three ways",
+    "titleMuted": "to start working.",
     "note": "exact numbers after a short discovery call — every project is scoped individually",
     "fixed": {
       "title": "Fixed-scope build",
@@ -126,8 +130,9 @@
     }
   },
   "faq": {
-    "eyebrow": "06 · questions",
-    "title": "Asked before, answered here.",
+    "eyebrow": "FAQ",
+    "title": "Asked before,",
+    "titleMuted": "answered here.",
     "onePerson": {
       "q": "Is it really just one person?",
       "a": "Yes — one engineer-designer doing the thinking, the pixels and the code. For specialised needs I bring in trusted collaborators, but responsibility never leaves this desk."

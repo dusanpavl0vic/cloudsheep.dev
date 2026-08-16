@@ -24,6 +24,7 @@ export const FaqSection = () => {
       id={SECTION_IDS.FAQ}
       eyebrow={t('faq.eyebrow')}
       title={t('faq.title')}
+      muted={t('faq.titleMuted')}
       width="narrow"
       align="center"
     >

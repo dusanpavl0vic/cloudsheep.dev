@@ -1,12 +1,22 @@
 import { cva } from 'class-variance-authority'
 
-export const siteFooterVariants = cva('relative w-full overflow-hidden bg-inverse text-inverse-foreground')
+/**
+ * Svetli panel sa tačkastom teksturom (docs/22 §3, §6).
+ *
+ * Ranije je bio tamni navy blok. Pošto ContactSection iznad njega već nosi tamni CTA panel,
+ * dva tamna bloka jedan do drugog su se slila u jedan — footer je gubio granicu.
+ */
+export const siteFooterVariants = cva(
+  'relative w-full overflow-hidden bg-muted/55 text-foreground',
+)
 
 /** Dekorativna dot-grid tekstura na navy podlozi (boja iz tokena). */
-export const footerDotGridVariants = cva('pointer-events-none absolute inset-0')
+export const footerDotGridVariants = cva(
+  'pointer-events-none absolute inset-0 bg-[radial-gradient(currentColor_1px,transparent_1px)] bg-[length:22px_22px] text-border-strong/40',
+)
 
 export const footerTopVariants = cva(
-  'flex flex-col justify-between gap-10 border-b border-inverse-border pb-12 md:flex-row md:items-end',
+  'flex flex-col justify-between gap-10 border-b border-border pb-12 md:flex-row md:items-end',
 )
 
 export const footerHeadlineVariants = cva(
@@ -18,7 +28,7 @@ export const footerGridVariants = cva(
 )
 
 export const footerGroupTitleVariants = cva(
-  'mb-4 font-mono text-[11.5px] tracking-[0.1em] uppercase text-inverse-faint',
+  'mb-4 font-mono text-[11.5px] tracking-[0.1em] uppercase text-faint',
 )
 
 /**
@@ -27,21 +37,21 @@ export const footerGroupTitleVariants = cva(
  * Pomera se udesno na hover.
  */
 export const footerLinkVariants = cva(
-  "inline-flex items-center gap-2 text-[14.5px] text-inverse-muted transition-colors before:text-inverse-faint before:transition-transform before:content-['→'] hover:text-inverse-foreground hover:before:translate-x-0.5",
+  "inline-flex items-center gap-2 text-[14.5px] text-muted-foreground transition-colors before:text-faint before:transition-transform before:content-['→'] hover:text-display hover:before:translate-x-0.5",
 )
 
-export const footerTextVariants = cva('max-w-[290px] text-[14.5px] leading-relaxed text-inverse-muted')
+export const footerTextVariants = cva('max-w-[290px] text-[14.5px] leading-relaxed text-muted-foreground')
 
 export const footerSocialVariants = cva(
-  'inline-flex size-[42px] items-center justify-center rounded-xl border border-inverse-border text-inverse-muted transition-[transform,background-color,color,border-color] duration-200 hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground [&_svg]:size-[18px]',
+  'inline-flex size-[42px] items-center justify-center rounded-xl border border-border text-muted-foreground transition-[transform,background-color,color,border-color] duration-200 hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground [&_svg]:size-[18px]',
 )
 
 export const footerBottomVariants = cva(
-  'flex flex-col items-center justify-between gap-3 border-t border-inverse-border py-6 sm:flex-row',
+  'flex flex-col items-center justify-between gap-3 border-t border-border py-6 sm:flex-row',
 )
 
 export const footerBottomTextVariants = cva(
-  'font-mono text-[11.5px] tracking-wide text-inverse-faint transition-colors hover:text-inverse-foreground',
+  'font-mono text-[11.5px] tracking-wide text-faint transition-colors hover:text-display',
 )
 
 /* --- Slim varijanta (podstranice) --- */

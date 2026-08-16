@@ -46,8 +46,9 @@
     }
   },
   "services": {
-    "eyebrow": "02 · čime se studio bavi",
-    "title": "Četiri discipline, jedan sto.",
+    "eyebrow": "Usluge",
+    "title": "Četiri discipline,",
+    "titleMuted": "jedan sto.",
     "design": {
       "title": "Dizajn proizvoda",
       "description": "UX tokovi, UI sistemi i klikabilni prototipovi napravljeni da se izgrade — a ne samo da lepo izgledaju."
@@ -66,8 +67,9 @@
     }
   },
   "process": {
-    "eyebrow": "03 · kako teče projekat",
-    "title": "Proces bez iznenađenja.",
+    "eyebrow": "Proces",
+    "title": "Proces",
+    "titleMuted": "bez iznenađenja.",
     "discover": {
       "title": "Otkrivanje",
       "description": "Poziv i pisani brief. Definišemo kako izgleda uspeh pre nego što se bilo šta nacrta.",
@@ -90,14 +92,16 @@
     }
   },
   "work": {
-    "eyebrow": "04 · izabrani radovi",
-    "title": "Dokazi, ne obećanja.",
+    "eyebrow": "Radovi",
+    "title": "Dokazi,",
+    "titleMuted": "ne obećanja.",
     "allCases": "Svi projekti",
     "readCase": "Pogledaj projekat"
   },
   "pricing": {
-    "eyebrow": "05 · načini saradnje",
-    "title": "Tri načina da uđemo u posao.",
+    "eyebrow": "Cene",
+    "title": "Tri načina",
+    "titleMuted": "da uđemo u posao.",
     "note": "tačni iznosi posle kratkog uvodnog poziva — svaki projekat se procenjuje pojedinačno",
     "fixed": {
       "title": "Projekat fiksnog obima",
@@ -126,8 +130,9 @@
     }
   },
   "faq": {
-    "eyebrow": "06 · pitanja",
-    "title": "Pitano ranije, odgovoreno ovde.",
+    "eyebrow": "Pitanja",
+    "title": "Pitano ranije,",
+    "titleMuted": "odgovoreno ovde.",
     "onePerson": {
       "q": "Da li je stvarno samo jedna osoba?",
       "a": "Da — jedan inženjer-dizajner koji radi promišljanje, piksele i kod. Za specijalizovane potrebe uključujem proverene saradnike, ali odgovornost nikad ne napušta ovaj sto."

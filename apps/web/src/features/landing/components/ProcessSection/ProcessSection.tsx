@@ -13,6 +13,9 @@ export const ProcessSection = () => {
       id={SECTION_IDS.PROCESS}
       eyebrow={t('process.eyebrow')}
       title={t('process.title')}
+      muted={t('process.titleMuted')}
+      align="center"
+      surface="panel"
     >
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {PROCESS_STEPS.map((step) => (

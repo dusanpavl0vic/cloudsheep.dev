@@ -13,6 +13,8 @@ export const ServicesSection = () => {
       id={SECTION_IDS.SERVICES}
       eyebrow={t('services.eyebrow')}
       title={t('services.title')}
+      muted={t('services.titleMuted')}
+      align="center"
     >
       <div className="flex flex-col">
         {DISCIPLINES.map((item, itemIndex) => (

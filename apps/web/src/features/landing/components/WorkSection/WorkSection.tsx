@@ -17,6 +17,7 @@ export const WorkSection = () => {
       id={SECTION_IDS.WORK}
       eyebrow={t('work.eyebrow')}
       title={t('work.title')}
+      muted={t('work.titleMuted')}
       action={
         <TextLink asChild>
           <Link to={ROUTES.PROJECTS}>{t('work.allCases')} →</Link>

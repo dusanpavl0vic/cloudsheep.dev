@@ -40,7 +40,8 @@
   --secondary-foreground: oklch(24.82% 0.0762 261.71);
   --muted: oklch(95.07% 0.0066 106.53); /* Surface-2 — hover redova */
   --muted-foreground: oklch(46% 0.0988 263.8); /* Ink-soft — paragrafi */
-  --faint: oklch(66.71% 0.0485 267.2); /* Ink-faint — meta / mono labele */
+  --faint: oklch(54% 0.0485 267.2); /* Ink-faint — meta labele i prigušena polovina naslova.
+     Potamnjen sa 66.71%: na 66.71% je bio 2.73:1 prema panelu, ispod WCAG AA (docs/15). */
   --accent: oklch(51.04% 0.2178 263.62); /* isti plavi akcenat kao primary */
   --accent-foreground: oklch(97.83% 0.004 106.47);
   --success: oklch(71.19% 0.152 158.69); /* Jungle Green */

@@ -13,6 +13,9 @@ export const PricingSection = () => {
       id={SECTION_IDS.PRICING}
       eyebrow={t('pricing.eyebrow')}
       title={t('pricing.title')}
+      muted={t('pricing.titleMuted')}
+      align="center"
+      surface="panel"
     >
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
