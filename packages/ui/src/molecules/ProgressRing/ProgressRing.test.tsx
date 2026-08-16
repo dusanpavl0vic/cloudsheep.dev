@@ -51,16 +51,48 @@ describe('ProgressRing', () => {
     vi.unstubAllGlobals()
   })
 
-  it('prikazuje vrednost sa znakom procenta', () => {
+  it('brojač kreće od nule i odbrojava tek na ulasku u viewport', () => {
     mockObserver()
     render(<ProgressRing value={95} ariaLabel="Dostupnost" />)
-    expect(screen.getByText('95%')).toBeInTheDocument()
+    expect(screen.getByText('0%')).toBeInTheDocument()
   })
 
-  it('prikazuje sopstvenu labelu kad je data', () => {
+  it('poštuje broj decimala', () => {
     mockObserver()
-    render(<ProgressRing value={99.95} label="99.95%" ariaLabel="Dostupnost" />)
-    expect(screen.getByText('99.95%')).toBeInTheDocument()
+    render(<ProgressRing value={99.95} decimals={2} ariaLabel="Dostupnost" />)
+    // Pre ulaska u viewport brojač stoji na nuli
+    expect(screen.getByText('0.00%')).toBeInTheDocument()
+  })
+
+  it('prihvata sopstveni sufiks', () => {
+    mockObserver()
+    render(<ProgressRing value={40} suffix=" GB" ariaLabel="Prostor" />)
+    expect(screen.getByText('0 GB')).toBeInTheDocument()
+  })
+
+  it('domain mapira vrednost u vidljiv luk — 99.95%% na skali 0-100 bio bi nevidljiv', () => {
+    const observer = mockObserver()
+
+    const { container: full } = render(
+      <ProgressRing value={99.95} decimals={2} ariaLabel="A" />,
+    )
+    act(() => {
+      observer.enter()
+    })
+    const fullScaleOffset = Number(offsetOf(full))
+
+    const observer2 = mockObserver()
+    const { container: scaled } = render(
+      <ProgressRing value={99.95} domain={[99, 100]} decimals={2} ariaLabel="B" />,
+    )
+    act(() => {
+      observer2.enter()
+    })
+    const scaledOffset = Number(offsetOf(scaled))
+
+    // Na punoj skali procep je ispod pola piksela; na suženom opsegu je merljiv
+    expect(fullScaleOffset).toBeLessThan(1)
+    expect(scaledOffset).toBeGreaterThan(15)
   })
 
   it('kreće prazan i puni se tek na ulazak u viewport', () => {
@@ -84,12 +116,19 @@ describe('ProgressRing', () => {
   })
 
   it.each([
-    [-10, '0%'],
-    [150, '100%'],
-  ])('ograničava vrednost %i na %s', (value, expected) => {
-    mockObserver()
-    render(<ProgressRing value={value} ariaLabel="X" />)
-    expect(screen.getByText(expected)).toBeInTheDocument()
+    [-10, 0],
+    [150, 1],
+  ])('ograničava luk za vrednost %i van opsega', (value, expectedRatio) => {
+    const observer = mockObserver()
+    const { container } = render(<ProgressRing value={value} ariaLabel="X" />)
+
+    act(() => {
+      observer.enter()
+    })
+
+    const circumference = 2 * Math.PI * ((112 - 8) / 2) // podrazumevani size='md'
+    const offset = Number(offsetOf(container))
+    expect(offset).toBeCloseTo(circumference * (1 - expectedRatio), 0)
   })
 
   it('sa prefers-reduced-motion crta punu vrednost odmah, bez čekanja na viewport', () => {
@@ -117,7 +156,10 @@ describe('ProgressRing', () => {
     )
 
     const { container } = render(<ProgressRing value={100} ariaLabel="X" />)
+
     expect(offsetOf(container)).toBe('0')
+    // Brojač takođe preskače animaciju
+    expect(screen.getByText('100%')).toBeInTheDocument()
   })
 
   it('nema axe povreda', async () => {

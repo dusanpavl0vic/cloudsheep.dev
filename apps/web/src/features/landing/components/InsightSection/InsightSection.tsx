@@ -16,8 +16,15 @@ import {
 } from './InsightSection.variants'
 
 /** Popunjenost prstena se izvodi iz iste vrednosti — nema drugog izvora istine. */
-const UPTIME = '99.95%'
-const UPTIME_PERCENT = Number.parseFloat(UPTIME)
+const UPTIME_PERCENT = 99.95
+
+/**
+ * Prsten prikazuje opseg 99–100%, ne 0–100%.
+ *
+ * Na punoj skali 99.95% daje procep od 0.21px — prsten izgleda pun i ne saopštava
+ * ništa. Na opsegu 99–100 ista vrednost popunjava 95% luka, pa se razlika vidi.
+ */
+const UPTIME_DOMAIN = [99, 100] as const
 
 export const InsightSection = () => {
   const { t } = useTranslation(['landing', 'common'])
@@ -60,10 +67,11 @@ export const InsightSection = () => {
             <div className="flex flex-col items-center gap-2">
               <ProgressRing
                 value={UPTIME_PERCENT}
-                label={UPTIME}
+                domain={UPTIME_DOMAIN}
+                decimals={2}
                 size="lg"
                 tone="inverse"
-                ariaLabel={`${UPTIME} ${t('insight.uptime')}`}
+                ariaLabel={`${String(UPTIME_PERCENT)}% ${t('insight.uptime')}`}
               />
               <span className={gaugeLabelVariants()}>{t('insight.uptime')}</span>
             </div>

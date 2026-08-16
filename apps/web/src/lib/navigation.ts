@@ -18,12 +18,32 @@ const landingHash = (id: string) => `${ROUTES.HOME}#${id}`
 /** Istaknuta studija slučaja (koristi je footer). */
 export const FEATURED_PROJECT_SLUG = 'atlas-analytics'
 
+/**
+ * Glavna navigacija.
+ *
+ * Početna NIJE stavka — logo levo već vodi na nju, a duplirani link uvek izgleda aktivno
+ * na svakoj ruti jer "/" odgovara svakoj putanji.
+ *
+ * `sectionId` postoji da bi sidro moglo da bude aktivno kad je ta sekcija na ekranu
+ * (vidi `useActiveSection`); rute nemaju sekciju i koriste `NavLink` aktivno stanje.
+ */
 export const MAIN_NAV = [
-  { id: 'home', labelKey: 'nav.home', to: ROUTES.HOME, route: true },
-  { id: 'work', labelKey: 'nav.work', to: ROUTES.PROJECTS, route: true },
-  { id: 'services', labelKey: 'nav.services', to: landingHash(SECTION_IDS.SERVICES), route: false },
-  { id: 'process', labelKey: 'nav.process', to: landingHash(SECTION_IDS.PROCESS), route: false },
-  { id: 'contact', labelKey: 'nav.contact', to: ROUTES.CONTACT, route: true },
+  { id: 'services', labelKey: 'nav.services', to: landingHash(SECTION_IDS.SERVICES), route: false, sectionId: SECTION_IDS.SERVICES },
+  { id: 'process', labelKey: 'nav.process', to: landingHash(SECTION_IDS.PROCESS), route: false, sectionId: SECTION_IDS.PROCESS },
+  { id: 'work', labelKey: 'nav.work', to: ROUTES.PROJECTS, route: true, sectionId: null },
+  { id: 'pricing', labelKey: 'nav.pricing', to: landingHash(SECTION_IDS.PRICING), route: false, sectionId: SECTION_IDS.PRICING },
+  { id: 'contact', labelKey: 'nav.contact', to: ROUTES.CONTACT, route: true, sectionId: null },
+] as const
+
+/** Sekcije koje navigacija prati radi aktivnog stanja — redosled prati redosled u dokumentu. */
+export const TRACKED_SECTION_IDS = [
+  SECTION_IDS.STUDIO,
+  SECTION_IDS.SERVICES,
+  SECTION_IDS.PROCESS,
+  SECTION_IDS.WORK,
+  SECTION_IDS.PRICING,
+  SECTION_IDS.FAQ,
+  SECTION_IDS.CONTACT,
 ] as const
 
 export const FOOTER_NAV = [

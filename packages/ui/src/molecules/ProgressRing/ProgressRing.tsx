@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 
-import { useIntersection, useMediaQuery } from '@app/hooks'
+import { useCountUp, useIntersection, useMediaQuery } from '@app/hooks'
 
 import {
   progressIndicatorVariants,
@@ -14,10 +14,20 @@ const SIZE_PX = { sm: 80, md: 112, lg: 144 } as const
 const STROKE = { sm: 6, md: 8, lg: 10 } as const
 
 interface ProgressRingProps {
-  /** Vrednost u procentima, 0–100. */
+  /** Stvarna vrednost, u jedinicama `domain`. */
   value: number
-  /** Tekst u sredini. Ako se izostavi, prikazuje se `value` sa znakom procenta. */
-  label?: string
+  /**
+   * Opseg koji prsten prikazuje, podrazumevano `[0, 100]`.
+   *
+   * Postoji zbog vrednosti kao što je uptime: 99.95 na skali 0–100 daje procep od
+   * **0.21px** na obimu od 421px — prsten izgleda potpuno pun i ne saopštava ništa.
+   * Sa `domain={[99, 100]}` ista vrednost popunjava 95% luka, pa se razlika vidi.
+   */
+  domain?: readonly [min: number, max: number]
+  /** Broj decimala u ispisu. */
+  decimals?: number
+  /** Sufiks uz broj. */
+  suffix?: string
   /** Pristupačno ime — obavezno, jer SVG sam po sebi ne kaže šta meri. */
   ariaLabel: string
   size?: keyof typeof SIZE_PX
@@ -26,16 +36,18 @@ interface ProgressRingProps {
 }
 
 /**
- * Kružni indikator koji se popunjava kad uđe u viewport.
+ * Kružni indikator koji se popunjava i odbrojava kad uđe u viewport.
  *
- * Animacija kreće tek na ulasku (`useIntersection` sa `once`), ne pri mount-u —
- * indikator koji se napuni dok je van ekrana korisnik nikad ne vidi.
+ * Animacija kreće na ulasku (`useIntersection` sa `once`), ne pri mount-u — indikator
+ * koji se napuni dok je van ekrana korisnik nikad ne vidi.
  *
- * Poštuje `prefers-reduced-motion`: tada se odmah crta puna vrednost, bez prelaza.
+ * Poštuje `prefers-reduced-motion`: tada se odmah crta konačno stanje, bez prelaza.
  */
 export function ProgressRing({
   value,
-  label,
+  domain = [0, 100],
+  decimals = 0,
+  suffix = '%',
   ariaLabel,
   size = 'md',
   tone = 'accent',
@@ -45,20 +57,30 @@ export function ProgressRing({
   const isVisible = useIntersection(ref, { once: true, threshold: 0.4 })
   const prefersReduced = useMediaQuery('(prefers-reduced-motion: reduce)')
 
+  const displayed = useCountUp(value, {
+    active: isVisible,
+    decimals,
+    immediate: prefersReduced,
+  })
+
   const px = SIZE_PX[size]
   const stroke = STROKE[size]
   const radius = (px - stroke) / 2
   const circumference = 2 * Math.PI * radius
 
-  const clamped = Math.min(Math.max(value, 0), 100)
+  const [min, max] = domain
+  const span = max - min || 1
+  const ratio = Math.min(Math.max((value - min) / span, 0), 1)
+
   const filled = isVisible || prefersReduced
-  const offset = circumference * (1 - (filled ? clamped : 0) / 100)
+  const offset = circumference * (1 - (filled ? ratio : 0))
 
   return (
     <div
       ref={ref}
       className={cn(progressRingVariants({ size }), className)}
       role="img"
+      // Ime nosi STVARNU vrednost, ne animiranu — screen reader ne sme da čita odbrojavanje
       aria-label={ariaLabel}
     >
       <svg width={px} height={px} viewBox={`0 0 ${String(px)} ${String(px)}`} aria-hidden>
@@ -84,7 +106,8 @@ export function ProgressRing({
       </svg>
 
       <span aria-hidden className={progressValueVariants({ size, tone })}>
-        {label ?? `${String(clamped)}%`}
+        {displayed.toFixed(decimals)}
+        {suffix}
       </span>
     </div>
   )

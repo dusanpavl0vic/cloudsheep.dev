@@ -4,7 +4,8 @@ import { Link, NavLink } from 'react-router'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { Logo } from '@/components/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { MAIN_NAV } from '@/lib/navigation'
+import { useActiveSection } from '@/hooks/useActiveSection'
+import { MAIN_NAV, TRACKED_SECTION_IDS } from '@/lib/navigation'
 import { ROUTES } from '@/lib/routes'
 import { Button, Container, cn } from '@app/ui'
 
@@ -18,6 +19,8 @@ import {
 export const SiteHeader = () => {
   const { t } = useTranslation('common')
 
+  const activeSection = useActiveSection(TRACKED_SECTION_IDS)
+
   return (
     <header className={siteHeaderVariants()}>
       <Container className={siteHeaderInnerVariants()}>
@@ -29,11 +32,10 @@ export const SiteHeader = () => {
           {MAIN_NAV.map((item) =>
             item.route ? (
               // Rute (Work, Contact) dobijaju aktivno stanje kad si na toj stranici
+              // Rute (Work, Contact) — aktivne kad si na toj stranici
               <NavLink
                 key={item.id}
                 to={item.to}
-                // `end` je bitno za "/" — bez njega je Home aktivan na SVAKOJ ruti
-                end={item.to === ROUTES.HOME}
                 className={({ isActive }) =>
                   cn(siteNavLinkVariants(), isActive && 'is-active text-foreground')
                 }
@@ -41,8 +43,16 @@ export const SiteHeader = () => {
                 {t(item.labelKey)}
               </NavLink>
             ) : (
-              // Sidra na landing sekcije — bez aktivnog stanja
-              <Link key={item.id} to={item.to} className={siteNavLinkVariants()}>
+              // Sidra na landing sekcije — aktivna kad je ta sekcija na ekranu
+              <Link
+                key={item.id}
+                to={item.to}
+                aria-current={item.sectionId === activeSection ? 'location' : undefined}
+                className={cn(
+                  siteNavLinkVariants(),
+                  item.sectionId === activeSection && 'is-active text-foreground',
+                )}
+              >
                 {t(item.labelKey)}
               </Link>
             ),
