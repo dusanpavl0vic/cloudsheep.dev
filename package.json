@@ -25,7 +25,8 @@
     "validate": "pnpm typecheck && pnpm lint && pnpm test && pnpm build && pnpm size",
     "clean": "turbo run clean && rm -rf node_modules",
     "changeset": "changeset",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check:icons": "node scripts/check-tech-icons.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",

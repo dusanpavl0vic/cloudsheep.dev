@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+/**
+ * Proverava da svaka tehnologija u `tech.constants.ts` ima svoj SVG u `public/tech/`,
+ * i obrnuto — da nema zaboravljenih fajlova.
+ *
+ * Postoji jer je nesklad tih dveju lista nevidljiv u typecheck-u: pločica bez fajla
+ * tiho pokaže inicijal, a fajl bez unosa se nikad ne renderuje.
+ */
+import { readdirSync, readFileSync } from 'node:fs'
+
+const CONSTANTS = 'apps/web/src/features/landing/tech.constants.ts'
+const ICON_DIR = 'apps/web/public/tech'
+
+const ids = [...readFileSync(CONSTANTS, 'utf8').matchAll(/tech\('([a-z0-9]+)'/g)].map((m) => m[1])
+const files = readdirSync(ICON_DIR)
+  .filter((f) => f.endsWith('.svg'))
+  .map((f) => f.replace(/\.svg$/, ''))
+
+const missing = ids.filter((id) => !files.includes(id))
+const unused = files.filter((f) => !ids.includes(f))
+
+console.log(`${String(ids.length)} tehnologija · ${String(files.length)} logotipa`)
+
+if (missing.length) console.log(`\n❌ nema logotip: ${missing.join(', ')}`)
+if (unused.length) console.log(`\n⚠  logotip bez unosa u spisku: ${unused.join(', ')}`)
+if (!missing.length && !unused.length) console.log('\n✅ spisak i fajlovi se poklapaju')
+
+process.exit(missing.length ? 1 : 0)

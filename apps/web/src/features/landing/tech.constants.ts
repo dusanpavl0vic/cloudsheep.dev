@@ -5,8 +5,11 @@
  * kroz `currentColor`, a inline bi ih ubacio u JS bundle gde nema mesta (docs/07 §6).
  * Ovako ih browser kešira odvojeno i koštaju nula u initial chunk-u.
  *
- * Dodavanje tehnologije = jedan red ovde + `public/tech/<id>.svg`.
- * Ako fajl fali, `TechTile` prikazuje inicijal — nikad rupu u rasporedu.
+ * **Spisak prati fajlove na disku.** Tehnologija bez logotipa se ne navodi — pločica sa
+ * inicijalom pored pravih logotipa izgleda kao greška, ne kao izbor.
+ * Dodavanje: `public/tech/<id>.svg` + jedan red ovde.
+ *
+ * Provera usklađenosti: `node scripts/check-tech-icons.mjs`
  */
 export interface TechItem {
   id: string
@@ -25,29 +28,22 @@ const tech = (id: string, label: string, group: TechItem['group']): TechItem => 
 export const TECH_ITEMS: readonly TechItem[] = [
   tech('react', 'React', 'frontend'),
   tech('typescript', 'TypeScript', 'frontend'),
+  tech('javascript', 'JavaScript', 'frontend'),
   tech('nextjs', 'Next.js', 'frontend'),
-  tech('tailwind', 'Tailwind', 'frontend'),
-  tech('redux', 'Redux', 'frontend'),
-  tech('vite', 'Vite', 'frontend'),
 
   tech('nodejs', 'Node.js', 'backend'),
   tech('dotnet', '.NET', 'backend'),
   tech('csharp', 'C#', 'backend'),
+  tech('graphql', 'GraphQL', 'backend'),
   tech('postgresql', 'PostgreSQL', 'backend'),
   tech('mongodb', 'MongoDB', 'backend'),
   tech('redis', 'Redis', 'backend'),
-  tech('graphql', 'GraphQL', 'backend'),
 
   tech('reactnative', 'React Native', 'mobile'),
-  tech('kotlin', 'Kotlin', 'mobile'),
-  tech('swift', 'Swift', 'mobile'),
 
   tech('docker', 'Docker', 'tooling'),
-  tech('git', 'Git', 'tooling'),
   tech('github', 'GitHub', 'tooling'),
-  tech('vitest', 'Vitest', 'tooling'),
-  tech('playwright', 'Playwright', 'tooling'),
-  tech('vercel', 'Vercel', 'tooling'),
+  tech('chrome', 'Chrome DevTools', 'tooling'),
 
   tech('figma', 'Figma', 'design'),
 ]
