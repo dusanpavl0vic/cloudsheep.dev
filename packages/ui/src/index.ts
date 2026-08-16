@@ -15,7 +15,7 @@ export { Textarea } from './ui/textarea'
 
 // Varijante su javne — app ih koristi za kompoziciju bez dupliranja stila
 export { accordionItemVariants } from './ui/accordion.variants'
-export { badgeVariants } from './ui/badge.variants'
+export { badgeMarkerVariants, badgeVariants } from './ui/badge.variants'
 export { buttonVariants } from './ui/button.variants'
 export { containerVariants } from './ui/container.variants'
 
@@ -27,7 +27,6 @@ export { TextLink } from './atoms/TextLink'
 
 // ── molecules ──
 export { PageHeader } from './molecules/PageHeader'
-export { ProgressRing } from './molecules/ProgressRing'
 export { TagList } from './molecules/TagList'
 
 // ── layouts ──

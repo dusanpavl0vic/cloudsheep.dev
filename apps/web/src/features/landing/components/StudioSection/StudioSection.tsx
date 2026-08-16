@@ -24,7 +24,7 @@ export const StudioSection = () => {
         <div className="flex flex-col gap-3">
           <span className={studioIndexVariants()}>{t('studio.index')}</span>
           <h2 className={studioTitleVariants()}>{t('studio.title')}</h2>
-          <Badge dot="success" className="mt-1 self-start">
+          <Badge marker="success" variant="plain" className="mt-1 self-start px-0">
             {t('studio.availability')}
           </Badge>
         </div>

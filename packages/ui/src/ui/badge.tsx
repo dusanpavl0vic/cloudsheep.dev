@@ -1,14 +1,20 @@
 import type { VariantProps } from 'class-variance-authority'
-import type { HTMLAttributes } from 'react'
+import type { HTMLAttributes, ReactNode } from 'react'
 
-import { badgeDotVariants, badgeVariants } from './badge.variants'
+import { badgeMarkerVariants, badgeVariants } from './badge.variants'
 import { cn } from '../lib/cn'
-
 
 type BadgeProps = HTMLAttributes<HTMLSpanElement> &
   VariantProps<typeof badgeVariants> & {
-    /** Prikazuje tačku-indikator ispred teksta */
-    dot?: VariantProps<typeof badgeDotVariants>['tone']
+    /** Boja markera ispred teksta. Bez ovoga se marker ne prikazuje. */
+    marker?: VariantProps<typeof badgeMarkerVariants>['tone']
+    /**
+     * Znak markera.
+     *
+     * Podrazumevano `$` — `packages/ui` ne sme da uvozi konstante iz app-e (docs/01 §2),
+     * pa vrednost stoji ovde, a app je sme zameniti kroz prop.
+     */
+    markerGlyph?: ReactNode
   }
 
 export const Badge = ({
@@ -17,12 +23,17 @@ export const Badge = ({
   size,
   shape,
   font,
-  dot,
+  marker,
+  markerGlyph = '$',
   children,
   ...props
 }: BadgeProps) => (
   <span className={cn(badgeVariants({ variant, size, shape, font }), className)} {...props}>
-    {dot && <span aria-hidden className={badgeDotVariants({ tone: dot })} />}
+    {marker && (
+      <span aria-hidden className={badgeMarkerVariants({ tone: marker })}>
+        {markerGlyph}
+      </span>
+    )}
     {children}
   </span>
 )

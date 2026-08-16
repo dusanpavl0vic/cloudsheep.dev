@@ -7,12 +7,14 @@ import { PricingSection } from '@/features/landing/components/PricingSection'
 import { ProcessSection } from '@/features/landing/components/ProcessSection'
 import { ServicesSection } from '@/features/landing/components/ServicesSection'
 import { StudioSection } from '@/features/landing/components/StudioSection'
+import { TechMarquee } from '@/features/landing/components/TechMarquee'
 import { WorkSection } from '@/features/landing/components/WorkSection'
 import { Reveal } from '@app/ui'
 
 export const LandingPage = () => (
   <>
     <HeroSection />
+    <TechMarquee />
     <InsightSection />
     <Reveal>
       <StudioSection />

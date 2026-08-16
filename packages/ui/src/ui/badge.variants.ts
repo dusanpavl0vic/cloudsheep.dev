@@ -34,14 +34,21 @@ export const badgeVariants = cva(
   },
 )
 
-export const badgeDotVariants = cva('size-2 shrink-0 rounded-full', {
+/**
+ * Marker ispred teksta — terminalni prompt, ne tačkica.
+ *
+ * Ranije je ovo bio okrugli indikator koji pulsira. Zamenjen je znakom `$` da bi status
+ * oznaka delila jezik sa hero terminalom umesto da uvodi drugi vizuelni rečnik.
+ */
+export const badgeMarkerVariants = cva('shrink-0 font-mono leading-none select-none', {
   variants: {
     tone: {
-      success: 'bg-success pulse-dot',
-      accent: 'bg-accent shadow-[0_0_0_4px] shadow-accent/20',
+      primary: 'text-primary',
+      success: 'text-success',
+      inverse: 'text-inverse-primary',
     },
   },
   defaultVariants: {
-    tone: 'success',
+    tone: 'primary',
   },
 })

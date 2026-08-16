@@ -26,10 +26,8 @@ export const progressTrackVariants = cva('stroke-current opacity-15', {
 /**
  * Popunjeni luk.
  *
- * Animira se `stroke-dashoffset`, a ne širina ili `clip-path` — SVG obim je poznat,
- * pa je pomeraj tačan do decimale i ne izaziva relayout. `will-change` je namerno
- * izostavljen: animacija traje jednom pri ulasku u viewport, a trajni sloj kompozicije
- * bi koštao više nego što donosi.
+ * Animira se `stroke-dashoffset`, ne širina ili `clip-path` — SVG obim je poznat, pa je
+ * pomeraj tačan do decimale i ne izaziva relayout.
  */
 export const progressIndicatorVariants = cva(
   '-rotate-90 origin-center stroke-current transition-[stroke-dashoffset] duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none',
@@ -39,6 +37,45 @@ export const progressIndicatorVariants = cva(
         default: 'text-foreground',
         accent: 'text-primary',
         inverse: 'text-inverse-primary',
+      },
+    },
+    defaultVariants: { tone: 'accent' },
+  },
+)
+
+/**
+ * Luk-tragač koji se vrti dok se prsten puni, pa nestane.
+ *
+ * Bez njega punjenje izgleda kao statična vrednost koja je „skočila"; sa njim se čita
+ * kao učitavanje koje se završilo. Rotira se `transform`-om, dakle na compositor-u.
+ */
+export const progressSweepVariants = cva(
+  'cs-ring-sweep origin-center stroke-current transition-opacity duration-500 motion-reduce:animate-none',
+  {
+    variants: {
+      tone: {
+        default: 'text-foreground',
+        accent: 'text-primary',
+        inverse: 'text-inverse-primary',
+      },
+      state: {
+        loading: 'opacity-70',
+        done: 'opacity-0',
+      },
+    },
+    defaultVariants: { tone: 'accent', state: 'done' },
+  },
+)
+
+/** Sjaj iza prstena — jača kako se popunjava, pa „upaljeno" stanje ima težinu. */
+export const progressGlowVariants = cva(
+  'pointer-events-none absolute inset-2 rounded-full blur-xl transition-opacity duration-[1400ms] motion-reduce:transition-none',
+  {
+    variants: {
+      tone: {
+        default: 'bg-foreground/25',
+        accent: 'bg-primary/30',
+        inverse: 'bg-inverse-primary/35',
       },
     },
     defaultVariants: { tone: 'accent' },

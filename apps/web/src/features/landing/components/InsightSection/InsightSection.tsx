@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
+import { ProgressRing } from '@/features/landing/components/ProgressRing'
 import { GLYPHS } from '@/lib/glyphs'
 import { SECTION_IDS } from '@/lib/navigation'
 import { ROUTES } from '@/lib/routes'
-import { Badge, Container, ProgressRing, Reveal, TextLink } from '@app/ui'
+import { Badge, Container, Reveal, TextLink } from '@app/ui'
 
 import {
   gaugeLabelVariants,

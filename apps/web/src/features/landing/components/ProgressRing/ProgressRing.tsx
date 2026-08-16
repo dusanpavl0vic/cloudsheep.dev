@@ -1,14 +1,16 @@
 import { useRef } from 'react'
 
 import { useCountUp, useIntersection, useMediaQuery } from '@app/hooks'
+import { cn } from '@app/ui'
 
 import {
+  progressGlowVariants,
   progressIndicatorVariants,
   progressRingVariants,
+  progressSweepVariants,
   progressTrackVariants,
   progressValueVariants,
 } from './ProgressRing.variants'
-import { cn } from '../../lib/cn'
 
 const SIZE_PX = { sm: 80, md: 112, lg: 144 } as const
 const STROKE = { sm: 6, md: 8, lg: 10 } as const
@@ -75,6 +77,13 @@ export function ProgressRing({
   const filled = isVisible || prefersReduced
   const offset = circumference * (1 - (filled ? ratio : 0))
 
+  // „Učitava se" dok brojač nije stigao do cilja. Izvodi se iz animacije, ne prima propom —
+  // dva izvora istine za isto stanje bi se razišla.
+  const isLoading = !prefersReduced && isVisible && displayed < value
+
+  // Tragač pokriva petinu obima: dovoljno da se vidi rotacija, premalo da se pobrka sa vrednošću
+  const sweepLength = circumference / 5
+
   return (
     <div
       ref={ref}
@@ -83,6 +92,12 @@ export function ProgressRing({
       // Ime nosi STVARNU vrednost, ne animiranu — screen reader ne sme da čita odbrojavanje
       aria-label={ariaLabel}
     >
+      <span
+        aria-hidden
+        className={progressGlowVariants({ tone })}
+        style={{ opacity: filled ? 0.55 : 0 }}
+      />
+
       <svg width={px} height={px} viewBox={`0 0 ${String(px)} ${String(px)}`} aria-hidden>
         <circle
           cx={px / 2}
@@ -102,6 +117,17 @@ export function ProgressRing({
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           className={progressIndicatorVariants({ tone })}
+        />
+
+        <circle
+          cx={px / 2}
+          cy={px / 2}
+          r={radius}
+          fill="none"
+          strokeWidth={stroke / 2}
+          strokeLinecap="round"
+          strokeDasharray={`${String(sweepLength)} ${String(circumference)}`}
+          className={progressSweepVariants({ tone, state: isLoading ? 'loading' : 'done' })}
         />
       </svg>
 

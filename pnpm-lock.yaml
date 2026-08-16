@@ -433,6 +433,9 @@ importers:
       '@testing-library/user-event':
         specifier: 'catalog:'
         version: 14.6.4(@testing-library/dom@10.4.1)
+      '@types/jest-axe':
+        specifier: 'catalog:'
+        version: 3.5.9
       '@types/node':
         specifier: 'catalog:'
         version: 26.2.0
@@ -448,9 +451,15 @@ importers:
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 4.1.10(vitest@4.1.10)
+      axe-core:
+        specifier: 'catalog:'
+        version: 4.13.0
       eslint:
         specifier: 'catalog:'
         version: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
+      jest-axe:
+        specifier: 'catalog:'
+        version: 11.0.0
       jsdom:
         specifier: 'catalog:'
         version: 30.0.1

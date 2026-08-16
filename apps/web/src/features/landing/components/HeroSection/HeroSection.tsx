@@ -5,16 +5,21 @@ import { Link } from 'react-router'
 import { SpiralMark } from '@/components/Logo'
 import { HERO_TERMINAL_KEYS } from '@/features/landing/landing.constants'
 import { useTypewriter } from '@/hooks/useTypewriter'
-import { BRAND } from '@/lib/glyphs'
+import { BRAND, GLYPHS } from '@/lib/glyphs'
 import { SECTION_IDS } from '@/lib/navigation'
 import { ROUTES } from '@/lib/routes'
+import { useMediaQuery } from '@app/hooks'
 import { Button } from '@app/ui'
 
-import { CLOUD_DIM, CLOUD_LIT, CLOUD_SIZE, SPOTLIGHT_MASK } from './HeroSection.constants'
+import { GRID_FADE, GRID_LINES, SPOTLIGHT_MASK, TEXT_HALO } from './HeroSection.constants'
 import {
-  heroCloudsVariants,
   heroCtaVariants,
+  heroGridLitVariants,
+  heroGridStageVariants,
+  heroGridVariants,
+  heroHorizonVariants,
   heroMonoVariants,
+  heroScrollArrowVariants,
   heroScrollVariants,
   heroSpiralVariants,
   heroTerminalVariants,
@@ -23,17 +28,28 @@ import {
   heroVariants,
 } from './HeroSection.variants'
 
+/** Zajednički stil oba sloja mreže — razlikuju se samo po boji i maski. */
+const gridLayerStyle = {
+  backgroundImage: GRID_LINES,
+  WebkitMaskImage: GRID_FADE,
+  maskImage: GRID_FADE,
+} as const
+
 export const HeroSection = () => {
   const { t } = useTranslation(['landing', 'common'])
   const sectionRef = useRef<HTMLElement>(null)
   const litRef = useRef<HTMLDivElement>(null)
+  const prefersReduced = useMediaQuery('(prefers-reduced-motion: reduce)')
 
   const phrases = useMemo(() => HERO_TERMINAL_KEYS.map((key) => t(key)), [t])
   const typed = useTypewriter(phrases)
 
-  // Svetlo koje prati kursor — subscribe na mousemove (opravdan useEffect, PROJECT_GUIDE 2.1)
-  // effect: mousemove na window — svetlo koje prati kursor
+  // effect: mousemove na sekciji — svetlo koje prati kursor.
+  // Pozicija ide direktno na stil čvora, bez setState: pomeraj miša ne sme da rerenderuje hero.
   useEffect(() => {
+    // Ranije ovo nije poštovalo prefers-reduced-motion jer je JS, pa ga CSS blok nije pokrivao
+    if (prefersReduced) return
+
     const section = sectionRef.current
     const lit = litRef.current
     if (!section || !lit) return
@@ -43,6 +59,7 @@ export const HeroSection = () => {
       lit.style.setProperty('--mx', `${String(event.clientX - rect.left)}px`)
       lit.style.setProperty('--my', `${String(event.clientY - rect.top)}px`)
     }
+
     const onLeave = () => {
       lit.style.setProperty('--mx', '-600px')
       lit.style.setProperty('--my', '-600px')
@@ -50,33 +67,47 @@ export const HeroSection = () => {
 
     section.addEventListener('mousemove', onMove)
     section.addEventListener('mouseleave', onLeave)
+
     return () => {
       section.removeEventListener('mousemove', onMove)
       section.removeEventListener('mouseleave', onLeave)
     }
-  }, [])
+  }, [prefersReduced])
+
+  const scrollToNext = () => {
+    document.getElementById(SECTION_IDS.STUDIO)?.scrollIntoView({
+      behavior: prefersReduced ? 'auto' : 'smooth',
+      block: 'start',
+    })
+  }
 
   return (
     <section ref={sectionRef} id={SECTION_IDS.TOP} className={heroVariants()}>
+      <div aria-hidden className={heroGridStageVariants()}>
+        {/* Ugašeni sloj — nosi celu mrežu */}
+        <div className={heroGridVariants()} style={gridLayerStyle} />
+
+        {/* Upaljeni sloj — ista mreža u boji akcenta, vidi se samo kroz masku oko kursora */}
+        <div
+          ref={litRef}
+          className={heroGridLitVariants()}
+          style={{
+            ...gridLayerStyle,
+            WebkitMaskImage: `${GRID_FADE}, ${SPOTLIGHT_MASK}`,
+            maskImage: `${GRID_FADE}, ${SPOTLIGHT_MASK}`,
+            WebkitMaskComposite: 'source-in',
+            maskComposite: 'intersect',
+          }}
+        />
+      </div>
+
+      <div aria-hidden className={heroHorizonVariants()} />
+
+      {/* Izmaglica iza teksta — odvaja naslov od mreže bez pune podloge */}
       <div
         aria-hidden
-        className={heroCloudsVariants()}
-        style={{ backgroundImage: CLOUD_DIM, backgroundSize: CLOUD_SIZE }}
-      />
-      <div
-        ref={litRef}
-        aria-hidden
-        className={heroCloudsVariants()}
-        style={{
-          backgroundImage: CLOUD_LIT,
-          backgroundSize: CLOUD_SIZE,
-          WebkitMaskImage: SPOTLIGHT_MASK,
-          maskImage: SPOTLIGHT_MASK,
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_58%_52%_at_50%_46%,var(--background)_26%,transparent_100%)]"
+        className="pointer-events-none absolute inset-0"
+        style={{ backgroundImage: TEXT_HALO }}
       />
 
       <SpiralMark aria-hidden animated className={heroSpiralVariants()} />
@@ -92,7 +123,9 @@ export const HeroSection = () => {
       <p className={heroTextVariants()}>{t('hero.description')}</p>
 
       <p className={heroTerminalVariants()}>
-        <span className="text-primary">$</span>
+        <span aria-hidden className="text-primary">
+          {GLYPHS.PROMPT}
+        </span>
         <span>{typed}</span>
         <span aria-hidden className="caret" />
       </p>
@@ -106,12 +139,12 @@ export const HeroSection = () => {
         </Button>
       </div>
 
-      <span className={heroScrollVariants()}>
+      <button type="button" onClick={scrollToNext} className={heroScrollVariants()}>
         {t('hero.scroll')}
-        <span aria-hidden className="text-sm">
+        <span aria-hidden className={heroScrollArrowVariants()}>
           ↓
         </span>
-      </span>
+      </button>
     </section>
   )
 }

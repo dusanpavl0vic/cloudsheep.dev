@@ -12,6 +12,8 @@ export const GLYPHS = {
   SPARKLE: '✦',
   /** Oznaka ispred badge teksta */
   BLOCKS: '▚',
+  /** Prompt iz terminala — koristi ga hero i status badge umesto tačkice */
+  PROMPT: '$',
 } as const
 
 /**

@@ -1,12 +1,16 @@
 import { cva } from 'class-variance-authority'
 
+/**
+ * Redovi su ranije bili razdvojeni punom gornjom ivicom. Sada nose nit koja se gasi
+ * ka desnoj ivici — lista i dalje ima ritam, ali bez rešetkastog utiska.
+ */
 export const disciplineRowVariants = cva(
-  'grid grid-cols-1 items-center gap-4 rounded-lg border-t px-2 py-8 transition-colors hover:bg-muted md:grid-cols-[110px_1.1fr_1.4fr_40px] md:gap-6',
+  "relative grid grid-cols-1 items-center gap-4 rounded-lg px-2 py-8 transition-colors before:absolute before:inset-x-0 before:top-0 before:h-px before:content-[''] hover:bg-muted md:grid-cols-[110px_1.1fr_1.4fr_40px] md:gap-6",
   {
     variants: {
       emphasis: {
-        first: 'border-t-2 border-foreground',
-        default: 'border-border',
+        first: 'before:bg-linear-to-r before:from-foreground/60 before:via-border before:to-transparent',
+        default: 'before:bg-linear-to-r before:from-border before:to-transparent',
       },
     },
     defaultVariants: {

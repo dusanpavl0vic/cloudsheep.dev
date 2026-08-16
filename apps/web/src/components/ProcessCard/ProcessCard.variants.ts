@@ -1,16 +1,23 @@
 import { cva } from 'class-variance-authority'
 
-export const processCardVariants = cva('flex flex-col gap-2.5 border-t-2 pt-4.5', {
-  variants: {
-    tone: {
-      primary: 'border-foreground',
-      accent: 'border-primary',
+/**
+ * Umesto pune gornje ivice — nit koja se gasi udesno (`::before`).
+ * Puna linija je secla kolonu na dva bloka; gradijent daje isti ritam bez rezа.
+ */
+export const processCardVariants = cva(
+  "relative flex flex-col gap-2.5 pt-4.5 before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-linear-to-r before:content-['']",
+  {
+    variants: {
+      tone: {
+        primary: 'before:from-foreground/45 before:to-transparent',
+        accent: 'before:from-primary before:to-transparent',
+      },
+    },
+    defaultVariants: {
+      tone: 'primary',
     },
   },
-  defaultVariants: {
-    tone: 'primary',
-  },
-})
+)
 
 export const processIndexVariants = cva('font-mono text-xs tracking-wide text-primary')
 
