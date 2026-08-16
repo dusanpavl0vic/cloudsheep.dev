@@ -84,8 +84,21 @@ ne biramo mi, pa mu moramo dati podlogu koju biramo.
 postao skoro beo i nestao sa svetlog papira — zato papir nosi svoje mastilo. Izmereno iz
 OKLCH: mastilo **9.98:1**, prigušeno **7.08:1**, linija **3.05:1**.
 
-> Koristi se **samo** za takve slučajeve. Za sve ostalo `--card` — površina koja se ne
-> invertuje je u tamnoj temi svetla mrlja, i svaka sledeća je mrlja više.
+**Gde se sme koristiti — tri mesta, i to je ceo spisak:**
+
+| Gde                           | Zašto baš tu                                                                          |
+| ----------------------------- | ------------------------------------------------------------------------------------- |
+| pločice logotipa (`TechTile`) | `nextjs.svg` i `github.svg` su `fill="black"` — na tamnoj `--card` su bili nevidljivi |
+| diploma (`CredentialSeal`)    | grb je tamno plav na providnoj pozadini                                               |
+| lebdeće hero kartice          | lebde **iznad** podloge, pa u tamnoj temi čitaju kao papir na stolu                   |
+
+> Za sve ostalo `--card`. Površina koja se ne invertuje je u tamnoj temi svetla mrlja, i
+> svaka sledeća je mrlja više. Zajedničko za sva tri slučaja: **nisu deo toka stranice** —
+> ili nose tuđu boju koju ne biramo, ili lebde iznad nje.
+
+**Posledica koju je lako promašiti:** kad podloga ne prati temu, ne sme ni tekst na njoj.
+`text-foreground` unutar `bg-plate` postaje u tamnoj temi skoro beo i nestaje. Zato uz
+`--plate` uvek ide `text-plate-ink` (ili `-muted`), nikad obična tekstualna klasa.
 
 ### 4c. Dokument sme ivicu — i to je jedini izuzetak od §3
 

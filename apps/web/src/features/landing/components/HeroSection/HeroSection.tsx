@@ -93,8 +93,6 @@ export const HeroSection = () => {
         style={{ backgroundImage: CURSOR_GLOW }}
       />
 
-      <HeroCards />
-
       <p className={heroMonoVariants()}>{BRAND.DOMAIN}</p>
 
       {/* Dvotonski naslov: nosivi deo pun, nastavak prigušen (docs/22 §1) */}
@@ -124,6 +122,10 @@ export const HeroSection = () => {
           <Link to={`${ROUTES.HOME}#${SECTION_IDS.WORK}`}>{t('hero.secondaryCta')}</Link>
         </Button>
       </div>
+
+      {/* Posle poziva na akciju, jer ispod `xl` postaje traka u toku. Lebdeći raspored je
+          `absolute` u odnosu na sekciju, pa mu mesto u DOM-u ništa ne menja. */}
+      <HeroCards />
 
       <button type="button" onClick={scrollToNext} className={heroScrollVariants()}>
         {t('hero.scroll')}

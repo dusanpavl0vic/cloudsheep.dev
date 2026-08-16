@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router'
 
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { Logo } from '@/components/Logo'
+import { MobileNav } from '@/components/MobileNav'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { useActiveSection } from '@/hooks/useActiveSection'
 import { MAIN_NAV, TRACKED_SECTION_IDS } from '@/lib/navigation'
@@ -59,12 +60,18 @@ export const SiteHeader = () => {
           )}
         </nav>
 
-        <div className="ml-auto flex items-center gap-3 md:ml-0">
+        {/* Ispod `lg` sve ovo seli u bočni panel — na tabletu pet linkova, dva prebacivača
+            i dugme ne staju u red od 72px, a zbijeni su premali za prst. */}
+        <div className="ml-auto hidden items-center gap-3 lg:ml-0 lg:flex">
           <LanguageSwitcher />
           <ThemeToggle />
-          <Button asChild size="sm" className="hidden sm:inline-flex">
+          <Button asChild size="sm">
             <Link to={ROUTES.CONTACT}>{t('nav.getStarted')}</Link>
           </Button>
+        </div>
+
+        <div className="ml-auto lg:hidden">
+          <MobileNav activeSection={activeSection} />
         </div>
       </Container>
     </header>

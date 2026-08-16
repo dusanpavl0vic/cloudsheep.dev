@@ -21,7 +21,9 @@
     "contact": "Kontakt",
     "uses": "Alati",
     "caseStudy": "Studija slučaja",
-    "getStarted": "Započni"
+    "getStarted": "Započni",
+    "openMenu": "Otvori meni",
+    "closeMenu": "Zatvori meni"
   },
   "footer": {
     "tagline": "Jednočlani produktni studio — dizajn, web i mobilne aplikacije iz jednog para ruku, sa sedištem u Nišu, Srbija.",

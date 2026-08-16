@@ -10,7 +10,7 @@ export const siteHeaderVariants = cva(
 
 export const siteHeaderInnerVariants = cva('flex h-[72px] items-center gap-7')
 
-export const siteNavVariants = cva('ml-auto hidden items-center gap-7 md:flex')
+export const siteNavVariants = cva('ml-auto hidden items-center gap-7 lg:flex')
 
 export const siteNavLinkVariants = cva(
   'nav-underline text-[15px] font-medium text-muted-foreground transition-colors hover:text-foreground',

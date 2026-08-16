@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 
-import { SpiralMark } from '@/components/Logo'
+import { SheepMark } from '@/components/Logo'
 import {
   CASE_STUDY_HIGHLIGHTS,
   CASE_STUDY_SECTIONS,
@@ -18,7 +18,7 @@ const MediaFrame = ({ ratio, caption }: { ratio: string; caption?: string }) => 
   <figure className="m-0">
     <div className="border-border bg-card overflow-hidden rounded-xl border">
       <div className={`flex ${ratio} text-faint items-center justify-center`}>
-        <SpiralMark aria-hidden className="text-primary/40 size-10" />
+        <SheepMark aria-hidden className="text-primary/40 size-10" />
       </div>
     </div>
     {caption && (

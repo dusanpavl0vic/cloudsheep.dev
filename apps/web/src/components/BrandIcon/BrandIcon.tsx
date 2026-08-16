@@ -72,6 +72,18 @@ export const ChevronDownIcon = ({ className, ...props }: BrandIconProps) => (
   </svg>
 )
 
+export const MenuIcon = ({ className, ...props }: BrandIconProps) => (
+  <svg {...stroke} className={className} {...props}>
+    <path d="M3 6h18M3 12h18M3 18h18" />
+  </svg>
+)
+
+export const CloseIcon = ({ className, ...props }: BrandIconProps) => (
+  <svg {...stroke} className={className} {...props}>
+    <path d="M18 6 6 18M6 6l12 12" />
+  </svg>
+)
+
 export const MailIcon = ({ className, ...props }: BrandIconProps) => (
   <svg {...stroke} className={className} {...props}>
     <rect width="20" height="16" x="2" y="4" rx="2" />

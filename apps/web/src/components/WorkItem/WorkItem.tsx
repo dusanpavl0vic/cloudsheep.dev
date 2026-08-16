@@ -2,7 +2,7 @@ import type { VariantProps } from 'class-variance-authority'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 
-import { SpiralMark } from '@/components/Logo'
+import { SheepMark } from '@/components/Logo'
 import { Reveal, TagList, type TagListItem, cn } from '@app/ui'
 
 import {
@@ -60,7 +60,7 @@ export const WorkItem = ({
             <img src={imageSrc} alt={imageCaption} className="size-full object-cover" />
           ) : (
             <span className="flex flex-col items-center gap-3">
-              <SpiralMark className="text-primary/40 size-9" />
+              <SheepMark className="text-primary/40 size-9" />
               <span className={workCaptionVariants()}>{imageCaption}</span>
             </span>
           )}

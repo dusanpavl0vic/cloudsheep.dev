@@ -21,7 +21,9 @@
     "contact": "Contact",
     "uses": "Uses",
     "caseStudy": "Case study",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "footer": {
     "tagline": "A one-person product studio — design, web and mobile from a single pair of hands, based in Niš, Serbia.",

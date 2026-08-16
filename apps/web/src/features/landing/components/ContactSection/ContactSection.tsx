@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
-import { SpiralMark } from '@/components/Logo'
+import { SheepMark } from '@/components/Logo'
 import { CONTACT_EMAIL, SECTION_IDS } from '@/lib/navigation'
 import { ROUTES } from '@/lib/routes'
 import { Button, Container } from '@app/ui'
@@ -28,7 +28,7 @@ export const ContactSection = () => {
               backgroundSize: '22px 22px',
             }}
           />
-          <SpiralMark aria-hidden className={contactMarkVariants()} />
+          <SheepMark aria-hidden className={contactMarkVariants()} />
           <h2 className={contactTitleVariants()}>
             {t('contact.titleTop')}
             <br />

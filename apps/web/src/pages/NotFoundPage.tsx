@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
-import { SpiralMark } from '@/components/Logo'
+import { SheepMark } from '@/components/Logo'
 import { BRAND } from '@/lib/glyphs'
 import { ROUTES } from '@/lib/routes'
 import { Button, Container } from '@app/ui'
@@ -27,7 +27,7 @@ export const NotFoundPage = () => {
           maskImage: GRID_MASK,
         }}
       />
-      <SpiralMark
+      <SheepMark
         aria-hidden
         className="text-primary/[0.07] pointer-events-none absolute -right-16 -bottom-24 size-[420px]"
       />

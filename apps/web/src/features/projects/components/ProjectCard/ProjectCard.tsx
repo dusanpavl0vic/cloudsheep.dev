@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
-import { SpiralMark } from '@/components/Logo'
+import { SheepMark } from '@/components/Logo'
 import type { Project } from '@/features/projects/projects.constants'
 import { projectPath } from '@/lib/routes'
 import { techTags } from '@/lib/tech'
@@ -28,7 +28,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
   return (
     <Link to={projectPath(project.slug)} className={projectCardVariants()}>
       <div className={projectMediaVariants()}>
-        <SpiralMark aria-hidden className="text-primary/40 size-9" />
+        <SheepMark aria-hidden className="text-primary/40 size-9" />
       </div>
       <div className={projectBodyVariants()}>
         <div className="flex items-baseline justify-between gap-3">

@@ -3,9 +3,15 @@ import { cva } from 'class-variance-authority'
 /**
  * Squircle pločica sa logotipom — glavni motiv reference (docs/22 §3).
  * Bela podloga, meka senka, veliki radijus; logo je obojen i stoji u sredini.
+ *
+ * **Podloga je `bg-plate`, ne `bg-card`** — dakle ista u obe teme (docs/22 §4b).
+ * Ranije je bila `bg-card`, što je u tamnoj temi značilo tamno plavu pločicu; a
+ * `nextjs.svg` i `github.svg` su `fill="black"`, pa su ta dva logotipa tamo bila
+ * praktično nevidljiva. Boju tuđeg znaka ne biramo mi, pa mu moramo dati podlogu
+ * na kojoj se vidi.
  */
 export const techTileVariants = cva(
-  'grid shrink-0 place-items-center rounded-[22%] bg-card shadow-[0_1px_2px_rgb(0_0_0/0.05),0_8px_20px_-8px_rgb(0_0_0/0.18)] ring-1 ring-border/50 ring-inset',
+  'grid shrink-0 place-items-center rounded-[22%] bg-plate shadow-[0_1px_2px_rgb(0_0_0/0.05),0_8px_20px_-8px_rgb(0_0_0/0.18)] ring-1 ring-plate-line/25 ring-inset',
   {
     variants: {
       size: { sm: 'size-10', md: 'size-14', lg: 'size-[68px]' },
@@ -26,7 +32,7 @@ export const techTileImageVariants = cva('object-contain', {
 })
 
 /** Rezerva dok SVG fajl nije skinut — inicijal umesto rupe u rasporedu. */
-export const techTileFallbackVariants = cva('font-heading font-bold text-faint', {
+export const techTileFallbackVariants = cva('font-heading font-bold text-plate-ink-muted', {
   variants: {
     size: { sm: 'text-[13px]', md: 'text-[17px]', lg: 'text-[21px]' },
   },
