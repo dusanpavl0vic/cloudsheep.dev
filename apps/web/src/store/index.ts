@@ -1,9 +1,16 @@
-import { configureStore, createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit'
+import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit'
+
+import { createStore } from '@app/core'
 
 import { applyTheme, themeReducer, themeSet, themeToggled } from './slices/themeSlice'
 
-// Side-effect promene teme (DOM atribut + localStorage) — listener middleware umesto useEffect-a
+/**
+ * Side-effect promene teme (DOM atribut + localStorage) ide kroz listener middleware,
+ * ne kroz `useEffect` — tema se menja iz akcije, pa reakcija pripada store sloju
+ * (docs/07-performance.md §3, docs/08-styling-ui.md).
+ */
 const themeListener = createListenerMiddleware()
+
 themeListener.startListening({
   matcher: isAnyOf(themeToggled, themeSet),
   effect: (_action, listenerApi) => {
@@ -11,15 +18,15 @@ themeListener.startListening({
   },
 })
 
-// RTK Query namerno NIJE uključen dok ne postoji prvi endpoint — inače bi ~25 KB
-// koda ušlo u bundle bez ijednog poziva. Uključivanje kada zatreba (PROJECT_GUIDE.md 6):
-//   reducer:    [baseApi.reducerPath]: baseApi.reducer
-//   middleware: .concat(baseApi.middleware)
-export const store = configureStore({
-  reducer: {
-    theme: themeReducer,
-  },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(themeListener.middleware),
+/**
+ * RTK Query namerno NIJE registrovan: `apps/web` nema nijedan endpoint, a `baseApi`
+ * bi uneo ~25 KB u bundle bez ijednog poziva. Uključuje se uz prvi endpoint —
+ * `apiMiddleware: [baseApi.middleware]` i reducer kroz `injectReducer`.
+ */
+export const store = createStore({
+  reducers: { theme: themeReducer },
+  middleware: [themeListener.middleware],
+  devMode: import.meta.env.DEV,
 })
 
 export type RootState = ReturnType<typeof store.getState>

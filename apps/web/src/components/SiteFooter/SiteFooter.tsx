@@ -5,8 +5,8 @@ import { Link } from 'react-router'
 
 import { GithubIcon, LinkedinIcon } from '@/components/BrandIcon'
 import { Logo } from '@/components/Logo'
-import { CONTACT_EMAIL, FOOTER_NAV, SOCIAL_LINKS } from '@/constants/navigation'
-import { ROUTES } from '@/constants/routes'
+import { CONTACT_EMAIL, FOOTER_NAV, SOCIAL_LINKS } from '@/lib/navigation'
+import { ROUTES } from '@/lib/routes'
 import { Container } from '@app/ui'
 
 import {
@@ -47,7 +47,7 @@ interface SiteFooterProps {
 }
 
 export const SiteFooter = ({ variant = 'full' }: SiteFooterProps) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation('common')
 
   if (variant === 'slim') {
     return (

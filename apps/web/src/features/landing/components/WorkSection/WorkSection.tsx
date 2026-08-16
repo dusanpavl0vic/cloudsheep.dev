@@ -2,15 +2,15 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { WorkItem } from '@/components/WorkItem'
-import { SECTION_IDS } from '@/constants/navigation'
-import { ROUTES, projectPath } from '@/constants/routes'
 import { FEATURED_PROJECTS } from '@/features/projects/projects.constants'
+import { SECTION_IDS } from '@/lib/navigation'
+import { ROUTES, projectPath } from '@/lib/routes'
 import { SectionBlock, TextLink } from '@app/ui'
 
 const WORK_INDEXES = ['/ 01', '/ 02', '/ 03']
 
 export const WorkSection = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['landing', 'common'])
 
   return (
     <SectionBlock

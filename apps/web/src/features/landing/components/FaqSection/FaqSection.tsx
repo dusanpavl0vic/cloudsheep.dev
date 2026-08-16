@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { SECTION_IDS } from '@/constants/navigation'
 import { FAQ_ITEMS } from '@/features/landing/landing.constants'
+import { SECTION_IDS } from '@/lib/navigation'
 import { Accordion, SectionBlock } from '@app/ui'
 
 export const FaqSection = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['landing', 'common'])
 
   // Izvedena vrednost — mapiranje ključeva u prevode tokom rendera (PROJECT_GUIDE.md 2.1)
   const items = useMemo(

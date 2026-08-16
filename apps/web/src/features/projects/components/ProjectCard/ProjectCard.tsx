@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { SpiralMark } from '@/components/Logo'
-import { projectPath } from '@/constants/routes'
 import type { Project } from '@/features/projects/projects.constants'
+import { projectPath } from '@/lib/routes'
 import { TagList } from '@app/ui'
 
 import {
@@ -21,7 +21,7 @@ interface ProjectCardProps {
 }
 
 export const ProjectCard = ({ project }: ProjectCardProps) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['projects', 'common'])
   const base = `projects.items.${project.key}`
 
   return (

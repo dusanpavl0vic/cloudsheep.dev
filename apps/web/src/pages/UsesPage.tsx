@@ -2,11 +2,11 @@ import { Cog, Keyboard, LayoutGrid, SquareTerminal } from 'lucide-react'
 import type { ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
 
+
+
+import type { UsesIcon } from '@/features/uses/uses.constants'
+import { USES_GROUPS } from '@/features/uses/uses.constants'
 import { Container, PageHeader, Reveal } from '@app/ui'
-
-
-import type { UsesIcon } from './uses.constants'
-import { USES_GROUPS } from './uses.constants'
 
 const ICONS: Record<UsesIcon, ComponentType<{ className?: string }>> = {
   keyboard: Keyboard,
@@ -16,7 +16,7 @@ const ICONS: Record<UsesIcon, ComponentType<{ className?: string }>> = {
 }
 
 export const UsesPage = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['uses', 'common'])
 
   return (
     <>

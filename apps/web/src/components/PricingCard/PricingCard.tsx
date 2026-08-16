@@ -1,5 +1,6 @@
 import type { VariantProps } from 'class-variance-authority'
 
+import { GLYPHS } from '@/lib/glyphs'
 import { Badge, cn } from '@app/ui'
 
 
@@ -45,7 +46,7 @@ export const PricingCard = ({
       {features.map((feature) => (
         <li key={feature} className={pricingFeatureVariants({ featured })}>
           <span aria-hidden className="font-semibold text-primary">
-            ✓
+            {GLYPHS.CHECK}
           </span>
           {feature}
         </li>

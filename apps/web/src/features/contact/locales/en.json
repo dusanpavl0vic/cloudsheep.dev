@@ -1,0 +1,32 @@
+{
+  "contact": {
+    "eyebrow": "contact",
+    "pageTitle": "Start a conversation.",
+    "pageLead": "Tell me what you're building — a paragraph is enough. You'll get a reply within 48 hours, usually much sooner.",
+    "emailLabel": "Email",
+    "baseLabel": "Base",
+    "baseValue": "Niš, Serbia · CET · EN / SR",
+    "elsewhereLabel": "Elsewhere",
+    "titleTop": "One studio. One person.",
+    "titleBottom": "Whole product.",
+    "cta": "Send a message",
+    "form": {
+      "name": "Name",
+      "namePh": "Your name",
+      "nameError": "Please add your name",
+      "email": "Email",
+      "emailPh": "you@company.com",
+      "emailError": "That email doesn't look right",
+      "subject": "Subject",
+      "subjectPh": "New project, question, hello…",
+      "message": "Message",
+      "messagePh": "What are you building, roughly when, and what does success look like?",
+      "messageError": "A sentence or two helps me reply usefully",
+      "note": "replies within 48h",
+      "submit": "Send message",
+      "sentTitle": "Message sent.",
+      "sentBody": "Thanks — it landed in the studio inbox. Expect a reply within 48 hours.",
+      "sendAnother": "Send another"
+    }
+  }
+}

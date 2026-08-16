@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next'
 
 import { DisciplineRow } from '@/components/DisciplineRow'
-import { SECTION_IDS } from '@/constants/navigation'
 import { DISCIPLINES } from '@/features/landing/landing.constants'
+import { SECTION_IDS } from '@/lib/navigation'
 import { SectionBlock } from '@app/ui'
 
 export const ServicesSection = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['landing', 'common'])
 
   return (
     <SectionBlock

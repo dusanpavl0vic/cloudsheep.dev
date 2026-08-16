@@ -3,10 +3,11 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { SpiralMark } from '@/components/Logo'
-import { SECTION_IDS } from '@/constants/navigation'
-import { ROUTES } from '@/constants/routes'
 import { HERO_TERMINAL_KEYS } from '@/features/landing/landing.constants'
 import { useTypewriter } from '@/hooks/useTypewriter'
+import { BRAND } from '@/lib/glyphs'
+import { SECTION_IDS } from '@/lib/navigation'
+import { ROUTES } from '@/lib/routes'
 import { Button } from '@app/ui'
 
 import { CLOUD_DIM, CLOUD_LIT, CLOUD_SIZE, SPOTLIGHT_MASK } from './HeroSection.constants'
@@ -23,7 +24,7 @@ import {
 } from './HeroSection.variants'
 
 export const HeroSection = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['landing', 'common'])
   const sectionRef = useRef<HTMLElement>(null)
   const litRef = useRef<HTMLDivElement>(null)
 
@@ -31,6 +32,7 @@ export const HeroSection = () => {
   const typed = useTypewriter(phrases)
 
   // Svetlo koje prati kursor — subscribe na mousemove (opravdan useEffect, PROJECT_GUIDE 2.1)
+  // effect: mousemove na window — svetlo koje prati kursor
   useEffect(() => {
     const section = sectionRef.current
     const lit = litRef.current
@@ -38,8 +40,8 @@ export const HeroSection = () => {
 
     const onMove = (event: MouseEvent) => {
       const rect = section.getBoundingClientRect()
-      lit.style.setProperty('--mx', `${event.clientX - rect.left}px`)
-      lit.style.setProperty('--my', `${event.clientY - rect.top}px`)
+      lit.style.setProperty('--mx', `${String(event.clientX - rect.left)}px`)
+      lit.style.setProperty('--my', `${String(event.clientY - rect.top)}px`)
     }
     const onLeave = () => {
       lit.style.setProperty('--mx', '-600px')
@@ -79,7 +81,7 @@ export const HeroSection = () => {
 
       <SpiralMark aria-hidden animated className={heroSpiralVariants()} />
 
-      <p className={heroMonoVariants()}>cloudsheep.dev</p>
+      <p className={heroMonoVariants()}>{BRAND.DOMAIN}</p>
 
       <h1 className={heroTitleVariants()}>
         {t('hero.titleTop')}

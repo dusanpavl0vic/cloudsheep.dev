@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
-import { SECTION_IDS } from '@/constants/navigation'
 import { HERO_STATS, TECH_STACK } from '@/features/landing/landing.constants'
+import { SECTION_IDS } from '@/lib/navigation'
 import { Badge, Container, StatItem, TagList } from '@app/ui'
 
 import {
@@ -16,7 +16,7 @@ import {
 } from './StudioSection.variants'
 
 export const StudioSection = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['landing', 'common'])
 
   return (
     <section id={SECTION_IDS.STUDIO} className="py-24">

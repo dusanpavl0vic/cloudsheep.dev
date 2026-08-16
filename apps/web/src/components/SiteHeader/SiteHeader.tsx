@@ -4,8 +4,8 @@ import { Link, NavLink } from 'react-router'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { Logo } from '@/components/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { MAIN_NAV } from '@/constants/navigation'
-import { ROUTES } from '@/constants/routes'
+import { MAIN_NAV } from '@/lib/navigation'
+import { ROUTES } from '@/lib/routes'
 import { Button, Container, cn } from '@app/ui'
 
 import {
@@ -16,7 +16,7 @@ import {
 } from './SiteHeader.variants'
 
 export const SiteHeader = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation('common')
 
   return (
     <header className={siteHeaderVariants()}>

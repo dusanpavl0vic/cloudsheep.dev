@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next'
 
 import { ProcessCard } from '@/components/ProcessCard'
-import { SECTION_IDS } from '@/constants/navigation'
 import { PROCESS_STEPS } from '@/features/landing/landing.constants'
+import { SECTION_IDS } from '@/lib/navigation'
 import { SectionBlock } from '@app/ui'
 
 export const ProcessSection = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['landing', 'common'])
 
   return (
     <SectionBlock

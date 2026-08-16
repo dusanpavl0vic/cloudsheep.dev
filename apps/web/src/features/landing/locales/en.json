@@ -1,0 +1,156 @@
+{
+  "hero": {
+    "titleTop": "Whole products,",
+    "titleBottom": "built by",
+    "titleHighlight": "one",
+    "description": "Design, web and mobile apps — dreamed up, drawn, coded and shipped by a single pair of hands. No handoffs, no telephone game, one owner from first sketch to launch.",
+    "term1": "whoami → one-person studio",
+    "term2": "stack → design · web · mobile",
+    "term3": "status → available for Q3",
+    "term4": "ls ./work → 20+ products",
+    "primaryCta": "Start a project",
+    "secondaryCta": "View work",
+    "scroll": "SCROLL"
+  },
+  "insight": {
+    "haveProject": "Have a project?",
+    "getInTouch": "Get in touch",
+    "badge": "Insights",
+    "title": "Reliability: Uptime in prod",
+    "seeWork": "See the work",
+    "uptime": "uptime",
+    "body": "Every product is built to keep running — monitored, maintained and answered for, long after launch.",
+    "waysToWork": "Ways to work"
+  },
+  "studio": {
+    "index": "01",
+    "title": "The studio",
+    "availability": "taking projects for Q3",
+    "lead": "CloudSheep is the one-person product studio of Dušan Pavlović — engineer of electrical engineering and computing, University of Niš.",
+    "body": "You work directly with the person who designs the interface, writes the code and answers for the result. One brain holding the whole product means fast decisions, no lost context, and a single owner for quality.",
+    "stats": {
+      "yearsValue": "6+",
+      "yearsLabel": "years shipping",
+      "productsValue": "20+",
+      "productsLabel": "products built",
+      "platformsValue": "3",
+      "platformsLabel": "platforms",
+      "personValue": "1",
+      "personLabel": "person accountable"
+    },
+    "stack": {
+      "frontend": "frontend",
+      "backend": "backend",
+      "mobile": "mobile",
+      "design": "design"
+    }
+  },
+  "services": {
+    "eyebrow": "02 · what the studio does",
+    "title": "Four disciplines, one desk.",
+    "design": {
+      "title": "Product Design",
+      "description": "UX flows, UI systems and clickable prototypes that are designed to be built — not just admired."
+    },
+    "web": {
+      "title": "Web Development",
+      "description": "Fast, maintainable web apps — from marketing sites to dashboards with real data models."
+    },
+    "mobile": {
+      "title": "Mobile Apps — iOS & Android",
+      "description": "One codebase or fully native — chosen per project, shipped to both stores."
+    },
+    "ops": {
+      "title": "Backend, APIs & Care",
+      "description": "The unglamorous part done right: APIs, deployments, monitoring and long-term maintenance."
+    }
+  },
+  "process": {
+    "eyebrow": "03 · how a project runs",
+    "title": "A process with no surprises.",
+    "discover": {
+      "title": "Discover",
+      "description": "A call and a written brief. We define what success looks like before anything is drawn.",
+      "meta": "→ brief · estimate · timeline"
+    },
+    "design": {
+      "title": "Design",
+      "description": "Wireframes to hi-fi, quickly. You review a clickable prototype, not a PDF.",
+      "meta": "→ wireframe · hi-fi · prototype"
+    },
+    "build": {
+      "title": "Build",
+      "description": "Weekly shippable increments on a staging link. You watch the product grow, not wait for it.",
+      "meta": "→ weekly staging releases"
+    },
+    "ship": {
+      "title": "Ship & care",
+      "description": "Launch, monitoring and support. The studio stays reachable after the invoice.",
+      "meta": "→ launch · monitoring · support"
+    }
+  },
+  "work": {
+    "eyebrow": "04 · selected work",
+    "title": "Proof, not promises.",
+    "allCases": "See all projects",
+    "readCase": "View project"
+  },
+  "pricing": {
+    "eyebrow": "05 · ways to work together",
+    "title": "Three ways in.",
+    "note": "exact numbers after a short discovery call — every project is scoped individually",
+    "fixed": {
+      "title": "Fixed-scope build",
+      "price": "project-based quote",
+      "description": "A defined product, designed and built to a fixed scope and date.",
+      "feature1": "discovery included",
+      "feature2": "design → build, one owner",
+      "feature3": "30 days of post-launch support"
+    },
+    "monthly": {
+      "title": "Monthly partner",
+      "price": "monthly retainer",
+      "description": "An ongoing seat at your table — product work shipped every week.",
+      "feature1": "rolling backlog, your priorities",
+      "feature2": "weekly releases",
+      "feature3": "priority response",
+      "badge": "most popular"
+    },
+    "sprint": {
+      "title": "Design sprint",
+      "price": "1–2 weeks · fixed fee",
+      "description": "From idea to a tested, clickable prototype — fast.",
+      "feature1": "workshop + brief",
+      "feature2": "hi-fi clickable prototype",
+      "feature3": "dev-ready handoff"
+    }
+  },
+  "faq": {
+    "eyebrow": "06 · questions",
+    "title": "Asked before, answered here.",
+    "onePerson": {
+      "q": "Is it really just one person?",
+      "a": "Yes — one engineer-designer doing the thinking, the pixels and the code. For specialised needs I bring in trusted collaborators, but responsibility never leaves this desk."
+    },
+    "designDev": {
+      "q": "Do you do design and development together?",
+      "a": "That's the whole point. Nothing gets lost between a designer's file and a developer's build, because they're the same person."
+    },
+    "platforms": {
+      "q": "Both iOS and Android?",
+      "a": "Yes. Usually one React Native codebase for both stores; fully native (Kotlin/Swift) when the product demands it."
+    },
+    "duration": {
+      "q": "How long does a project take?",
+      "a": "A design sprint: 1–2 weeks. A typical product build: 8–16 weeks, shipped in weekly increments you can see on staging."
+    },
+    "ownership": {
+      "q": "Who owns the code?",
+      "a": "You do — 100%, from day one. Repos live in your organisation; there is no lock-in and nothing held hostage."
+    },
+    "location": {
+      "q": "Where are you based?",
+      "a": "Niš, Serbia (CET) — a comfortable overlap with all of Europe and US mornings. Working languages: English and Serbian."
+    }
+  }
+}

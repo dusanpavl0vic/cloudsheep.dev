@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+
+
+import { ProjectCard } from '@/features/projects/components/ProjectCard'
+import { PROJECT_CATEGORIES, PROJECTS, type ProjectCategory } from '@/features/projects/projects.constants'
 import { Container, PageHeader, Reveal, cn } from '@app/ui'
-
-
-import { ProjectCard } from './components/ProjectCard'
-import { PROJECT_CATEGORIES, PROJECTS, type ProjectCategory } from './projects.constants'
 
 const filterButtonClass = (active: boolean) =>
   cn(
@@ -16,7 +16,7 @@ const filterButtonClass = (active: boolean) =>
   )
 
 export const ProjectsPage = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['projects', 'common'])
   const [active, setActive] = useState<ProjectCategory>('all')
 
   // Izvedena vrednost — filtriranje tokom rendera, bez useEffect-a (PROJECT_GUIDE 2.1)

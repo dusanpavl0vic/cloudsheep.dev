@@ -1,0 +1,75 @@
+{
+  "projects": {
+    "eyebrow": "the archive · updated jul 2026",
+    "title": "Work",
+    "subtitle": "Every project here was designed, built and shipped by one person. Fewer, deeper case studies over a wall of thumbnails.",
+    "empty": "nothing in this category yet — check back soon",
+    "filters": {
+      "all": "All",
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "fullStack": "Full-Stack",
+      "openSource": "Open Source"
+    },
+    "items": {
+      "atlas": {
+        "title": "Atlas Analytics",
+        "cat": "full-stack",
+        "desc": "Analytics dashboard for a fintech team — 40k events/min, sub-second queries, shipped in 14 weeks.",
+        "caption": "Atlas Analytics — dashboard screenshot"
+      },
+      "transit": {
+        "title": "Niš Transit",
+        "cat": "frontend · mobile",
+        "desc": "Real-time bus tracking for the city of Niš — 12k monthly riders on iOS and Android.",
+        "caption": "Niš Transit — app screens"
+      },
+      "forge": {
+        "title": "Forge CMS",
+        "cat": "open source",
+        "desc": "Block-based headless CMS with a drag-and-drop page builder — 1.2k GitHub stars.",
+        "caption": "Forge CMS — editor screenshot"
+      },
+      "pulse": {
+        "title": "Pulse API",
+        "cat": "backend",
+        "desc": "Health-metrics ingestion API — 99.98% uptime across two years of production traffic.",
+        "caption": "Pulse API — docs / dashboard"
+      },
+      "meridian": {
+        "title": "Meridian",
+        "cat": "full-stack",
+        "desc": "Booking platform for a Berlin studio — calendar sync, payments, multilingual UI.",
+        "caption": "Meridian — booking flow"
+      }
+    }
+  },
+  "caseStudy": {
+    "allProjects": "all projects",
+    "highlightsLabel": "Highlights — what moved the needle",
+    "highlight1": "40,000 events/min ingested with sub-second dashboard queries",
+    "highlight2": "Time-to-insight cut from 2 days (spreadsheets) to under 1 minute",
+    "highlight3": "Designed, built and shipped end-to-end in 14 weeks — one person",
+    "highlight4": "99.95% uptime over the first 12 months in production",
+    "heroCaption": "the main dashboard — live event stream, saved views, alerting",
+    "gridCaption": "query builder · alert configuration",
+    "problemTitle": "The problem",
+    "problem1": "A Belgrade fintech team was flying blind between weekly spreadsheet exports. Product decisions waited days for data that already existed — it just had nowhere to live. They needed a real-time view of user behaviour without buying a six-figure analytics suite.",
+    "problem2": "The brief: one dashboard, every core metric, fast enough to check between two sips of coffee.",
+    "decisionsTitle": "Key decisions",
+    "decisions1": "Events land in ClickHouse, not Postgres — a columnar store made sub-second aggregation possible on commodity hardware. Postgres keeps what it's good at: users, saved views, alert rules.",
+    "decisions2": "On the design side: no chart zoo. Four view types, consistent everywhere, so the team reads every screen the same way. Density where it matters, whitespace where it doesn't.",
+    "outcomeTitle": "Outcome",
+    "outcome1": "The dashboard replaced the weekly export ritual entirely. A year in, it runs at 99.95% uptime and has become the first tab the team opens each morning. Feature decisions that used to wait for Friday's spreadsheet now happen in standup.",
+    "stat1Value": "40k",
+    "stat1Label": "events per minute",
+    "stat2Value": "<1s",
+    "stat2Label": "p95 query time",
+    "stat3Value": "14",
+    "stat3Label": "weeks, idea → production",
+    "github": "GitHub",
+    "liveDemo": "Live demo",
+    "demoNote": "demo credentials shared on request",
+    "nextUp": "next up"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "common": {
+    "appName": "CloudSheep",
+    "appNameLower": "cloudsheep",
+    "loading": "Učitavanje...",
+    "save": "Sačuvaj",
+    "cancel": "Otkaži"
+  },
+  "theme": {
+    "switchToDark": "Prebaci na tamnu temu",
+    "switchToLight": "Prebaci na svetlu temu"
+  },
+  "language": {
+    "label": "Jezik"
+  },
+  "nav": {
+    "label": "Glavna navigacija",
+    "home": "Početna",
+    "work": "Radovi",
+    "services": "Usluge",
+    "pricing": "Cene",
+    "process": "Proces",
+    "studio": "Studio",
+    "faq": "Pitanja",
+    "contact": "Kontakt",
+    "uses": "Alati",
+    "caseStudy": "Studija slučaja",
+    "getStarted": "Započni"
+  },
+  "footer": {
+    "tagline": "Jednočlani produktni studio — dizajn, web i mobilne aplikacije iz jednog para ruku, sa sedištem u Nišu, Srbija.",
+    "ctaLead": "Napravimo nešto",
+    "ctaHighlight": "zajedno.",
+    "groupSite": "Sajt",
+    "groupStudio": "Studio",
+    "groupContact": "Javi se",
+    "github": "GitHub ↗",
+    "linkedin": "LinkedIn ↗",
+    "email": "Email",
+    "base": "Niš, Srbija · CET",
+    "reply": "Odgovor u roku od 48h",
+    "copyright": "© 2026 CloudSheep · Dizajnirano i napravljeno u Nišu, Srbija",
+    "copyrightLong": "© 2026 CloudSheep · Dizajnirano i napravljeno u Nišu, Srbija · cloudsheep.dev",
+    "backToTop": "na vrh"
+  },
+  "notFound": {
+    "terminal": "nema takvog fajla ili direktorijuma",
+    "body": "Ova ovca je odlutala sa oblaka. Stranica koju tražiš se preselila, ili nikad nije ni postojala.",
+    "home": "Nazad na početnu",
+    "work": "Pogledaj radove"
+  }
+}

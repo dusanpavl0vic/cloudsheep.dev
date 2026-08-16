@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { SpiralMark } from '@/components/Logo'
-import { CONTACT_EMAIL, SECTION_IDS } from '@/constants/navigation'
-import { ROUTES } from '@/constants/routes'
+import { CONTACT_EMAIL, SECTION_IDS } from '@/lib/navigation'
+import { ROUTES } from '@/lib/routes'
 import { Button, Container } from '@app/ui'
 
 import {
@@ -14,7 +14,7 @@ import {
 } from './ContactSection.variants'
 
 export const ContactSection = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['landing', 'common'])
 
   return (
     <section id={SECTION_IDS.CONTACT} className="py-14">

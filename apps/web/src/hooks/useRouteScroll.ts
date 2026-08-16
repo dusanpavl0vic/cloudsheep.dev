@@ -8,6 +8,7 @@ import { useLocation } from 'react-router'
 export const useRouteScroll = () => {
   const { pathname, hash } = useLocation()
 
+  // effect: window.scrollTo — imperativni DOM rad na promenu rute
   useEffect(() => {
     if (hash) {
       // Odloži za jedan frame da sekcija bude izmerena pre skrolovanja (posle mount-a)

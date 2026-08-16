@@ -2,13 +2,14 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { SpiralMark } from '@/components/Logo'
-import { ROUTES } from '@/constants/routes'
+import { BRAND } from '@/lib/glyphs'
+import { ROUTES } from '@/lib/routes'
 import { Button } from '@app/ui'
 
 const GRID_MASK = 'radial-gradient(ellipse 65% 75% at 50% 45%, #000 25%, transparent 72%)'
 
 export const NotFoundPage = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation('common')
 
   return (
     <section className="relative flex flex-1 items-center justify-center overflow-hidden px-6 py-24">
@@ -31,7 +32,7 @@ export const NotFoundPage = () => {
       <div className="relative max-w-[640px] text-center">
         <div className="mb-7 inline-flex flex-wrap items-center justify-center gap-2 font-mono text-[13px] text-foreground">
           <span className="text-primary">$</span>
-          <span>cd /this-page</span>
+          <span>{BRAND.NOT_FOUND_COMMAND}</span>
           <span className="text-faint">→</span>
           <span className="text-destructive">{t('notFound.terminal')}</span>
           <span aria-hidden className="caret" />

@@ -1,0 +1,75 @@
+{
+  "projects": {
+    "eyebrow": "arhiva · ažurirano jul 2026",
+    "title": "Radovi",
+    "subtitle": "Svaki projekat ovde je dizajnirala, izgradila i isporučila jedna osoba. Manje, dublje studije slučaja umesto zida sličica.",
+    "empty": "u ovoj kategoriji još nema ničega — svrati ponovo uskoro",
+    "filters": {
+      "all": "Sve",
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "fullStack": "Full-Stack",
+      "openSource": "Open Source"
+    },
+    "items": {
+      "atlas": {
+        "title": "Atlas Analytics",
+        "cat": "full-stack",
+        "desc": "Analitički dashboard za fintech tim — 40k događaja u minuti, upiti ispod sekunde, isporučen za 14 nedelja.",
+        "caption": "Atlas Analytics — snimak dashboarda"
+      },
+      "transit": {
+        "title": "Niš Transit",
+        "cat": "frontend · mobilne",
+        "desc": "Praćenje autobusa u realnom vremenu za grad Niš — 12k mesečnih korisnika na iOS-u i Androidu.",
+        "caption": "Niš Transit — ekrani aplikacije"
+      },
+      "forge": {
+        "title": "Forge CMS",
+        "cat": "otvoreni kod",
+        "desc": "Headless CMS zasnovan na blokovima sa drag-and-drop graditeljem stranica — 1.2k zvezdica na GitHub-u.",
+        "caption": "Forge CMS — snimak editora"
+      },
+      "pulse": {
+        "title": "Pulse API",
+        "cat": "backend",
+        "desc": "API za prikupljanje zdravstvenih metrika — 99.98% uptime kroz dve godine produkcije.",
+        "caption": "Pulse API — dokumentacija / dashboard"
+      },
+      "meridian": {
+        "title": "Meridian",
+        "cat": "full-stack",
+        "desc": "Platforma za rezervacije za berlinski studio — sinhronizacija kalendara, plaćanja, višejezični UI.",
+        "caption": "Meridian — tok rezervacije"
+      }
+    }
+  },
+  "caseStudy": {
+    "allProjects": "svi projekti",
+    "highlightsLabel": "Ključno — šta je napravilo razliku",
+    "highlight1": "40.000 događaja u minuti uz upite na dashboardu ispod sekunde",
+    "highlight2": "Vreme do uvida smanjeno sa 2 dana (tabele) na ispod 1 minuta",
+    "highlight3": "Dizajniran, izgrađen i isporučen od početka do kraja za 14 nedelja — jedna osoba",
+    "highlight4": "99.95% uptime tokom prvih 12 meseci u produkciji",
+    "heroCaption": "glavni dashboard — tok događaja uživo, sačuvani prikazi, upozorenja",
+    "gridCaption": "graditelj upita · konfiguracija upozorenja",
+    "problemTitle": "Problem",
+    "problem1": "Beogradski fintech tim je radio naslepo, između nedeljnih izvoza u tabelama. Produktne odluke su danima čekale podatke koji su već postojali — samo nisu imali gde da žive. Trebao im je pregled ponašanja korisnika u realnom vremenu, bez kupovine analitike od šest cifara.",
+    "problem2": "Zadatak: jedan dashboard, sve ključne metrike, dovoljno brz da se pogleda između dva gutljaja kafe.",
+    "decisionsTitle": "Ključne odluke",
+    "decisions1": "Događaji sleću u ClickHouse, ne u Postgres — kolonarni skladišni sistem omogućio je agregaciju ispod sekunde na običnom hardveru. Postgres radi ono u čemu je dobar: korisnici, sačuvani prikazi, pravila upozorenja.",
+    "decisions2": "Sa strane dizajna: bez zoološkog vrta grafikona. Četiri tipa prikaza, dosledna svuda, pa tim čita svaki ekran na isti način. Gustina gde je bitno, prazan prostor gde nije.",
+    "outcomeTitle": "Rezultat",
+    "outcome1": "Dashboard je u potpunosti zamenio ritual nedeljnog izvoza. Godinu dana kasnije, radi sa 99.95% uptime-a i postao je prvi tab koji tim otvori svakog jutra. Odluke o funkcijama koje su nekad čekale petak sad se donose na standup-u.",
+    "stat1Value": "40k",
+    "stat1Label": "događaja u minuti",
+    "stat2Value": "<1s",
+    "stat2Label": "p95 vreme upita",
+    "stat3Value": "14",
+    "stat3Label": "nedelja, ideja → produkcija",
+    "github": "GitHub",
+    "liveDemo": "Demo uživo",
+    "demoNote": "pristupni podaci za demo na zahtev",
+    "nextUp": "sledeće"
+  }
+}

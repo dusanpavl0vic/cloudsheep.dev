@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next'
 
 import { PricingCard } from '@/components/PricingCard'
-import { SECTION_IDS } from '@/constants/navigation'
 import { PRICING_PLANS } from '@/features/landing/landing.constants'
+import { SECTION_IDS } from '@/lib/navigation'
 import { Eyebrow, SectionBlock } from '@app/ui'
 
 export const PricingSection = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['landing', 'common'])
 
   return (
     <SectionBlock

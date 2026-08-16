@@ -4,12 +4,13 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 
+import { GLYPHS } from '@/lib/glyphs'
 import { Button, Input, Label, Textarea } from '@app/ui'
 
 
 const schema = z.object({
   name: z.string().trim().min(1),
-  email: z.string().trim().email(),
+  email: z.email().trim(),
   subject: z.string().trim().optional(),
   message: z.string().trim().min(10),
 })
@@ -17,7 +18,7 @@ const schema = z.object({
 type ContactValues = z.infer<typeof schema>
 
 export const ContactForm = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['contact', 'common'])
   const [sent, setSent] = useState(false)
 
   const {
@@ -39,7 +40,7 @@ export const ContactForm = () => {
     return (
       <div className="rounded-xl border border-border bg-card p-9 text-center shadow-sm">
         <div className="mx-auto mb-4.5 flex size-[58px] items-center justify-center rounded-full bg-primary text-2xl font-bold text-primary-foreground">
-          ✓
+          {GLYPHS.CHECK}
         </div>
         <h2 className="mb-2.5 font-heading text-2xl font-semibold text-foreground">
           {t('contact.form.sentTitle')}
@@ -57,7 +58,7 @@ export const ContactForm = () => {
   return (
     <form
       noValidate
-      onSubmit={onSubmit}
+      onSubmit={(event) => void onSubmit(event)}
       className="flex flex-col gap-4.5 rounded-xl border border-border bg-card p-9 shadow-sm"
     >
       <div className="grid grid-cols-1 gap-4.5 sm:grid-cols-2">

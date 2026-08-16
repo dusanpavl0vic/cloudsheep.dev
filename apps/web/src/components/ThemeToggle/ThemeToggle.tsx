@@ -6,7 +6,7 @@ import { THEMES, themeToggled } from '@/store/slices/themeSlice'
 import { Button } from '@app/ui'
 
 export const ThemeToggle = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation('common')
   const dispatch = useAppDispatch()
   const theme = useAppSelector((state) => state.theme.theme)
 

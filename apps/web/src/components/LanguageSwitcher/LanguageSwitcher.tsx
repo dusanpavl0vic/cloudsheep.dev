@@ -14,7 +14,7 @@ import {
 } from './LanguageSwitcher.variants'
 
 export const LanguageSwitcher = () => {
-  const { i18n, t } = useTranslation()
+  const { i18n, t } = useTranslation('common')
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -23,6 +23,7 @@ export const LanguageSwitcher = () => {
     DEFAULT_LANGUAGE_OPTION
 
   // Zatvaranje na klik van menija i na Escape — subscribe na DOM evente (PROJECT_GUIDE 2.1)
+  // effect: document — klik van menija i Escape su globalni DOM događaji
   useEffect(() => {
     if (!open) return
     const onPointerDown = (event: MouseEvent) => {

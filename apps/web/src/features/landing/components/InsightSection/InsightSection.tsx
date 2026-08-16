@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
-import { SECTION_IDS } from '@/constants/navigation'
-import { ROUTES } from '@/constants/routes'
+import { GLYPHS } from '@/lib/glyphs'
+import { SECTION_IDS } from '@/lib/navigation'
+import { ROUTES } from '@/lib/routes'
 import { Badge, Container, Reveal, TextLink } from '@app/ui'
 
 import {
@@ -20,7 +21,7 @@ import {
 const UPTIME = '99.95%'
 
 export const InsightSection = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['landing', 'common'])
 
   return (
     <Reveal as="section" className="pt-8">
@@ -31,7 +32,7 @@ export const InsightSection = () => {
               aria-hidden
               className="flex size-10 items-center justify-center rounded-full border border-primary-foreground/40 bg-primary-foreground/15 text-[15px]"
             >
-              ✦
+              {GLYPHS.SPARKLE}
             </span>
             <span className="flex flex-col gap-4">
               <span className="font-heading text-[27px] leading-tight font-semibold tracking-tight">
@@ -47,7 +48,7 @@ export const InsightSection = () => {
             <div className="min-w-[200px] flex-1">
               <Badge variant="soft" className="mb-4">
                 <span aria-hidden className="text-primary">
-                  ▚
+                  {GLYPHS.BLOCKS}
                 </span>
                 {t('insight.badge')}
               </Badge>

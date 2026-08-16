@@ -2,16 +2,17 @@ import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 
 import { SpiralMark } from '@/components/Logo'
-import { ROUTES, projectPath } from '@/constants/routes'
-import { Button, Container, Reveal, TagList, TextLink } from '@app/ui'
-
 import {
   CASE_STUDY_HIGHLIGHTS,
   CASE_STUDY_SECTIONS,
   CASE_STUDY_STATS,
   PROJECTS,
   getProjectBySlug,
-} from './projects.constants'
+} from '@/features/projects/projects.constants'
+import { GLYPHS } from '@/lib/glyphs'
+import { ROUTES, projectPath } from '@/lib/routes'
+import { Button, Container, Reveal, TagList, TextLink } from '@app/ui'
+
 
 const MediaFrame = ({ ratio, caption }: { ratio: string; caption?: string }) => (
   <figure className="m-0">
@@ -27,7 +28,7 @@ const MediaFrame = ({ ratio, caption }: { ratio: string; caption?: string }) => 
 )
 
 export const ProjectPage = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(['projects', 'common'])
   const { slug } = useParams()
   const project = slug ? getProjectBySlug(slug) : undefined
 
@@ -75,7 +76,7 @@ export const ProjectPage = () => {
           {CASE_STUDY_HIGHLIGHTS.map((key) => (
             <div key={key} className="flex gap-2.5 text-[15.5px] leading-snug text-foreground">
               <span aria-hidden className="font-bold text-primary">
-                ✓
+                {GLYPHS.CHECK}
               </span>
               <span>{t(key)}</span>
             </div>
