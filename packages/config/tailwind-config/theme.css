@@ -60,6 +60,16 @@
   --inverse-faint: oklch(59.43% 0.0599 266.41); /* Lynch */
   --inverse-primary: oklch(61.23% 0.2092 263.53); /* svetlija plava na navy podlozi */
   --inverse-border: oklch(95.91% 0.025 106.86 / 0.141);
+
+  /* ── Akcenti za oznake ──────────────────────────────────────────────────
+     Nose boju na SITNIM površinama: ikonice, tačkice, tagovi, brojevi koraka.
+     NIKAD na dugmetu ni na punoj kartici — plava ostaje jedina boja akcije
+     (docs/22 §4). Svaki je usklađen po svetlini da nijedan ne „viče" jače od ostalih. */
+  --mark-amber: oklch(62% 0.15 72);
+  --mark-violet: oklch(55% 0.19 295);
+  --mark-teal: oklch(56% 0.11 195);
+  --mark-rose: oklch(58% 0.17 15);
+  --mark-lime: oklch(58% 0.14 135);
 }
 
 /* Tamna tema — izvedena iz iste palete (override samo boja) */
@@ -96,6 +106,12 @@
   --inverse-faint: oklch(59.43% 0.0599 266.41);
   --inverse-primary: oklch(71.68% 0.1299 267.02);
   --inverse-border: oklch(95.91% 0.025 106.86 / 0.125);
+
+  --mark-amber: oklch(76% 0.14 72);
+  --mark-violet: oklch(72% 0.16 295);
+  --mark-teal: oklch(72% 0.1 195);
+  --mark-rose: oklch(73% 0.15 15);
+  --mark-lime: oklch(74% 0.13 135);
 }
 
 /* Mapiranje tokena na Tailwind klase (bg-background, text-primary, border-border...) */
@@ -127,6 +143,11 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-mark-amber: var(--mark-amber);
+  --color-mark-violet: var(--mark-violet);
+  --color-mark-teal: var(--mark-teal);
+  --color-mark-rose: var(--mark-rose);
+  --color-mark-lime: var(--mark-lime);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);

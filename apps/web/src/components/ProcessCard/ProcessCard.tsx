@@ -28,7 +28,7 @@ export const ProcessCard = ({
   className,
 }: ProcessCardProps) => (
   <article className={cn(processCardVariants({ tone }), className)}>
-    <span className={processIndexVariants()}>{index}</span>
+    <span className={processIndexVariants({ tone })}>{index}</span>
     <h3 className={processTitleVariants()}>{title}</h3>
     <p className={processTextVariants()}>{description}</p>
     <span className={processMetaVariants()}>{meta}</span>

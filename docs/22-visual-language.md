@@ -53,6 +53,21 @@ Paleta je skoro monohromna — pozadina, tekst, sivi tonovi. **Plava se koristi 
 što traži akciju**: primarno dugme, istaknuta kartica, aktivna stavka. Ako je na ekranu tri
 plave stvari, dve su suvišne.
 
+### 4b. Boja na oznakama, ne na površinama
+
+Pored plave postoji pet `mark-*` tokena (`amber`, `violet`, `teal`, `rose`, `lime`).
+Oni nose **šarenilo na sitnim površinama**: ikonice, brojevi koraka, tanke niti, tagovi.
+
+> **Nikad na dugmetu ni na punoj kartici.** Plava ostaje jedina boja akcije (§4).
+> Ako korak procesa ima ljubičastu nit i ljubičast broj, to je oznaka; ako bi imao
+> ljubičastu podlogu, četiri kartice bi vikale jedna preko druge.
+
+Svi `mark-*` su usklađeni po svetlini da nijedan ne dominira, i svi prolaze 3:1 prema
+podlozi u obe teme — to je prag za grafičke oznake po WCAG-u.
+
+Brend logotipi tehnologija su izuzetak od pravila o jednom akcentu: oni **jesu** šarenilo,
+i zato stoje u belim squircle pločicama koje ih drže odvojene od ostatka stranice.
+
 ### 5. Istaknuta kartica u grupi
 
 U grupi od tri (cene, planovi), srednja je **puna akcenatska**: plava podloga, beo tekst,

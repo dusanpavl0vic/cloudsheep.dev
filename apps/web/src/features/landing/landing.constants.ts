@@ -63,6 +63,7 @@ export const PROCESS_STEPS = [
     titleKey: 'process.discover.title',
     descriptionKey: 'process.discover.description',
     metaKey: 'process.discover.meta',
+    tone: 'primary' as const,
   },
   {
     id: 'design',
@@ -70,6 +71,7 @@ export const PROCESS_STEPS = [
     titleKey: 'process.design.title',
     descriptionKey: 'process.design.description',
     metaKey: 'process.design.meta',
+    tone: 'violet' as const,
   },
   {
     id: 'build',
@@ -77,6 +79,7 @@ export const PROCESS_STEPS = [
     titleKey: 'process.build.title',
     descriptionKey: 'process.build.description',
     metaKey: 'process.build.meta',
+    tone: 'teal' as const,
   },
   {
     id: 'ship',
@@ -84,7 +87,7 @@ export const PROCESS_STEPS = [
     titleKey: 'process.ship.title',
     descriptionKey: 'process.ship.description',
     metaKey: 'process.ship.meta',
-    tone: 'accent',
+    tone: 'amber' as const,
   },
 ] as const
 

@@ -25,7 +25,7 @@ export const ProcessSection = () => {
             title={t(step.titleKey)}
             description={t(step.descriptionKey)}
             meta={t(step.metaKey)}
-            tone={'tone' in step ? 'accent' : 'primary'}
+            tone={step.tone}
           />
         ))}
       </div>
