@@ -35,7 +35,7 @@ export const PricingCard = ({
 }: PricingCardProps) => (
   <article className={cn(pricingCardVariants({ featured }), className)}>
     {badge && (
-      <Badge variant="accent" className={pricingBadgeVariants()}>
+      <Badge variant="plain" className={pricingBadgeVariants()}>
         {badge}
       </Badge>
     )}

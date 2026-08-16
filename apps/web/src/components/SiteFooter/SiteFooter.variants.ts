@@ -21,8 +21,13 @@ export const footerGroupTitleVariants = cva(
   'mb-4 font-mono text-[11.5px] tracking-[0.1em] uppercase text-inverse-faint',
 )
 
+/**
+ * Strelica ispred linka (docs/22 §7) — kroz `::before`, ne kao čvor u JSX-u,
+ * pa je automatski nevidljiva za screen reader i ne ulazi u tekst linka.
+ * Pomera se udesno na hover.
+ */
 export const footerLinkVariants = cva(
-  'text-[14.5px] text-inverse-muted transition-colors hover:text-inverse-foreground',
+  "inline-flex items-center gap-2 text-[14.5px] text-inverse-muted transition-colors before:text-inverse-faint before:transition-transform before:content-['→'] hover:text-inverse-foreground hover:before:translate-x-0.5",
 )
 
 export const footerTextVariants = cva('max-w-[290px] text-[14.5px] leading-relaxed text-inverse-muted')

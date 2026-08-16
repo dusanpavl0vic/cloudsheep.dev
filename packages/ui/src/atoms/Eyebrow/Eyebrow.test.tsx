@@ -10,15 +10,19 @@ describe('Eyebrow', () => {
     expect(screen.getByText('Usluge')).toBeInTheDocument()
   })
 
-  it('podrazumevani marker je //', () => {
-    render(<Eyebrow>Usluge</Eyebrow>)
-    expect(screen.getByText('//')).toBeInTheDocument()
+  it('podrazumevano prikazuje tačkicu — dekoraciju, ne tekst', () => {
+    const { container } = render(<Eyebrow>Usluge</Eyebrow>)
+    expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(1)
   })
 
-  it('marker se može zameniti', () => {
-    render(<Eyebrow marker="→">Usluge</Eyebrow>)
-    expect(screen.getByText('→')).toBeInTheDocument()
-    expect(screen.queryByText('//')).not.toBeInTheDocument()
+  it('tačkica se može isključiti', () => {
+    const { container } = render(<Eyebrow marker={false}>Usluge</Eyebrow>)
+    expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(0)
+  })
+
+  it('renderuje se kao pilula, ne kao goli tekst', () => {
+    render(<Eyebrow>Usluge</Eyebrow>)
+    expect(screen.getByText('Usluge')).toHaveClass('rounded-full')
   })
 
   it('tone varijanta radi na tamnoj podlozi — ista komponenta, ne druga', () => {

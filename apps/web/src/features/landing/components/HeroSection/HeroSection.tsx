@@ -11,29 +11,22 @@ import { ROUTES } from '@/lib/routes'
 import { useMediaQuery } from '@app/hooks'
 import { Button } from '@app/ui'
 
-import { GRID_FADE, GRID_LINES, SPOTLIGHT_MASK, TEXT_HALO } from './HeroSection.constants'
+import { AMBIENT_GLOW, CURSOR_GLOW } from './HeroSection.constants'
 import {
+  heroAmbientVariants,
   heroCtaVariants,
-  heroGridLitVariants,
-  heroGridStageVariants,
-  heroGridVariants,
-  heroHorizonVariants,
+  heroDotsVariants,
+  heroCursorGlowVariants,
   heroMonoVariants,
   heroScrollArrowVariants,
   heroScrollVariants,
   heroSpiralVariants,
   heroTerminalVariants,
   heroTextVariants,
+  heroTitleMutedVariants,
   heroTitleVariants,
   heroVariants,
 } from './HeroSection.variants'
-
-/** Zajednički stil oba sloja mreže — razlikuju se samo po boji i maski. */
-const gridLayerStyle = {
-  backgroundImage: GRID_LINES,
-  WebkitMaskImage: GRID_FADE,
-  maskImage: GRID_FADE,
-} as const
 
 export const HeroSection = () => {
   const { t } = useTranslation(['landing', 'common'])
@@ -83,41 +76,31 @@ export const HeroSection = () => {
 
   return (
     <section ref={sectionRef} id={SECTION_IDS.TOP} className={heroVariants()}>
-      <div aria-hidden className={heroGridStageVariants()}>
-        {/* Ugašeni sloj — nosi celu mrežu */}
-        <div className={heroGridVariants()} style={gridLayerStyle} />
+      {/* Statična tačkasta tekstura — gasi se ka centru da ne smeta naslovu */}
+      <div aria-hidden className={heroDotsVariants()} />
 
-        {/* Upaljeni sloj — ista mreža u boji akcenta, vidi se samo kroz masku oko kursora */}
-        <div
-          ref={litRef}
-          className={heroGridLitVariants()}
-          style={{
-            ...gridLayerStyle,
-            WebkitMaskImage: `${GRID_FADE}, ${SPOTLIGHT_MASK}`,
-            maskImage: `${GRID_FADE}, ${SPOTLIGHT_MASK}`,
-            WebkitMaskComposite: 'source-in',
-            maskComposite: 'intersect',
-          }}
-        />
-      </div>
+      {/* Statični ambijentalni sjaj — nema šare i ništa se ne pomera samo od sebe */}
+      <div aria-hidden className={heroAmbientVariants()} style={{ backgroundImage: AMBIENT_GLOW }} />
 
-      <div aria-hidden className={heroHorizonVariants()} />
-
-      {/* Izmaglica iza teksta — odvaja naslov od mreže bez pune podloge */}
+      {/* Svetlo oko kursora — jedini pokretan sloj */}
       <div
+        ref={litRef}
         aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{ backgroundImage: TEXT_HALO }}
+        className={heroCursorGlowVariants()}
+        style={{ backgroundImage: CURSOR_GLOW }}
       />
 
       <SpiralMark aria-hidden animated className={heroSpiralVariants()} />
 
       <p className={heroMonoVariants()}>{BRAND.DOMAIN}</p>
 
+      {/* Dvotonski naslov: nosivi deo pun, nastavak prigušen (docs/22 §1) */}
       <h1 className={heroTitleVariants()}>
         {t('hero.titleTop')}
         <br />
-        {t('hero.titleBottom')} <span className="text-primary">{t('hero.titleHighlight')}</span>.
+        <span className={heroTitleMutedVariants()}>
+          {t('hero.titleBottom')} {t('hero.titleHighlight')}
+        </span>
       </h1>
 
       <p className={heroTextVariants()}>{t('hero.description')}</p>

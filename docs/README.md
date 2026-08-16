@@ -32,6 +32,7 @@ nikad "treba voditi računa o performansama".
 | rute, guard, lazy | [`05-routing.md`](05-routing.md) |
 | dijalog bilo koje vrste | [`06-modals.md`](06-modals.md) |
 | stil, tokene, teme | [`08-styling-ui.md`](08-styling-ui.md) |
+| izgled sekcija, kartica, naslova | [`22-visual-language.md`](22-visual-language.md) |
 | prevode, novi jezik | [`09-i18n.md`](09-i18n.md) |
 | formu | [`10-forms-validation.md`](10-forms-validation.md) |
 | API poziv | [`11-data-fetching.md`](11-data-fetching.md) |
@@ -41,6 +42,7 @@ nikad "treba voditi računa o performansama".
 | lint, CI, verzije | [`16-tooling-ci.md`](16-tooling-ci.md) |
 | bilo šta oko sigurnosti | [`20-security.md`](20-security.md) |
 | ne razumeš pojam | [`21-glossary.md`](21-glossary.md) |
+| vizuelni jezik (naslovi, kartice, elevacija) | [`22-visual-language.md`](22-visual-language.md) |
 
 ## Arhitektonske odluke (ADR)
 

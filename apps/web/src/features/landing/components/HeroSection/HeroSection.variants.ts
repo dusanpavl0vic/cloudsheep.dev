@@ -4,30 +4,20 @@ export const heroVariants = cva(
   'relative flex min-h-[calc(100svh-72px)] w-full flex-col items-center justify-center overflow-hidden bg-background px-5 py-20 text-center',
 )
 
-/**
- * Nosač perspektive. `perspective` mora biti na roditelju, ne na samoj mreži —
- * inače se `rotateX` primenjuje ravno i dubine nema.
- */
-export const heroGridStageVariants = cva(
-  'pointer-events-none absolute inset-0 [perspective:640px] [perspective-origin:50%_0%]',
-)
+/** Statični ambijentalni sjaj — sloj koji se nikad ne pomera. */
+export const heroAmbientVariants = cva('pointer-events-none absolute inset-0')
 
 /**
- * Sama mreža. Prelazi donju ivicu (`-bottom-1/3`) da linije ne bi nestale na dnu ekrana
- * kad ih rotacija „položi".
+ * Fina tačkasta tekstura preko cele sekcije (docs/22 §6).
+ * Statična je — animiran uzorak je već dvaput pao na performansama.
  */
-export const heroGridVariants = cva(
-  'cs-grid absolute inset-x-[-30%] top-[18%] -bottom-1/3 [transform:rotateX(64deg)] [transform-origin:50%_0%] text-border-strong',
+export const heroDotsVariants = cva(
+  'pointer-events-none absolute inset-0 bg-[radial-gradient(currentColor_1px,transparent_1px)] bg-[length:22px_22px] text-border-strong/40 [mask-image:radial-gradient(ellipse_75%_70%_at_50%_45%,transparent_35%,#000_100%)]',
 )
 
-/** Upaljeni sloj — ista mreža u boji akcenta, vidljiva samo kroz masku oko kursora. */
-export const heroGridLitVariants = cva(
-  'cs-grid absolute inset-x-[-30%] top-[18%] -bottom-1/3 [transform:rotateX(64deg)] [transform-origin:50%_0%] text-primary',
-)
-
-/** Sjaj na liniji horizonta — čini da mreža „izlazi" iz svetla, umesto da se seče. */
-export const heroHorizonVariants = cva(
-  'pointer-events-none absolute inset-x-0 top-[18%] h-40 -translate-y-1/2 bg-[radial-gradient(ellipse_50%_100%_at_50%_50%,var(--color-primary)_0%,transparent_70%)] opacity-[0.14] blur-2xl',
+/** Svetlo oko kursora. Jedini pokretan sloj, i to samo dok se miš pomera. */
+export const heroCursorGlowVariants = cva(
+  'pointer-events-none absolute inset-0 transition-opacity duration-500',
 )
 
 export const heroSpiralVariants = cva(
@@ -41,6 +31,12 @@ export const heroMonoVariants = cva(
 export const heroTitleVariants = cva(
   'relative z-10 m-0 font-heading text-[clamp(2.9rem,8.5vw,6.8rem)] leading-[0.94] font-bold tracking-[-0.05em] text-balance text-display',
 )
+
+/**
+ * Prigušeni nastavak naslova (docs/22 §1).
+ * Dopuna, ne ključna informacija — rečenica mora imati smisla i bez njega.
+ */
+export const heroTitleMutedVariants = cva('text-faint')
 
 export const heroTextVariants = cva(
   'relative z-10 mt-7 max-w-[600px] text-[clamp(1.05rem,1.6vw,1.3rem)] leading-relaxed text-pretty text-muted-foreground',

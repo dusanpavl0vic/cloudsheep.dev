@@ -183,24 +183,6 @@ details[open] > .dropdown-content {
   animation: cs-drop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* --- Perspektivna mreža u hero pozadini --- */
-/* Pomera se za tačno jednu ćeliju (56px), pa je povratak na početak neprimetan. */
-@keyframes cs-grid-drift {
-  from {
-    background-position:
-      0 0,
-      0 0;
-  }
-  to {
-    background-position:
-      0 56px,
-      0 56px;
-  }
-}
-.cs-grid {
-  animation: cs-grid-drift 8s linear infinite;
-}
-
 /* --- Hero watermark: povrh iscrtavanja i lagano „diše" po prozirnosti --- */
 @keyframes cs-breathe {
   0%,
@@ -276,7 +258,6 @@ details[open] > .dropdown-content {
   }
   .pulse-dot,
   .cs-ring-sweep,
-  .cs-grid,
   .cs-scroll-hint,
   .cs-marquee,
   .menu-in,
