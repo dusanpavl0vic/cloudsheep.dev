@@ -6,6 +6,16 @@ dist-ssr
 .env.*
 !.env.example
 
+# Monorepo
+.turbo
+*.tsbuildinfo
+
+# Test i budžeti
+coverage
+playwright-report
+test-results
+.lighthouseci
+
 # Editor
 .vscode/*
 !.vscode/extensions.json

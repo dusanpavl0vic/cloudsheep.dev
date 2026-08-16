@@ -1,0 +1,13 @@
+{
+  "extends": "@app/typescript-config/node.json",
+  "compilerOptions": {
+    "types": [
+      "node"
+    ],
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true
+  },
+  "include": [
+    "index.ts"
+  ]
+}

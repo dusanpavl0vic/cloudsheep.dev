@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "React app (Vite)",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "types": ["vite/client"]
+  }
+  // NAPOMENA: `paths` se NE deklariše ovde. TypeScript razrešava paths relativno na fajl
+  // koji ih sadrži, pa bi "@/*" pokazivao na packages/config/typescript-config/src.
+  // Svaka app deklariše svoj alias u sopstvenom tsconfig.app.json.
+}
