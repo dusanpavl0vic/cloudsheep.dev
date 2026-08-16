@@ -27,6 +27,7 @@ export { TextLink } from './atoms/TextLink'
 
 // ── molecules ──
 export { PageHeader } from './molecules/PageHeader'
+export { ProgressRing } from './molecules/ProgressRing'
 export { TagList } from './molecules/TagList'
 
 // ── layouts ──

@@ -32,8 +32,10 @@ export const SiteHeader = () => {
               <NavLink
                 key={item.id}
                 to={item.to}
+                // `end` je bitno za "/" — bez njega je Home aktivan na SVAKOJ ruti
+                end={item.to === ROUTES.HOME}
                 className={({ isActive }) =>
-                  cn(siteNavLinkVariants(), isActive && 'text-foreground')
+                  cn(siteNavLinkVariants(), isActive && 'is-active text-foreground')
                 }
               >
                 {t(item.labelKey)}

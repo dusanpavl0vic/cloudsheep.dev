@@ -17,14 +17,6 @@ export const insightHeadingVariants = cva(
 export const insightTextVariants = cva('text-[16px] leading-relaxed text-muted-foreground')
 
 /** Prsten iskorišćenosti (uptime) — konusni gradijent + tamno jezgro. */
-export const gaugeRingVariants = cva(
-  'flex size-[154px] shrink-0 items-center justify-center rounded-full',
-)
-
-export const gaugeCoreVariants = cva(
-  'flex size-[120px] flex-col items-center justify-center rounded-full bg-inverse text-inverse-foreground',
-)
-
 export const gaugeValueVariants = cva('font-heading text-[26px] leading-none font-bold')
 
 export const gaugeLabelVariants = cva('mt-1 font-mono text-[10.5px] text-inverse-faint')

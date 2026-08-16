@@ -1,0 +1,10 @@
+{
+  "common": {
+    "loading": "Loading…",
+    "signOut": "Sign out",
+    "skipToContent": "Skip to content"
+  },
+  "nav": { "dashboard": "Dashboard" },
+  "dashboard": { "title": "Dashboard", "welcome": "Welcome, {name}" },
+  "notFound": { "title": "Page not found", "back": "Back to dashboard" }
+}

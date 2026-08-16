@@ -1,7 +1,27 @@
+import type React from 'react'
 import { createBrowserRouter } from 'react-router'
 
 import { MainLayout } from '@/components/MainLayout'
+import { loadFeatureNamespace, type FeatureNamespace } from '@/i18n'
 import { ROUTES } from '@/lib/routes'
+
+/**
+ * Učitava chunk stranice I prevode njenog feature-a paralelno.
+ *
+ * Bez ovoga se namespace nikad ne registruje i `t('insight.uptime')` renderuje sam ključ —
+ * greška koja se ne vidi u typecheck-u, samo na ekranu (docs/09-i18n.md).
+ */
+async function lazyPage<T extends Record<string, unknown>>(
+  namespace: FeatureNamespace | null,
+  load: () => Promise<T>,
+  exportName: keyof T,
+) {
+  const [module] = await Promise.all([
+    load(),
+    namespace ? loadFeatureNamespace(namespace) : Promise.resolve(),
+  ])
+  return { Component: module[exportName] as React.ComponentType }
+}
 
 /**
  * Svaka ruta je lazy (docs/05-routing.md §1).
@@ -16,10 +36,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        lazy: async () => {
-          const { LandingPage } = await import('@/pages/LandingPage')
-          return { Component: LandingPage }
-        },
+        lazy: () => lazyPage('landing', () => import('@/pages/LandingPage'), 'LandingPage'),
       },
     ],
   },
@@ -28,42 +45,27 @@ export const router = createBrowserRouter([
     children: [
       {
         path: ROUTES.PROJECTS,
-        handle: { crumb: 'nav.projects' },
-        lazy: async () => {
-          const { ProjectsPage } = await import('@/pages/ProjectsPage')
-          return { Component: ProjectsPage }
-        },
+        handle: { crumb: 'nav.work' },
+        lazy: () => lazyPage('projects', () => import('@/pages/ProjectsPage'), 'ProjectsPage'),
       },
       {
         path: ROUTES.PROJECT,
-        handle: { crumb: 'nav.caseStudy' },
-        lazy: async () => {
-          const { ProjectPage } = await import('@/pages/ProjectPage')
-          return { Component: ProjectPage }
-        },
+        handle: { crumb: 'nav.work' },
+        lazy: () => lazyPage('projects', () => import('@/pages/ProjectPage'), 'ProjectPage'),
       },
       {
         path: ROUTES.CONTACT,
         handle: { crumb: 'nav.contact' },
-        lazy: async () => {
-          const { ContactPage } = await import('@/pages/ContactPage')
-          return { Component: ContactPage }
-        },
+        lazy: () => lazyPage('contact', () => import('@/pages/ContactPage'), 'ContactPage'),
       },
       {
         path: ROUTES.USES,
         handle: { crumb: 'nav.uses' },
-        lazy: async () => {
-          const { UsesPage } = await import('@/pages/UsesPage')
-          return { Component: UsesPage }
-        },
+        lazy: () => lazyPage('uses', () => import('@/pages/UsesPage'), 'UsesPage'),
       },
       {
         path: ROUTES.NOT_FOUND,
-        lazy: async () => {
-          const { NotFoundPage } = await import('@/pages/NotFoundPage')
-          return { Component: NotFoundPage }
-        },
+        lazy: () => lazyPage(null, () => import('@/pages/NotFoundPage'), 'NotFoundPage'),
       },
     ],
   },

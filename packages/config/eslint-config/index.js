@@ -139,7 +139,10 @@ export function createAppConfig({ tsconfigRootDir, srcDir = './src' } = {}) {
         'import/no-internal-modules': [
           'error',
           {
-            forbid: ['@app/*/*'],
+            // Zabranjuje se posezanje u UNUTRAŠNJOST paketa (`@app/ui/src/...`).
+            // Deklarisani subpath export (`@app/utils/env`) je javni API, ne dubinski import —
+            // paket ga svesno izlaže kroz `exports` u svom package.json.
+            forbid: ['@app/*/*/**'],
           },
         ],
       },

@@ -1,0 +1,12 @@
+{
+  "extends": "@app/typescript-config/app.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "composite": true,
+    // Mora ovde, ne u presetu — paths se razrešava relativno na fajl koji ih deklariše
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src", "vitest.setup.ts"]
+}

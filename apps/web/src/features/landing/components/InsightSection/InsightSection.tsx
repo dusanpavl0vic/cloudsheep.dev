@@ -4,13 +4,10 @@ import { Link } from 'react-router'
 import { GLYPHS } from '@/lib/glyphs'
 import { SECTION_IDS } from '@/lib/navigation'
 import { ROUTES } from '@/lib/routes'
-import { Badge, Container, Reveal, TextLink } from '@app/ui'
+import { Badge, Container, ProgressRing, Reveal, TextLink } from '@app/ui'
 
 import {
-  gaugeCoreVariants,
   gaugeLabelVariants,
-  gaugeRingVariants,
-  gaugeValueVariants,
   insightBlueCardVariants,
   insightGridVariants,
   insightHeadingVariants,
@@ -18,7 +15,9 @@ import {
   insightTextVariants,
 } from './InsightSection.variants'
 
+/** Popunjenost prstena se izvodi iz iste vrednosti — nema drugog izvora istine. */
 const UPTIME = '99.95%'
+const UPTIME_PERCENT = Number.parseFloat(UPTIME)
 
 export const InsightSection = () => {
   const { t } = useTranslation(['landing', 'common'])
@@ -58,17 +57,15 @@ export const InsightSection = () => {
               </TextLink>
             </div>
 
-            <div
-              className={gaugeRingVariants()}
-              style={{
-                background:
-                  'conic-gradient(var(--primary) 0 95%, var(--border-strong) 95% 100%)',
-              }}
-            >
-              <div className={gaugeCoreVariants()}>
-                <span className={gaugeValueVariants()}>{UPTIME}</span>
-                <span className={gaugeLabelVariants()}>{t('insight.uptime')}</span>
-              </div>
+            <div className="flex flex-col items-center gap-2">
+              <ProgressRing
+                value={UPTIME_PERCENT}
+                label={UPTIME}
+                size="lg"
+                tone="inverse"
+                ariaLabel={`${UPTIME} ${t('insight.uptime')}`}
+              />
+              <span className={gaugeLabelVariants()}>{t('insight.uptime')}</span>
             </div>
 
             <div className="min-w-[170px] flex-1">

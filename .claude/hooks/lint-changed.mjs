@@ -3,10 +3,11 @@
 //
 // Namerno lintuje SAMO taj fajl, ne ceo paket: `pnpm lint` nad monorepoom traje predugo
 // da bi se pokretao posle svake izmene. Typecheck se ne radi ovde iz istog razloga —
-// tsc nema per-file režim koji bi bio brz, pa ostaje na `pnpm validate` i CI-ju.
+// tsc nema brz per-file režim, pa ostaje na `pnpm validate` i CI-ju.
 
-import { readFileSync, existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
+import path from 'node:path';
 
 let input;
 try {
@@ -15,16 +16,36 @@ try {
   process.exit(0);
 }
 
-const path = input?.tool_input?.file_path ?? '';
-if (!/\.(ts|tsx)$/.test(path) || !existsSync(path)) process.exit(0);
-if (/\.d\.ts$/.test(path)) process.exit(0);
+const filePath = input?.tool_input?.file_path ?? '';
+if (!/\.(ts|tsx)$/.test(filePath) || /\.d\.ts$/.test(filePath) || !existsSync(filePath)) {
+  process.exit(0);
+}
 
 const root = process.env.CLAUDE_PROJECT_DIR ?? process.cwd();
-if (!existsSync(`${root}/node_modules/.bin/eslint`)) process.exit(0); // pre pnpm install
+
+/**
+ * ESLint 9 flat config se traži počev od CWD-a. U monorepou koren nema `eslint.config.js` —
+ * ima ga svaki paket. Zato se penjemo od fajla naviše do prvog paketa sa konfiguracijom
+ * i pokrećemo ESLint odatle. (Isti razlog postoji i u `lint-staged.config.mjs`.)
+ */
+function packageRootOf(file) {
+  let dir = path.dirname(path.resolve(file));
+  while (dir.startsWith(root) && dir !== root) {
+    if (existsSync(path.join(dir, 'eslint.config.js'))) return dir;
+    dir = path.dirname(dir);
+  }
+  return null;
+}
+
+const packageRoot = packageRootOf(filePath);
+if (!packageRoot) process.exit(0); // fajl van paketa sa lint konfiguracijom
+
+const eslintBin = path.join(root, 'node_modules', '.bin', 'eslint');
+if (!existsSync(eslintBin)) process.exit(0); // pre `pnpm install`
 
 try {
-  execFileSync(`${root}/node_modules/.bin/eslint`, ['--fix', path], {
-    cwd: root,
+  execFileSync(eslintBin, ['--fix', path.relative(packageRoot, filePath)], {
+    cwd: packageRoot,
     stdio: ['ignore', 'pipe', 'pipe'],
     timeout: 30_000,
   });
@@ -34,6 +55,6 @@ try {
   if (!out) process.exit(0);
 
   // Exit 2 vraća izlaz modelu da ga popravi u istom potezu.
-  process.stderr.write(`ESLint prijavljuje probleme u ${path}:\n${out}\n`);
+  process.stderr.write(`ESLint prijavljuje probleme u ${filePath}:\n${out}\n`);
   process.exit(2);
 }

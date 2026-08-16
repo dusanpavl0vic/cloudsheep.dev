@@ -1,0 +1,10 @@
+{
+  "common": {
+    "loading": "Učitavanje…",
+    "signOut": "Odjavi se",
+    "skipToContent": "Pređi na sadržaj"
+  },
+  "nav": { "dashboard": "Kontrolna tabla" },
+  "dashboard": { "title": "Kontrolna tabla", "welcome": "Dobrodošli, {name}" },
+  "notFound": { "title": "Stranica nije pronađena", "back": "Nazad na tablu" }
+}

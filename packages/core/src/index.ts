@@ -2,6 +2,7 @@
 
 export { type AppError, ERROR_KEYS, isAppError, normalizeError } from './errors/AppError'
 export { consoleTransport, createLogger, type Logger, type LogLevel, type LogTransport } from './logger/logger'
+export { createBaseApi } from './api/createBaseApi'
 export { Mutex } from './api/mutex'
 export {
   allModalsClosed,

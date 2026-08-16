@@ -19,6 +19,7 @@ const landingHash = (id: string) => `${ROUTES.HOME}#${id}`
 export const FEATURED_PROJECT_SLUG = 'atlas-analytics'
 
 export const MAIN_NAV = [
+  { id: 'home', labelKey: 'nav.home', to: ROUTES.HOME, route: true },
   { id: 'work', labelKey: 'nav.work', to: ROUTES.PROJECTS, route: true },
   { id: 'services', labelKey: 'nav.services', to: landingHash(SECTION_IDS.SERVICES), route: false },
   { id: 'process', labelKey: 'nav.process', to: landingHash(SECTION_IDS.PROCESS), route: false },
