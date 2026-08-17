@@ -1,7 +1,7 @@
 import { baseApi } from '@/store'
 
 import type { LoginInput } from '../schemas/login.schema'
-import type { Session } from '../types'
+import type { AuthUser, Session } from '../types'
 
 /**
  * Endpointi se dodaju kroz `injectEndpoints` — nikad novi `createApi` (docs/11).
@@ -18,7 +18,22 @@ export const authApi = baseApi.injectEndpoints({
       query: () => ({ url: '/auth/logout', method: 'POST' }),
       invalidatesTags: ['Session'],
     }),
+
+    /**
+     * Ko je ulogovan, po serveru.
+     *
+     * Trenutno ga nijedna komponenta ne zove — sesija se dobija iz `login` odgovora. Ostaje
+     * jer je predviđen za obnovu sesije posle osvežavanja stranice, kad backend stigne:
+     * access token je u memoriji i nestane sa reload-om, pa je `me` uz refresh cookie jedini
+     * način da se sesija povrati bez ponovne prijave.
+     *
+     * `providesTags: ['Session']` znači da ga `login` i `logout` automatski invalidiraju.
+     */
+    me: build.query<AuthUser, undefined>({
+      query: () => '/auth/me',
+      providesTags: ['Session'],
+    }),
   }),
 })
 
-export const { useLoginMutation, useLogoutMutation } = authApi
+export const { useLoginMutation, useLogoutMutation, useMeQuery } = authApi

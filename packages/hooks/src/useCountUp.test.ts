@@ -24,7 +24,11 @@ const advance = (ms: number) => {
 beforeEach(() => {
   now = 0
   queue = []
-  vi.stubGlobal('performance', { now: () => now })
+  // Menja se SAMO `now`, na pravom objektu. Prva verzija je zamenila ceo `performance`
+  // objektom `{ now }`, pa bi svako `performance.mark()` — a to zovu i React i alati —
+  // puklo; otud jedan pad koji se posle nije reprodukovao. `spyOn` čuva prototip, što
+  // spread ne bi.
+  vi.spyOn(performance, 'now').mockImplementation(() => now)
   vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => {
     queue.push(cb)
     return queue.length
@@ -36,6 +40,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.unstubAllGlobals()
+  vi.restoreAllMocks()
 })
 
 describe('useCountUp', () => {

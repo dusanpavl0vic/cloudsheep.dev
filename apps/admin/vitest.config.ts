@@ -6,6 +6,22 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
+    /**
+     * Env za testove stoji OVDE, ne u `.env` fajlu.
+     *
+     * `src/lib/env.ts` validira `import.meta.env` i baca **pri importu modula**, pa svaki
+     * test koji dodirne `@/store` pada pre nego što se ijedan `it` pokrene. Lokalno to nije
+     * primetno jer `apps/admin/.env` postoji — ali je gitignore-ovan, pa u CI-ju nema ničega
+     * i tri test fajla su padala kao „0 test".
+     *
+     * Vrednosti su namerno lažne: testovi presreću mrežu MSW-om, pa `VITE_API_URL` treba
+     * samo da bude ispravan URL koji se poklapa sa onim u handler-ima. Ovako je test paket
+     * determinističan i ne zavisi od toga šta ko ima na disku.
+     */
+    env: {
+      VITE_APP_ENV: 'test',
+      VITE_API_URL: 'http://localhost:3000/api',
+    },
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],

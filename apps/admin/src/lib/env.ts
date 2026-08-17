@@ -4,7 +4,13 @@ import { createEnv } from '@app/utils/env'
 
 /**
  * `VITE_` prefiks znači da je vrednost JAVNO vidljiva u bundle-u — nikad tajne (docs/20).
- * Build pada ako fali obavezna varijabla.
+ *
+ * **Provera je pri UČITAVANJU modula, ne pri build-u.** Ranije je ovde pisalo da build pada;
+ * ne pada — Vite prosto ugradi `undefined` i bundle se napravi. Aplikacija onda pukne na
+ * prvom otvaranju, sa ovom porukom. Zato env varijable moraju biti postavljene na Vercelu
+ * pre prvog deploy-a, a ne otkrivene posle njega (`/DEPLOYMENT.md`).
+ *
+ * Testovi ne zavise od `.env` fajla — vrednosti im daje `test.env` u `vitest.config.ts`.
  */
 export const env = createEnv(
   z.object({
