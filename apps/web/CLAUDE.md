@@ -13,11 +13,23 @@ Baseline pre monorepo migracije: **desktop 100 / mobile 92**, FCP 0.5 s, LCP 0.6
 Svaka izmena koja obori te brojke mora imati obrazloženje u PR-u.
 
 ```bash
-pnpm build --filter=web && pnpm preview --filter=web   # Lighthouse na :4173
+pnpm build && pnpm --filter web preview                # Lighthouse na :4173
 ```
 
 **Meri se samo produkcijski build.** Dev server servira nemitifikovane ESM module sa
 react-refresh-om — Lighthouse tamo pokazuje FCP od 13 s, što nema veze sa stvarnošću.
+
+> `--filter` ide **ispred** imena skripte kad je skripta samo u paketu (`pnpm --filter web
+preview`). Oblik `pnpm preview --filter=web` radi samo za skripte koje postoje i u korenu
+> (`dev`, `build`, `test`), gde `--filter` zapravo prima turbo, a ne pnpm.
+
+**Lokalni preview NE primenjuje `vercel.json`** — dakle nema CSP-a ni ostalih headera. Za njih
+je jedini pravi test Vercel preview deployment. Lokalno se proverava sve ostalo: izgled,
+Lighthouse Performance/A11y/SEO, `robots.txt`, `sitemap.xml`, `og.png`.
+
+**Lighthouse pokretati u incognito prozoru sa isključenim ekstenzijama.** Jedno merenje je već
+palo na tome: Best Practices 54, od čega je 284.9 KiB „neiskorišćenog JS-a" bila Adobe Acrobat
+ekstenzija, a ne sajt.
 
 ## Budžet
 

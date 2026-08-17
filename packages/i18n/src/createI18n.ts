@@ -76,14 +76,19 @@ export function createI18n({
 function syncDocumentLang(instance: I18nInstance): void {
   if (typeof document === 'undefined') return
 
-  const apply = (lng: string) => {
-    document.documentElement.lang = lng
+  const apply = (lng: string | undefined) => {
+    if (lng) document.documentElement.lang = lng
   }
 
-  // `language` je nedefinisan dok se `init` ne razreši, pa i početno postavljanje ide
-  // kroz događaj; `initialized` se okine i kad je init već gotov.
-  instance.on('initialized', () => {
-    apply(instance.language)
-  })
+  /*
+   * Početna vrednost se postavlja ODMAH, ne kroz `initialized` događaj.
+   *
+   * Prva verzija je slušala `initialized` i to je bio tih promašaj: resursi su ugrađeni,
+   * pa `init()` prođe sinhrono i događaj se okine PRE nego što se slušalac zakači — dakle
+   * nikad. Testovi to nisu uhvatili jer svaki od njih zove `changeLanguage`, a to okine
+   * `languageChanged` i atribut se ipak postavi. Na stvarnom učitavanju, gde niko ne dira
+   * prebacivač, `lang` bi ostao na vrednosti iz `index.html`.
+   */
+  apply(instance.language)
   instance.on('languageChanged', apply)
 }

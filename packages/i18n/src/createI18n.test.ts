@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { createI18n } from './createI18n'
 
@@ -114,6 +114,17 @@ describe('fallback', () => {
 })
 
 describe('sinhronizacija <html lang>', () => {
+  it('postavlja atribut ODMAH, bez ijednog poziva changeLanguage', () => {
+    // Ovo je test koji je nedostajao. Prva verzija je slušala `initialized`, koji se sa
+    // ugrađenim resursima okine pre nego što se slušalac zakači — pa se atribut nikad ne
+    // postavi na prvom učitavanju. Svi ostali testovi zovu `changeLanguage` i time
+    // slučajno zaobiđu grešku.
+    document.documentElement.lang = 'xx'
+    make('sr')
+
+    expect(document.documentElement.lang).toBe('sr')
+  })
+
   it('postavlja atribut na početni jezik', async () => {
     const instance = make('sr')
     await instance.changeLanguage('sr')
@@ -135,5 +146,24 @@ describe('sinhronizacija <html lang>', () => {
     await instance.changeLanguage('sr')
 
     expect(document.documentElement.lang).toBe('sr')
+  })
+
+  it('bez eksplicitnog `lng` bira jezik detektorom — to je put koji app zaista koristi', () => {
+    // Testovi svuda prosleđuju `lng` radi determinizma, pa je produkcijska grana
+    // (`lng === undefined`, izbor iz localStorage/navigator) ostajala neproverena.
+    const instance = createI18n({ resources, storageKey: 'test.detect' })
+
+    expect(instance.language).toBeTruthy()
+    expect(document.documentElement.lang).toBe(instance.language)
+  })
+
+  it('ne pada kad DOM ne postoji', () => {
+    // Zaštita za okruženja bez `document` (node skripta). Grana se ne može pogoditi u
+    // jsdom-u bez ovoga, pa bi inače ostala i nepokrivena i nedokazana.
+    vi.stubGlobal('document', undefined)
+
+    expect(() => make('sr')).not.toThrow()
+
+    vi.unstubAllGlobals()
   })
 })
