@@ -90,8 +90,9 @@ describe('DashboardPage', () => {
     wrap(<DashboardPage />)
     await user.click(screen.getByRole('button', { name: 'common.signOut' }))
 
-    // `useLogout` briše lokalno u `finally` — korisnik mora biti odjavljen na ovom
-    // uređaju bez obzira na ishod mrežnog poziva
+    // `useLogout` guta grešku i svejedno briše sesiju — korisnik mora biti odjavljen na
+    // ovom uređaju bez obzira na ishod mrežnog poziva. Ovaj test je i našao raniju
+    // verziju sa `try/finally` bez `catch`, koja je posle brisanja ponovo bacala grešku.
     await expect.poll(() => store.getState().auth.session).toBeNull()
   })
 })

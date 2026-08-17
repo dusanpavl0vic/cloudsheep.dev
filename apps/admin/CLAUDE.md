@@ -17,18 +17,22 @@ u `docs/07-performance.md` §3.
 
 ## `auth` feature — šta pokriva
 
-| Sloj | Šta demonstrira |
-|---|---|
-| `api/authApi.ts` | RTKQ `injectEndpoints`, `login`/`logout`/`me`/`refresh`, tagovi |
-| `store/auth.slice.ts` | session state, akcije kao događaji (`sessionEstablished`) |
-| `store/auth.selectors.ts` | `createSelector` |
-| `hooks/useAuth.ts` | javni API feature-a, hook-first pravilo |
-| `hooks/useLogin.ts` | odvojen hook jer radi drugu stvar |
-| `components/LoginForm/` | RHF + zod + i18n poruke grešaka, **nula `useState`** |
-| `modals/LoginModal.tsx` | registry, promise rezultat, `ModalPropsMap` |
-| `schemas/login.schema.ts` | zod kao jedini izvor istine za tip |
-| `locales/{sr,en}.json` | namespace + ICU plural primer |
-| `__tests__/` | pun set: reducer → selektor → hook → komponenta → integracija |
+| Sloj                      | Šta demonstrira                                                                                   |
+| ------------------------- | ------------------------------------------------------------------------------------------------- |
+| `api/authApi.ts`          | RTKQ `injectEndpoints`, `login`/`logout`, tagovi                                                  |
+| `store/auth.slice.ts`     | session state, akcije kao događaji (`sessionEstablished`), selektori kroz `createSlice.selectors` |
+| `hooks/useAuth.ts`        | javni API feature-a, hook-first pravilo                                                           |
+| `hooks/useLogin.ts`       | odvojen hook jer radi drugu stvar                                                                 |
+| `hooks/useLogout.ts`      | greška mreže se guta — odjava sa uređaja ne sme da zavisi od servera                              |
+| `components/LoginForm/`   | RHF + zod + i18n poruke grešaka, **nula `useState`**                                              |
+| `schemas/login.schema.ts` | zod kao jedini izvor istine za tip                                                                |
+| `locales/{sr,en}.json`    | namespace + ICU plural primer                                                                     |
+| `__tests__/`              | pun set: reducer → selektor → hook → komponenta → integracija                                     |
+
+> Modal sistem (`ModalRoot`, registry, `ModalPropsMap`) **nije demonstriran u ovoj app-i**.
+> Skela je postojala, ali je nijedan provajder nije montirao — mrtav kod koji je obarao
+> pokrivenost, pa je obrisan. Opis sistema ostaje u `docs/06-modals.md`; kad `admin` dobije
+> prvi pravi modal, vraća se iz git istorije.
 
 Guard `RequireAuth` je u `routes/`, ne u feature-u — koristi ga router, ne domen.
 
@@ -44,15 +48,19 @@ Ovo je app iza logina, pa pravila iz `docs/20-security.md` nisu teorijska:
 
 ## Razlike u odnosu na `web`
 
-| | `web` | `admin` |
-|---|---|---|
-| Lighthouse budžet | tvrd (100/92 baseline) | blaži — nema SEO ni javne publike |
-| SEO / meta tagovi | kritični | nebitni (`noindex`) |
-| Backend | nema | ima |
-| Autentikacija | nema | cela app |
-| Sadržaj | statičan, iz `.constants.ts` | dinamičan, sa API-ja |
+|                   | `web`                        | `admin`                           |
+| ----------------- | ---------------------------- | --------------------------------- |
+| Lighthouse budžet | tvrd (100/92 baseline)       | blaži — nema SEO ni javne publike |
+| SEO / meta tagovi | kritični                     | nebitni (`noindex`)               |
+| Backend           | nema                         | ima                               |
+| Autentikacija     | nema                         | cela app                          |
+| Sadržaj           | statičan, iz `.constants.ts` | dinamičan, sa API-ja              |
 
-Budžeti i dalje postoje — samo nisu isti. Vidi `.size-limit.json`.
+Budžeti i dalje postoje — samo nisu isti. Meri ih `scripts/check-size.mjs` (= `pnpm size`),
+koji čita `dist/index.html` da bi znao šta je zaista u početnom učitavanju.
+
+> Trenutno je pod merom samo `web`. Kad `admin` počne da se deployuje, dodaje mu se unos u
+> `APPS` niz te skripte.
 
 ## Liste
 
@@ -64,13 +72,19 @@ prikaz je u admin panelu češće potreban nego na sajtu.
 
 ## Deploy
 
-Vercel projekat `cloudsheep-admin`, root directory `apps/admin`.
-Grane prate istu šemu kao `web`: `dev` → preview, `main` → test, `prod` → production.
+**Još nije deployovan.** Postoji jedan Vercel projekat i on gradi `web`
+(`vercel.json` na korenu, `--filter=web`) — vidi `/DEPLOYMENT.md`.
+
+Kad dođe red: zaseban projekat `cloudsheep-admin`, i pošto Vercel čita `vercel.json` samo iz
+svog Root Directory-ja, taj projekat traži **sopstvenu konfiguraciju** — koren repoa je već
+zauzet `web`-om. Grane prate istu šemu: `dev` → preview, `main` → test, `prod` → production.
 
 ## Checklist pre PR-a
 
 - [ ] `pnpm validate` prolazi
 - [ ] `auth` i dalje ima 0 `useEffect` i ≤ 2 `useState`
+- [ ] Pokrivenost prolazi (`RequireAuth`, hookovi i slice se mere; čisto ožičenje je
+      isključeno u `vitest.config.ts`, uz obrazloženje)
 - [ ] Nova lista > 100 stavki je virtualizovana
 - [ ] Filteri su u URL-u, ne u Redux-u
 - [ ] Nijedan token nije završio u `localStorage`
