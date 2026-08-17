@@ -6,13 +6,13 @@ Vitest 4 + Testing Library + `user-event` + MSW 2 + Playwright.
 
 ## Piramida
 
-| Nivo | Alat | Coverage | Šta se testira |
-|---|---|---|---|
-| Unit | Vitest | **100%** `packages/utils` | čiste funkcije, reduceri, selektori, zod šeme |
-| Hook | `renderHook` | **90%** `features/*/hooks` | **primarni fokus** — logika živi u hookovima |
-| Komponenta | RTL + `user-event` | 80% | ponašanje, ne implementacija |
-| Integracija | RTL + MSW + pravi store | ključni flow-ovi | feature end-to-end u JSDOM-u |
-| E2E | Playwright | kritični putevi | login, CRUD, i18n switch, modal flow |
+| Nivo        | Alat                    | Coverage                   | Šta se testira                                |
+| ----------- | ----------------------- | -------------------------- | --------------------------------------------- |
+| Unit        | Vitest                  | **100%** `packages/utils`  | čiste funkcije, reduceri, selektori, zod šeme |
+| Hook        | `renderHook`            | **90%** `features/*/hooks` | **primarni fokus** — logika živi u hookovima  |
+| Komponenta  | RTL + `user-event`      | 80%                        | ponašanje, ne implementacija                  |
+| Integracija | RTL + MSW + pravi store | ključni flow-ovi           | feature end-to-end u JSDOM-u                  |
+| E2E         | Playwright              | kritični putevi            | login, CRUD, i18n switch, modal flow          |
 
 Ukupni prag: **80%**. Pragovi su u `vitest.config.ts` i **obaraju CI**.
 
@@ -66,18 +66,18 @@ describe('slugify', () => {
     ['Čačak i Šabac', 'cacak-i-sabac'],
     ['  trim  ', 'trim'],
   ])('%s → %s', (input, expected) => {
-    expect(slugify(input)).toBe(expected);
-  });
-});
+    expect(slugify(input)).toBe(expected)
+  })
+})
 ```
 
 ### Reducer
 
 ```ts
 it('briše sesiju na loggedOut', () => {
-  const state = authReducer({ user: makeUser(), accessToken: 'x' }, loggedOut());
-  expect(state).toEqual({ user: null, accessToken: null });
-});
+  const state = authReducer({ user: makeUser(), accessToken: 'x' }, loggedOut())
+  expect(state).toEqual({ user: null, accessToken: null })
+})
 ```
 
 ### Hook — primarni fokus
@@ -86,9 +86,9 @@ it('briše sesiju na loggedOut', () => {
 it('vraća isAuthenticated true kad postoji korisnik', () => {
   const { result } = renderHook(() => useAuth(), {
     wrapper: createWrapper({ preloadedState: { auth: { user: makeUser(), accessToken: 't' } } }),
-  });
-  expect(result.current.isAuthenticated).toBe(true);
-});
+  })
+  expect(result.current.isAuthenticated).toBe(true)
+})
 ```
 
 ### Komponenta — ponašanje
@@ -135,16 +135,39 @@ it('nema axe povreda', async () => {
 
 ### E2E
 
+Živi u `apps/web/e2e/`, vozi ga `pnpm e2e` (turbo, `dependsOn: ["build"]`).
+
+**Šta pripada ovde, a šta ne.** Sve što jsdom može ostaje u Vitest-u — brže je i preciznije.
+E2E nosi samo ono što traži pravi pretraživač:
+
+| Ide u E2E                                  | Zašto ne može u jsdom                                                                                                     |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| mobilni panel (`<dialog>` + `showModal()`) | jsdom nema top-layer; u unit testu su `showModal` i `close` **stubovani**, pa zamku fokusa i `Esc` tamo niko ne proverava |
+| `color-contrast` kroz axe                  | traži stvarno izračunate boje i raspored                                                                                  |
+| `<html lang>` na dokumentu                 | unit test vidi i18next instancu, ne atribut koji čita screen reader                                                       |
+| serviranje `/robots.txt`, `/sitemap.xml`   | rewrite pravila postoje tek nad pravim serverom                                                                           |
+
+**Dve zamke koje su nas već koštale:**
+
+1. **Axe mora meriti mirno stanje.** `.reveal` animira `opacity`, pa axe uhvati element usred
+   prelaza i prijavi lažan `color-contrast`. Izgledalo je kao tri prave WCAG greške;
+   sa `page.emulateMedia({ reducedMotion: 'reduce' })` — nula. WCAG ionako ne meri prelazna
+   stanja, a usput se proverava i verzija stranice za korisnike sa smanjenim kretanjem.
+2. **Vitest i Playwright se moraju razdvojiti izričito.** Vitest-ov podrazumevani obrazac
+   hvata i `*.spec.ts`, pa je pokupio Playwright fajlove i pao na njihovom importu. Otud
+   `include: ['src/**/*.test.{ts,tsx}']` u `vitest.config.ts`: **Vitest je `.test.` u `src/`,
+   Playwright je `.spec.` u `e2e/`.**
+
 ```ts
 test('korisnik se prijavljuje i odjavljuje', async ({ page }) => {
-  await page.goto('/login');
-  await page.getByLabel('E-pošta').fill('a@b.rs');
-  await page.getByLabel('Lozinka').fill('lozinka123');
-  await page.getByRole('button', { name: 'Prijavi se' }).click();
-  await expect(page.getByRole('heading', { name: 'Kontrolna tabla' })).toBeVisible();
+  await page.goto('/login')
+  await page.getByLabel('E-pošta').fill('a@b.rs')
+  await page.getByLabel('Lozinka').fill('lozinka123')
+  await page.getByRole('button', { name: 'Prijavi se' }).click()
+  await expect(page.getByRole('heading', { name: 'Kontrolna tabla' })).toBeVisible()
 
-  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
-});
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+})
 ```
 
 ## Factories
@@ -157,24 +180,24 @@ export const makeUser = (overrides: Partial<AuthUser> = {}): AuthUser => ({
   name: 'Test Korisnik',
   role: 'member',
   ...overrides,
-});
+})
 ```
 
 `makeUser({ role: 'admin' })` čita se u jednom redu; JSON blob od 40 linija ne čita se nikako.
 
 ## Anti-patterns
 
-| ❌ | ✅ |
-|---|---|
-| `container.querySelector('.btn-primary')` | `getByRole('button', { name })` |
-| `fireEvent.change(input, …)` | `await user.type(input, …)` |
-| `data-testid` kao prvi izbor | `getByRole`/`getByLabelText` |
-| test koji proverava da je `useState` pozvan | testiraj šta korisnik vidi |
-| `await new Promise(r => setTimeout(r, 500))` | `findBy*` / `waitFor` |
-| mock celog RTKQ modula | MSW na mrežnom nivou |
-| JSON fixture od 40 linija | factory sa `overrides` |
-| test koji proverava tekst prevoda | `cimode`, proveri ključ |
-| snapshot cele stranice | ciljane provere ponašanja |
+| ❌                                           | ✅                              |
+| -------------------------------------------- | ------------------------------- |
+| `container.querySelector('.btn-primary')`    | `getByRole('button', { name })` |
+| `fireEvent.change(input, …)`                 | `await user.type(input, …)`     |
+| `data-testid` kao prvi izbor                 | `getByRole`/`getByLabelText`    |
+| test koji proverava da je `useState` pozvan  | testiraj šta korisnik vidi      |
+| `await new Promise(r => setTimeout(r, 500))` | `findBy*` / `waitFor`           |
+| mock celog RTKQ modula                       | MSW na mrežnom nivou            |
+| JSON fixture od 40 linija                    | factory sa `overrides`          |
+| test koji proverava tekst prevoda            | `cimode`, proveri ključ         |
+| snapshot cele stranice                       | ciljane provere ponašanja       |
 
 ## Checklist
 

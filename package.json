@@ -12,7 +12,7 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "test:cov": "turbo run test -- --coverage",
-    "e2e": "echo \"e2e još nije postavljen (F6) — nijedan workspace ne definiše e2e skriptu\" && exit 1",
+    "e2e": "turbo run e2e",
     "lint": "node scripts/check-css.mjs && node scripts/check-i18n-keys.mjs && node scripts/check-tech-icons.mjs && turbo run lint",
     "lint:fix": "turbo run lint -- --fix",
     "typecheck": "turbo run typecheck",

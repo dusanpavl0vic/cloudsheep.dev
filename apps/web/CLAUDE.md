@@ -123,3 +123,4 @@ Grane: `dev` → preview, `main` → test, `prod` → production. Vidi `/DEPLOYM
 - [ ] `pnpm size` prolazi (meri stvarno početno učitavanje iz `dist/index.html`)
 - [ ] Novi sadržaj je podatak u `.constants.ts`, ne ponovljeni JSX
 - [ ] Novi tekst je u `sr.json` i `en.json`
+- [ ] `pnpm e2e` prolazi ako je diran mobilni panel, jezik ili SEO fajl

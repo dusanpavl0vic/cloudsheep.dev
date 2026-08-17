@@ -89,6 +89,12 @@ function syncDocumentLang(instance: I18nInstance): void {
    * `languageChanged` i atribut se ipak postavi. Na stvarnom učitavanju, gde niko ne dira
    * prebacivač, `lang` bi ostao na vrednosti iz `index.html`.
    */
-  apply(instance.language)
-  instance.on('languageChanged', apply)
+  apply(instance.resolvedLanguage ?? instance.language)
+  instance.on('languageChanged', () => {
+    // `resolvedLanguage`, ne `language`: detektor vraća ono što je pretraživač prijavio
+    // (`en-US`), a `nonExplicitSupportedLngs` to razreši na `en` za same prevode. Atribut
+    // mora da kaže koji jezik se ZAISTA servira — E2E je uhvatio `lang="en-US"` na stranici
+    // čiji je sadržaj `en`.
+    apply(instance.resolvedLanguage ?? instance.language)
+  })
 }

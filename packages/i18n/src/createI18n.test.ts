@@ -154,7 +154,16 @@ describe('sinhronizacija <html lang>', () => {
     const instance = createI18n({ resources, storageKey: 'test.detect' })
 
     expect(instance.language).toBeTruthy()
-    expect(document.documentElement.lang).toBe(instance.language)
+    expect(document.documentElement.lang).toBe(instance.resolvedLanguage)
+  })
+
+  it('upisuje RAZREŠEN jezik, ne ono što je detektor prijavio', async () => {
+    // Pretraživač javlja `en-US`; `nonExplicitSupportedLngs` to razreši na `en` za prevode,
+    // pa i atribut mora reći `en` — inače stranica tvrdi jezik koji ne servira.
+    const instance = make('sr')
+    await instance.changeLanguage('en-US')
+
+    expect(document.documentElement.lang).toBe('en')
   })
 
   it('ne pada kad DOM ne postoji', () => {
