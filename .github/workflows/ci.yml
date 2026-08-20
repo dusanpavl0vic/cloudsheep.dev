@@ -70,25 +70,17 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.app }}
           cache-to: type=gha,scope=${{ matrix.app }},mode=max
 
-  e2e:
-    runs-on: ubuntu-latest
-    needs: validate
-    steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 24
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      # `--filter web` je obavezan: Playwright je zavisnost te app-e, pa mu binarni fajl
-      # stoji u `apps/web/node_modules/.bin`, a `pnpm exec` iz korena tamo ne gleda —
-      # zbog toga je e2e posao padao sa `Command "playwright" not found`.
-      - run: pnpm --filter web exec playwright install --with-deps chromium
-      - run: pnpm e2e
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: apps/*/playwright-report/
-          retention-days: 7
+  # E2E se NE vozi u CI-ju — pušta se lokalno sa `pnpm e2e`.
+  #
+  # `apps/web` loaderi dohvataju projekte, tehnologije, profil i tim sa API-ja PRE rendera,
+  # bez fallback-a: kad API ne odgovara, i početna strana ode na `errorElement`. U CI-ju API
+  # ne postoji, pa je padalo svih 23 testa — 19 minuta po pokretanju, bez ijedne korisne
+  # informacije. Lokalno prolaze jer `apps/web/.env` postoji na mašini (gitignore-ovan).
+  #
+  # Da se vrate ovde, treba jedno od dvoga, i to je odluka a ne propust:
+  #   • Playwright `page.route()` koji presreće API pozive i vraća fiksne podatke
+  #     (hermetično, brzo, ne traži ni bazu ni `api`), ili
+  #   • Postgres servis + pokrenut `api` u ovom poslu (testira pravi stack, ali sporo
+  #     i pada kad padne bilo šta u API-ju).
+  #
+  # `docker` posao iznad ostaje jedina provera koja stvarno gradi ono što gradi Coolify.
