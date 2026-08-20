@@ -32,8 +32,6 @@ test-results
 apps/web/public/sitemap.xml
 
 # Deploy
-# Vercel CLI upisuje ID projekta i organizacije — vezano za nalog, ne za repo.
-.vercel
 
 # Env
 # `.env.example` je ugovor i JESTE praćen; sve ostalo nosi stvarne vrednosti.

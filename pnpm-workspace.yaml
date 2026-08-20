@@ -6,8 +6,11 @@ packages:
 # Build skripte se izvršavaju samo za pakete koje smo pogledali i odobrili.
 # Novi paket koji traži build biće prijavljen pri instalaciji, ne tiho izvršen (docs/20-security.md).
 allowBuilds:
+  '@prisma/client': true
+  '@prisma/engines': true
   esbuild: true # bundler koji koriste vite i vitest
   msw: true # postinstall kopira mockServiceWorker.js (potreban samo za browser mod)
+  prisma: true
   unrs-resolver: true # native resolver za eslint-import-resolver-typescript
 
 # Jedna verzija za ceo monorepo. Paketi referišu sa "react": "catalog:".
@@ -34,6 +37,47 @@ catalog:
   rolldown: 1.2.4
   # exact pin, bez ^ — compiler je nov, patch verzije menjaju ponašanje (ADR 0001)
   babel-plugin-react-compiler: 1.0.0
+
+  # ── Backend (apps/api) ──────────────────────────────────────────────────
+  # Express 5, ne 4: 4 je u maintenance modu, a 5 donosi async error handling
+  # bez `express-async-errors` omotača.
+  express: 5.2.1
+  '@types/express': 5.0.6
+  helmet: 8.3.0
+  compression: 1.8.1
+  '@types/compression': 1.8.1
+  cors: 2.8.6
+  '@types/cors': 2.8.19
+  cookie-parser: 1.4.7
+  '@types/cookie-parser': 1.4.10
+  jsonwebtoken: 9.0.3
+  '@types/jsonwebtoken': 9.0.10
+  express-rate-limit: 8.6.2
+  # Upload slika. `multer` je jedini održavan multipart parser za Express 5.
+  multer: 2.0.2
+  '@types/multer': 2.0.0
+  # `image-size`, ne `sharp`: sharp je ~30 MB native koda, lockfile je generisan na
+  # darwin-arm64, a API image je alpine/musl — `--frozen-lockfile` u Docker buildu ne bi
+  # našao pravi binarni paket bez `supportedArchitectures`. Ovo je čist JS i samo čita
+  # zaglavlje fajla, što je jedino što nam treba (width/height protiv CLS-a).
+  image-size: 2.0.2
+  # Slanje mejla. Jedini održavan SMTP klijent za Node; bez native zavisnosti.
+  nodemailer: 7.0.9
+  '@types/nodemailer': 7.0.4
+  # bcryptjs, ne argon2: argon2 traži native build, a .npmrc ima node-linker=isolated
+  # i allowBuilds allowlist — jedan native modul manje u Alpine image-u.
+  bcryptjs: 3.0.3
+  pino: 10.3.1
+  pino-http: 11.0.0
+  # Prisma 6, ne 7 — treće namerno odstupanje od „najnovije" (docs/16 §1.7).
+  # Sedmica je izbacila `url` iz `datasource` bloka i traži `prisma.config.ts` uz driver
+  # adapter; to je druga postavka, ne nadogradnja. Šestica je i dalje podržana i poklapa
+  # se sa `migrate:deploy` tokom koji Coolify pre-deploy komanda koristi.
+  prisma: 6.19.3
+  '@prisma/client': 6.19.3
+  tsx: 4.23.12
+  supertest: 7.2.2
+  '@types/supertest': 7.2.1
 
   # ── Aplikativni sloj ────────────────────────────────────────────────────
   react-router: 8.3.0

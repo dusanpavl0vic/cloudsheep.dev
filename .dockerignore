@@ -1,0 +1,27 @@
+# Sve što se gradi unutar image-a ili ne sme u njega.
+# Bez ovoga `COPY . .` uvlači node_modules sa host-a (pogrešna platforma za Alpine)
+# i pravi image od nekoliko stotina MB.
+**/node_modules
+**/dist
+**/build
+**/.turbo
+**/coverage
+**/playwright-report
+**/test-results
+**/.git
+**/.env
+**/.env.*
+!**/.env.example
+**/*.log
+**/.DS_Store
+
+# Ne treba u build kontekstu — samo usporava `docker build` i menja keš bez razloga.
+.git
+.github
+.changeset
+.husky
+.claude
+docs
+**/e2e
+**/*.test.ts
+**/*.test.tsx

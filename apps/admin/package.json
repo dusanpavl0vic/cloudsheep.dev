@@ -19,6 +19,7 @@
     "@app/utils": "workspace:*",
     "@hookform/resolvers": "catalog:",
     "@reduxjs/toolkit": "catalog:",
+    "class-variance-authority": "catalog:",
     "i18next": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

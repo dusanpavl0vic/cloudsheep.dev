@@ -9,7 +9,7 @@ export function NotFoundPage() {
 
   return (
     <Container as="main" width="content" className="py-24 text-center">
-      <h1 className="mb-4 font-heading text-3xl font-bold text-foreground">
+      <h1 className="font-heading text-foreground mb-4 text-3xl font-bold">
         {t('notFound.title')}
       </h1>
       <TextLink asChild>

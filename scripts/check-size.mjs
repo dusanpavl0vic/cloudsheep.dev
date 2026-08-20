@@ -22,7 +22,7 @@ import { gzipSync } from 'node:zlib'
 const KB = 1024
 
 /** Budžeti iz `apps/web/CLAUDE.md`. Menjaju se tamo pa ovde — nikad samo ovde. */
-const APPS = [{ name: 'web', dist: 'apps/web/dist', initialJs: 155, css: 20, route: 60 }]
+const APPS = [{ name: 'web', dist: 'apps/web/dist', initialJs: 158, css: 20, route: 60 }]
 
 const gzipOf = (file) => gzipSync(readFileSync(file)).length
 const kb = (bytes) => bytes / KB

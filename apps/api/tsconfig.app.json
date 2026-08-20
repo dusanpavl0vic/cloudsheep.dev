@@ -1,0 +1,28 @@
+{
+  "extends": "@app/typescript-config/node.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    // `src`, ne `.` — inače bi izlaz bio `dist/src/main.js`, a `start` i Docker CMD
+    // pokazuju na `dist/main.js`.
+    "rootDir": "src",
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
+    "composite": true,
+    "noEmit": false,
+    // Jedini paket koji stvarno emituje JS, pa mu trebaju dva odstupanja od baze:
+    //
+    // 1. Baza pali `allowImportingTsExtensions` (Vite app-e uvoze `.ts` direktno), a to je
+    //    uz emit dozvoljeno samo uz `rewriteRelativeImportExtensions`. Ono u izlazu prepiše
+    //    `./app.ts` u `./app.js`.
+    // 2. Bez toga bi emitovani import ostao bez ekstenzije (`./app`), što Node ESM odbija
+    //    sa ERR_MODULE_NOT_FOUND — build bi prošao, a kontejner pao pri prvom pokretanju.
+    "rewriteRelativeImportExtensions": true
+  },
+  "include": ["src"],
+  // Testovi se NE kompajliraju.
+  //
+  // Bez ovoga `tsc -b` emituje i `dist/**/*.test.js`, što pravi dva odvojena problema:
+  // vitest onda nalazi svaki test dvaput (jednom u `src`, jednom u `dist`), a `files`
+  // polje u package.json-u nosi ceo `dist` u produkcioni image — dakle i testove, i
+  // uvoze `supertest`-a kojeg tamo nema.
+  "exclude": ["src/**/*.test.ts"]
+}

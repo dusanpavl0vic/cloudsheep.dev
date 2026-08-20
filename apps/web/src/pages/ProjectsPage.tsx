@@ -1,12 +1,8 @@
-import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useLoaderData } from 'react-router'
 
-import { ProjectCard } from '@/features/projects/components/ProjectCard'
-import {
-  PROJECT_CATEGORIES,
-  PROJECTS,
-  type ProjectCategory,
-} from '@/features/projects/projects.constants'
+import { ProjectCard, useProjectFilter, type Project } from '@/features/projects'
+import { PROJECT_CATEGORIES } from '@/features/projects'
 import { Container, PageHeader, Reveal, cn } from '@app/ui'
 
 const filterButtonClass = (active: boolean) =>
@@ -19,13 +15,8 @@ const filterButtonClass = (active: boolean) =>
 
 export const ProjectsPage = () => {
   const { t } = useTranslation(['projects', 'common'])
-  const [active, setActive] = useState<ProjectCategory>('all')
-
-  // Izvedena vrednost — filtriranje tokom rendera, bez useEffect-a (PROJECT_GUIDE 2.1)
-  const visible = useMemo(
-    () => (active === 'all' ? PROJECTS : PROJECTS.filter((p) => p.category === active)),
-    [active],
-  )
+  const projects = useLoaderData<Project[]>()
+  const { active, visible, setCategory } = useProjectFilter(projects)
 
   return (
     <>
@@ -45,8 +36,9 @@ export const ProjectsPage = () => {
             <button
               key={category}
               type="button"
+              aria-pressed={category === active}
               onClick={() => {
-                setActive(category)
+                setCategory(category)
               }}
               className={filterButtonClass(category === active)}
             >

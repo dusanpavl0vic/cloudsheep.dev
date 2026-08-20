@@ -21,13 +21,13 @@ a komponenta ostaje zamenjiva.
 
 ## Gde koji hook živi
 
-| Tip hooka | Lokacija | Primer |
-|---|---|---|
-| Domenski | `features/<x>/hooks/` | `useAuth`, `useProjectFilters` |
-| App-specifičan deljeni | `apps/<x>/src/hooks/` | `useRouteScroll` |
-| Generički React | `@app/hooks` | `useDebounce`, `useMediaQuery` |
-| Store-tipizirani | `apps/<x>/src/store/hooks.ts` | `useAppDispatch`, `useAppSelector` |
-| UI (ne-domenski) | `@app/ui` | `useDisclosure` |
+| Tip hooka              | Lokacija                      | Primer                             |
+| ---------------------- | ----------------------------- | ---------------------------------- |
+| Domenski               | `features/<x>/hooks/`         | `useAuth`, `useProjectFilters`     |
+| App-specifičan deljeni | `apps/<x>/src/hooks/`         | `useRouteScroll`                   |
+| Generički React        | `@app/hooks`                  | `useDebounce`, `useMediaQuery`     |
+| Store-tipizirani       | `apps/<x>/src/store/hooks.ts` | `useAppDispatch`, `useAppSelector` |
+| UI (ne-domenski)       | `@app/ui`                     | `useDisclosure`                    |
 
 Pravilo za odluku: **zna li hook za domen?** Ako da → feature. Ako ne, ali zna za ovu app →
 `apps/<x>/src/hooks`. Ako ne zna ni za šta → `@app/hooks`.
@@ -37,33 +37,33 @@ Pravilo za odluku: **zna li hook za domen?** Ako da → feature. Ako ne, ali zna
 ```ts
 // ✅ features/auth/hooks/useAuth.ts
 export function useAuth() {
-  const user = useAppSelector(selectCurrentUser);
-  const { isLoading } = useGetMeQuery(undefined, { skip: user !== null });
+  const user = useAppSelector(selectCurrentUser)
+  const { isLoading } = useGetMeQuery(undefined, { skip: user !== null })
 
   return {
     user,
     isAuthenticated: user !== null,
     isLoading,
-  };
+  }
 }
 ```
 
 ```ts
 // ✅ features/auth/hooks/useLogin.ts — odvojen, jer radi drugu stvar
 export function useLogin() {
-  const dispatch = useAppDispatch();
-  const [loginMutation, { isLoading, error }] = useLoginMutation();
+  const dispatch = useAppDispatch()
+  const [loginMutation, { isLoading, error }] = useLoginMutation()
 
   const login = useCallback(
     async (input: LoginInput) => {
-      const result = await loginMutation(input);
-      if ('data' in result) dispatch(sessionEstablished(result.data));
-      return result;
+      const result = await loginMutation(input)
+      if ('data' in result) dispatch(sessionEstablished(result.data))
+      return result
     },
     [dispatch, loginMutation],
-  );
+  )
 
-  return { login, isLoading, error };
+  return { login, isLoading, error }
 }
 ```
 
@@ -88,10 +88,10 @@ function UserMenu() {
 
 ```ts
 // ✅ objekat — dodavanje polja ne lomi pozivaoce
-return { data, isLoading, error, refresh };
+return { data, isLoading, error, refresh }
 
 // ❌ niz — pozicija je API, dodavanje u sredinu lomi sve
-return [data, isLoading, error];
+return [data, isLoading, error]
 ```
 
 Izuzetak: hook sa tačno dva člana koji imitira `useState` (`const [value, setValue] = useToggle()`).
@@ -100,48 +100,49 @@ Izuzetak: hook sa tačno dva člana koji imitira `useState` (`const [value, setV
 
 ### `@app/hooks` — generički
 
-| Hook | Potpis | Namena |
-|---|---|---|
-| `useDebounce` | `(value: T, delay: number) => T` | odloženo praćenje vrednosti |
-| `useMediaQuery` | `(query: string) => boolean` | responsivni breakpoint |
-| `useIntersection` | `(ref, options) => boolean` | vidljivost u viewport-u |
-| `useToggle` | `(initial?) => [boolean, () => void]` | boolean prekidač |
-| `usePrevious` | `(value: T) => T \| undefined` | prethodna vrednost |
+| Hook              | Potpis                                | Namena                      |
+| ----------------- | ------------------------------------- | --------------------------- |
+| `useDebounce`     | `(value: T, delay: number) => T`      | odloženo praćenje vrednosti |
+| `useMediaQuery`   | `(query: string) => boolean`          | responsivni breakpoint      |
+| `useIntersection` | `(ref, options) => boolean`           | vidljivost u viewport-u     |
+| `useToggle`       | `(initial?) => [boolean, () => void]` | boolean prekidač            |
+| `usePrevious`     | `(value: T) => T \| undefined`        | prethodna vrednost          |
 
 ### `@app/ui` — UI, ne-domenski
 
-| Hook | Namena |
-|---|---|
+| Hook            | Namena                                                                                |
+| --------------- | ------------------------------------------------------------------------------------- |
 | `useDisclosure` | open/close/toggle za prezentacione elemente (**ne** za modale — [`06`](06-modals.md)) |
 
 ### `apps/web/src/hooks`
 
-| Hook | Namena |
-|---|---|
-| `useRouteScroll` | scroll na vrh pri promeni rute |
-| `useTypewriter` | animacija kucanja; poštuje `prefers-reduced-motion` |
+| Hook             | Namena                                                                        |
+| ---------------- | ----------------------------------------------------------------------------- |
+| `useRouteScroll` | scroll na vrh pri promeni rute                                                |
+| `useTypewriter`  | animacija kucanja; poštuje `prefers-reduced-motion`                           |
+| `usePointerGlow` | svetlo koje prati kursor po grupi panela; vraća ref za KONTEJNER, ne za panel |
 
 ### `features/auth/hooks`
 
-| Hook | Vraća |
-|---|---|
-| `useAuth` | `{ user, isAuthenticated, isLoading }` |
-| `useLogin` | `{ login, isLoading, error }` |
-| `useLogout` | `{ logout, isLoading }` |
+| Hook        | Vraća                                  |
+| ----------- | -------------------------------------- |
+| `useAuth`   | `{ user, isAuthenticated, isLoading }` |
+| `useLogin`  | `{ login, isLoading, error }`          |
+| `useLogout` | `{ logout, isLoading }`                |
 
 > Novi hook se dodaje sa `/new-hook <scope> <useName>` — komanda upisuje i red u ovu tabelu.
 
 ## Anti-patterns
 
-| ❌ | Zašto | ✅ |
-|---|---|---|
-| `useSelector` u komponenti | komponenta zna za Redux | feature hook |
-| `useGetProjectsQuery()` u komponenti | isto, za server state | `useProjects()` |
-| hook koji vraća `<Spinner />` | to je komponenta | vrati `isLoading` |
-| `useEverything()` sa 12 povratnih polja | radi previše | podeli po odgovornosti |
-| hook u `lib/` bez ijednog React hooka | nije hook | obična funkcija |
-| hook koji zove drugi feature direktno | probija granicu | kroz barrel ili store |
-| `useAuth()` koji i loguje i menja temu | dve odgovornosti | dva hooka |
+| ❌                                      | Zašto                   | ✅                     |
+| --------------------------------------- | ----------------------- | ---------------------- |
+| `useSelector` u komponenti              | komponenta zna za Redux | feature hook           |
+| `useGetProjectsQuery()` u komponenti    | isto, za server state   | `useProjects()`        |
+| hook koji vraća `<Spinner />`           | to je komponenta        | vrati `isLoading`      |
+| `useEverything()` sa 12 povratnih polja | radi previše            | podeli po odgovornosti |
+| hook u `lib/` bez ijednog React hooka   | nije hook               | obična funkcija        |
+| hook koji zove drugi feature direktno   | probija granicu         | kroz barrel ili store  |
+| `useAuth()` koji i loguje i menja temu  | dve odgovornosti        | dva hooka              |
 
 ## Checklist
 

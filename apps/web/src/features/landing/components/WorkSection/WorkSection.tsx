@@ -2,16 +2,25 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { WorkItem } from '@/components/WorkItem'
-import { FEATURED_PROJECTS } from '@/features/projects/projects.constants'
+import { localize, type Project } from '@/features/projects'
 import { SECTION_IDS } from '@/lib/navigation'
 import { ROUTES, projectPath } from '@/lib/routes'
-import { techTags } from '@/lib/tech'
 import { SectionBlock, TextLink } from '@app/ui'
 
-const WORK_INDEXES = ['/ 01', '/ 02', '/ 03']
+interface WorkSectionProps {
+  /** Izdvojeni projekti sa API-ja. Broj više nije fiksan — nekad ih je tri, nekad ni jedan. */
+  projects: readonly Project[]
+}
 
-export const WorkSection = () => {
-  const { t } = useTranslation(['landing', 'common'])
+/** Naslovna slika projekta; `galleryLayout: 'none'` znači da je namerno nema. */
+const coverUrl = (project: Project): string | undefined =>
+  project.galleryLayout === 'none' ? undefined : project.images[0]?.url
+
+export const WorkSection = ({ projects }: WorkSectionProps) => {
+  const { t, i18n } = useTranslation(['landing', 'common'])
+  const lang = i18n.language
+
+  if (projects.length === 0) return null
 
   return (
     <SectionBlock
@@ -26,24 +35,36 @@ export const WorkSection = () => {
       }
     >
       <div className="flex flex-col gap-20">
-        {FEATURED_PROJECTS.map((project, index) => (
-          <WorkItem
-            key={project.slug}
-            index={WORK_INDEXES[index] ?? `/ ${String(index + 1).padStart(2, '0')}`}
-            title={t(`projects.items.${project.key}.title`)}
-            meta={`${project.year} · ${t(`projects.items.${project.key}.cat`)}`}
-            description={t(`projects.items.${project.key}.desc`)}
-            imageCaption={t(`projects.items.${project.key}.caption`)}
-            tags={techTags(project.tech)}
-            to={projectPath(project.slug)}
-            media={index % 2 === 0 ? 'start' : 'end'}
-            action={
-              <TextLink asChild className="mt-1">
-                <Link to={projectPath(project.slug)}>{t('work.readCase')} →</Link>
-              </TextLink>
-            }
-          />
-        ))}
+        {projects.map((project, index) => {
+          const image = coverUrl(project)
+
+          return (
+            <WorkItem
+              key={project.slug}
+              // Ranije fiksan niz od tri vrednosti; sada se izvodi iz indeksa, pa četvrti
+              // izdvojen projekat ne ostaje bez oznake.
+              index={`/ ${String(index + 1).padStart(2, '0')}`}
+              title={localize(project.title, lang)}
+              meta={`${String(project.year)} · ${localize(project.cat, lang)}`}
+              description={localize(project.desc, lang)}
+              imageCaption={localize(project.caption, lang)}
+              tags={project.technologies.map((technology) => ({
+                label: technology.label,
+                ...(technology.logoUrl ? { icon: technology.logoUrl } : {}),
+              }))}
+              to={projectPath(project.slug)}
+              {...(image ? { imageSrc: image } : {})}
+              /* Strana slike je sada PODATAK, ne parnost indeksa: ranije se menjala sama
+               od sebe čim se doda projekat ispred. */
+              media={project.mediaSide}
+              action={
+                <TextLink asChild className="mt-1">
+                  <Link to={projectPath(project.slug)}>{t('work.readCase')} →</Link>
+                </TextLink>
+              }
+            />
+          )
+        })}
       </div>
     </SectionBlock>
   )

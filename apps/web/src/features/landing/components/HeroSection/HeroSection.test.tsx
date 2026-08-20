@@ -10,6 +10,13 @@ import { createI18n } from '@app/i18n'
 
 import { HeroSection } from './HeroSection'
 
+/** Tehnologije više nisu statični niz — test ih daje kao podatak, kao i API. */
+const TECHNOLOGIES = [
+  { id: 't1', slug: 'react', label: 'React', group: 'frontend', logoUrl: '/uploads/react.svg' },
+  { id: 't2', slug: 'nodejs', label: 'Node.js', group: 'backend', logoUrl: '/uploads/nodejs.svg' },
+  { id: 't3', slug: 'gtfs', label: 'GTFS', group: 'tooling', logoUrl: null },
+]
+
 const i18n = createI18n({ resources: {}, storageKey: 'test.lang', lng: 'cimode' })
 
 const wrapper = ({ children }: PropsWithChildren) => (
@@ -30,7 +37,10 @@ function stubMatchMedia(reduced: boolean) {
   )
 }
 
-const renderHero = () => ({ user: userEvent.setup(), ...render(<HeroSection />, { wrapper }) })
+const renderHero = () => ({
+  user: userEvent.setup(),
+  ...render(<HeroSection technologies={TECHNOLOGIES} />, { wrapper }),
+})
 
 describe('HeroSection — SCROLL dugme', () => {
   beforeEach(() => {

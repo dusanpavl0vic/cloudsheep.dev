@@ -2,8 +2,8 @@ import type { CSSProperties, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { TechTile } from '@/components/TechTile'
+import type { Technology } from '@/features/projects'
 import { useDevice } from '@/hooks/useDevice'
-import { TECH_ITEMS } from '@/lib/tech'
 
 import {
   heroCardTitleVariants,
@@ -22,7 +22,6 @@ import {
 } from './HeroCards.variants'
 
 /** Prve tri tehnologije idu u karticu sa stack-om; ostatak nosi traka logotipa ispod hero-a. */
-const FEATURED_TECH = TECH_ITEMS.slice(0, 3)
 
 /**
  * Zadaci u kartici su **primer izgleda proizvoda**, ne stvarni podaci.
@@ -52,7 +51,7 @@ interface Card {
  * Sadržaj kartica stoji odvojeno od omotača, da bi oba rasporeda — lebdeći i traka —
  * crtala **isti** DOM umesto da se markup piše dvaput.
  */
-const useCardContent = (): Card[] => {
+const useCardContent = (technologies: readonly Technology[]): Card[] => {
   const { t } = useTranslation('landing')
 
   return [
@@ -103,8 +102,8 @@ const useCardContent = (): Card[] => {
         <>
           <p className={heroCardTitleVariants()}>{t('hero.cards.stackTitle')}</p>
           <div className="flex gap-2">
-            {FEATURED_TECH.map((item) => (
-              <TechTile key={item.id} label={item.label} icon={item.icon} size="sm" />
+            {technologies.slice(0, 3).map((item) => (
+              <TechTile key={item.id} label={item.label} icon={item.logoUrl} size="sm" />
             ))}
           </div>
         </>
@@ -137,9 +136,14 @@ const useCardContent = (): Card[] => {
  * Granicu bira `useDevice`, a ne samo Tailwind prefiks, jer se razlikuje **struktura**
  * (apsolutni sloj naspram trake u toku), ne samo vidljivost.
  */
-export const HeroCards = () => {
+interface HeroCardsProps {
+  /** Prve tri se prikazuju u kartici „stack". */
+  technologies: readonly Technology[]
+}
+
+export const HeroCards = ({ technologies }: HeroCardsProps) => {
   const { isWide } = useDevice()
-  const cards = useCardContent()
+  const cards = useCardContent(technologies)
 
   if (isWide) {
     return (

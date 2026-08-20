@@ -27,6 +27,15 @@
       "sentTitle": "Poruka poslata.",
       "sentBody": "Hvala — stigla je u sanduče studija. Očekuj odgovor u roku od 48 sati.",
       "sendAnother": "Pošalji još jednu"
+    },
+    "errors": {
+      "required": "Ovo polje je obavezno",
+      "emailInvalid": "Neispravna e-mail adresa",
+      "messageTooShort": "Poruka mora imati bar 10 znakova",
+      "tooLong": "Predugačko",
+      "network": "Nema veze sa serverom. Pokušaj ponovo.",
+      "tooMany": "Previše poruka u kratkom roku. Pokušaj kasnije.",
+      "failed": "Slanje nije uspelo. Pokušaj ponovo."
     }
   }
 }

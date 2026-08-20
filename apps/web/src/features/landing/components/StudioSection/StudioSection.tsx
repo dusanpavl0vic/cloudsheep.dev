@@ -1,13 +1,14 @@
 import { useTranslation } from 'react-i18next'
 
-import { CredentialSeal } from '@/components/CredentialSeal'
+import { TeamCarousel } from '@/features/landing/components/TeamCarousel'
+import { localize } from '@/features/projects'
 import { SECTION_IDS } from '@/lib/navigation'
+import type { SiteProfile, TeamMember } from '@/lib/site'
 import { SectionBlock } from '@app/ui'
 
 import {
   studioBodyVariants,
   studioLeadVariants,
-  studioSealVariants,
   studioTextVariants,
 } from './StudioSection.variants'
 
@@ -23,8 +24,16 @@ import {
  * kvartal zastari za tri meseca i sajt izgleda napušteno, a zvanje ne zastareva. Isti podatak
  * je ranije stajao i u `studio.lead`, pa je odatle skraćen — pečat ga sada nosi jednom.
  */
-export const StudioSection = () => {
-  const { t } = useTranslation('landing')
+interface StudioSectionProps {
+  profile: SiteProfile['profile']
+  team: readonly TeamMember[]
+}
+
+export const StudioSection = ({ profile, team }: StudioSectionProps) => {
+  const { t, i18n } = useTranslation('landing')
+
+  const headline = profile ? localize(profile.headline, i18n.language) : ''
+  const bio = profile ? localize(profile.bio, i18n.language) : ''
 
   return (
     <SectionBlock
@@ -35,18 +44,15 @@ export const StudioSection = () => {
       align="center"
     >
       <div className={studioBodyVariants()}>
-        <p className={studioLeadVariants()}>{t('studio.lead')}</p>
-        <p className={studioTextVariants()}>{t('studio.body')}</p>
+        {/* Tekst dolazi iz profila u bazi, ne iz i18n: sa timom od više ljudi kopija
+            „jednočlani studio" prestaje da bude tačna, a menja se u adminu. */}
+        {headline && <p className={studioLeadVariants()}>{headline}</p>}
+        {bio && <p className={studioTextVariants()}>{bio}</p>}
+      </div>
 
-        <CredentialSeal
-          className={studioSealVariants()}
-          logo="/edu/elfak.webp"
-          university={t('studio.credential.university')}
-          degree={t('studio.credential.degree')}
-          programme={t('studio.credential.programme')}
-          faculty={t('studio.credential.faculty')}
-          city={t('studio.credential.city')}
-        />
+      {/* Karusel je IZVAN uže tekstualne kolone: kartice diplome su šire od 680px */}
+      <div className="mt-10">
+        <TeamCarousel members={team} />
       </div>
     </SectionBlock>
   )

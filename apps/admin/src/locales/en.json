@@ -2,9 +2,27 @@
   "common": {
     "loading": "Loading…",
     "signOut": "Sign out",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "error": "Something went wrong. Please try again."
   },
-  "nav": { "dashboard": "Dashboard" },
-  "dashboard": { "title": "Dashboard", "welcome": "Welcome, {name}" },
-  "notFound": { "title": "Page not found", "back": "Back to dashboard" }
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "technologies": "Technologies",
+    "profile": "Profile",
+    "team": "Team",
+    "messages": "Messages"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome, {name}"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "back": "Back to dashboard"
+  }
 }

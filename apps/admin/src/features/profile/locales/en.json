@@ -1,0 +1,40 @@
+{
+  "profile": {
+    "title": "Profile",
+    "subtitle": "The information about you that the site shows",
+    "loading": "Loading profile",
+    "loadError": "Profile could not be loaded.",
+    "saved": "Saved",
+    "locales": { "Sr": "Serbian", "En": "English" },
+    "form": {
+      "fullName": "Full name",
+      "location": "Location",
+      "locationHint": "Shown in the footer — e.g. “Niš, Serbia · CET”.",
+      "headline": "Headline",
+      "bio": "About me",
+      "university": "University",
+      "degree": "Faculty",
+      "isAvailable": "Open to new work"
+    },
+    "links": {
+      "title": "Contact and social",
+      "empty": "No links yet",
+      "emptyBody": "Add at least one so it shows up in the site footer.",
+      "platform": "Platform",
+      "platformHint": "Lowercase: github, linkedin, instagram, x, email.",
+      "label": "Label",
+      "url": "URL",
+      "urlHint": "https://… or mailto:…",
+      "add": "Add link",
+      "visible": "Visible",
+      "moveUp": "Move up",
+      "moveDown": "Move down"
+    },
+    "errors": {
+      "required": "This field is required",
+      "tooLong": "The value is too long",
+      "platformFormat": "Lowercase letters only, no spaces",
+      "urlInvalid": "Must start with http(s):// or mailto:"
+    }
+  }
+}

@@ -27,12 +27,12 @@ Nova sekcija u postojećoj app-i je feature, ne app. Ako nisi siguran — reci i
    - `vite.config.ts` → `createViteConfig({ appName: '$name' })`
    - `tsconfig.json` → `extends: "@app/typescript-config/app.json"`
    - `eslint.config.js` → `createAppConfig({ tsconfigRootDir: import.meta.dirname })`
-   Ako moraš da prepišeš nešto iz preseta — preset fali, prijavi to umesto da praviš izuzetak.
+     Ako moraš da prepišeš nešto iz preseta — preset fali, prijavi to umesto da praviš izuzetak.
 4. Budžeti **od prvog commita**: `.size-limit.json` i `lighthouserc.json`
 5. Registracija: CI matrix, root `README.md`, `docs/00-overview.md`
 6. `apps/$name/CLAUDE.md` sa specifičnostima app-e
 7. Bar jedan e2e smoke test
-8. `vercel.json` sa `pnpm install --frozen-lockfile` i `npx turbo-ignore`
+8. `infra/docker/$name.Dockerfile` (kopija `web.Dockerfile`) + servis u `infra/docker-compose.yml`
 
 ## Acceptance
 
@@ -41,4 +41,5 @@ Nova sekcija u postojećoj app-i je feature, ne app. Ako nisi siguran — reci i
 - `pnpm build --filter=$name`, `pnpm lint`, `pnpm typecheck`, `pnpm test` prolaze
 - `pnpm size --filter=$name` prolazi
 
-Na kraju reci šta korisnik mora ručno: Vercel projekat na dashboardu (root directory `apps/$name`).
+Na kraju reci šta korisnik mora ručno: Coolify resurs + DNS A rekord za subdomen
+(vidi `docs/17-adding-new-app.md` §5).

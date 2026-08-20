@@ -6,31 +6,45 @@
 
 export const HERO_TERMINAL_KEYS = ['hero.term1', 'hero.term2', 'hero.term3', 'hero.term4'] as const
 
+/**
+ * Discipline studija.
+ *
+ * `no` i `slug` su razdvojeni, a ranije su bili jedan string (`'/01 design'`). Razdvojeni su
+ * zato što ih novi raspored crta na dva različita mesta i u dve različite težine: broj je
+ * veliki duh u pozadini panela, oznaka je sitan mono red nad naslovom.
+ *
+ * `slug` nije prevod — `design`, `web`, `mobile` i `ops` su isti na svakom jeziku, kao i
+ * nazivi tehnologija u `tags`.
+ */
 export const DISCIPLINES = [
   {
     id: 'design',
-    index: '/01 design',
+    no: '01',
+    slug: '/ design',
     titleKey: 'services.design.title',
     descriptionKey: 'services.design.description',
     tags: ['ux/ui', 'design systems', 'prototyping'],
   },
   {
     id: 'web',
-    index: '/02 web',
+    no: '02',
+    slug: '/ web',
     titleKey: 'services.web.title',
     descriptionKey: 'services.web.description',
     tags: ['next.js', 'typescript', 'postgresql'],
   },
   {
     id: 'mobile',
-    index: '/03 mobile',
+    no: '03',
+    slug: '/ mobile',
     titleKey: 'services.mobile.title',
     descriptionKey: 'services.mobile.description',
     tags: ['react native', 'kotlin', 'swift'],
   },
   {
     id: 'ops',
-    index: '/04 ops',
+    no: '04',
+    slug: '/ ops',
     titleKey: 'services.ops.title',
     descriptionKey: 'services.ops.description',
     tags: ['node.js', 'docker', 'ci/cd'],

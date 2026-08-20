@@ -26,9 +26,26 @@
 │   │   ├── index.html
 │   │   ├── vite.config.ts
 │   │   ├── lighthouserc.json
-│   │   ├── vercel.json
 │   │   └── CLAUDE.md
-│   └── admin/                        # ista struktura
+│   ├── admin/                        # ista struktura
+│   └── api/                          # Express + Prisma — jedini koji dodiruje bazu
+│       ├── src/
+│       │   ├── main.ts               # listen + graceful shutdown
+│       │   ├── app.ts                # Express app bez listen-a (zbog supertest-a)
+│       │   ├── env.ts                # zod validacija process.env
+│       │   ├── db.ts                 # PrismaClient singleton
+│       │   ├── seed.ts               # prvi admin nalog; u src/ da se kompajlira u dist/
+│       │   ├── routes/               # auth.ts, health.ts
+│       │   ├── middleware/           # auth.ts, error.ts
+│       │   └── lib/                  # tokens.ts
+│       └── prisma/                   # schema.prisma, migrations/
+│
+├── infra/                            # sve što se tiče deploya — vidi /DEPLOYMENT.md
+│   ├── docker/                       # web./admin./api.Dockerfile
+│   ├── nginx/                        # spa.conf, security-headers.conf
+│   ├── docker-compose.yml            # SAMO lokalna provera produkcionog builda
+│   ├── SERVER-SETUP.md               # Hetzner + Coolify, jednokratno
+│   └── COOLIFY.md                    # konfiguracija tri resursa
 │
 ├── packages/
 │   ├── ui/                           # dizajn sistem
@@ -63,21 +80,21 @@
 
 ## Šta gde ide — tabela odlučivanja
 
-| Pišeš… | Ide u |
-|---|---|
-| komponentu koju koristi jedan feature | `features/<x>/components/` |
-| komponentu koju koriste dva feature-a iste app-e | `apps/<x>/src/components/` |
-| komponentu koju koriste dve app-e | `packages/ui/` (atoms/molecules/organisms) |
-| shadcn primitiv | `packages/ui/src/ui/` — flat, kako CLI generiše |
-| hook koji zna za domen | `features/<x>/hooks/` |
-| hook bez domena (`useDebounce`) | `packages/hooks/` |
-| `useAppDispatch`/`useAppSelector` | `apps/<x>/src/store/hooks.ts` |
-| čistu funkciju bez React-a | `packages/utils/` |
-| helper koji zna za ovu app | `apps/<x>/src/lib/` |
-| route-level komponentu | `pages/` — **samo kompozicija** |
-| zod šemu | `features/<x>/schemas/` |
-| prevod feature-a | `features/<x>/locales/{sr,en}.json` |
-| globalni prevod | `apps/<x>/src/locales/common.json` |
+| Pišeš…                                           | Ide u                                           |
+| ------------------------------------------------ | ----------------------------------------------- |
+| komponentu koju koristi jedan feature            | `features/<x>/components/`                      |
+| komponentu koju koriste dva feature-a iste app-e | `apps/<x>/src/components/`                      |
+| komponentu koju koriste dve app-e                | `packages/ui/` (atoms/molecules/organisms)      |
+| shadcn primitiv                                  | `packages/ui/src/ui/` — flat, kako CLI generiše |
+| hook koji zna za domen                           | `features/<x>/hooks/`                           |
+| hook bez domena (`useDebounce`)                  | `packages/hooks/`                               |
+| `useAppDispatch`/`useAppSelector`                | `apps/<x>/src/store/hooks.ts`                   |
+| čistu funkciju bez React-a                       | `packages/utils/`                               |
+| helper koji zna za ovu app                       | `apps/<x>/src/lib/`                             |
+| route-level komponentu                           | `pages/` — **samo kompozicija**                 |
+| zod šemu                                         | `features/<x>/schemas/`                         |
+| prevod feature-a                                 | `features/<x>/locales/{sr,en}.json`             |
+| globalni prevod                                  | `apps/<x>/src/locales/common.json`              |
 
 ## Pravila
 
@@ -113,14 +130,14 @@ Inline utility klase su dozvoljene isključivo za **layout kompoziciju** (`flex`
 
 ## Anti-patterns
 
-| ❌ | ✅ |
-|---|---|
+| ❌                                                         | ✅                                                                          |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------- |
 | `src/components/index.ts` koji re-eksportuje 40 komponenti | barrel po komponenti; nikad zbirni ([`adr/0005`](adr/0005-barrel-files.md)) |
-| `features/x/utils.ts` | `features/x/lib/formatPrice.ts` |
-| `pages/Dashboard.tsx` sa `useQuery` i tri `useState`-a | logika u `features/dashboard/hooks/useDashboard.ts` |
-| `packages/ui/src/ui/Button/Button.tsx` | `packages/ui/src/ui/button.tsx` (flat) |
-| Tailwind klase u `.tsx` fajlu komponente | `.variants.ts` |
-| `types/index.ts` sa 300 linija svih tipova | tip živi uz svoj domen: `features/x/types.ts` |
+| `features/x/utils.ts`                                      | `features/x/lib/formatPrice.ts`                                             |
+| `pages/Dashboard.tsx` sa `useQuery` i tri `useState`-a     | logika u `features/dashboard/hooks/useDashboard.ts`                         |
+| `packages/ui/src/ui/Button/Button.tsx`                     | `packages/ui/src/ui/button.tsx` (flat)                                      |
+| Tailwind klase u `.tsx` fajlu komponente                   | `.variants.ts`                                                              |
+| `types/index.ts` sa 300 linija svih tipova                 | tip živi uz svoj domen: `features/x/types.ts`                               |
 
 ## Checklist
 

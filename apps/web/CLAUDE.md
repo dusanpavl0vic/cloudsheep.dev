@@ -23,8 +23,9 @@ react-refresh-om — Lighthouse tamo pokazuje FCP od 13 s, što nema veze sa stv
 preview`). Oblik `pnpm preview --filter=web` radi samo za skripte koje postoje i u korenu
 > (`dev`, `build`, `test`), gde `--filter` zapravo prima turbo, a ne pnpm.
 
-**Lokalni preview NE primenjuje `vercel.json`** — dakle nema CSP-a ni ostalih headera. Za njih
-je jedini pravi test Vercel preview deployment. Lokalno se proverava sve ostalo: izgled,
+**Lokalni `vite preview` NE primenjuje nginx config** — dakle nema CSP-a ni ostalih headera.
+Za njih je test produkcioni image: `docker compose -f infra/docker-compose.yml up --build web`,
+pa `curl -I localhost:8080`. Lokalno se proverava sve ostalo: izgled,
 Lighthouse Performance/A11y/SEO, `robots.txt`, `sitemap.xml`, `og.png`.
 
 **Lighthouse pokretati u incognito prozoru sa isključenim ekstenzijama.** Jedno merenje je već
@@ -33,11 +34,28 @@ ekstenzija, a ne sajt.
 
 ## Budžet
 
-| Stavka     | Limit           | Trenutno          |
-| ---------- | --------------- | ----------------- |
-| Initial JS | **155 KB gzip** | 150.4             |
-| CSS        | 20 KB gzip      | 11.7              |
-| Po ruti    | 60 KB gzip      | 29.5 (`/contact`) |
+| Stavka     | Limit           | Trenutno     |
+| ---------- | --------------- | ------------ |
+| Initial JS | **158 KB gzip** | 157.0        |
+| CSS        | 20 KB gzip      | 13.6         |
+| Po ruti    | 60 KB gzip      | 17.2 (`env`) |
+
+> **Zašto 158.** Brend marka je 2026-08-19 zamenjena isporučenim crtežom iz Figme. On je
+> bogatiji od ranijih: šest putanja, 4664 znaka posle zaokruživanja na 2 decimale, što je
+> **~2.1 KB gzip**. Rolldown ga izdvaja u zaseban `Logo` chunk (3.12 KB sa `Logo` i
+> varijantama), a taj chunk je u početnom učitavanju jer marku nose zaglavlje i podnožje.
+>
+> **Nema šta da se očisti.** Ranije su u ljusci stajale dve marke; obe su obrisane i ostala
+> je tačno jedna. Zaokruživanje sa 10 na 2 decimale već je vratilo 24% putanje (razlika
+> 0.12% piksela pri renderu na 600px, izmereno). Na 1 decimalu razlika skače na 1.19% i
+> ivice se vidno pomeraju, pa je to granica.
+>
+> **Put ispod 155 ako ikad zatreba:** marka se izmesti u `public/logo.svg` i crta kroz
+> CSS `mask` sa `background: currentColor`. Tema i dalje radi, JS trošak pada na nulu, cena
+> je jedan keširan zahtev i nova mehanika u kodu. Nije urađeno jer bi zbog jednog KB uvelo
+> obrazac koji nigde drugde ne postoji.
+>
+> Traka napretka i 404 stranica **nisu** dodale ništa — izmereno pre i posle, oba puta 154.7.
 
 Meri `node scripts/check-size.mjs` (= `pnpm size`), i to je deo `pnpm validate`.
 
@@ -53,8 +71,8 @@ Meri `node scripts/check-size.mjs` (= `pnpm size`), i to je deo `pnpm validate`.
 **Šta ulazi u „initial" — čita se iz `dist/index.html`**, ne iz imena fajlova: entry script
 plus svaki `modulepreload`. Browser ih povuče pre prvog kadra, pa svi ulaze u budžet.
 
-Sastav početnog učitavanja (gzip): `react-vendor` 85.6 · `index` 36.1 · `src` 16.7 ·
-`redux-vendor` 9.9 · ostalo ~2.2.
+Sastav početnog učitavanja (gzip): `react-vendor` 85.9 · `index` 38.5 · `src` 17.4 ·
+`redux-vendor` 9.9 · `useDevice` 1.6 · `routes` 1.2 · ostalo ~0.5.
 
 **Pun stack (RHF, modal engine, RTKQ) je prisutan i ovde**, ali sve mora biti lazy:
 modal registry se učitava tek na prvo otvaranje modala, RHF tek na `/contact` ruti,
@@ -113,8 +131,9 @@ Nekvadratni SVG: `h-* w-auto`, ne `size-*`.
 
 ## Deploy
 
-Vercel projekat `cloudsheep-web`, root directory `apps/web`.
-Grane: `dev` → preview, `main` → test, `prod` → production. Vidi `/DEPLOYMENT.md`.
+`cloudsheep.dev`, Coolify resurs `web`, image iz `infra/docker/web.Dockerfile`
+(nginx koji servira `dist/`, uz SPA fallback i security headere iz `infra/nginx/spa.conf`).
+Vidi `/DEPLOYMENT.md` i `infra/COOLIFY.md`.
 
 ## Checklist pre PR-a
 

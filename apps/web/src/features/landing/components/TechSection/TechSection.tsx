@@ -1,11 +1,16 @@
 import { useTranslation } from 'react-i18next'
 
 import { TechGrid } from '@/features/landing/components/TechGrid'
+import type { Technology } from '@/features/projects'
 import { SECTION_IDS } from '@/lib/navigation'
 import { SectionBlock } from '@app/ui'
 
 /** Sekcija sa mrežom tehnologija — zamenjuje spisak tagova tekstom u StudioSection. */
-export const TechSection = () => {
+interface TechSectionProps {
+  technologies: readonly Technology[]
+}
+
+export const TechSection = ({ technologies }: TechSectionProps) => {
   const { t } = useTranslation('landing')
 
   return (
@@ -17,7 +22,7 @@ export const TechSection = () => {
       subtitle={t('stack.subtitle')}
       align="center"
     >
-      <TechGrid />
+      <TechGrid technologies={technologies} />
     </SectionBlock>
   )
 }

@@ -1,0 +1,40 @@
+{
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Podaci o tebi koje sajt prikazuje",
+    "loading": "Učitavanje profila",
+    "loadError": "Profil se ne može učitati.",
+    "saved": "Sačuvano",
+    "locales": { "Sr": "srpski", "En": "engleski" },
+    "form": {
+      "fullName": "Ime i prezime",
+      "location": "Lokacija",
+      "locationHint": "Prikazuje se u podnožju — npr. „Niš, Srbija · CET\".",
+      "headline": "Naslov",
+      "bio": "O meni",
+      "university": "Univerzitet",
+      "degree": "Fakultet",
+      "isAvailable": "Primam nove poslove"
+    },
+    "links": {
+      "title": "Kontakt i mreže",
+      "empty": "Još nema linkova",
+      "emptyBody": "Dodaj bar jedan da bi se pojavio u podnožju sajta.",
+      "platform": "Platforma",
+      "platformHint": "Mala slova: github, linkedin, instagram, x, email.",
+      "label": "Naziv",
+      "url": "Adresa",
+      "urlHint": "https://… ili mailto:…",
+      "add": "Dodaj link",
+      "visible": "Vidljiv",
+      "moveUp": "Pomeri gore",
+      "moveDown": "Pomeri dole"
+    },
+    "errors": {
+      "required": "Ovo polje je obavezno",
+      "tooLong": "Vrednost je predugačka",
+      "platformFormat": "Samo mala slova, bez razmaka",
+      "urlInvalid": "Mora počinjati sa http(s):// ili mailto:"
+    }
+  }
+}

@@ -35,7 +35,6 @@ apps/<name>/
 ├── vitest.config.ts
 ├── lighthouserc.json
 ├── .size-limit.json
-├── vercel.json
 ├── tsconfig.json
 ├── package.json
 └── CLAUDE.md
@@ -77,8 +76,8 @@ apps/<name>/
 
 ```ts
 // vite.config.ts
-import { createViteConfig } from '@app/vite-config';
-export default createViteConfig({ appName: '<name>' });
+import { createViteConfig } from '@app/vite-config'
+export default createViteConfig({ appName: '<name>' })
 ```
 
 ```json
@@ -88,8 +87,8 @@ export default createViteConfig({ appName: '<name>' });
 
 ```js
 // eslint.config.js
-import { createAppConfig } from '@app/eslint-config';
-export default createAppConfig({ tsconfigRootDir: import.meta.dirname });
+import { createAppConfig } from '@app/eslint-config'
+export default createAppConfig({ tsconfigRootDir: import.meta.dirname })
 ```
 
 Ako moraš da prepišeš nešto iz preseta — to je signal da preset fali, ne da app treba izuzetak.
@@ -104,39 +103,48 @@ Ako moraš da prepišeš nešto iz preseta — to je signal da preset fali, ne d
 
 ### 5. Deploy
 
-Novi Vercel projekat:
+Novi Dockerfile + novi Coolify resurs.
 
-| Podešavanje | Vrednost |
-|---|---|
-| Root Directory | `apps/<name>` |
-| Install Command | `pnpm install --frozen-lockfile` |
-| Build Command | `pnpm build` |
-| Output Directory | `dist` |
-| Ignored Build Step | `npx turbo-ignore` |
+1. `infra/docker/<name>.Dockerfile` — kopija `web.Dockerfile`, promeni samo
+   `--filter <name>` i putanju do `dist`-a. Dodaj `COPY apps/<name>/package.json`
+   u `deps` stage (inače `--frozen-lockfile` puca).
+2. Dodaj servis u `infra/docker-compose.yml` na slobodan port.
+3. Coolify → New Resource → Application:
 
-Grane prate postojeću šemu: `dev` → preview, `main` → test, `prod` → production
-(vidi `DEPLOYMENT.md`).
+| Podešavanje         | Vrednost                                          |
+| ------------------- | ------------------------------------------------- |
+| Build Pack          | Dockerfile                                        |
+| Base Directory      | `/` (build context je koren monorepoa)            |
+| Dockerfile Location | `infra/docker/<name>.Dockerfile`                  |
+| Ports Exposes       | `80`                                              |
+| Domains             | `https://<name>.cloudsheep.dev`                   |
+| Build Variables     | `VITE_API_URL`, `VITE_APP_ENV`                    |
+| Watch Paths         | `apps/<name>/**`, `packages/**`, `pnpm-lock.yaml` |
+
+Deploy prati granu `prod` (vidi `DEPLOYMENT.md`).
 
 ### 6. Budžeti od prvog dana
 
 ```json
 // .size-limit.json
-[{ "name": "initial", "path": "dist/assets/index-*.js", "limit": "150 KB" },
- { "name": "css",     "path": "dist/assets/*.css",      "limit": "20 KB" }]
+[
+  { "name": "initial", "path": "dist/assets/index-*.js", "limit": "150 KB" },
+  { "name": "css", "path": "dist/assets/*.css", "limit": "20 KB" }
+]
 ```
 
 Budžet postavljen kasnije je budžet koji se nikad ne postavi.
 
 ## Anti-patterns
 
-| ❌ | ✅ |
-|---|---|
-| kopiranje `vite.config.ts` iz druge app-e | `createViteConfig` preset |
-| `"react": "^19.2.8"` u app `package.json` | `"react": "catalog:"` |
-| app bez `lighthouserc.json` i `.size-limit.json` | budžeti od prvog commita |
-| deljenje koda copy-paste-om iz druge app-e | izdigni u `packages/` |
-| nova app za novu stranicu | to je ruta, ne app |
-| `apps/<name>/src/utils.ts` | `lib/<imePosla>.ts` |
+| ❌                                               | ✅                        |
+| ------------------------------------------------ | ------------------------- |
+| kopiranje `vite.config.ts` iz druge app-e        | `createViteConfig` preset |
+| `"react": "^19.2.8"` u app `package.json`        | `"react": "catalog:"`     |
+| app bez `lighthouserc.json` i `.size-limit.json` | budžeti od prvog commita  |
+| deljenje koda copy-paste-om iz druge app-e       | izdigni u `packages/`     |
+| nova app za novu stranicu                        | to je ruta, ne app        |
+| `apps/<name>/src/utils.ts`                       | `lib/<imePosla>.ts`       |
 
 ## Checklist
 
@@ -146,7 +154,8 @@ Budžet postavljen kasnije je budžet koji se nikad ne postavi.
 - [ ] `pnpm lint`, `pnpm typecheck`, `pnpm test` prolaze za novu app
 - [ ] `.size-limit.json` i `lighthouserc.json` postoje i prolaze
 - [ ] Dodata u CI matrix
-- [ ] Vercel projekat napravljen sa `turbo-ignore`
+- [ ] `infra/docker/<name>.Dockerfile` + servis u `infra/docker-compose.yml`
+- [ ] Coolify resurs napravljen, sa Watch Paths
 - [ ] `apps/<name>/CLAUDE.md` napisan
 - [ ] Upisana u [`00-overview.md`](00-overview.md) i root `README.md`
 - [ ] Bar jedan e2e smoke test

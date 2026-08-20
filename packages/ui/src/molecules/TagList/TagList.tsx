@@ -14,7 +14,10 @@ import { type badgeVariants } from '../../ui/badge.variants'
  */
 export type TagListItem = string | { label: string; icon?: string | undefined }
 
-type TagListProps = Pick<VariantProps<typeof badgeVariants>, 'variant' | 'size' | 'font'> & {
+type TagListProps = Pick<
+  VariantProps<typeof badgeVariants>,
+  'variant' | 'size' | 'font' | 'shape'
+> & {
   tags: readonly TagListItem[]
   className?: string
 }
@@ -31,11 +34,11 @@ const toTag = (tag: TagListItem) => (typeof tag === 'string' ? { label: tag } : 
  * (tehnologije poput `GTFS` ga i nemaju), pa pozivalac prosto ne šalje `icon`; da putanja
  * pokazuje na nepostojeći fajl, to je greška u podacima app-e i tamo se i hvata.
  */
-export const TagList = ({ tags, variant, size, font, className }: TagListProps) => (
+export const TagList = ({ tags, variant, size, font, shape, className }: TagListProps) => (
   <ul className={cn(tagListVariants(), className)}>
     {tags.map(toTag).map(({ label, icon }) => (
       <li key={label}>
-        <Badge variant={variant} size={size} font={font}>
+        <Badge variant={variant} size={size} font={font} shape={shape}>
           {icon && (
             <img
               src={icon}

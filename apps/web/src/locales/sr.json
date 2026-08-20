@@ -1,7 +1,9 @@
 {
   "common": {
     "appName": "CloudSheep",
-    "appNameLower": "cloudsheep"
+    "appNameLower": "cloudsheep",
+    "loading": "Učitavanje…",
+    "sending": "Slanje…"
   },
   "theme": {
     "switchToDark": "Prebaci na tamnu temu",
@@ -43,8 +45,13 @@
   },
   "notFound": {
     "terminal": "nema takvog fajla ili direktorijuma",
-    "body": "Ova ovca je odlutala sa oblaka. Stranica koju tražiš se preselila, ili nikad nije ni postojala.",
     "home": "Nazad na početnu",
-    "work": "Pogledaj radove"
+    "work": "Pogledaj radove",
+    "cards": {
+      "logTitle": "zahtevi",
+      "note": "Adresa je možda promenjena. Kreni od početne — ovca zna put.",
+      "statusMeta": "not found",
+      "statusTitle": "status odgovora"
+    }
   }
 }

@@ -3,7 +3,7 @@ import { useId } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
-import { Button, Input, Label } from '@app/ui'
+import { Button, Checkbox, FormField, Input, Label } from '@app/ui'
 
 import { useLogin } from '../../hooks/useLogin'
 import { loginSchema, type LoginInput } from '../../schemas/login.schema'
@@ -18,13 +18,15 @@ interface LoginFormProps {
  *
  * **Nula `useState`.** Vrednosti, greške, `isSubmitting` i `isValid` drži react-hook-form.
  * Poruke grešaka su i18n ključevi iz zod šeme, pa se prevode tek pri prikazu.
+ *
+ * Povezivanje labele, `aria-invalid` i `aria-describedby` radi `FormField` — ranije je
+ * ovde stajalo po devet linija na svako polje, sa `useId`-om po polju. Jedini `useId` koji
+ * je ostao je za čekboks, jer njemu labela stoji sa strane, ne iznad.
  */
 export function LoginForm({ onSuccess }: LoginFormProps) {
   const { t } = useTranslation(['auth', 'common'])
   const { login, isLoading } = useLogin()
 
-  const emailId = useId()
-  const passwordId = useId()
   const rememberId = useId()
 
   const {
@@ -57,50 +59,32 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     <form
       noValidate
       onSubmit={(event) => void onSubmit(event)}
-      className="flex flex-col gap-5 rounded-xl border border-border bg-card p-8"
+      className="border-border bg-card flex flex-col gap-5 rounded-xl border p-8"
       aria-busy={busy}
     >
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor={emailId}>{t('auth.login.email')}</Label>
-        <Input
-          id={emailId}
-          type="email"
-          autoComplete="email"
-          aria-invalid={Boolean(errors.email)}
-          aria-describedby={errors.email ? `${emailId}-error` : undefined}
-          {...register('email')}
-        />
-        {errors.email && (
-          <p id={`${emailId}-error`} role="alert" className="text-sm text-destructive">
-            {t(errors.email.message ?? '')}
-          </p>
-        )}
-      </div>
+      <FormField
+        label={t('auth.login.email')}
+        {...(errors.email && { error: t(errors.email.message ?? '') })}
+      >
+        {(field) => <Input {...field} type="email" autoComplete="email" {...register('email')} />}
+      </FormField>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor={passwordId}>{t('auth.login.password')}</Label>
-        <Input
-          id={passwordId}
-          type="password"
-          autoComplete="current-password"
-          aria-invalid={Boolean(errors.password)}
-          aria-describedby={errors.password ? `${passwordId}-error` : undefined}
-          {...register('password')}
-        />
-        {errors.password && (
-          <p id={`${passwordId}-error`} role="alert" className="text-sm text-destructive">
-            {t(errors.password.message ?? '')}
-          </p>
+      <FormField
+        label={t('auth.login.password')}
+        {...(errors.password && { error: t(errors.password.message ?? '') })}
+      >
+        {(field) => (
+          <Input
+            {...field}
+            type="password"
+            autoComplete="current-password"
+            {...register('password')}
+          />
         )}
-      </div>
+      </FormField>
 
       <div className="flex items-center gap-2">
-        <input
-          id={rememberId}
-          type="checkbox"
-          className="size-4 accent-primary"
-          {...register('rememberMe')}
-        />
+        <Checkbox id={rememberId} {...register('rememberMe')} />
         <Label htmlFor={rememberId} className="mb-0">
           {t('auth.login.rememberMe')}
         </Label>

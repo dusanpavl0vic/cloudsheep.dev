@@ -1,0 +1,99 @@
+# SAMO za lokalnu proveru produkcionog builda:
+#
+#   docker compose -f infra/docker-compose.yml up --build
+#
+# Na serveru ovaj fajl niko ne čita — Coolify pravi tri odvojena resursa i svoju bazu.
+# Svrha je da build lom, CSP greška ili polomljen SPA fallback ispadnu ovde, a ne
+# petnaest minuta posle push-a u `prod`.
+#
+# Posle podizanja:
+#   curl -s localhost:3000/health         → {"status":"ok"}
+#   curl -s localhost:3000/health/ready   → {"status":"ok","database":"up"}
+#   open http://localhost:8080            → web
+#   open http://localhost:8081            → admin
+
+name: cloudsheep-prod-local
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: appdb
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U app -d appdb']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: ..
+      dockerfile: infra/docker/api.Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://app:app@postgres:5432/appdb
+      CORS_ORIGINS: http://localhost:8080,http://localhost:8081
+      # 32+ znaka, kao u produkciji — inače zod odbije da digne app.
+      JWT_SECRET: lokalni-kljuc-samo-za-docker-smoke-test
+      # Prazno: `Domain=.localhost` pretraživači odbacuju, pa cookie ne bi ni stigao.
+      COOKIE_DOMAIN: ''
+      UPLOAD_DIR: /app/uploads
+      # Puna adresa: `web` je na :8080, API na :3000 — relativna putanja bi tražila
+      # sliku od `web`-a, koji bi vratio index.html sa statusom 200 (tiha greška).
+      PUBLIC_UPLOAD_BASE: http://localhost:3000
+    volumes: [uploads:/app/uploads]
+    ports: ['3000:3000']
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  # Migracije i seed idu ovde kao zaseban jednokratni servis, ne u `api` CMD — isto
+  # razdvajanje kao u produkciji, gde ih pokreće Coolify pre-deployment komanda.
+  migrate:
+    build:
+      context: ..
+      dockerfile: infra/docker/api.Dockerfile
+    environment:
+      DATABASE_URL: postgresql://app:app@postgres:5432/appdb
+      # Bez naloga se u `admin` ne može ući — registracije nema. `upsert` je idempotentan,
+      # pa ponovno dizanje compose-a ne dira postojeći nalog.
+      #
+      # Ovo su LOKALNE vrednosti za smoke test i smeju biti ovde. Produkcione idu u
+      # Coolify env varijable, nikad u fajl koji se commit-uje.
+      SEED_ADMIN_EMAIL: admin@localhost
+      SEED_ADMIN_PASSWORD: lokalna-lozinka-za-smoke-test
+      SEED_ADMIN_NAME: Admin
+    command:
+      - sh
+      - -c
+      - ./node_modules/.bin/prisma migrate deploy && node dist/seed.js
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: 'no'
+
+  web:
+    build:
+      context: ..
+      dockerfile: infra/docker/web.Dockerfile
+      args:
+        # Bez sheme bi CSP `connect-src` dobio besmislenu vrednost.
+        VITE_API_URL: http://localhost:3000
+        VITE_APP_ENV: production
+    ports: ['8080:80']
+
+  admin:
+    build:
+      context: ..
+      dockerfile: infra/docker/admin.Dockerfile
+      args:
+        VITE_API_URL: http://localhost:3000
+        VITE_APP_ENV: production
+    ports: ['8081:80']
+
+volumes:
+  pgdata:
+  # Otpremljene slike. Bez ovoga nestaju pri svakom `docker compose down`.
+  uploads:

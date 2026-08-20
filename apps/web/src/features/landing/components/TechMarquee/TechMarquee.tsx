@@ -1,5 +1,5 @@
 import { TechTile } from '@/components/TechTile'
-import { TECH_ITEMS, type TechItem } from '@/lib/tech'
+import type { Technology } from '@/features/projects'
 
 import {
   techEdgeVariants,
@@ -16,12 +16,12 @@ import {
  * druga je zauzela njeno mesto, pa petlja nema šav. Duplikat je `aria-hidden` — screen
  * reader ne sme da pročita isti spisak dvaput.
  */
-function TechGroup({ items, duplicate }: { items: readonly TechItem[]; duplicate?: boolean }) {
+function TechGroup({ items, duplicate }: { items: readonly Technology[]; duplicate?: boolean }) {
   return (
     <ul className={techGroupVariants()} {...(duplicate ? { 'aria-hidden': true } : {})}>
       {items.map((item) => (
         <li key={item.id} className={techItemVariants()}>
-          <TechTile key={item.id} label={item.label} icon={item.icon} size="sm" />
+          <TechTile key={item.id} label={item.label} icon={item.logoUrl} size="sm" />
           {item.label}
         </li>
       ))}
@@ -35,14 +35,21 @@ function TechGroup({ items, duplicate }: { items: readonly TechItem[]; duplicate
  * Animacija je čist CSS (`cs-marquee`) i pomera `transform` — na compositor-u, bez
  * relayout-a. Staje na hover i na `prefers-reduced-motion`.
  */
-export function TechMarquee() {
+interface TechMarqueeProps {
+  technologies: readonly Technology[]
+}
+
+export function TechMarquee({ technologies }: TechMarqueeProps) {
+  // Prazan spisak: traka bi bila prazna kutija, pa se ne renderuje uopšte
+  if (technologies.length === 0) return null
+
   return (
     <div className={techMarqueeVariants()}>
       <span aria-hidden className={techEdgeVariants({ side: 'left' })} />
 
       <div className={techTrackVariants()}>
-        <TechGroup items={TECH_ITEMS} />
-        <TechGroup items={TECH_ITEMS} duplicate />
+        <TechGroup items={technologies} />
+        <TechGroup items={technologies} duplicate />
       </div>
 
       <span aria-hidden className={techEdgeVariants({ side: 'right' })} />

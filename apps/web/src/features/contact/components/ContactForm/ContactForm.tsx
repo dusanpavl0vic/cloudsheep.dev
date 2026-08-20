@@ -1,54 +1,41 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { z } from 'zod'
 
-import { GLYPHS } from '@/lib/glyphs'
-import { Button, Input, Label, Textarea } from '@app/ui'
+import { Button, FormField, Input, Textarea } from '@app/ui'
 
+import { useContactForm } from '../../hooks/useContactForm'
 
-const schema = z.object({
-  name: z.string().trim().min(1),
-  email: z.email().trim(),
-  subject: z.string().trim().optional(),
-  message: z.string().trim().min(10),
-})
-
-type ContactValues = z.infer<typeof schema>
-
+/**
+ * Kontakt forma koja ZAISTA šalje.
+ *
+ * Ranije je `onSubmit` odbacivao vrednosti i prikazivao potvrdu „stiglo je u studio inbox" —
+ * poruka koja nije bila tačna. Sada ide na `POST /contact`, gde se prvo upiše u bazu, pa
+ * pošalje mejl.
+ *
+ * **Nula `useState`.** Uspeh je `isSubmitSuccessful`, greška servera je `root` greška —
+ * oboje već drži react-hook-form (docs/10).
+ */
 export const ContactForm = () => {
   const { t } = useTranslation(['contact', 'common'])
-  const [sent, setSent] = useState(false)
+  const { form, onSubmit, sendAnother } = useContactForm()
 
   const {
     register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<ContactValues>({ resolver: zodResolver(schema) })
+    formState: { errors, isSubmitting, isSubmitSuccessful },
+  } = form
 
-  // Slanje forme = event handler, ne useEffect. (Bez backenda: prikaz potvrde.)
-  const onSubmit = handleSubmit(() => { setSent(true); })
-
-  const sendAnother = () => {
-    reset()
-    setSent(false)
-  }
-
-  if (sent) {
+  if (isSubmitSuccessful) {
     return (
-      <div className="rounded-xl border border-border bg-card p-9 text-center shadow-sm">
-        <div className="mx-auto mb-4.5 flex size-[58px] items-center justify-center rounded-full bg-primary text-2xl font-bold text-primary-foreground">
-          {GLYPHS.CHECK}
-        </div>
-        <h2 className="mb-2.5 font-heading text-2xl font-semibold text-foreground">
+      <div
+        role="status"
+        className="border-border bg-card flex flex-col items-start gap-4 rounded-xl border p-8"
+      >
+        <p className="font-heading text-foreground text-[19px] font-semibold">
           {t('contact.form.sentTitle')}
-        </h2>
-        <p className="mb-5.5 text-[15.5px] leading-relaxed text-muted-foreground">
+        </p>
+        <p className="text-muted-foreground text-[15.5px] leading-relaxed">
           {t('contact.form.sentBody')}
         </p>
-        <Button variant="outline" shape="pill" size="sm" onClick={sendAnother}>
+        <Button variant="outline" size="sm" onClick={sendAnother}>
           {t('contact.form.sendAnother')}
         </Button>
       </div>
@@ -59,61 +46,60 @@ export const ContactForm = () => {
     <form
       noValidate
       onSubmit={(event) => void onSubmit(event)}
-      className="flex flex-col gap-4.5 rounded-xl border border-border bg-card p-9 shadow-sm"
+      className="border-border bg-card flex flex-col gap-5 rounded-xl border p-8"
+      aria-busy={isSubmitting}
     >
-      <div className="grid grid-cols-1 gap-4.5 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="c-name">{t('contact.form.name')}</Label>
-          <Input
-            id="c-name"
-            placeholder={t('contact.form.namePh')}
-            aria-invalid={Boolean(errors.name)}
-            {...register('name')}
-          />
-          {errors.name && (
-            <span className="text-[12.5px] text-destructive">{t('contact.form.nameError')}</span>
-          )}
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="c-email">{t('contact.form.email')}</Label>
-          <Input
-            id="c-email"
-            type="email"
-            placeholder={t('contact.form.emailPh')}
-            aria-invalid={Boolean(errors.email)}
-            {...register('email')}
-          />
-          {errors.email && (
-            <span className="text-[12.5px] text-destructive">{t('contact.form.emailError')}</span>
-          )}
-        </div>
-      </div>
+      <FormField
+        label={t('contact.form.name')}
+        {...(errors.name && { error: t(errors.name.message ?? '') })}
+      >
+        {(field) => <Input {...field} autoComplete="name" {...register('name')} />}
+      </FormField>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="c-subject">{t('contact.form.subject')}</Label>
-        <Input id="c-subject" placeholder={t('contact.form.subjectPh')} {...register('subject')} />
-      </div>
+      <FormField
+        label={t('contact.form.email')}
+        {...(errors.email && { error: t(errors.email.message ?? '') })}
+      >
+        {(field) => <Input {...field} type="email" autoComplete="email" {...register('email')} />}
+      </FormField>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="c-message">{t('contact.form.message')}</Label>
-        <Textarea
-          id="c-message"
-          rows={6}
-          placeholder={t('contact.form.messagePh')}
-          aria-invalid={Boolean(errors.message)}
-          {...register('message')}
-        />
-        {errors.message && (
-          <span className="text-[12.5px] text-destructive">{t('contact.form.messageError')}</span>
-        )}
-      </div>
+      <FormField
+        label={t('contact.form.subject')}
+        {...(errors.subject && { error: t(errors.subject.message ?? '') })}
+      >
+        {(field) => <Input {...field} {...register('subject')} />}
+      </FormField>
 
-      <div className="flex items-center justify-between gap-4">
-        <span className="font-mono text-[11.5px] text-faint">{t('contact.form.note')}</span>
-        <Button type="submit" shape="pill">
-          {t('contact.form.submit')} →
-        </Button>
-      </div>
+      <FormField
+        label={t('contact.form.message')}
+        {...(errors.message && { error: t(errors.message.message ?? '') })}
+      >
+        {(field) => <Textarea {...field} rows={6} {...register('message')} />}
+      </FormField>
+
+      {/*
+        Honeypot: skriven od ljudi (`sr-only` + `tabIndex={-1}`), vidljiv botovima koji
+        popunjavaju svako polje. `aria-hidden` da ga screen reader ne pročita kao pravo polje.
+      */}
+      <input
+        {...register('website')}
+        type="text"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden
+        className="sr-only"
+      />
+
+      {/* Greška servera bez polja — ne toast, jer toast sistem u `web` ne postoji */}
+      {errors.root && (
+        <p role="alert" className="text-destructive text-sm">
+          {t(errors.root.message ?? '')}
+        </p>
+      )}
+
+      <Button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? t('common:common.sending') : t('contact.form.submit')}
+      </Button>
     </form>
   )
 }

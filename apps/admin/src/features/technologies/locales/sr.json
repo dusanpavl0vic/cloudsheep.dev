@@ -1,0 +1,54 @@
+{
+  "technologies": {
+    "title": "Tehnologije",
+    "subtitle": "Alati koji se kače na projekte i prikazuju na sajtu",
+    "new": "Nova tehnologija",
+    "editTitle": "Izmena tehnologije",
+    "newTitle": "Nova tehnologija",
+    "loading": "Učitavanje tehnologija",
+    "loadError": "Tehnologije se ne mogu učitati.",
+    "empty": {
+      "title": "Još nema tehnologija",
+      "body": "Dodaj prvu da bi mogla da se zakači na projekat.",
+      "action": "Dodaj tehnologiju"
+    },
+    "groups": {
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "mobile": "Mobilne",
+      "tooling": "Alati",
+      "design": "Dizajn"
+    },
+    "table": { "logo": "Logotip", "label": "Naziv", "group": "Grupa", "actions": "Radnje" },
+    "form": {
+      "label": "Naziv",
+      "slug": "Slug",
+      "slugHint": "Mala slova i cifre. Predlaže se iz naziva; menja se samo ako moraš.",
+      "group": "Grupa",
+      "logo": "Logotip",
+      "logoHint": "SVG, PNG, WebP ili AVIF, do 5 MB. Bez logotipa se prikazuje samo naziv.",
+      "chooseLogo": "Izaberi datoteku",
+      "uploading": "Otpremanje"
+    },
+    "delete": {
+      "title": "Brisanje tehnologije",
+      "body": "Obrisati „{label}\"? Skinuće se sa svih projekata na kojima stoji.",
+      "confirm": "Obriši"
+    },
+    "errors": {
+      "required": "Ovo polje je obavezno",
+      "slugFormat": "Dozvoljena su samo mala slova i cifre",
+      "slugTooLong": "Slug je predugačak",
+      "slugTaken": "Taj slug je već zauzet",
+      "labelTooLong": "Naziv je predugačak"
+    }
+  },
+  "uploads": {
+    "errors": {
+      "unsupportedType": "Ta vrsta datoteke nije podržana",
+      "tooLarge": "Datoteka je prevelika",
+      "unreadable": "Datoteka se ne može pročitati kao slika",
+      "failed": "Otpremanje nije uspelo"
+    }
+  }
+}

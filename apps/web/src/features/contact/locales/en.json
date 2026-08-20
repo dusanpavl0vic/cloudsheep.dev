@@ -27,6 +27,15 @@
       "sentTitle": "Message sent.",
       "sentBody": "Thanks — it landed in the studio inbox. Expect a reply within 48 hours.",
       "sendAnother": "Send another"
+    },
+    "errors": {
+      "required": "This field is required",
+      "emailInvalid": "Invalid email address",
+      "messageTooShort": "The message must be at least 10 characters",
+      "tooLong": "Too long",
+      "network": "No connection to the server. Please try again.",
+      "tooMany": "Too many messages in a short time. Try again later.",
+      "failed": "Sending failed. Please try again."
     }
   }
 }

@@ -1,0 +1,49 @@
+{
+  "team": {
+    "title": "Team",
+    "subtitle": "People shown in the “Studio” section on the site",
+    "new": "New member",
+    "newTitle": "New member",
+    "editTitle": "Edit member",
+    "loading": "Loading team",
+    "loadError": "Team could not be loaded.",
+    "locales": { "Sr": "sr", "En": "en" },
+    "empty": {
+      "title": "No members yet",
+      "body": "Add the first one so the “Studio” section shows up on the site.",
+      "action": "Add member"
+    },
+    "list": {
+      "visible": "Visible",
+      "hasDiploma": "Has diploma",
+      "noDiploma": "No diploma",
+      "noRole": "no role",
+      "moveUp": "Move up",
+      "moveDown": "Move down"
+    },
+    "form": {
+      "fullName": "Full name",
+      "role": "Role",
+      "city": "City",
+      "avatar": "Photo",
+      "avatarHint": "A square image works best. PNG, WebP, AVIF or JPEG, up to 5 MB.",
+      "choose": "Choose file",
+      "uploading": "Uploading",
+      "hasDiploma": "Has a diploma",
+      "hasDiplomaHint": "When off, the diploma card is NOT shown on the site — the member still appears with photo and role.",
+      "university": "University",
+      "degree": "Degree",
+      "programme": "Programme / module",
+      "faculty": "Faculty",
+      "seal": "Faculty seal",
+      "sealHint": "Shown as an embossed stamp on the diploma card.",
+      "isVisible": "Shown on the site"
+    },
+    "delete": {
+      "title": "Delete member",
+      "body": "Delete “{fullName}”? This cannot be undone.",
+      "confirm": "Delete"
+    },
+    "errors": { "required": "This field is required", "tooLong": "The value is too long" }
+  }
+}

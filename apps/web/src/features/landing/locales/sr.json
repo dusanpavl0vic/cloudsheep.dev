@@ -41,14 +41,11 @@
     "eyebrow": "studio",
     "titleTop": "Jedan čovek,",
     "titleMuted": "ceo proizvod.",
-    "lead": "CloudSheep je jednočlani produktni studio Dušana Pavlovića.",
-    "body": "Radiš direktno sa osobom koja dizajnira interfejs, piše kod i odgovara za rezultat. Kada jedan čovek drži ceo proizvod, odluke su brze, kontekst se ne gubi, a kvalitet ima jednog vlasnika.",
-    "credential": {
-      "university": "Univerzitet u Nišu",
-      "degree": "Diplomirani inženjer elektrotehnike i računarstva",
-      "programme": "Računarstvo i informatika",
-      "faculty": "Elektronski fakultet",
-      "city": "Niš, Srbija"
+    "team": {
+      "label": "Tim",
+      "previous": "Prethodni član",
+      "next": "Sledeći član",
+      "noDiploma": "Bez diplome"
     }
   },
   "services": {
