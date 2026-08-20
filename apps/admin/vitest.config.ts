@@ -20,7 +20,10 @@ export default defineConfig({
      */
     env: {
       VITE_APP_ENV: 'test',
-      VITE_API_URL: 'http://localhost:3000/api',
+      // Bez `/api` sufiksa — API servira `/auth/login` i `/admin/projects` na korenu.
+      // Ranije je ovde stajalo `.../api`, pa su handleri u testovima opisivali putanje
+      // koje na serveru ne postoje; MSW to ne primeti, jer presreće šta god da se pošalje.
+      VITE_API_URL: 'http://localhost:3000',
     },
     coverage: {
       provider: 'v8',

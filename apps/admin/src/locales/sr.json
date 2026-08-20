@@ -2,9 +2,27 @@
   "common": {
     "loading": "Učitavanje…",
     "signOut": "Odjavi se",
-    "skipToContent": "Pređi na sadržaj"
+    "skipToContent": "Pređi na sadržaj",
+    "save": "Sačuvaj",
+    "cancel": "Odustani",
+    "edit": "Izmeni",
+    "delete": "Obriši",
+    "error": "Nešto je pošlo naopako. Pokušaj ponovo."
   },
-  "nav": { "dashboard": "Kontrolna tabla" },
-  "dashboard": { "title": "Kontrolna tabla", "welcome": "Dobrodošli, {name}" },
-  "notFound": { "title": "Stranica nije pronađena", "back": "Nazad na tablu" }
+  "nav": {
+    "dashboard": "Kontrolna tabla",
+    "projects": "Projekti",
+    "technologies": "Tehnologije",
+    "profile": "Profil",
+    "team": "Tim",
+    "messages": "Poruke"
+  },
+  "dashboard": {
+    "title": "Kontrolna tabla",
+    "welcome": "Dobrodošli, {name}"
+  },
+  "notFound": {
+    "title": "Stranica nije pronađena",
+    "back": "Nazad na tablu"
+  }
 }

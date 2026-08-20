@@ -1,1 +1,0 @@
-export { DisciplineRow } from './DisciplineRow'

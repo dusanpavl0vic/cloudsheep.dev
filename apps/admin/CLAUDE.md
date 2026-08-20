@@ -1,6 +1,6 @@
 # apps/admin
 
-Interni panel iza autentikacije. Odvojen Vercel projekat i odvojen domen od `web`.
+Interni panel iza autentikacije. Odvojen Docker image i odvojen domen od `web`.
 
 Root pravila važe — vidi `/CLAUDE.md` i `docs/`. Ovde su samo specifičnosti ove app-e.
 
@@ -72,12 +72,12 @@ prikaz je u admin panelu češće potreban nego na sajtu.
 
 ## Deploy
 
-**Još nije deployovan.** Postoji jedan Vercel projekat i on gradi `web`
-(`vercel.json` na korenu, `--filter=web`) — vidi `/DEPLOYMENT.md`.
+`admin.cloudsheep.dev`, Coolify resurs `admin`, image iz `infra/docker/admin.Dockerfile`
+(nginx koji servira `dist/`). Detalji: `/DEPLOYMENT.md` i `infra/COOLIFY.md`.
 
-Kad dođe red: zaseban projekat `cloudsheep-admin`, i pošto Vercel čita `vercel.json` samo iz
-svog Root Directory-ja, taj projekat traži **sopstvenu konfiguraciju** — koren repoa je već
-zauzet `web`-om. Grane prate istu šemu: `dev` → preview, `main` → test, `prod` → production.
+**`VITE_API_URL` i `VITE_APP_ENV` su build-time.** `src/lib/env.ts` ih validira pri
+učitavanju modula — ako fale, app se ne diže, i to se vidi tek u pretraživaču, ne u
+build logu. U Coolify-u idu pod **Build Variables**, ne pod Environment Variables.
 
 ## Checklist pre PR-a
 

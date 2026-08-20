@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 
 import { HeroCards } from '@/features/landing/components/HeroCards'
 import { HERO_TERMINAL_KEYS } from '@/features/landing/landing.constants'
+import type { Technology } from '@/features/projects'
 import { useTypewriter } from '@/hooks/useTypewriter'
 import { BRAND, GLYPHS } from '@/lib/glyphs'
 import { SECTION_IDS } from '@/lib/navigation'
@@ -27,7 +28,11 @@ import {
   heroVariants,
 } from './HeroSection.variants'
 
-export const HeroSection = () => {
+interface HeroSectionProps {
+  technologies: readonly Technology[]
+}
+
+export const HeroSection = ({ technologies }: HeroSectionProps) => {
   const { t } = useTranslation(['landing', 'common'])
   const sectionRef = useRef<HTMLElement>(null)
   const litRef = useRef<HTMLDivElement>(null)
@@ -152,7 +157,7 @@ export const HeroSection = () => {
 
       {/* Posle poziva na akciju, jer ispod `xl` postaje traka u toku. Lebdeći raspored je
           `absolute` u odnosu na sekciju, pa mu mesto u DOM-u ništa ne menja. */}
-      <HeroCards />
+      <HeroCards technologies={technologies} />
 
       <button type="button" onClick={scrollToNext} className={heroScrollVariants()}>
         {t('hero.scroll')}

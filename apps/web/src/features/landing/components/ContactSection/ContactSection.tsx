@@ -2,8 +2,9 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { SheepMark } from '@/components/Logo'
-import { CONTACT_EMAIL, SECTION_IDS } from '@/lib/navigation'
+import { SECTION_IDS } from '@/lib/navigation'
 import { ROUTES } from '@/lib/routes'
+import type { SiteLink } from '@/lib/site'
 import { Button, Container } from '@app/ui'
 
 import {
@@ -13,7 +14,12 @@ import {
   contactTitleVariants,
 } from './ContactSection.variants'
 
-export const ContactSection = () => {
+interface ContactSectionProps {
+  /** Mejl link iz baze; `undefined` kad nije unet. */
+  email: SiteLink | undefined
+}
+
+export const ContactSection = ({ email }: ContactSectionProps) => {
   const { t } = useTranslation(['landing', 'common'])
 
   return (
@@ -34,9 +40,11 @@ export const ContactSection = () => {
             <br />
             {t('contact.titleBottom')}
           </h2>
-          <a href={`mailto:${CONTACT_EMAIL}`} className={contactEmailVariants()}>
-            {CONTACT_EMAIL}
-          </a>
+          {email && (
+            <a href={email.url} className={contactEmailVariants()}>
+              {email.url.replace(/^mailto:/, '')}
+            </a>
+          )}
           <div className="relative mt-6">
             <Button asChild size="lg">
               <Link to={ROUTES.CONTACT}>{t('contact.cta')} →</Link>

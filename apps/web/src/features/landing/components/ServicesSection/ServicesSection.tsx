@@ -1,12 +1,18 @@
 import { useTranslation } from 'react-i18next'
 
-import { DisciplineRow } from '@/components/DisciplineRow'
+import { DisciplineCard } from '@/features/landing/components/DisciplineCard'
 import { DISCIPLINES } from '@/features/landing/landing.constants'
+import { usePointerGlow } from '@/hooks/usePointerGlow'
 import { SECTION_IDS } from '@/lib/navigation'
 import { SectionBlock } from '@app/ui'
 
+import { servicesGridVariants } from './ServicesSection.variants'
+
 export const ServicesSection = () => {
   const { t } = useTranslation(['landing', 'common'])
+
+  // Jedan slušalac za sva četiri panela — kartica pod kursorom se nalazi kroz `closest()`
+  const gridRef = usePointerGlow<HTMLDivElement>()
 
   return (
     <SectionBlock
@@ -16,15 +22,15 @@ export const ServicesSection = () => {
       muted={t('services.titleMuted')}
       align="center"
     >
-      <div className="flex flex-col">
-        {DISCIPLINES.map((item, itemIndex) => (
-          <DisciplineRow
+      <div ref={gridRef} className={servicesGridVariants()}>
+        {DISCIPLINES.map((item) => (
+          <DisciplineCard
             key={item.id}
-            index={item.index}
+            no={item.no}
+            slug={item.slug}
             title={t(item.titleKey)}
             description={t(item.descriptionKey)}
             tags={item.tags}
-            emphasis={itemIndex === 0 ? 'first' : 'default'}
           />
         ))}
       </div>

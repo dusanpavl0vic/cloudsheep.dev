@@ -1,4 +1,4 @@
-import { ROUTES, projectPath } from './routes'
+import { ROUTES } from './routes'
 
 /** Sidro-sekcije na landing stranici — koriste ih i header i footer. */
 export const SECTION_IDS = {
@@ -16,9 +16,6 @@ export const SECTION_IDS = {
 
 /** Sidro na landing sekciju iz bilo koje rute (RR skroluje preko useScrollToHash). */
 const landingHash = (id: string) => `${ROUTES.HOME}#${id}`
-
-/** Istaknuta studija slučaja (koristi je footer). */
-export const FEATURED_PROJECT_SLUG = 'atlas-analytics'
 
 /**
  * Glavna navigacija.
@@ -82,16 +79,15 @@ export const FOOTER_NAV = [
     links: [
       { id: 'services', labelKey: 'nav.services', to: landingHash(SECTION_IDS.SERVICES) },
       { id: 'pricing', labelKey: 'nav.pricing', to: landingHash(SECTION_IDS.PRICING) },
-      { id: 'case', labelKey: 'nav.caseStudy', to: projectPath(FEATURED_PROJECT_SLUG) },
+      /*
+       * Vodi na SPISAK projekata, ne na jedan određeni.
+       *
+       * Ranije je ovde stajao hardkodovan `atlas-analytics`. Otkad projekti žive u bazi,
+       * taj slug može biti preimenovan ili neobjavljen — i footer link bi tiho postao 404
+       * na svakoj stranici sajta. Spisak je jedina meta koja ne može da nestane.
+       */
+      { id: 'case', labelKey: 'nav.caseStudy', to: ROUTES.PROJECTS },
       { id: 'faq', labelKey: 'nav.faq', to: landingHash(SECTION_IDS.FAQ) },
     ],
   },
-] as const
-
-export const CONTACT_EMAIL = 'hi@cloudsheep.dev'
-
-export const SOCIAL_LINKS = [
-  { id: 'github', href: 'https://github.com/cloudsheep', labelKey: 'footer.github' },
-  { id: 'linkedin', href: 'https://linkedin.com/in/cloudsheep', labelKey: 'footer.linkedin' },
-  { id: 'email', href: `mailto:${CONTACT_EMAIL}`, labelKey: 'footer.email' },
 ] as const

@@ -1,0 +1,1 @@
+export { TeamCarousel } from './TeamCarousel'

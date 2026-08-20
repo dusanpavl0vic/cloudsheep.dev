@@ -8,9 +8,13 @@ export { Accordion } from './ui/accordion'
 export { Badge } from './ui/badge'
 export { Button } from './ui/button'
 export { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+export { Checkbox } from './ui/checkbox'
 export { Container } from './ui/container'
+export { Dialog } from './ui/dialog'
 export { Input } from './ui/input'
 export { Label } from './ui/label'
+export { Select } from './ui/select'
+export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 export { Textarea } from './ui/textarea'
 
 // Varijante su javne — app ih koristi za kompoziciju bez dupliranja stila
@@ -21,11 +25,15 @@ export { containerVariants } from './ui/container.variants'
 
 // ── atoms ──
 export { Eyebrow } from './atoms/Eyebrow'
+export { ProgressBar } from './atoms/ProgressBar'
 export { Reveal } from './atoms/Reveal'
+export { Spinner } from './atoms/Spinner'
 export { StatItem } from './atoms/StatItem'
 export { TextLink } from './atoms/TextLink'
 
 // ── molecules ──
+export { EmptyState } from './molecules/EmptyState'
+export { FormField, type FormFieldControlProps } from './molecules/FormField'
 export { PageHeader } from './molecules/PageHeader'
 export { TagList, type TagListItem } from './molecules/TagList'
 

@@ -16,7 +16,7 @@ import { DashboardPage } from './DashboardPage'
 import { LoginPage } from './LoginPage'
 import { NotFoundPage } from './NotFoundPage'
 
-const API = 'http://localhost:3000/api'
+const API = 'http://localhost:3000'
 
 const session: Session = {
   user: { id: 'usr_1', email: 'a@b.rs', name: 'Marko', role: 'admin' },

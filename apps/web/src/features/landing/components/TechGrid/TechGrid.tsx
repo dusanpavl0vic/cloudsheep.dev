@@ -1,5 +1,5 @@
 import { TechTile } from '@/components/TechTile'
-import { TECH_ITEMS, type TechItem } from '@/lib/tech'
+import type { Technology } from '@/features/projects'
 
 import {
   techGridItemVariants,
@@ -10,8 +10,12 @@ import {
 } from './TechGrid.variants'
 
 /**
- * Redovi nejednake dužine — otud asimetrija. Zbir mora pokriti `TECH_ITEMS`;
- * ostatak preko zbira ide u poslednji red.
+ * Redovi nejednake dužine — otud asimetrija.
+ *
+ * Zbir NE mora da se poklopi sa brojem tehnologija: otkad one dolaze iz baze, broj je
+ * promenljiv, pa višak ide u poslednji red, a prazni redovi ispadaju. Ranije je zbir
+ * morao tačno da pokrije statični niz, što je značilo da dodavanje tehnologije tiho
+ * razbije raspored.
  */
 const ROW_SIZES = [5, 6, 5] as const
 
@@ -19,7 +23,7 @@ const LIFTS = ['none', 'up', 'down', 'up', 'none', 'down'] as const
 const SIZES = ['md', 'lg', 'md', 'lg', 'md'] as const
 
 interface Row {
-  items: TechItem[]
+  items: Technology[]
   /** Redni broj prve stavke u celoj listi — određuje veličinu i pomak. */
   offset: number
 }
@@ -30,7 +34,7 @@ interface Row {
  * Pomak se računa **ovde**, ne u petlji tokom rendera: menjanje promenljive dok se
  * renderuje je greška koju `react-hooks/immutability` s pravom odbija.
  */
-function splitRows(items: readonly TechItem[]): Row[] {
+function splitRows(items: readonly Technology[]): Row[] {
   const rows: Row[] = []
   let cursor = 0
 
@@ -48,8 +52,12 @@ function splitRows(items: readonly TechItem[]): Row[] {
  *
  * Linije mreže su dekoracija i `aria-hidden`; lista je jedna `<ul>` sa vidljivim stavkama.
  */
-export function TechGrid() {
-  const rows = splitRows(TECH_ITEMS)
+interface TechGridProps {
+  technologies: readonly Technology[]
+}
+
+export function TechGrid({ technologies }: TechGridProps) {
+  const rows = splitRows(technologies)
 
   return (
     <div className={techGridWrapVariants()}>
@@ -71,7 +79,7 @@ export function TechGrid() {
                   >
                     <TechTile
                       label={item.label}
-                      icon={item.icon}
+                      icon={item.logoUrl}
                       size={SIZES[absolute % SIZES.length] ?? 'md'}
                       interactive
                     />

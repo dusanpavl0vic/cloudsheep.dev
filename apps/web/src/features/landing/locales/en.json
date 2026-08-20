@@ -41,14 +41,11 @@
     "eyebrow": "studio",
     "titleTop": "One person,",
     "titleMuted": "the whole product.",
-    "lead": "CloudSheep is the one-person product studio of Dušan Pavlović.",
-    "body": "You work directly with the person who designs the interface, writes the code and answers for the result. One brain holding the whole product means fast decisions, no lost context, and a single owner for quality.",
-    "credential": {
-      "university": "University of Niš",
-      "degree": "Graduate Engineer of Electrical and Computer Engineering",
-      "programme": "Computer Science and Engineering",
-      "faculty": "Faculty of Electronic Engineering",
-      "city": "Niš, Serbia"
+    "team": {
+      "label": "Team",
+      "previous": "Previous member",
+      "next": "Next member",
+      "noDiploma": "No diploma"
     }
   },
   "services": {

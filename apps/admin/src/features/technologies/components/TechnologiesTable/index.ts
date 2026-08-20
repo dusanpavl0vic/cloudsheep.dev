@@ -1,0 +1,1 @@
+export { TechnologiesTable } from './TechnologiesTable'

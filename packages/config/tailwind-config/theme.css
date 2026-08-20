@@ -179,4 +179,54 @@
   --color-inverse-faint: var(--inverse-faint);
   --color-inverse-primary: var(--inverse-primary);
   --color-inverse-border: var(--inverse-border);
+
+  /* ── Animacije ───────────────────────────────────────────────────────────
+     Prvi animacijski tokeni u projektu, i namerno OVDE a ne u
+     `apps/web/src/styles/animations.css`: `apps/admin` taj fajl ne uvozi, a traku napretka
+     i skeleton koriste obe app-e. Trajanja i easing su vrednosti, ne magija u komponenti.
+
+     Reduced-motion se ne rešava media query-jem nego varijantom `motion-reduce:animate-none`
+     na mestu upotrebe — isti obrazac kao `spinnerVariants`. */
+  --animate-progress-slide: cs-progress-slide 1.15s ease-in-out infinite;
+  --animate-progress-in: cs-progress-in 200ms ease-out 150ms backwards;
+  --animate-shimmer: cs-shimmer 1.5s linear infinite;
+}
+
+/* Keyframes stoje IZVAN `@theme` bloka namerno.
+   Unutra ih Tailwind vezuje za odgovarajući `--animate-*` token i izbacuje neiskorišćene —
+   što je korisno, ali znači da se ime keyframe-a ne može koristiti iz proizvoljne
+   `[animation:...]` klase. Ovde su bezuslovno u izlazu, po ceni od ~200 bajta. */
+
+/* Neodređena traka: uzak segment prelazi preko celog traga i vraća se. Animira se samo
+   `transform`, dakle compositor — `background-position` bi na svaki kadar iznova crtao. */
+@keyframes cs-progress-slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+/* Kašnjenje ulaza je u `animation-delay`, ne u JS timeru: prelaz koji se razreši za 80 ms
+   ne sme da bljesne trakom. `backwards` fill drži `opacity: 0` tokom kašnjenja. */
+@keyframes cs-progress-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Sjaj skeletona. Gradijent je dvostruko širi od elementa, pa pomeranje pozicije daje
+   prelaz svetla — jedini slučaj u kom `background-position` ima smisla animirati, jer je
+   površina mala i broj elemenata ograničen. */
+@keyframes cs-shimmer {
+  from {
+    background-position: -150% 0;
+  }
+  to {
+    background-position: 250% 0;
+  }
 }

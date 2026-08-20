@@ -15,6 +15,13 @@ type LogoProps = VariantProps<typeof logoMarkVariants> & {
   className?: string
 }
 
+/**
+ * Znak + naziv.
+ *
+ * Prekidača za izbor marke nema: postoji tačno jedan znak (`SheepMark`) i koristi se svuda.
+ * Ranija verzija je imala prop `mark` sa dve varijante — obe su obrisane kad je stigao
+ * jedinstven crtež.
+ */
 export const Logo = ({
   tone,
   size,

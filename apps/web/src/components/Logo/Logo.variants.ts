@@ -2,16 +2,24 @@ import { cva } from 'class-variance-authority'
 
 export const logoVariants = cva('inline-flex items-center gap-2.5')
 
-export const logoMarkVariants = cva('shrink-0', {
+/**
+ * `viewBox` marke je 136×126, dakle NIJE kvadratan — zato `h-* w-auto`, nikad `size-*`
+ * (`docs/22`). Odnos je 1.08:1, pa je razlika mala, ali `size-*` bi je ipak sabio.
+ *
+ * **`text-foreground`, ne `text-primary`.** Crtež je isporučen u dubokoj plavoj (`#133E87`),
+ * a to je tačno `--foreground` u svetloj temi; akcentna plava (`--primary`, `#1E56E0`)
+ * ostaje rezervisana za ono što se klikće.
+ */
+export const logoMarkVariants = cva('w-auto shrink-0', {
   variants: {
     tone: {
-      default: 'text-primary',
-      inverse: 'text-inverse-primary',
+      default: 'text-foreground',
+      inverse: 'text-inverse-foreground',
     },
     size: {
-      sm: 'size-[34px]',
-      md: 'size-10',
-      lg: 'size-14',
+      sm: 'h-[34px]',
+      md: 'h-10',
+      lg: 'h-14',
     },
   },
   defaultVariants: {

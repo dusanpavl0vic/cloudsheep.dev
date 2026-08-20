@@ -1,5 +1,9 @@
-
-import { authReducer, selectAccessToken, sessionRefreshed, loggedOut } from '@/features/auth/store/auth.slice'
+import {
+  authReducer,
+  selectAccessToken,
+  sessionRefreshed,
+  loggedOut,
+} from '@/features/auth/store/auth.slice'
 import type { Session } from '@/features/auth/types'
 import { env } from '@/lib/env'
 import { createBaseApi, createStore } from '@app/core'
@@ -15,7 +19,7 @@ export const baseApi = createBaseApi({
   selectToken: (state) => selectAccessToken(state as { auth: { session: Session | null } }),
   onRefreshed: (data) => sessionRefreshed(data as Session),
   onSessionExpired: () => loggedOut(),
-  tagTypes: ['Session'],
+  tagTypes: ['Session', 'Project', 'Technology', 'Profile', 'TeamMember', 'Message'],
 })
 
 export const store = createStore({

@@ -26,10 +26,22 @@ test.describe('sajt', () => {
     await expect(page).toHaveURL(/\/projects\/.+/)
   })
 
+  /**
+   * Prva verzija je tražila samo `h1` vidljiv — što prolazi i za pogrešnu stranicu, i za
+   * stranicu sa jednim slovom u naslovu. Sada se proverava ono što posetilac zaista treba:
+   * kod greške, oba izlaza, i da ovca nosi klase na koje se animacija veže.
+   */
   test('nepoznata ruta daje 404, ne prazan ekran', async ({ page }) => {
     await page.goto('/ovo-ne-postoji')
 
-    await expect(page.locator('h1')).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('404')
+
+    // `main`, ne cela strana: `a[href="/"]` inače hvata i logotip u zaglavlju
+    await expect(page.locator('main a[href="/"]')).toBeVisible()
+    await expect(page.locator('main a[href="/projects"]')).toBeVisible()
+
+    // Marke ovde NEMA namerno: logotip na strani greške vuče pažnju na brend, ne na izlaz.
+    await expect(page.locator('main svg')).toHaveCount(0)
   })
 
   /**

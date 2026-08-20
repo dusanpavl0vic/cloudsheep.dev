@@ -1,3 +1,5 @@
+import type { VariantProps } from 'class-variance-authority'
+
 import { cn } from '@app/ui'
 
 import {
@@ -14,7 +16,7 @@ import {
   paperVariants,
 } from './CredentialSeal.variants'
 
-interface CredentialSealProps {
+type CredentialSealProps = VariantProps<typeof paperVariants> & {
   /** Zaglavlje dokumenta — „Univerzitet u Nišu". */
   university: string
   /** Zvanje — „Diplomirani inženjer elektrotehnike i računarstva". */
@@ -25,8 +27,11 @@ interface CredentialSealProps {
   faculty: string
   /** Grad i država. */
   city: string
-  /** Putanja do grba u `public/`. */
-  logo: string
+  /**
+   * Adresa grba. `null` je dozvoljen — otkad pečat dolazi iz baze, član sa diplomom ali
+   * bez otpremljenog grba je normalno stanje; kartica se tada prikazuje bez pečata.
+   */
+  logo: string | null
   className?: string
 }
 
@@ -58,8 +63,9 @@ export const CredentialSeal = ({
   city,
   logo,
   className,
+  layout,
 }: CredentialSealProps) => (
-  <div className={cn(paperVariants(), className)}>
+  <div className={cn(paperVariants({ layout }), className)}>
     <span aria-hidden className={paperGrainVariants()} />
 
     <div className={paperFrameVariants()}>
@@ -79,17 +85,19 @@ export const CredentialSeal = ({
         <span>{city}</span>
       </p>
 
-      <span aria-hidden className={paperStampVariants()}>
-        <img
-          src={logo}
-          alt=""
-          width={104}
-          height={104}
-          loading="lazy"
-          decoding="async"
-          className={paperStampImageVariants()}
-        />
-      </span>
+      {logo && (
+        <span aria-hidden className={paperStampVariants()}>
+          <img
+            src={logo}
+            alt=""
+            width={104}
+            height={104}
+            loading="lazy"
+            decoding="async"
+            className={paperStampImageVariants()}
+          />
+        </span>
+      )}
     </div>
   </div>
 )

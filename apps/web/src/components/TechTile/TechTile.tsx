@@ -12,8 +12,13 @@ import {
 type TechTileProps = VariantProps<typeof techTileVariants> & {
   /** Ime tehnologije — ide u pristupačno ime i u rezervni inicijal. */
   label: string
-  /** Putanja do logotipa u `public/`. */
-  icon: string
+  /**
+   * Adresa logotipa, ili `null` kad tehnologija nema otpremljen logotip.
+   *
+   * `null` NIJE greška: pločica tada prikazuje inicijal, isto kao kad se učitavanje ne
+   * uspe. Otkad logotipi žive u bazi, tehnologija bez logotipa je normalno stanje.
+   */
+  icon: string | null
   className?: string
 }
 
@@ -32,6 +37,7 @@ type TechTileProps = VariantProps<typeof techTileVariants> & {
  */
 export const TechTile = ({ label, icon, size, interactive, className }: TechTileProps) => {
   const [failed, setFailed] = useState(false)
+  const showFallback = failed || !icon
 
   return (
     <span
@@ -40,7 +46,7 @@ export const TechTile = ({ label, icon, size, interactive, className }: TechTile
       role="img"
       aria-label={label}
     >
-      {failed ? (
+      {showFallback ? (
         <span aria-hidden className={techTileFallbackVariants({ size })}>
           {label.charAt(0)}
         </span>

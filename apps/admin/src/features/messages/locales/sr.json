@@ -1,0 +1,14 @@
+{
+  "messages": {
+    "title": "Poruke",
+    "subtitle": "Poruke poslate kroz kontakt formu na sajtu",
+    "unreadCount": "{count, plural, one {# nepročitana poruka} few {# nepročitane poruke} other {# nepročitanih poruka}}",
+    "loading": "Učitavanje poruka",
+    "loadError": "Poruke se ne mogu učitati.",
+    "filters": { "all": "Sve", "unread": "Nepročitane" },
+    "empty": { "title": "Nema poruka", "body": "Poruke sa kontakt forme stižu ovde." },
+    "markRead": "Označi kao pročitano",
+    "markUnread": "Označi kao nepročitano",
+    "notEmailed": "Mejl nije poslat"
+  }
+}

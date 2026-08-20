@@ -10,12 +10,13 @@
  * jedino svetlo prati kursor, a ono je `transform`/`mask`, dakle jeftino.
  */
 
-/** Topli sjaj gore-levo i hladniji dole-desno — dubina bez ijedne linije. */
-export const AMBIENT_GLOW = [
-  'radial-gradient(ellipse 90% 60% at 18% 0%, color-mix(in oklch, var(--color-primary) 14%, transparent) 0%, transparent 60%)',
-  'radial-gradient(ellipse 70% 50% at 86% 18%, color-mix(in oklch, var(--color-accent) 10%, transparent) 0%, transparent 58%)',
-  'radial-gradient(ellipse 80% 55% at 50% 108%, color-mix(in oklch, var(--color-primary) 9%, transparent) 0%, transparent 62%)',
-].join(', ')
+/**
+ * Topli sjaj gore-levo i hladniji dole-desno — dubina bez ijedne linije.
+ *
+ * Vrednost živi u `@/lib/ambient`, jer isti sjaj nosi i 404 stranica, a feature ne sme da
+ * uvozi feature. Re-eksport stoji da `HeroSection.tsx` i dalje uvozi sve iz jednog mesta.
+ */
+export { AMBIENT_GLOW } from '@/lib/ambient'
 
 /**
  * Svetlo koje prati kursor.

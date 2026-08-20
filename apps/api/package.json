@@ -1,0 +1,64 @@
+{
+  "name": "api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "//files": "Ograničava šta `pnpm deploy` prepiše u runtime image: bez ovoga bi tamo završili i `src/`, tsconfig-ovi i eslint config. `prisma/` mora ostati — nosi migracije koje pokreće pre-deployment komanda.",
+  "files": [
+    "dist",
+    "prisma"
+  ],
+  "scripts": {
+    "dev": "tsx watch --env-file=.env src/main.ts",
+    "build": "prisma generate && tsc -b",
+    "start": "node dist/main.js",
+    "test": "vitest run --passWithNoTests",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "db:seed": "tsx --env-file=.env src/seed.ts",
+    "clean": "rm -rf dist .turbo node_modules"
+  },
+  "prisma": {
+    "seed": "tsx src/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "catalog:",
+    "bcryptjs": "catalog:",
+    "compression": "catalog:",
+    "cookie-parser": "catalog:",
+    "cors": "catalog:",
+    "express": "catalog:",
+    "express-rate-limit": "catalog:",
+    "helmet": "catalog:",
+    "image-size": "catalog:",
+    "jsonwebtoken": "catalog:",
+    "multer": "catalog:",
+    "nodemailer": "catalog:",
+    "pino": "catalog:",
+    "pino-http": "catalog:",
+    "prisma": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@app/eslint-config": "workspace:*",
+    "@app/typescript-config": "workspace:*",
+    "@types/compression": "catalog:",
+    "@types/cookie-parser": "catalog:",
+    "@types/cors": "catalog:",
+    "@types/express": "catalog:",
+    "@types/jsonwebtoken": "catalog:",
+    "@types/multer": "catalog:",
+    "@types/node": "catalog:",
+    "@types/nodemailer": "catalog:",
+    "@types/supertest": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "eslint": "catalog:",
+    "supertest": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "//scripts": "dev i db:seed čitaju .env preko Node --env-file. U produkciji .env ne postoji — vrednosti dolaze iz okruženja kontejnera, pa start namerno nema tu zastavicu."
+}

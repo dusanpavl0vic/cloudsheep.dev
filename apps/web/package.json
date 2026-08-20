@@ -55,6 +55,7 @@
     "eslint": "catalog:",
     "jest-axe": "catalog:",
     "jsdom": "catalog:",
+    "msw": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",

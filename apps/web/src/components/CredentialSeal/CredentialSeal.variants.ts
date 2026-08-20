@@ -10,7 +10,22 @@ import { cva } from 'class-variance-authority'
  * oko njega ne skače.
  */
 export const paperVariants = cva(
-  'relative isolate mx-auto w-full max-w-[560px] rotate-[-0.6deg] rounded-sm bg-plate px-7 py-6 text-start text-plate-ink shadow-[0_1px_2px_rgb(0_0_0/0.06),0_18px_40px_-14px_rgb(0_0_0/0.28)] sm:px-9 sm:py-8',
+  'relative isolate rotate-[-0.6deg] rounded-sm bg-plate px-7 py-6 text-start text-plate-ink shadow-[0_1px_2px_rgb(0_0_0/0.06),0_18px_40px_-14px_rgb(0_0_0/0.28)] sm:px-9 sm:py-8',
+  {
+    variants: {
+      /**
+       * `standalone` je zatečeni izgled: centriran, širok koliko roditelj dozvoli.
+       *
+       * `slide` postoji jer u `flex` traci karusela `w-full` kolabira — slajd mora imati
+       * svoju širinu i `shrink-0`, inače se sve kartice zbiju u jednu kolonu.
+       */
+      layout: {
+        standalone: 'mx-auto w-full max-w-[560px]',
+        slide: 'w-[min(86vw,520px)] shrink-0',
+      },
+    },
+    defaultVariants: { layout: 'standalone' },
+  },
 )
 
 /**

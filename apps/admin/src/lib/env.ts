@@ -7,8 +7,9 @@ import { createEnv } from '@app/utils/env'
  *
  * **Provera je pri UČITAVANJU modula, ne pri build-u.** Ranije je ovde pisalo da build pada;
  * ne pada — Vite prosto ugradi `undefined` i bundle se napravi. Aplikacija onda pukne na
- * prvom otvaranju, sa ovom porukom. Zato env varijable moraju biti postavljene na Vercelu
- * pre prvog deploy-a, a ne otkrivene posle njega (`/DEPLOYMENT.md`).
+ * prvom otvaranju, sa ovom porukom. Zato ove vrednosti idu u Coolify **Build Variables**
+ * (docker build args), ne u obične env varijable — runtime env kontejner ne vidi jer je
+ * bundle već napravljen (`/DEPLOYMENT.md`).
  *
  * Testovi ne zavise od `.env` fajla — vrednosti im daje `test.env` u `vitest.config.ts`.
  */

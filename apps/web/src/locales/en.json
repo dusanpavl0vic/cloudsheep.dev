@@ -1,7 +1,9 @@
 {
   "common": {
     "appName": "CloudSheep",
-    "appNameLower": "cloudsheep"
+    "appNameLower": "cloudsheep",
+    "loading": "Loading…",
+    "sending": "Sending…"
   },
   "theme": {
     "switchToDark": "Switch to dark theme",
@@ -43,8 +45,13 @@
   },
   "notFound": {
     "terminal": "no such file or directory",
-    "body": "This sheep wandered off the cloud. The page you're after moved, or never existed.",
     "home": "Back home",
-    "work": "Browse work"
+    "work": "Browse work",
+    "cards": {
+      "logTitle": "requests",
+      "note": "The address may have changed. Start from home — the sheep knows the way.",
+      "statusMeta": "not found",
+      "statusTitle": "response status"
+    }
   }
 }

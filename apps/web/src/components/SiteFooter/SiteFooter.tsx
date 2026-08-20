@@ -4,8 +4,9 @@ import { Link } from 'react-router'
 
 import { GithubIcon, LinkedinIcon, MailIcon } from '@/components/BrandIcon'
 import { Logo } from '@/components/Logo'
-import { CONTACT_EMAIL, FOOTER_NAV, SOCIAL_LINKS } from '@/lib/navigation'
+import { FOOTER_NAV } from '@/lib/navigation'
 import { ROUTES } from '@/lib/routes'
+import { emailOf, type SiteProfile } from '@/lib/site'
 import { Container } from '@app/ui'
 
 import {
@@ -34,10 +35,19 @@ const DotGrid = () => <div aria-hidden className={footerDotGridVariants()} />
 
 interface SiteFooterProps {
   variant?: 'full' | 'slim'
+  /**
+   * Profil i kontakt linkovi iz baze.
+   *
+   * Dolaze kroz props, ne kroz `useLoaderData` u samoj komponenti: `components/` ne sme da
+   * zna za rutu ni za feature (docs/01 §2), a podnožje je na svakoj stranici. Ožičenje je
+   * u `MainLayout`.
+   */
+  site: SiteProfile
 }
 
-export const SiteFooter = ({ variant = 'full' }: SiteFooterProps) => {
+export const SiteFooter = ({ variant = 'full', site }: SiteFooterProps) => {
   const { t } = useTranslation('common')
+  const email = emailOf(site)
 
   if (variant === 'slim') {
     return (
@@ -72,19 +82,21 @@ export const SiteFooter = ({ variant = 'full' }: SiteFooterProps) => {
           <div className="flex flex-col gap-6">
             <p className={footerTextVariants()}>{t('footer.tagline')}</p>
             <ul className="flex gap-2.5">
-              {SOCIAL_LINKS.map((link) => {
-                const Icon = SOCIAL_ICONS[link.id]
-                if (!Icon) return null
+              {site.links.map((link) => {
+                // Nepoznata platforma nema ikonicu — prikazuje se naziv, umesto da nestane
+                const Icon = SOCIAL_ICONS[link.platform]
+
                 return (
                   <li key={link.id}>
                     <a
-                      href={link.href}
-                      target={link.id === 'email' ? undefined : '_blank'}
-                      rel="noreferrer"
-                      aria-label={t(link.labelKey)}
+                      href={link.url}
+                      {...(link.platform === 'email'
+                        ? {}
+                        : { target: '_blank', rel: 'noopener noreferrer' })}
+                      aria-label={link.label}
                       className={footerSocialVariants()}
                     >
-                      <Icon />
+                      {Icon ? <Icon /> : link.label}
                     </a>
                   </li>
                 )
@@ -109,12 +121,14 @@ export const SiteFooter = ({ variant = 'full' }: SiteFooterProps) => {
 
           <div className="flex flex-col">
             <h3 className={footerGroupTitleVariants()}>{t('footer.groupContact')}</h3>
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="text-primary font-mono text-[14.5px] transition-colors hover:brightness-110"
-            >
-              {CONTACT_EMAIL}
-            </a>
+            {email && (
+              <a
+                href={email.url}
+                className="text-primary font-mono text-[14.5px] transition-colors hover:brightness-110"
+              >
+                {email.url.replace(/^mailto:/, '')}
+              </a>
+            )}
             <p className="text-muted-foreground mt-3 text-[14px] leading-relaxed">
               {t('footer.base')}
               <br />

@@ -2,10 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { SheepMark } from '@/components/Logo'
-import type { Project } from '@/features/projects/projects.constants'
 import { projectPath } from '@/lib/routes'
-import { techTags } from '@/lib/tech'
-import { TagList } from '@app/ui'
 
 import {
   projectBodyVariants,
@@ -16,34 +13,50 @@ import {
   projectTitleVariants,
   projectYearVariants,
 } from './ProjectCard.variants'
+import { localize } from '../../lib/localize'
+import type { Project } from '../../types'
+import { TechTags } from '../TechTags'
 
 interface ProjectCardProps {
   project: Project
 }
 
+/**
+ * Tekst više ne dolazi iz i18n ključeva nego iz samog projekta — sadržaj je podatak,
+ * a `t()` ostaje za ono što je deo interfejsa (labele filtera, prazno stanje).
+ */
 export const ProjectCard = ({ project }: ProjectCardProps) => {
-  const { t } = useTranslation(['projects', 'common'])
-  const base = `projects.items.${project.key}`
+  const { i18n } = useTranslation('projects')
+
+  // Prva slika je naslovna. `galleryLayout: 'none'` znači da projekat namerno nema medije.
+  const cover = project.galleryLayout === 'none' ? undefined : project.images[0]
 
   return (
     <Link to={projectPath(project.slug)} className={projectCardVariants()}>
       <div className={projectMediaVariants()}>
-        <SheepMark aria-hidden className="text-primary/40 size-9" />
+        {cover ? (
+          <img
+            src={cover.url}
+            alt={localize(cover.alt, i18n.language)}
+            width={cover.width}
+            height={cover.height}
+            loading="lazy"
+            decoding="async"
+            className="size-full object-cover"
+          />
+        ) : (
+          // Projekat bez slike i dalje ima karticu — ovčica je čuvar mesta, ne greška
+          <SheepMark aria-hidden className="text-primary/40 size-9" />
+        )}
       </div>
       <div className={projectBodyVariants()}>
         <div className="flex items-baseline justify-between gap-3">
-          <h3 className={projectTitleVariants()}>{t(`${base}.title`)}</h3>
+          <h3 className={projectTitleVariants()}>{localize(project.title, i18n.language)}</h3>
           <span className={projectYearVariants()}>{project.year}</span>
         </div>
-        <div className={projectCatVariants()}>{t(`${base}.cat`)}</div>
-        <p className={projectDescVariants()}>{t(`${base}.desc`)}</p>
-        <TagList
-          tags={techTags(project.tech)}
-          variant="logo"
-          size="bare"
-          font="sans"
-          className="mt-2.5"
-        />
+        <div className={projectCatVariants()}>{localize(project.cat, i18n.language)}</div>
+        <p className={projectDescVariants()}>{localize(project.desc, i18n.language)}</p>
+        <TechTags technologies={project.technologies} className="mt-2.5" />
       </div>
     </Link>
   )

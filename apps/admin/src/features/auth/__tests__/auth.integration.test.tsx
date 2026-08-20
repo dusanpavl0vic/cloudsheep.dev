@@ -16,7 +16,7 @@ import { LoginForm } from '../components/LoginForm'
 import { selectCurrentUser, selectIsAuthenticated } from '../store/auth.slice'
 import type { Session } from '../types'
 
-const API = 'http://localhost:3000/api'
+const API = 'http://localhost:3000'
 
 const session: Session = {
   user: { id: 'usr_1', email: 'a@b.rs', name: 'Marko', role: 'admin' },

@@ -10,10 +10,10 @@ export function DashboardPage() {
 
   return (
     <Container as="main" width="content" className="py-16">
-      <h1 className="mb-2 font-heading text-3xl font-bold text-foreground">
+      <h1 className="font-heading text-foreground mb-2 text-3xl font-bold">
         {t('dashboard.title')}
       </h1>
-      <p className="mb-8 text-muted-foreground">
+      <p className="text-muted-foreground mb-8">
         {t('dashboard.welcome', { name: user?.name ?? '' })}
       </p>
       <Button
