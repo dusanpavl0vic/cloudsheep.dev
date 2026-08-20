@@ -10,8 +10,8 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "test": "turbo run test",
-    "test:cov": "turbo run test -- --coverage",
+    "test": "turbo run test --concurrency=3",
+    "test:cov": "turbo run test --concurrency=3 -- --coverage",
     "e2e": "turbo run e2e",
     "lint": "node scripts/check-css.mjs && node scripts/check-i18n-keys.mjs && turbo run lint",
     "lint:fix": "turbo run lint -- --fix",
@@ -28,6 +28,7 @@
     "check:i18n": "node scripts/check-i18n-keys.mjs",
     "check:size": "node scripts/check-size.mjs"
   },
+  "//test": "--concurrency=3 je namerno. Turbo podrazumevano pusti svih 9 paketa odjednom, a svaki vitest povrh toga cepa po jedan fork worker po jezgru — desetine procesa na 8 jezgara. Posledica nije sporost nego NASUMIČAN PAD: workeri koji ne uspeju da se pokrenu (`Failed to start forks worker`) i testovi koji probiju rok jer im je oduzet CPU. Isti paket pušten sam prolazi za 8 s.",
   "devDependencies": {
     "@changesets/cli": "catalog:",
     "@commitlint/cli": "catalog:",

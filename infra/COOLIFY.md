@@ -19,7 +19,8 @@ U Coolify-u to znači **Base Directory = `/`**, a putanja do Dockerfile-a je pun
 
 **2. `VITE_*` idu u „Build Variables", ne u „Environment Variables".** Vite ih ugrađuje
 u JS bundle u trenutku builda; runtime env varijabla u nginx kontejneru ne postoji jer
-se JS više ne prevodi. Ovo je najčešća greška pri prelasku sa Vercela, i najgora — build
+se JS više ne prevodi. Ovo je najčešća greška pri prelasku sa hostovane platforme, i
+najgora — build
 prođe, deploy prođe, a app u pretraživaču pukne sa `undefined` umesto API adrese.
 
 ---

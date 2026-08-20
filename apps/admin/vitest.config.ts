@@ -5,6 +5,15 @@ export default defineConfig({
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   test: {
     environment: 'jsdom',
+    /*
+     * Podrazumevanih 5 s je premalo kad `turbo` pusti sve jsdom pakete PARALELNO: otimaju se
+     * o ista jezgra, pojedinačni `waitFor` probije rok i paket padne nasumično — lokalno
+     * dvaput od tri pokretanja, dok isti paket pušten sam prolazi za 8 s.
+     *
+     * Granica postoji da uhvati ZAGLAVLJEN test, ne da meri koliko je mašina zauzeta.
+     */
+    testTimeout: 20_000,
+    hookTimeout: 20_000,
     setupFiles: ['./vitest.setup.ts'],
     /**
      * Env za testove stoji OVDE, ne u `.env` fajlu.

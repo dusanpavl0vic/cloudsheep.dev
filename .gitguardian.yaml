@@ -1,0 +1,20 @@
+# Konfiguracija skenera tajni (GitGuardian / ggshield).
+#
+# Pravilo: ovde se izuzimaju SAMO vrednosti koje ne postoje van lokalne mašine —
+# lozinke kontejnera koji živi dok traje `docker compose up`. Sve ostalo mora da puca.
+#
+# `.env.example` NIJE izuzet, i to je namerno: to je fajl u koji prava vrednost najlakše
+# sklizne (jednom se već desilo). Ako skener tamo nešto prijavi, prijava je tačna.
+
+version: 2
+
+secret:
+  ignored-paths:
+    # Lokalni smoke test produkcionog builda. Postgres se diže u kontejneru sa `app:app`,
+    # `JWT_SECRET` potpisuje tokene koji ne napuštaju `localhost`, a ceo stack nestaje sa
+    # `docker compose down`. Prave vrednosti žive isključivo u Coolify UI-ju (infra/COOLIFY.md).
+    - 'infra/docker-compose.yml'
+
+  # Prazna lista je namerna — nema pojedinačnih izuzetaka. Nova prijava se rešava
+  # rotacijom tajne, ne dopisivanjem u ovaj fajl.
+  ignored-matches: []
