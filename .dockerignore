@@ -22,6 +22,11 @@
 .husky
 .claude
 docs
-**/e2e
 **/*.test.ts
 **/*.test.tsx
+
+# `e2e/` se NE izuzima, iako se u image-u ne izvršava.
+#
+# `apps/*/tsconfig.json` je solution config koji referencira `tsconfig.e2e.json`, a taj ima
+# `include: ["e2e"]`. Bez foldera `tsc -b` puca sa TS18003 („No inputs were found") i obara
+# ceo Docker build — greška koja se vidi tek na serveru, jer lokalni build folder ima.

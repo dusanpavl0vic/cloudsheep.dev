@@ -23,6 +23,9 @@ export default defineConfig({
      * Isti razlog kao u ostalim paketima: pod paralelnim `turbo run test` podrazumevanih
      * 5 s probije `supertest` koji diže Express app po test fajlu.
      */
+    // Turbo je već na `--concurrency=3`, ali svaki vitest povrh toga cepa jedan fork po
+    // jezgru — 3 × 7 = 21 proces na 8 jezgara. Otud `Failed to start forks worker`.
+    maxWorkers: 2,
     testTimeout: 20_000,
     hookTimeout: 20_000,
     /**

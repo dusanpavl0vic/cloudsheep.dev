@@ -15,7 +15,7 @@
     "start": "node dist/main.js",
     "test": "vitest run --passWithNoTests",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc -b",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
     "db:seed": "tsx --env-file=.env src/seed.ts",
@@ -61,5 +61,6 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
+  "//typecheck": "`tsc -b`, BEZ `--noEmit` koji stoji u `web` i `admin`. Ovde ne može: `tsconfig.app.json` mora da emituje (`dist` je ono što ide u produkcioni image), a `tsconfig.test.json` ga REFERENCIRA — `--noEmit` preko celog solution builda zato puca sa TS6310 („Referenced project may not disable emit\"). Cena je da typecheck popuni `dist`, isti posao koji radi i `build`; turbo ga kešira, pa se ne izvršava dvaput.",
   "//scripts": "dev i db:seed čitaju .env preko Node --env-file. U produkciji .env ne postoji — vrednosti dolaze iz okruženja kontejnera, pa start namerno nema tu zastavicu."
 }
