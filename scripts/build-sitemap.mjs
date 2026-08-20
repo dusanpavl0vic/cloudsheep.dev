@@ -29,8 +29,19 @@ const OUT = 'apps/web/public/sitemap.xml'
 
 /** Isti izvor koji sajt zove u runtime-u. U Coolify-u je to Build Variable za `web`. */
 const API_URL = process.env.VITE_API_URL
-/** Produkcioni build MORA da dohvati projekte; lokalni sme bez API-ja. */
-const IS_PRODUCTION_BUILD = process.env.NODE_ENV === 'production' || process.env.CI === 'true'
+/**
+ * Produkcioni build MORA da dohvati projekte; lokalni i CI provera smeju bez API-ja.
+ *
+ * `CI=true` se OVDE NE računa kao produkcioni build, iako je ranije računao. CI-jev
+ * `validate` posao proverava da se kod PREVODI i nema pristup živom API-ju, pa je na tom
+ * pravilu padao svaki build. Pravi produkcioni build je Docker build na serveru.
+ *
+ * ZNA SE DA GUARD ZASAD NE PUCA NIGDE: Docker build ne postavlja `NODE_ENV=production` u
+ * build sloju, pa i on prolazi kroz `warn` granu. Namerno se ne popravlja ovde — čim se
+ * doda, svaki deploy `web`-a traži da `api` bude živ u trenutku BUILDA, što je odluka o
+ * spregnutosti dva resursa, a ne detalj ove skripte.
+ */
+const IS_PRODUCTION_BUILD = process.env.NODE_ENV === 'production'
 
 const read = (file) => readFileSync(path.join(ROOT, file), 'utf8')
 
