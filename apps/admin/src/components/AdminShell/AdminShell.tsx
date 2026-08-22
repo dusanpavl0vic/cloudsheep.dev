@@ -2,10 +2,10 @@ import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router'
 
-import { BRAND } from '@/lib/brand'
-import { ROUTES } from '@/lib/routes'
-import { Button } from '@app/ui'
+import { Button, Logo } from '@app/ui'
 
+import { AdminNav } from './AdminNav'
+import { NAV } from './AdminShell.constants'
 import {
   brandVariants,
   contentVariants,
@@ -13,18 +13,11 @@ import {
   navLinkVariants,
   shellVariants,
   sidebarVariants,
+  topbarLeadVariants,
+  topbarTailVariants,
   topbarVariants,
+  userNameVariants,
 } from './AdminShell.variants'
-
-/** Navigacija kao podaci — dodavanje stranice je red u nizu, ne novi JSX. */
-const NAV = [
-  { to: ROUTES.DASHBOARD, labelKey: 'nav.dashboard', end: true },
-  { to: ROUTES.PROJECTS, labelKey: 'nav.projects', end: false },
-  { to: ROUTES.TECHNOLOGIES, labelKey: 'nav.technologies', end: false },
-  { to: ROUTES.PROFILE, labelKey: 'nav.profile', end: false },
-  { to: ROUTES.TEAM, labelKey: 'nav.team', end: false },
-  { to: ROUTES.MESSAGES, labelKey: 'nav.messages', end: false },
-] as const
 
 interface AdminShellProps {
   userName: string
@@ -39,14 +32,23 @@ interface AdminShellProps {
  * **Ne zna za auth.** `components/` ne sme da uvozi feature (docs/01 §2), pa ime korisnika
  * i odjavu dobija kroz props od `routes/AdminLayout`, koji sme. Ista podela kao svuda:
  * komponenta je glupa, ožičenje je sloj iznad.
+ *
+ * **Dva rasporeda, jedan izvor navigacije.** Od `lg` naviše stoji bočna traka; ispod nje
+ * `AdminNav` prikazuje hamburger i panel. Obe čitaju isti `NAV` niz, pa nova stranica ne
+ * može da se pojavi na jednom mestu a izostane na drugom.
+ *
+ * Znak se ne ponavlja: na desktopu je u traci, na mobilnom u zaglavlju — nikad oba
+ * istovremeno, jer bi to bio isti podatak dvaput na istom ekranu.
  */
 export const AdminShell = ({ userName, onSignOut, isSigningOut, children }: AdminShellProps) => {
   const { t } = useTranslation('common')
 
   return (
     <div className={shellVariants()}>
-      <nav className={sidebarVariants()} aria-label={t('nav.dashboard')}>
-        <span className={brandVariants()}>{BRAND.NAME}</span>
+      <nav className={sidebarVariants()} aria-label={t('nav.label')}>
+        <span className={brandVariants()}>
+          <Logo size="sm" label={t('common.appNameLower')} />
+        </span>
         {NAV.map((item) => (
           <NavLink
             key={item.to}
@@ -61,10 +63,17 @@ export const AdminShell = ({ userName, onSignOut, isSigningOut, children }: Admi
 
       <div className={mainVariants()}>
         <header className={topbarVariants()}>
-          <span className="text-muted-foreground text-[15px]">{userName}</span>
-          <Button variant="ghost" size="sm" disabled={isSigningOut} onClick={onSignOut}>
-            {t('common.signOut')}
-          </Button>
+          <div className={topbarLeadVariants()}>
+            <AdminNav />
+            <Logo size="sm" showWordmark={false} label={t('common.appNameLower')} />
+          </div>
+
+          <div className={topbarTailVariants()}>
+            <span className={userNameVariants()}>{userName}</span>
+            <Button variant="ghost" size="sm" disabled={isSigningOut} onClick={onSignOut}>
+              {t('common.signOut')}
+            </Button>
+          </div>
         </header>
 
         <main className={contentVariants()}>{children}</main>

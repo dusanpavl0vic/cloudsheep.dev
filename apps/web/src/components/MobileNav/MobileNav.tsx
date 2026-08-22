@@ -1,15 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
-import { CloseIcon, MenuIcon } from '@/components/BrandIcon'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
-import { Logo } from '@/components/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { useDevice } from '@/hooks/useDevice'
-import { useNativeDialog } from '@/hooks/useNativeDialog'
 import { MAIN_NAV } from '@/lib/navigation'
 import { ROUTES } from '@/lib/routes'
-import { Button } from '@app/ui'
+import { useNativeDialog } from '@app/hooks'
+import { Button, CloseIcon, Logo, MenuIcon } from '@app/ui'
 
 import {
   navCloseVariants,

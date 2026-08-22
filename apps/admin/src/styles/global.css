@@ -8,6 +8,9 @@
  * Putanja je relativna na ovaj fajl i cilja izvor paketa, ne simlink.
  */
 @source '../../../../packages/ui/src';
+@import './fonts.css';
+/* Panel navigacije — deljen sa `web`-om */
+@import '@app/tailwind-config/sheet.css';
 
 /* Isti tokeni kao web — jedan izvor za obe app-e (docs/08) */
 @import '@app/tailwind-config/theme.css';

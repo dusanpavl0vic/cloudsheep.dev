@@ -299,6 +299,9 @@ importers:
       '@app/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@app/hooks':
+        specifier: workspace:*
+        version: link:../../packages/hooks
       '@app/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n

@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@app/core": "workspace:*",
+    "@app/hooks": "workspace:*",
     "@app/i18n": "workspace:*",
     "@app/ui": "workspace:*",
     "@app/utils": "workspace:*",

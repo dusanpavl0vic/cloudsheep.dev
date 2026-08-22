@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
-import { SheepMark } from '@/components/Logo'
 import { projectPath } from '@/lib/routes'
+import { SheepMark } from '@app/ui'
 
 import {
   projectBodyVariants,

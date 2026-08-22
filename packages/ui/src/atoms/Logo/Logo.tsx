@@ -1,9 +1,8 @@
 import type { VariantProps } from 'class-variance-authority'
 
-import { cn } from '@app/ui'
-
 import { logoMarkVariants, logoVariants, logoWordmarkVariants } from './Logo.variants'
 import { SheepMark } from './SheepMark'
+import { cn } from '../../lib/cn'
 
 type LogoProps = VariantProps<typeof logoMarkVariants> & {
   /** Kada je false, prikazuje se samo znak bez naziva */

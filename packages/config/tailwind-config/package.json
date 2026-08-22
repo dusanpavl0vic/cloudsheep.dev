@@ -2,11 +2,18 @@
   "name": "@app/tailwind-config",
   "version": "0.0.0",
   "private": true,
-  "files": ["theme.css"],
-  "exports": { "./theme.css": "./theme.css" },
+  "files": [
+    "theme.css"
+  ],
+  "exports": {
+    "./theme.css": "./theme.css",
+    "./sheet.css": "./sheet.css"
+  },
   "scripts": {
     "lint": "echo 'samo CSS'",
     "typecheck": "echo 'samo CSS'"
   },
-  "peerDependencies": { "tailwindcss": "catalog:" }
+  "peerDependencies": {
+    "tailwindcss": "catalog:"
+  }
 }

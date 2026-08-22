@@ -1,11 +1,10 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
-import { SheepMark } from '@/components/Logo'
 import { SECTION_IDS } from '@/lib/navigation'
 import { ROUTES } from '@/lib/routes'
 import type { SiteLink } from '@/lib/site'
-import { Button, Container } from '@app/ui'
+import { Button, Container, SheepMark } from '@app/ui'
 
 import {
   contactBannerVariants,

@@ -89,6 +89,35 @@ describe('AdminShell', () => {
   it('bočna navigacija je <nav> landmark sa imenom', () => {
     renderShell()
 
-    expect(screen.getByRole('navigation', { name: 'nav.dashboard' })).toBeInTheDocument()
+    // `nav.label`, ne `nav.dashboard`: traka je ranije bila označena imenom PRVE stavke,
+    // pa je čitač ekrana najavljivao „Kontrolna tabla, navigacija" za celu navigaciju.
+    expect(screen.getByRole('navigation', { name: 'nav.label' })).toBeInTheDocument()
+  })
+
+  /*
+   * Ispod `lg` bočna traka je sakrivena i navigacija ide kroz panel. jsdom nema CSS, pa se
+   * ovde ne proverava ŠTA se vidi — nego da hamburger postoji, da je ispravno ožičen za
+   * čitač ekrana i da otvara panel.
+   */
+  it('hamburger je ožičen za čitač ekrana', () => {
+    renderShell()
+
+    const trigger = screen.getByRole('button', { name: 'nav.openMenu' })
+
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    expect(trigger).toHaveAttribute('aria-controls', 'admin-nav-sheet')
+  })
+
+  it('klik na hamburger otvara panel', async () => {
+    const user = userEvent.setup()
+    renderShell()
+
+    await user.click(screen.getByRole('button', { name: 'nav.openMenu' }))
+
+    expect(screen.getByRole('button', { name: 'nav.openMenu' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    )
+    expect(screen.getByRole('button', { name: 'nav.closeMenu' })).toBeInTheDocument()
   })
 })

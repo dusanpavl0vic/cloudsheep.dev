@@ -2,13 +2,12 @@ import { useTranslation } from 'react-i18next'
 import { Link, NavLink } from 'react-router'
 
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
-import { Logo } from '@/components/Logo'
 import { MobileNav } from '@/components/MobileNav'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { useActiveSection } from '@/hooks/useActiveSection'
 import { MAIN_NAV, TRACKED_SECTION_IDS } from '@/lib/navigation'
 import { ROUTES } from '@/lib/routes'
-import { Button, Container, cn } from '@app/ui'
+import { Button, Container, Logo, cn } from '@app/ui'
 
 import {
   siteHeaderInnerVariants,

@@ -10,11 +10,12 @@
 @source '../../../../packages/ui/src';
 @import './fonts.css';
 @import './animations.css';
+/* Panel navigacije — deljen sa `admin`-om (packages/config/tailwind-config/sheet.css) */
+@import '@app/tailwind-config/sheet.css';
 
 /* Tamna tema se aktivira preko data-theme atributa na <html> (postavlja ga themeSlice/listener) */
 /* Dizajn tokeni žive u @app/tailwind-config — jedan izvor za sve app-e (docs/08) */
 @import '@app/tailwind-config/theme.css';
-
 
 @layer base {
   * {

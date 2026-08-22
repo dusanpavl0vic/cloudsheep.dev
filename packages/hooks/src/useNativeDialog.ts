@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { useMediaQuery } from '@app/hooks'
+import { useMediaQuery } from './useMediaQuery'
 
 /**
  * Otvaranje i zatvaranje native `<dialog>`-a preko `showModal()`.

@@ -2,8 +2,7 @@ import type { VariantProps } from 'class-variance-authority'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 
-import { SheepMark } from '@/components/Logo'
-import { Reveal, TagList, type TagListItem, cn } from '@app/ui'
+import { Reveal, SheepMark, TagList, cn, type TagListItem } from '@app/ui'
 
 import {
   workBodyVariants,

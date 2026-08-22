@@ -7,7 +7,8 @@
     "cancel": "Odustani",
     "edit": "Izmeni",
     "delete": "Obriši",
-    "error": "Nešto je pošlo naopako. Pokušaj ponovo."
+    "error": "Nešto je pošlo naopako. Pokušaj ponovo.",
+    "appNameLower": "cloudsheep"
   },
   "nav": {
     "dashboard": "Kontrolna tabla",
@@ -15,7 +16,10 @@
     "technologies": "Tehnologije",
     "profile": "Profil",
     "team": "Tim",
-    "messages": "Poruke"
+    "messages": "Poruke",
+    "label": "Glavna navigacija",
+    "openMenu": "Otvori meni",
+    "closeMenu": "Zatvori meni"
   },
   "dashboard": {
     "title": "Kontrolna tabla",

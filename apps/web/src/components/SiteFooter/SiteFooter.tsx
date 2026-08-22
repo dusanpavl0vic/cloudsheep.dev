@@ -3,11 +3,10 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { GithubIcon, LinkedinIcon, MailIcon } from '@/components/BrandIcon'
-import { Logo } from '@/components/Logo'
 import { FOOTER_NAV } from '@/lib/navigation'
 import { ROUTES } from '@/lib/routes'
 import { emailOf, type SiteProfile } from '@/lib/site'
-import { Container } from '@app/ui'
+import { Container, Logo } from '@app/ui'
 
 import {
   footerBottomTextVariants,

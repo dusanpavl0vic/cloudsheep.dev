@@ -22,9 +22,12 @@ export { accordionItemVariants } from './ui/accordion.variants'
 export { badgeMarkerVariants, badgeVariants } from './ui/badge.variants'
 export { buttonVariants } from './ui/button.variants'
 export { containerVariants } from './ui/container.variants'
+export { logoMarkVariants, logoVariants, logoWordmarkVariants } from './atoms/Logo/Logo.variants'
 
 // ── atoms ──
 export { Eyebrow } from './atoms/Eyebrow'
+export { CloseIcon, MenuIcon } from './atoms/Icon'
+export { Logo, SheepMark } from './atoms/Logo'
 export { ProgressBar } from './atoms/ProgressBar'
 export { Reveal } from './atoms/Reveal'
 export { Spinner } from './atoms/Spinner'
