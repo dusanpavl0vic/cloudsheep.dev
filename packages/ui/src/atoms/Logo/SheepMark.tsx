@@ -1,4 +1,4 @@
-import type { SVGProps } from 'react'
+import { useId, type SVGProps } from 'react'
 
 type SheepMarkProps = SVGProps<SVGSVGElement>
 
@@ -7,38 +7,46 @@ type SheepMarkProps = SVGProps<SVGSVGElement>
  *
  * ## Linije su RUPE, ne bela boja
  *
- * Ovo je jedina stvar koju o ovom fajlu treba zapamtiti. Oblik je **jedna** putanja sa
- * `fill-rule="evenodd"`: spoljna ploha i šest linija su spojene u isti `d`, pa parno
- * pravilo linije izbacuje iz plohe umesto da ih boji.
+ * Ovo je jedina stvar koju o ovom fajlu treba zapamtiti. Linije nisu obojene nego IZREZANE
+ * iz plohe, pa uvek imaju boju podloge: bele na beloj strani, plave na plavoj traci, navy
+ * u tamnoj temi. Verzija u kojoj su obojene u `#FFFFFF` izgleda identično na beloj podlozi
+ * i pogrešno na svakoj drugoj, pa se razlika primeti tek kad marka završi na obojenoj
+ * površini.
  *
- * Posledica je da linije uvek imaju boju PODLOGE, gde god marka stajala — bela na beloj
- * strani, plava na plavoj traci, navy na tamnoj temi. Verzija u kojoj su linije obojene u
- * `#FFFFFF` izgleda identično na beloj podlozi i pogrešno na svakoj drugoj, pa se razlika
- * primeti tek kad marka završi na obojenoj površini.
+ * ## Zašto `<mask>`, a ne `fill-rule="evenodd"`
  *
- * ## Zašto ne `<mask>`
+ * `evenodd` daje isti rezultat dok se linije ne PREKLOPE. Tamo se parnost okrene i rupa se
+ * zapuši — na svakom ukrštanju iskoči bela tačka, a duž spoljne konture tanka nit. To se ne
+ * vidi na 16px favikonu, ali se vidi svuda drugde.
  *
- * Isti izgled daje i `<mask>`, ali maska traži `id`. Marka se renderuje više puta na
- * istoj stranici (zaglavlje, podnožje, kartice projekata), a dva jednaka `id`-a u SVG-u
- * su tiha greška: druga instanca preuzme masku prve ili je izgubi. `evenodd` nema `id`,
- * pa taj problem ne postoji — i putanja je jedna umesto sedam.
+ * Maska tog problema nema: crno preko crnog ostaje crno, bez obzira koliko se puta preklopi.
+ *
+ * ## `useId`, jer maska traži `id`
+ *
+ * Marka se renderuje više puta na istoj stranici (zaglavlje, podnožje, kartice projekata),
+ * a dva jednaka `id`-a u SVG-u su tiha greška: druga instanca preuzme masku prve ili je
+ * izgubi. `useId` daje jedinstven `id` po instanci; nealfanumerički znakovi se skidaju jer
+ * React ih menja između verzija (`:r1:`, `«r1»`), a `url(#…)` ih ne voli.
+ *
+ * ## Gradijent
+ *
+ * Radijalni, od ivica ka sredini: ivice pune, centar na 85% neprozirnosti. Oba stopa su
+ * `currentColor`, pa marka i dalje prati `text-*` klasu i temu — gradijent daje dubinu, ne
+ * drugu boju. Fiksne vrednosti bi prekršile pravilo o semantičkim tokenima (docs/08) i
+ * razišle se sa temom pri prvoj izmeni palete.
  *
  * ## Preciznost
  *
- * Putanja je prošla kroz `svgo --multipass --precision=2`: 9740 znakova iz Figme →
- * 4443. To NIJE kozmetika — marka stoji u POČETNOM chunk-u, a sirov izvoz je oborio bundle
- * budžet (159.6 KB naspram granice od 158).
- *
- * Obe verzije preklopljene jedna preko druge, na 4× uvećanju, nemaju vidljivog pomeranja.
- * `svgo` nije zavisnost repoa — pušten je jednokratno, a rezultat je ovde kao podatak. Kad
- * stigne nov izvoz iz Figme, kroz isti korak mora i on:
+ * Ceo SVG je prošao kroz `svgo --multipass --precision=2` — 10378 bajtova iz Figme → 4823.
+ * To NIJE kozmetika: marka stoji u POČETNOM chunk-u, a sirov izvoz je već jednom oborio
+ * bundle budžet. `svgo` nije zavisnost repoa, pušten je jednokratno; kad stigne nov izvoz,
+ * kroz isti korak mora i on:
  *
  *   npx svgo --multipass --precision=2 -i mark.svg -o mark.min.svg
  *
- * ## Ostalo
+ * Provereno preklapanjem optimizovanog preko sirovog — nema pomeranja.
  *
- * **Boja je `currentColor`.** Pozivalac bira ton kroz `text-*` klasu, pa isti SVG radi na
- * svetloj, tamnoj i inverznoj površini (docs/08).
+ * ## Ostalo
  *
  * `viewBox` je 136×126, dakle **nije kvadratan** — veličina se zadaje kroz `h-* w-auto`,
  * nikad `size-*` (`docs/22`).
@@ -46,13 +54,45 @@ type SheepMarkProps = SVGProps<SVGSVGElement>
  * Geometrija je ista i u oba favicona (`apps/web/public/favicon.svg`,
  * `apps/admin/public/favicon.svg`); menja se na sva tri mesta.
  */
-export const SheepMark = ({ className, ...props }: SheepMarkProps) => (
-  <svg viewBox="0 0 136 126" fill="none" aria-hidden className={className} {...props}>
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      fill="currentColor"
-      d="M42.69 2.31c1.42-.06 2.39 0 3.62.1a39 39 0 0 1 7.19 1.33c1.17.35 2.41.78 3.56 1.25s2.19.95 3.34 1.57c1.16.63 2.44 1.4 3.58 2.19s2.34 1.76 3.27 2.54c.93.79.56 2.88 2.31 2.17 1.75-.7 6.42-5.16 8.19-6.4s1.55-.77 2.44-1.05c.88-.27 1.69-.48 2.87-.6s2.77-.21 4.25-.13a31 31 0 0 1 9.25 2.03 50 50 0 0 1 4.94 2.37c1.26.68 1.7 1.04 2.62 1.73s2.03 1.58 2.91 2.4a28 28 0 0 1 4.25 5.13 34 34 0 0 1 2.11 3.75 34 34 0 0 1 2.88 9.37c.27 1.58.36 3.7.49 4.5.14.8.08.19.3.3.23.12.55.07 1.06.4.52.34 1.31.98 2.03 1.62.72.63 1.67 1.56 2.29 2.22.62.65.71.68 1.44 1.7.72 1.02 2.08 2.86 2.93 4.42.86 1.57 1.66 3.5 2.2 4.97a25 25 0 0 1 1.06 3.81c.27 1.28.46 2.76.58 3.88.12 1.11.16 1.61.13 2.81s-.14 3.02-.32 4.37a27 27 0 0 1-.77 3.75c-.35 1.3-.84 2.77-1.37 4.06-.53 1.3-1.1 2.47-1.81 3.69a46 46 0 0 1-2.44 3.63c-.71.96-1.1 1.4-1.82 2.15a37 37 0 0 1-2.5 2.37c-.8.69-1.4 1.16-2.33 1.79s-2.19 1.42-3.23 1.98q-1.56.82-3 1.4c-.96.4-1.31.61-2.75.98s-4.52.3-5.88 1.25c-1.35.95-1.59 3.23-2.27 4.45a34 34 0 0 1-6.64 8.5c-.81.79-1.26 1.17-2.21 1.89-.96.72-2.32 1.7-3.5 2.43a40 40 0 0 1-3.63 1.95c-1.11.53-1.88.84-3.06 1.24s-2.65.87-4 1.19a38 38 0 0 1-8.31.96q-2.08-.02-4.06-.26a29 29 0 0 1-3.82-.64 49 49 0 0 1-4.93-1.44 25 25 0 0 1-3.94-1.77c-1.43-.79-3.09-2.6-4.63-2.93s-2.96.75-4.62.96c-1.67.22-3.51.37-5.38.33a62 62 0 0 1-5.81-.58c-1.41-.19-1.65-.3-2.63-.55a40 40 0 0 1-6.62-2.39 39 39 0 0 1-3.94-2.17 45 45 0 0 1-4-2.95 27 27 0 0 1-2.78-2.64 43 43 0 0 1-2.53-3.06A36 36 0 0 1 3.97 86.5a27 27 0 0 1-.91-3.25 34 34 0 0 1-.65-3.56 47 47 0 0 1-.32-4.31 39 39 0 0 1 1.03-8.82 61 61 0 0 1 1.69-5.25c.46-1.29.66-1.61 1.11-2.5s.85-1.69 1.57-2.81 2.51-2.69 2.77-3.94-.86-2.38-1.2-3.56a40 40 0 0 1-1.46-7.12 35 35 0 0 1-.19-3.63c0-1.17.03-2.03.2-3.37s.49-3.27.82-4.69.75-2.7 1.17-3.88.65-1.87 1.32-3.19a51 51 0 0 1 2.69-4.68c.98-1.45 2.15-2.9 3.14-4.03s1.71-1.8 2.81-2.74A37 37 0 0 1 32.5 3.95c1.59-.48 3.55-.94 5.25-1.22 1.7-.27 3.51-.37 4.94-.42m34.84 4.66c2.54-1.6 6.36-2.2 10.43-1.88 4.12.33 8.76 1.62 13.1 4.09 8.76 4.98 16.25 14.71 16.07 30.62a82 82 0 0 1-.8 11.5q-.68 4.31-2 6.55c-.91 1.55-2.22 2.61-3.91 2.68-1.54.06-2.91-.73-3.96-1.59-2.14-1.74-4.14-4.7-5.56-7.07a61 61 0 0 1-2.29-4.16l-.14-.27-.01-.04h-.01c-.12-.21-.2-.42-.25-.54l-.19-.65q-.19-.74-.29-1.85a18 18 0 0 1 .54-5.79c.08-.32.05-.76-.25-1.37q-.47-.94-1.53-2.01a21 21 0 0 0-4.05-3.05l-.5-.29-.16-.09a1.8 1.8 0 0 1 1.7-3.15l.17.08.58.32c1.44.84 3.3 2.12 4.81 3.64.86.86 1.68 1.87 2.22 2.97.54 1.11.85 2.44.5 3.82a15 15 0 0 0-.44 4.63 9 9 0 0 0 .27 1.54l.04.07.05.1.15.29.49.96c.42.78.99 1.85 1.68 2.99 1.4 2.35 3.13 4.83 4.74 6.13.81.66 1.32.79 1.54.78.08 0 .43-.01.96-.9.55-.94 1.11-2.59 1.54-5.3.43-2.68.7-6.26.76-10.97.17-14.56-6.59-23.1-14.25-27.45a28.5 28.5 0 0 0-11.61-3.63c-3.64-.29-6.54.31-8.18 1.31-8.08 5.98-18.61 15.59-25.5 25.52-3.45 4.99-5.9 9.94-6.74 14.47-.83 4.46-.09 8.44 2.76 11.78 3.02 3.56 6.3 5.33 9.59 5.97 3.32.64 6.8.14 10.24-1.11 6.93-2.52 13.34-7.98 17.11-12.28l.13-.13a1.8 1.8 0 0 1 2.41-.04c.75.66.82 1.8.17 2.54l-.38.44C85.22 61.65 78.53 67.29 71.07 70c-3.86 1.41-8.02 2.06-12.15 1.26-4.16-.8-8.15-3.04-11.66-7.16-3.69-4.34-4.53-9.49-3.55-14.78.97-5.23 3.73-10.66 7.32-15.86 7.2-10.39 18.1-20.29 26.39-26.41l.06-.04zm24.02 38.59-.08-.12zM70.44 14.23a1.8 1.8 0 0 1-2.69 2.39 32.6 32.6 0 0 0-45.71-3.03 32.6 32.6 0 0 0-11.17 22.1c-.67 8.5 2.63 17.82 8.19 24.41l.11.14a1.8 1.8 0 0 1-2.87 2.18l-.56-.69c-5.77-7.2-9.19-17.09-8.46-26.33a36.21 36.21 0 0 1 63.16-21.17m16 77.66a1.8 1.8 0 1 1 1.43-3.3 28.27 28.27 0 0 0 35.81-11.8 28.27 28.27 0 0 0-7.71-36.9 1.8 1.8 0 0 1 2.14-2.9 31.86 31.86 0 0 1 8.69 41.6 31.9 31.9 0 0 1-40.36 13.3M10.85 51.2a1.8 1.8 0 0 1 2.59 2.49l-.49.58a32.63 32.63 0 0 0 1.39 43.13 32.6 32.6 0 0 0 21.11 10.15c8.04.64 14.77-1.4 21.18-6.32l.16-.11a1.8 1.8 0 0 1 2.37.44c.6.79.45 1.92-.33 2.53l-.67.5a32.6 32.6 0 0 1-23 6.54 36.18 36.18 0 0 1-24.44-59.8zm36.45 56.19a1.8 1.8 0 0 1 2.37-.44l.16.11.75.56a30 30 0 0 0 12.29 5.19 32.6 32.6 0 0 0 36.55-20.14 1.8 1.8 0 1 1 3.35 1.31 36.14 36.14 0 0 1-40.59 22.36 33 33 0 0 1-13.7-5.8l-.84-.62-.15-.12a1.8 1.8 0 0 1-.19-2.41m37.8-76.61a9 9 0 0 0-.08-5.33c-.52-1.43-1.39-2.22-2.3-2.47-.92-.25-2.06.01-3.23.98a9 9 0 0 0-2.75 4.57 9 9 0 0 0 .09 5.33c.52 1.43 1.38 2.22 2.3 2.47s2.06-.01 3.23-.98a9 9 0 0 0 2.74-4.57m3.48.93a12.6 12.6 0 0 1-3.92 6.4c-1.79 1.5-4.11 2.33-6.47 1.7s-3.94-2.52-4.74-4.71c-.81-2.2-.89-4.87-.18-7.5.71-2.64 2.12-4.9 3.91-6.4 1.8-1.5 4.12-2.33 6.47-1.7 2.36.64 3.95 2.52 4.75 4.71.8 2.2.89 4.86.18 7.5"
-    />
-  </svg>
-)
+export const SheepMark = ({ className, ...props }: SheepMarkProps) => {
+  // `useId` vraća `:r1:` (React 18) odnosno `«r1»` (React 19) — oba nose znakove koje
+  // `url(#…)` ne podnosi, pa ostaje samo alfanumerički deo.
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '')
+  const gradientId = `sheep-g-${uid}`
+  const maskId = `sheep-m-${uid}`
+
+  return (
+    <svg viewBox="0 0 136 126" fill="none" aria-hidden className={className} {...props}>
+      <defs>
+        <radialGradient id={gradientId} cx="50%" cy="44%" r="64%">
+          <stop offset="0%" stopColor="currentColor" stopOpacity=".85" />
+          <stop offset="100%" stopColor="currentColor" />
+        </radialGradient>
+
+        <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width="136" height="126">
+          {/* Belo propušta, crno izrezuje. `stroke` uz `fill` zadebljava linije koje su
+               već pretvorene u ispune — širi ih za pola vrednosti na svaku stranu. */}
+          <path fill="#fff" d="M0 0h136v126H0z" />
+          <g
+            fill="#000"
+            stroke="#000"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M77.53 6.97c2.54-1.6 6.36-2.2 10.43-1.88 4.12.33 8.76 1.62 13.1 4.1 8.76 4.97 16.25 14.7 16.07 30.61a82 82 0 0 1-.8 11.5q-.68 4.31-2 6.55c-.91 1.55-2.22 2.6-3.91 2.68-1.54.06-2.9-.73-3.96-1.59-2.14-1.74-4.14-4.7-5.56-7.07a67 67 0 0 1-2.29-4.16l-.14-.27-.01-.04c-.13-.21-.21-.42-.26-.54q-.1-.29-.2-.65-.18-.74-.28-1.85c-.11-1.48-.04-3.46.54-5.8.08-.31.05-.75-.25-1.36q-.47-.94-1.53-2.01a21 21 0 0 0-4.05-3.05l-.5-.29-.16-.1a1.8 1.8 0 0 1 1.7-3.14l.17.08.58.32c1.44.84 3.3 2.12 4.8 3.64a12 12 0 0 1 2.23 2.97c.54 1.11.85 2.44.5 3.82a15 15 0 0 0-.44 4.63 8 8 0 0 0 .27 1.54l.04.07.05.1.15.3a72 72 0 0 0 2.17 3.94c1.4 2.35 3.13 4.83 4.74 6.13.81.66 1.32.79 1.54.78.08 0 .43-.01.96-.9.55-.94 1.11-2.59 1.54-5.3.43-2.68.7-6.26.76-10.97.17-14.56-6.59-23.1-14.25-27.45-3.87-2.2-8-3.34-11.6-3.63-3.65-.29-6.55.3-8.19 1.31-8.08 5.98-18.61 15.59-25.5 25.52-3.45 5-5.9 9.94-6.74 14.47-.83 4.46-.1 8.44 2.76 11.78 3.02 3.56 6.3 5.33 9.59 5.97 3.32.64 6.8.14 10.24-1.11 6.93-2.52 13.34-7.98 17.11-12.28l.13-.13a1.8 1.8 0 0 1 2.58 2.5l-.38.44c-4.06 4.5-10.75 10.14-18.2 12.85-3.87 1.4-8.03 2.06-12.16 1.26-4.16-.8-8.15-3.04-11.66-7.16-3.69-4.34-4.53-9.49-3.55-14.78.97-5.23 3.73-10.66 7.32-15.86 7.2-10.39 18.1-20.3 26.4-26.41l.05-.04zm24.02 38.6zl-.08-.12z" />
+            <path d="M70.44 14.23a1.8 1.8 0 1 1-2.69 2.39 32.6 32.6 0 0 0-56.88 19.07c-.67 8.5 2.63 17.82 8.19 24.4l.1.15a1.8 1.8 0 0 1-2.86 2.18l-.56-.7c-5.77-7.19-9.2-17.08-8.46-26.32a36.2 36.2 0 0 1 63.16-21.17m16 77.66a1.8 1.8 0 0 1 1.43-3.3 28.3 28.3 0 0 0 28.1-48.7 1.8 1.8 0 1 1 2.14-2.9 31.89 31.89 0 0 1-31.67 54.9" />
+            <path d="M10.85 51.2a1.8 1.8 0 0 1 2.6 2.5l-.5.57a32.6 32.6 0 0 0 22.5 53.28c8.04.64 14.77-1.4 21.18-6.32l.16-.1a1.8 1.8 0 0 1 2.04 2.96l-.67.5a32.6 32.6 0 0 1-23 6.54 36.2 36.2 0 0 1-24.44-59.8z" />
+            <path d="M47.3 107.4a1.8 1.8 0 0 1 2.37-.45l.16.11.75.56a30 30 0 0 0 12.29 5.19 32.6 32.6 0 0 0 36.55-20.14 1.8 1.8 0 0 1 3.35 1.31 36.2 36.2 0 0 1-40.59 22.36c-5.14-1-9.5-2.75-13.7-5.8l-.84-.62-.15-.12a1.8 1.8 0 0 1-.19-2.4m37.8-76.62a9 9 0 0 0-.08-5.33c-.52-1.43-1.39-2.22-2.3-2.47-.92-.25-2.06 0-3.23.98a9 9 0 0 0-2.75 4.57 9 9 0 0 0 .09 5.33c.52 1.43 1.38 2.22 2.3 2.47s2.06-.01 3.23-.98a9 9 0 0 0 2.74-4.57m3.48.93c-.7 2.64-2.12 4.9-3.92 6.4s-4.11 2.33-6.47 1.7-3.94-2.52-4.74-4.71c-.8-2.2-.9-4.87-.18-7.5.7-2.64 2.12-4.9 3.91-6.4 1.8-1.5 4.12-2.33 6.47-1.7 2.36.64 3.95 2.52 4.75 4.71.8 2.2.89 4.86.18 7.5" />
+          </g>
+        </mask>
+      </defs>
+
+      <path
+        d="M42.69 2.31c1.42-.06 2.39 0 3.62.1a39 39 0 0 1 7.19 1.33c1.17.35 2.41.78 3.56 1.25s2.19.95 3.34 1.57c1.16.63 2.44 1.4 3.58 2.19s2.34 1.76 3.27 2.54c.93.79.56 2.88 2.31 2.17 1.75-.7 6.42-5.16 8.19-6.4s1.55-.77 2.44-1.05c.88-.27 1.69-.48 2.87-.6s2.77-.21 4.25-.13a31 31 0 0 1 9.25 2.03 50 50 0 0 1 4.94 2.37c1.26.68 1.7 1.04 2.62 1.73s2.03 1.58 2.91 2.4a28 28 0 0 1 4.25 5.13 34 34 0 0 1 2.11 3.75 34 34 0 0 1 2.88 9.37c.27 1.58.36 3.7.49 4.5.14.8.08.19.3.3.23.12.55.07 1.06.4.52.34 1.31.98 2.03 1.62.72.63 1.67 1.56 2.29 2.22.62.65.71.68 1.44 1.7.72 1.02 2.08 2.86 2.93 4.42.86 1.57 1.66 3.5 2.2 4.97a25 25 0 0 1 1.06 3.81c.27 1.28.46 2.76.58 3.88.12 1.11.16 1.61.13 2.81s-.14 3.02-.32 4.37a27 27 0 0 1-.77 3.75c-.35 1.3-.84 2.77-1.37 4.06-.53 1.3-1.1 2.47-1.81 3.69a46 46 0 0 1-2.44 3.63c-.71.96-1.1 1.4-1.82 2.15a37 37 0 0 1-2.5 2.37c-.8.69-1.4 1.16-2.33 1.79s-2.19 1.42-3.23 1.98q-1.56.82-3 1.4c-.96.4-1.31.61-2.75.98s-4.52.3-5.88 1.25c-1.35.95-1.59 3.23-2.27 4.45a34 34 0 0 1-6.64 8.5c-.81.79-1.26 1.17-2.21 1.89-.96.72-2.32 1.7-3.5 2.43a40 40 0 0 1-3.63 1.95c-1.11.53-1.88.84-3.06 1.24s-2.65.87-4 1.19a38 38 0 0 1-8.31.96q-2.08-.02-4.06-.26a29 29 0 0 1-3.82-.64 49 49 0 0 1-4.93-1.44 25 25 0 0 1-3.94-1.77c-1.43-.79-3.09-2.6-4.63-2.93s-2.96.75-4.62.96c-1.67.22-3.51.37-5.38.33a62 62 0 0 1-5.81-.58c-1.41-.19-1.65-.3-2.63-.55a40 40 0 0 1-6.62-2.39 39 39 0 0 1-3.94-2.17 45 45 0 0 1-4-2.95 27 27 0 0 1-2.78-2.64 43 43 0 0 1-2.53-3.06A36 36 0 0 1 3.97 86.5a27 27 0 0 1-.91-3.25 34 34 0 0 1-.65-3.56 47 47 0 0 1-.32-4.31 39 39 0 0 1 1.03-8.82 61 61 0 0 1 1.69-5.25c.46-1.29.66-1.61 1.11-2.5s.85-1.69 1.57-2.81 2.51-2.69 2.77-3.94-.86-2.38-1.2-3.56a40 40 0 0 1-1.46-7.12 35 35 0 0 1-.19-3.63c0-1.17.03-2.03.2-3.37s.49-3.27.82-4.69.75-2.7 1.17-3.88.65-1.87 1.32-3.19a51 51 0 0 1 2.69-4.68c.98-1.45 2.15-2.9 3.14-4.03s1.71-1.8 2.81-2.74A37 37 0 0 1 32.5 3.95c1.59-.48 3.55-.94 5.25-1.22 1.7-.27 3.51-.37 4.94-.42"
+        fill={`url(#${gradientId})`}
+        mask={`url(#${maskId})`}
+      />
+    </svg>
+  )
+}
