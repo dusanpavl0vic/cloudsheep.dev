@@ -46,7 +46,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
           />
         ) : (
           // Projekat bez slike i dalje ima karticu — ovčica je čuvar mesta, ne greška
-          <SheepMark aria-hidden className="text-primary/40 size-9" />
+          <SheepMark aria-hidden className="text-primary/40 h-9 w-auto" />
         )}
       </div>
       <div className={projectBodyVariants()}>

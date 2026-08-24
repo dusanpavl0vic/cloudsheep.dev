@@ -4,7 +4,9 @@ export const contactBannerVariants = cva(
   'relative flex flex-col items-center gap-3.5 overflow-hidden rounded-[24px] bg-inverse px-8 py-20 text-center',
 )
 
-export const contactMarkVariants = cva('relative mb-2 size-12 text-primary')
+// `h-12 w-auto`, ne `size-12`: `viewBox` marke je 136×126 i NIJE kvadratan, pa je
+// `size-*` sabija po širini. Vidljivo je otkad je marka puna ploha, a ne linijski crtež.
+export const contactMarkVariants = cva('relative mb-2 h-12 w-auto text-primary')
 
 export const contactTitleVariants = cva(
   'relative font-heading text-4xl leading-tight font-bold tracking-tight text-balance text-inverse-foreground md:text-[52px]',
