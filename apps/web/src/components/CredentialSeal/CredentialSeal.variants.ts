@@ -19,9 +19,19 @@ export const paperVariants = cva(
        * `slide` postoji jer u `flex` traci karusela `w-full` kolabira — slajd mora imati
        * svoju širinu i `shrink-0`, inače se sve kartice zbiju u jednu kolonu.
        */
+      /**
+       * `standalone` je zatečeni izgled: centriran, širok koliko roditelj dozvoli.
+       *
+       * `slide` prati širinu KARTICE (`w-full`), ne prozora.
+       *
+       * Ranije je bio `w-[min(86vw,520px)]`, dok je karusel bio `flex` traka u kojoj `w-full`
+       * kolabira. Karusel je od tada mreža sa `flex-col` karticama, gde `w-full` radi — a
+       * vezivanje za `vw` je od 535px naviše pravilo diplomu ŠIRU od kartice na kojoj stoji,
+       * do 60px. Papir je virio ispod imena i sekao se o `overflow-hidden` scene.
+       */
       layout: {
         standalone: 'mx-auto w-full max-w-[560px]',
-        slide: 'w-[min(86vw,520px)] shrink-0',
+        slide: 'w-full max-w-[520px] shrink-0',
       },
     },
     defaultVariants: { layout: 'standalone' },

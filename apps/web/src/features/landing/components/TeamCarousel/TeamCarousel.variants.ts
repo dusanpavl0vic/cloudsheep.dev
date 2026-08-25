@@ -32,7 +32,7 @@ export const carouselStageVariants = cva(
  * i `opacity` — obe se menjaju u istom kadru, pa moraju istom krivom.
  */
 export const carouselCardVariants = cva(
-  'col-start-1 row-start-1 flex w-[min(88vw,460px)] origin-top flex-col items-center gap-5 transition-[transform,opacity,filter] duration-500 ease-[cubic-bezier(0.22,0.61,0.36,1)] motion-reduce:transition-none',
+  'col-start-1 row-start-1 flex w-[min(86vw,460px)] origin-top flex-col items-center gap-5 transition-[transform,opacity,filter] duration-500 ease-[cubic-bezier(0.22,0.61,0.36,1)] motion-reduce:transition-none',
   {
     variants: {
       /** Bočne kartice ne primaju klik na svoj sadržaj — klik na njih pomera ringišpil. */
@@ -68,6 +68,12 @@ export const noDiplomaVariants = cva(
 )
 
 /**
+ * Strelice postoje SAMO od `sm` naviše (`hidden sm:flex`).
+ *
+ * Ispod te širine kartica zauzima 86vw, pa između nje i ivice ostane 8–12px — a strelica je
+ * 44px. Stajale su preko kartice, 13–22px, i to tačno na visini diplome. Na dodir se ionako
+ * prevlači prstom, a tačkice ispod vode direktno na člana, pa se ništa ne gubi.
+ *
  * `top` je FIKSNA razdaljina od vrha, ne procenat.
  *
  * Sa `top-[42%]` su strelice poskakivale 18px pri svakoj promeni člana. Uzrok nije bio u
@@ -79,7 +85,7 @@ export const noDiplomaVariants = cva(
  * `origin-top`), pa je razmak od vrha do avatara i imena uvek isti; menja se samo ono ispod.
  */
 export const arrowVariants = cva(
-  'absolute top-[12.5rem] z-30 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card text-[18px] text-foreground shadow-lg transition-colors hover:border-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none',
+  'absolute top-[12.5rem] z-30 hidden size-11 sm:flex -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card text-[18px] text-foreground shadow-lg transition-colors hover:border-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none',
   {
     variants: { side: { start: 'start-0 sm:start-2', end: 'end-0 sm:end-2' } },
   },
