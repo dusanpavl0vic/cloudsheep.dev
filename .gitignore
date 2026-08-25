@@ -31,6 +31,11 @@ test-results
 # Commit-ovan bi bio drugi izvor istine koji tiho zastari.
 apps/web/public/sitemap.xml
 
+# Izvezeni logotipi (`brand/README.md`)
+# Kopije marke iz `packages/ui/src/atoms/Logo/SheepMark.tsx`, za upotrebu van koda.
+# Ne prate se: izvor je komponenta, a dva izvora istine se tiho raziđu. Regenerišu se ručno.
+brand/
+
 # Deploy
 
 # Env
