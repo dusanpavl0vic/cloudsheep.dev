@@ -90,18 +90,17 @@
   --mark-teal: oklch(56% 0.11 195);
   --mark-rose: oklch(58% 0.17 15);
 
-  /* Okvir oko brend marke (`packages/ui/src/atoms/Logo/SheepMark.tsx`).
+  /* Obrub oko brend marke (`packages/ui/src/atoms/Logo/SheepMark.tsx`).
      Debljina, ne boja — zato broj bez jedinice: `stroke-width` u koordinatama `viewBox`-a.
-
-     Dva sloja ISPOD marke: širi PRSTEN u boji marke, pa uži RAZMAK u boji podloge. Razlika
-     im daje vidljivi okvir odvojen od ispune. `--logo-ring-width` MORA biti veći od
-     `--logo-gap-width`, inače prsten nestane ispod razmaka.
 
      Postoji SAMO u svetloj temi. Tamo se puna ploha stapa sa skoro belom podlogom, jer joj
      gradijent posvetli sredinu. U tamnoj temi marka je svetla na navy podlozi i razdvaja se
-     sama. Nula gasi oba sloja. */
-  --logo-ring-width: 13;
-  --logo-gap-width: 7;
+     sama, pa je obrub tamo suvišan — i vidi se kao okvir, što nije bila namera.
+
+     `--logo-halo-width` mora ostati veći od `--logo-edge-width`: halo gura liniju van same
+     ivice ispune. Nula gasi oba. */
+  --logo-edge-width: 3.4;
+  --logo-halo-width: 8;
 }
 
 /* Tamna tema — izvedena iz iste palete (override samo boja) */
@@ -143,9 +142,9 @@
   --mark-teal: oklch(72% 0.1 195);
   --mark-rose: oklch(73% 0.15 15);
 
-  /* Bez okvira: svetla marka na navy podlozi se razdvaja sama. Nula gasi oba sloja. */
-  --logo-ring-width: 0;
-  --logo-gap-width: 0;
+  /* Bez obruba: svetla marka na navy podlozi se razdvaja sama. Nula gasi i halo i liniju. */
+  --logo-edge-width: 0;
+  --logo-halo-width: 0;
 }
 
 /* Mapiranje tokena na Tailwind klase (bg-background, text-primary, border-border...) */

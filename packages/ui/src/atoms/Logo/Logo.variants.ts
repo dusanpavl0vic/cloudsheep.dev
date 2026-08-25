@@ -47,17 +47,14 @@ export const logoWordmarkVariants = cva('font-heading leading-none font-bold tra
 })
 
 /**
- * Okvir marke — dva sloja ISPOD ispune, oba na istoj putanji.
+ * Halo i obrub marke. Debljina dolazi iz `--logo-*-width` tokena, koji su u svetloj temi
+ * pozitivni a u tamnoj nula — pa se obrub gasi promenom teme, bez grananja u komponenti.
  *
- * Širi prsten u boji marke, pa uži razmak u boji podloge; razlika ostaje vidljiva kao okvir
- * odvojen od ispune. Debljine dolaze iz `--logo-*-width` tokena, koji su u tamnoj temi nula
- * — pa se okvir gasi promenom teme, bez grananja u komponenti.
- *
- * Boja razmaka je `--logo-halo`, sa `--background` kao podrazumevanim: komponenta ne zna na
+ * Boja haloa je `--logo-halo`, sa `--background` kao podrazumevanim: komponenta ne zna na
  * kojoj površini stoji. Površina koja nije `background` postavlja svoju vrednost.
  */
-export const logoRingVariants = cva('[stroke-width:var(--logo-ring-width)]')
-
-export const logoGapVariants = cva(
-  '[stroke:var(--logo-halo,var(--background))] [stroke-width:var(--logo-gap-width)]',
+export const logoHaloVariants = cva(
+  '[stroke:var(--logo-halo,var(--background))] [stroke-width:var(--logo-halo-width)]',
 )
+
+export const logoEdgeVariants = cva('[stroke-width:var(--logo-edge-width)]')
