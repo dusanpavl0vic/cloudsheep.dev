@@ -1,6 +1,6 @@
 import { useId, type SVGProps } from 'react'
 
-import { logoEdgeVariants, logoHaloVariants } from './Logo.variants'
+import { logoEdgeVariants } from './Logo.variants'
 
 type SheepMarkProps = SVGProps<SVGSVGElement>
 
@@ -51,9 +51,8 @@ type SheepMarkProps = SVGProps<SVGSVGElement>
  * ## Obrub
  *
  * SAMO u svetloj temi. Tamo se puna ploha stapa sa skoro belom podlogom, jer joj gradijent
- * posvetli sredinu, pa silueta dobija liniju na 30% `currentColor` preko haloa u boji
- * podloge. U tamnoj temi marka je svetla na navy podlozi i razdvaja se sama — tamo su
- * `--logo-edge-width` i `--logo-halo-width` nula.
+ * posvetli sredinu, pa silueta dobija obrub u PUNOJ boji marke, preko ispune. U tamnoj temi
+ * marka je svetla na navy podlozi i razdvaja se sama — tamo je `--logo-edge-width` nula.
  *
  * ## Ostalo
  *
@@ -105,32 +104,20 @@ export const SheepMark = ({ className, ...props }: SheepMarkProps) => {
         </mask>
       </defs>
 
-      {/* Obrub, tri sloja i redosled je bitan:
-
-           1. HALO u boji podloge, ispod svega — proširuje siluetu i time gura tamnu liniju
-              van same ivice. Bez njega linija dodiruje ispunu, pa marka izgleda zaprljano
-              umesto uokvireno.
-           2. Marka.
-           3. TAMNA LINIJA na 30% `currentColor` — definiše ivicu bez uvođenja nove boje.
-
-           Debljine oba nose `--logo-halo-width` i `--logo-edge-width`, koji su u TAMNOJ
-           temi nula: tamo je marka svetla na navy podlozi i razdvaja se sama, pa bi obrub
-           bio okvir bez razloga. Grananja po temi u komponenti nema — vrednosti dolaze iz
-           `theme.css`, gde razlike među temama ionako žive.
-
-           Boju haloa nosi `--logo-halo`, sa `--background` kao podrazumevanim: komponenta
-           ne zna na kojoj površini stoji. Površina koja NIJE background daje svoju vrednost
-           — „Kontakt" stoji na `bg-inverse`, `WorkItem` na `bg-card`. Pogrešan halo se vidi
-           kao svetli prsten oko marke. */}
-      <path d={SILHOUETTE} fill="none" className={logoHaloVariants()} />
       <path d={SILHOUETTE} fill={`url(#${gradientId})`} mask={`url(#${maskId})`} />
-      <path
-        d={SILHOUETTE}
-        fill="none"
-        stroke="currentColor"
-        strokeOpacity=".3"
-        className={logoEdgeVariants()}
-      />
+
+      {/* Obrub, PREKO ispune i u punoj boji marke.
+
+           Nema haloa ispod: obrub stoji tačno na ivici ispune. Ranija verzija ga je gurala
+           napolje svetlim slojem, pa je marka izgledala kao nalepnica — ovo je bliže crtežu.
+
+           Vidi se zato što gradijent posvetli plohu ka sredini, pa puna boja na obodu ima uz
+           šta da se odvoji. Na potpuno ravnoj ispuni ne bi radio.
+
+           Debljinu nosi `--logo-edge-width`, koji je u TAMNOJ temi nula: tamo je marka svetla
+           na navy podlozi i razdvaja se sama. Grananja po temi u komponenti nema — vrednost
+           dolazi iz `theme.css`, gde razlike među temama ionako žive. */}
+      <path d={SILHOUETTE} fill="none" stroke="currentColor" className={logoEdgeVariants()} />
     </svg>
   )
 }
