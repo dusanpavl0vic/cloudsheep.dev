@@ -59,7 +59,7 @@ export const WorkItem = ({
             <img src={imageSrc} alt={imageCaption} className="size-full object-cover" />
           ) : (
             <span className="flex flex-col items-center gap-3">
-              <SheepMark className="text-primary/40 h-9 w-auto" />
+              <SheepMark className="text-primary/40 h-9 w-auto [--mark-halo:var(--card)]" />
               <span className={workCaptionVariants()}>{imageCaption}</span>
             </span>
           )}

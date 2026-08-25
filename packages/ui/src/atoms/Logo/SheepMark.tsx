@@ -46,6 +46,12 @@ type SheepMarkProps = SVGProps<SVGSVGElement>
  *
  * Provereno preklapanjem optimizovanog preko sirovog — nema pomeranja.
  *
+ * ## Obrub
+ *
+ * Silueta ima liniju na 30% `currentColor` preko haloa u boji podloge. Nije ukras:
+ * puna ploha bez ivice se na svetlim karticama stapa sa površinom, jer joj gradijent
+ * posvetli sredinu. Boju haloa nosi `--mark-halo` — vidi komentar uz putanje.
+ *
  * ## Ostalo
  *
  * `viewBox` je 136×126, dakle **nije kvadratan** — veličina se zadaje kroz `h-* w-auto`,
@@ -54,6 +60,14 @@ type SheepMarkProps = SVGProps<SVGSVGElement>
  * Geometrija je ista i u oba favicona (`apps/web/public/favicon.svg`,
  * `apps/admin/public/favicon.svg`); menja se na sva tri mesta.
  */
+/**
+ * Silueta oblaka. Ista putanja se crta TRI puta — halo, ispuna, obrub — pa stoji kao
+ * konstanta: tri literala bi značila tri kopije istog stringa u bundle-u, a marka je u
+ * početnom chunk-u.
+ */
+const SILHOUETTE =
+  'M42.69 2.31c1.42-.06 2.39 0 3.62.1a39 39 0 0 1 7.19 1.33c1.17.35 2.41.78 3.56 1.25s2.19.95 3.34 1.57c1.16.63 2.44 1.4 3.58 2.19s2.34 1.76 3.27 2.54c.93.79.56 2.88 2.31 2.17 1.75-.7 6.42-5.16 8.19-6.4s1.55-.77 2.44-1.05c.88-.27 1.69-.48 2.87-.6s2.77-.21 4.25-.13a31 31 0 0 1 9.25 2.03 50 50 0 0 1 4.94 2.37c1.26.68 1.7 1.04 2.62 1.73s2.03 1.58 2.91 2.4a28 28 0 0 1 4.25 5.13 34 34 0 0 1 2.11 3.75 34 34 0 0 1 2.88 9.37c.27 1.58.36 3.7.49 4.5.14.8.08.19.3.3.23.12.55.07 1.06.4.52.34 1.31.98 2.03 1.62.72.63 1.67 1.56 2.29 2.22.62.65.71.68 1.44 1.7.72 1.02 2.08 2.86 2.93 4.42.86 1.57 1.66 3.5 2.2 4.97a25 25 0 0 1 1.06 3.81c.27 1.28.46 2.76.58 3.88.12 1.11.16 1.61.13 2.81s-.14 3.02-.32 4.37a27 27 0 0 1-.77 3.75c-.35 1.3-.84 2.77-1.37 4.06-.53 1.3-1.1 2.47-1.81 3.69a46 46 0 0 1-2.44 3.63c-.71.96-1.1 1.4-1.82 2.15a37 37 0 0 1-2.5 2.37c-.8.69-1.4 1.16-2.33 1.79s-2.19 1.42-3.23 1.98q-1.56.82-3 1.4c-.96.4-1.31.61-2.75.98s-4.52.3-5.88 1.25c-1.35.95-1.59 3.23-2.27 4.45a34 34 0 0 1-6.64 8.5c-.81.79-1.26 1.17-2.21 1.89-.96.72-2.32 1.7-3.5 2.43a40 40 0 0 1-3.63 1.95c-1.11.53-1.88.84-3.06 1.24s-2.65.87-4 1.19a38 38 0 0 1-8.31.96q-2.08-.02-4.06-.26a29 29 0 0 1-3.82-.64 49 49 0 0 1-4.93-1.44 25 25 0 0 1-3.94-1.77c-1.43-.79-3.09-2.6-4.63-2.93s-2.96.75-4.62.96c-1.67.22-3.51.37-5.38.33a62 62 0 0 1-5.81-.58c-1.41-.19-1.65-.3-2.63-.55a40 40 0 0 1-6.62-2.39 39 39 0 0 1-3.94-2.17 45 45 0 0 1-4-2.95 27 27 0 0 1-2.78-2.64 43 43 0 0 1-2.53-3.06A36 36 0 0 1 3.97 86.5a27 27 0 0 1-.91-3.25 34 34 0 0 1-.65-3.56 47 47 0 0 1-.32-4.31 39 39 0 0 1 1.03-8.82 61 61 0 0 1 1.69-5.25c.46-1.29.66-1.61 1.11-2.5s.85-1.69 1.57-2.81 2.51-2.69 2.77-3.94-.86-2.38-1.2-3.56a40 40 0 0 1-1.46-7.12 35 35 0 0 1-.19-3.63c0-1.17.03-2.03.2-3.37s.49-3.27.82-4.69.75-2.7 1.17-3.88.65-1.87 1.32-3.19a51 51 0 0 1 2.69-4.68c.98-1.45 2.15-2.9 3.14-4.03s1.71-1.8 2.81-2.74A37 37 0 0 1 32.5 3.95c1.59-.48 3.55-.94 5.25-1.22 1.7-.27 3.51-.37 4.94-.42'
+
 export const SheepMark = ({ className, ...props }: SheepMarkProps) => {
   // `useId` vraća `:r1:` (React 18) odnosno `«r1»` (React 19) — oba nose znakove koje
   // `url(#…)` ne podnosi, pa ostaje samo alfanumerički deo.
@@ -88,11 +102,27 @@ export const SheepMark = ({ className, ...props }: SheepMarkProps) => {
         </mask>
       </defs>
 
+      {/* Obrub, tri sloja i redosled je bitan:
+
+           1. HALO u boji podloge, ispod svega — proširuje siluetu za 3px i time gura
+              tamnu liniju van same ivice. Bez njega linija dodiruje ispunu, pa marka
+              izgleda zaprljano umesto uokvireno.
+           2. Marka.
+           3. TAMNA LINIJA na 30% `currentColor` — definiše ivicu bez uvođenja nove boje.
+
+           Halo mora da zna na čemu marka stoji, a komponenta to ne zna. Zato `--mark-halo`,
+           sa `--background` kao podrazumevanim: pokriva zaglavlje, panele i kartice.
+           Površina koja NIJE background postavlja svoju vrednost — sekcija „Kontakt" stoji
+           na `bg-inverse` i daje `[--mark-halo:var(--inverse)]`. Pogrešan halo se vidi kao
+           svetli prsten oko marke. */}
       <path
-        d="M42.69 2.31c1.42-.06 2.39 0 3.62.1a39 39 0 0 1 7.19 1.33c1.17.35 2.41.78 3.56 1.25s2.19.95 3.34 1.57c1.16.63 2.44 1.4 3.58 2.19s2.34 1.76 3.27 2.54c.93.79.56 2.88 2.31 2.17 1.75-.7 6.42-5.16 8.19-6.4s1.55-.77 2.44-1.05c.88-.27 1.69-.48 2.87-.6s2.77-.21 4.25-.13a31 31 0 0 1 9.25 2.03 50 50 0 0 1 4.94 2.37c1.26.68 1.7 1.04 2.62 1.73s2.03 1.58 2.91 2.4a28 28 0 0 1 4.25 5.13 34 34 0 0 1 2.11 3.75 34 34 0 0 1 2.88 9.37c.27 1.58.36 3.7.49 4.5.14.8.08.19.3.3.23.12.55.07 1.06.4.52.34 1.31.98 2.03 1.62.72.63 1.67 1.56 2.29 2.22.62.65.71.68 1.44 1.7.72 1.02 2.08 2.86 2.93 4.42.86 1.57 1.66 3.5 2.2 4.97a25 25 0 0 1 1.06 3.81c.27 1.28.46 2.76.58 3.88.12 1.11.16 1.61.13 2.81s-.14 3.02-.32 4.37a27 27 0 0 1-.77 3.75c-.35 1.3-.84 2.77-1.37 4.06-.53 1.3-1.1 2.47-1.81 3.69a46 46 0 0 1-2.44 3.63c-.71.96-1.1 1.4-1.82 2.15a37 37 0 0 1-2.5 2.37c-.8.69-1.4 1.16-2.33 1.79s-2.19 1.42-3.23 1.98q-1.56.82-3 1.4c-.96.4-1.31.61-2.75.98s-4.52.3-5.88 1.25c-1.35.95-1.59 3.23-2.27 4.45a34 34 0 0 1-6.64 8.5c-.81.79-1.26 1.17-2.21 1.89-.96.72-2.32 1.7-3.5 2.43a40 40 0 0 1-3.63 1.95c-1.11.53-1.88.84-3.06 1.24s-2.65.87-4 1.19a38 38 0 0 1-8.31.96q-2.08-.02-4.06-.26a29 29 0 0 1-3.82-.64 49 49 0 0 1-4.93-1.44 25 25 0 0 1-3.94-1.77c-1.43-.79-3.09-2.6-4.63-2.93s-2.96.75-4.62.96c-1.67.22-3.51.37-5.38.33a62 62 0 0 1-5.81-.58c-1.41-.19-1.65-.3-2.63-.55a40 40 0 0 1-6.62-2.39 39 39 0 0 1-3.94-2.17 45 45 0 0 1-4-2.95 27 27 0 0 1-2.78-2.64 43 43 0 0 1-2.53-3.06A36 36 0 0 1 3.97 86.5a27 27 0 0 1-.91-3.25 34 34 0 0 1-.65-3.56 47 47 0 0 1-.32-4.31 39 39 0 0 1 1.03-8.82 61 61 0 0 1 1.69-5.25c.46-1.29.66-1.61 1.11-2.5s.85-1.69 1.57-2.81 2.51-2.69 2.77-3.94-.86-2.38-1.2-3.56a40 40 0 0 1-1.46-7.12 35 35 0 0 1-.19-3.63c0-1.17.03-2.03.2-3.37s.49-3.27.82-4.69.75-2.7 1.17-3.88.65-1.87 1.32-3.19a51 51 0 0 1 2.69-4.68c.98-1.45 2.15-2.9 3.14-4.03s1.71-1.8 2.81-2.74A37 37 0 0 1 32.5 3.95c1.59-.48 3.55-.94 5.25-1.22 1.7-.27 3.51-.37 4.94-.42"
-        fill={`url(#${gradientId})`}
-        mask={`url(#${maskId})`}
+        d={SILHOUETTE}
+        fill="none"
+        stroke="var(--mark-halo, var(--background))"
+        strokeWidth="6"
       />
+      <path d={SILHOUETTE} fill={`url(#${gradientId})`} mask={`url(#${maskId})`} />
+      <path d={SILHOUETTE} fill="none" stroke="currentColor" strokeOpacity=".3" strokeWidth="2.4" />
     </svg>
   )
 }
