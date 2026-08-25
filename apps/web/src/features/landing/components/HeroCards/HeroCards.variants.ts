@@ -40,9 +40,19 @@ export const heroFloatVariants = cva('pointer-events-none absolute inset-0 z-0')
  * Negativne margine + padding: kartice smeju da „izlaze" iz ivice sekcije, inače bi poslednja
  * izgledala odsečeno umesto da poziva na prevlačenje. Traka za skrolovanje se sakriva na oba
  * motora (`scrollbar-width` i `::-webkit-scrollbar`) — sam pomak kartica je dovoljan nagoveštaj.
+ *
+ * `select-none` ide uz prevlačenje mišem: bez njega pokret označava tekst kartica umesto da
+ * pomera traku. Kartice su ionako `aria-hidden` ukras — nema šta da se kopira.
+ *
+ * **`self-stretch` je ono što uopšte omogućava skrolovanje.** Hero sekcija je `flex flex-col
+ * items-center`, pa se traka kao flex stavka po horizontali širi na MIN-CONTENT — a kartice
+ * su `shrink-0`, pa je to zbir svih pet: 1238px. Kutija je time bila šira od ekrana, ništa
+ * nije prelivalo, `overflow-x-auto` nije imao šta da skroluje, i kartice su se samo sekle o
+ * `overflow-hidden` sekcije. `self-stretch` vraća širinu na kontejner, pa sadržaj preliva i
+ * traka postaje skrolabilna. Izmereno u pretraživaču, ne pretpostavljeno.
  */
 export const heroStripVariants = cva(
-  'relative z-10 -mx-5 mt-12 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden xl:hidden',
+  'relative z-10 -mx-5 mt-12 flex cursor-grab snap-x select-none snap-mandatory gap-3 self-stretch overflow-x-auto px-5 pb-2 active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden xl:hidden',
 )
 
 /** Kartica u traci — fiksna širina da vodoravno listanje ima ritam. */

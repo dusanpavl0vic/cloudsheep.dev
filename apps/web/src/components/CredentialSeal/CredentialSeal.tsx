@@ -77,11 +77,15 @@ export const CredentialSeal = ({
 
       <span aria-hidden className={paperRuleVariants()} />
 
-      <p className={paperFooterVariants()}>
+      <p className={paperFooterVariants({ stamped: Boolean(logo) })}>
+        {/* Podaci ostaju u `span`-ovima: `<p>` je običan tok teksta, pa su inline i prelamaju
+            se kao rečenica — a svaki podatak i dalje stoji kao zaseban čvor. */}
         <span>{faculty}</span>
+        {/* `\u00A0` je NELOMLJIVI razmak: vezuje tačku za reč ispred, pa pri prelamanju ne
+            završi sama na početku novog reda. */}
         <span aria-hidden className={paperFooterSepVariants()}>
-          ·
-        </span>
+          {'\u00A0·'}
+        </span>{' '}
         <span>{city}</span>
       </p>
 

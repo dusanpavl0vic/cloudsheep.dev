@@ -10,7 +10,10 @@ import { cva } from 'class-variance-authority'
  * oko njega ne skače.
  */
 export const paperVariants = cva(
-  'relative isolate rotate-[-0.6deg] rounded-sm bg-plate px-7 py-6 text-start text-plate-ink shadow-[0_1px_2px_rgb(0_0_0/0.06),0_18px_40px_-14px_rgb(0_0_0/0.28)] sm:px-9 sm:py-8',
+  // Senka tek od `sm`. Na telefonu je papir skoro pune širine ekrana, pa se meki oreol
+  // od 40px razliva do ivica i čita kao zamućenje, ne kao dubina. Na širem ekranu papir
+  // ima vazduha oko sebe i senka radi ono zbog čega postoji.
+  'relative isolate rotate-[-0.6deg] rounded-sm bg-plate px-7 py-6 text-start text-plate-ink sm:px-9 sm:py-8 sm:shadow-[0_1px_2px_rgb(0_0_0/0.06),0_18px_40px_-14px_rgb(0_0_0/0.28)]',
   {
     variants: {
       /**
@@ -71,10 +74,33 @@ export const paperProgrammeVariants = cva('text-[14px] leading-snug text-plate-i
 /** Linija iznad podnožja — deli zvanje od podataka o ustanovi. */
 export const paperRuleVariants = cva('mt-1 h-px w-full bg-plate-line/60')
 
+/**
+ * Podnožje dokumenta — ustanova i grad.
+ *
+ * **Običan tok teksta, ne `flex`.** Kao `flex flex-wrap` je separator bio zaseban element,
+ * pa je pri prelamanju završavao na POČETKU reda: „· Niš, Srbija". Sada se prelama kao
+ * rečenica, a tačka je nelomljivim razmakom vezana za reč pre sebe.
+ *
+ * `stamped` sklanja tekst ispod pečata. Pečat je `absolute` u donjem desnom uglu i preklapa
+ * tekstualnu kolonu za `veličina − 8px − padding okvira`, dakle ~58px odnosno ~68px od `sm`;
+ * uz rotaciju od 11° to je ~65 / ~75px. Otud 4.5rem odnosno 5.25rem, sa malim zazorom.
+ * Bez toga je „Niš, Srbija" nestajalo iza grba. Na desktopu se nije videlo jer
+ * je papir dovoljno širok da se red završi pre pečata.
+ *
+ * Razmak se dodaje samo kad pečat postoji — član sa diplomom bez otpremljenog grba je
+ * normalno stanje, a tamo bi prazan pojas desno izgledao kao greška u poravnanju.
+ */
 export const paperFooterVariants = cva(
-  'flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11.5px] text-plate-ink-muted',
+  'font-mono text-[11.5px] leading-relaxed text-plate-ink-muted',
+  {
+    variants: {
+      stamped: { true: 'pe-[4.5rem] sm:pe-[5.25rem]', false: '' },
+    },
+    defaultVariants: { stamped: false },
+  },
 )
 
+/** Separator nosi NELOMLJIVI razmak ispred sebe (`CredentialSeal.tsx`), da ne padne u nov red. */
 export const paperFooterSepVariants = cva('text-plate-line')
 
 /**

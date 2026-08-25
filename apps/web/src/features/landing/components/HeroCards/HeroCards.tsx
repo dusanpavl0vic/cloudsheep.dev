@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { TechTile } from '@/components/TechTile'
 import type { Technology } from '@/features/projects'
 import { useDevice } from '@/hooks/useDevice'
+import { useDragScroll } from '@/hooks/useDragScroll'
 
 import {
   heroCardTitleVariants,
@@ -144,6 +145,12 @@ interface HeroCardsProps {
 export const HeroCards = ({ technologies }: HeroCardsProps) => {
   const { isWide } = useDevice()
   const cards = useCardContent(technologies)
+  // Prst i trackpad pokriva `overflow-x-auto`; ovo dodaje prevlačenje MIŠEM, jer je skrol
+  // traka namerno sakrivena pa je mišem inače nema čime pomeriti.
+  //
+  // `startAt: 'center'` jer kartice nemaju redosled — one su ukras. Sa početka se vidi samo
+  // prva i deo druge, pa traka izgleda kao da tu i počinje i završava se.
+  const drag = useDragScroll<HTMLDivElement>({ startAt: 'center' })
 
   if (isWide) {
     return (
@@ -162,7 +169,7 @@ export const HeroCards = ({ technologies }: HeroCardsProps) => {
   }
 
   return (
-    <div aria-hidden className={heroStripVariants()}>
+    <div aria-hidden className={heroStripVariants()} {...drag}>
       {cards.map((card) => (
         <div
           key={card.id}
