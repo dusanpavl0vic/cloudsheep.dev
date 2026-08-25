@@ -89,6 +89,18 @@
   --mark-violet: oklch(55% 0.19 295);
   --mark-teal: oklch(56% 0.11 195);
   --mark-rose: oklch(58% 0.17 15);
+
+  /* Obrub oko brend marke (`packages/ui/src/atoms/Logo/SheepMark.tsx`).
+     Debljina, ne boja — zato broj bez jedinice: `stroke-width` u koordinatama `viewBox`-a.
+
+     Postoji SAMO u svetloj temi. Tamo se puna ploha stapa sa skoro belom podlogom, jer joj
+     gradijent posvetli sredinu. U tamnoj temi marka je svetla na navy podlozi i razdvaja se
+     sama, pa je obrub tamo suvišan — i vidi se kao okvir, što nije bila namera.
+
+     `--logo-halo-width` mora ostati veći od `--logo-edge-width`: halo gura liniju van same
+     ivice ispune. Nula gasi oba. */
+  --logo-edge-width: 3.4;
+  --logo-halo-width: 8;
 }
 
 /* Tamna tema — izvedena iz iste palete (override samo boja) */
@@ -129,6 +141,10 @@
   --mark-violet: oklch(72% 0.16 295);
   --mark-teal: oklch(72% 0.1 195);
   --mark-rose: oklch(73% 0.15 15);
+
+  /* Bez obruba: svetla marka na navy podlozi se razdvaja sama. Nula gasi i halo i liniju. */
+  --logo-edge-width: 0;
+  --logo-halo-width: 0;
 }
 
 /* Mapiranje tokena na Tailwind klase (bg-background, text-primary, border-border...) */

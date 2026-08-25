@@ -45,3 +45,16 @@ export const logoWordmarkVariants = cva('font-heading leading-none font-bold tra
     size: 'sm',
   },
 })
+
+/**
+ * Halo i obrub marke. Debljina dolazi iz `--logo-*-width` tokena, koji su u svetloj temi
+ * pozitivni a u tamnoj nula — pa se obrub gasi promenom teme, bez grananja u komponenti.
+ *
+ * Boja haloa je `--logo-halo`, sa `--background` kao podrazumevanim: komponenta ne zna na
+ * kojoj površini stoji. Površina koja nije `background` postavlja svoju vrednost.
+ */
+export const logoHaloVariants = cva(
+  '[stroke:var(--logo-halo,var(--background))] [stroke-width:var(--logo-halo-width)]',
+)
+
+export const logoEdgeVariants = cva('[stroke-width:var(--logo-edge-width)]')
