@@ -64,6 +64,11 @@ catalog:
   # Slanje mejla. Jedini održavan SMTP klijent za Node; bez native zavisnosti.
   nodemailer: 7.0.9
   '@types/nodemailer': 7.0.4
+  # Generisanje CV-a kao PDF (docs/adr/0009). Čist JS — zavisnosti su fflate, fontkit,
+  # linebreak i @noble/*, nijedna native. Time Alpine build i `--frozen-lockfile` ostaju
+  # netaknuti, iz istog razloga iz kog je izabran `image-size` umesto `sharp`.
+  pdfkit: 0.20.1
+  '@types/pdfkit': 0.17.5
   # bcryptjs, ne argon2: argon2 traži native build, a .npmrc ima node-linker=isolated
   # i allowBuilds allowlist — jedan native modul manje u Alpine image-u.
   bcryptjs: 3.0.3

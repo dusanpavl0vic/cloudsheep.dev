@@ -2,10 +2,14 @@ import type { Asset, Prisma, TeamMember } from '@prisma/client'
 import { Router } from 'express'
 
 import { prisma } from '../db.ts'
+import { localizeCv } from '../lib/cv/localize.ts'
+import { renderCv } from '../lib/cv/renderCv.ts'
 import { withPrismaErrors } from '../lib/prismaError.ts'
+import { adminCv, cvInclude } from '../lib/serialize.ts'
 import { publicUrl } from '../lib/uploads.ts'
 import { requireAuth, requireRole } from '../middleware/auth.ts'
 import { HttpError } from '../middleware/error.ts'
+import { cvSchema } from '../schemas/cv.schema.ts'
 import { reorderSchema } from '../schemas/project.schema.ts'
 import { teamMemberSchema, updateTeamMemberSchema } from '../schemas/team.schema.ts'
 
@@ -130,6 +134,115 @@ adminRouter.delete('/team/:id', async (req, res) => {
   await withPrismaErrors(() => prisma.teamMember.delete({ where: { id: req.params.id } }))
 
   res.status(204).end()
+})
+
+// ── CV ────────────────────────────────────────────────────────────────────────────
+//
+// Sve tri rute stoje ISPOD `/team/:id`, ali imaju svoj segment posle njega, pa ih Express
+// razlikuje bez obzira na redosled — za razliku od `/team/order`, koje bi bez pažnje bilo
+// pročitano kao id.
+
+adminRouter.get('/team/:id/cv', async (req, res) => {
+  const member = await prisma.teamMember.findUnique({
+    where: { id: req.params.id },
+    include: cvInclude,
+  })
+  if (!member) throw new HttpError(404, 'errors.notFound')
+
+  res.json(adminCv(member))
+})
+
+/**
+ * Ceo CV u jednom telu, umesto CRUD-a po kolekciji.
+ *
+ * Četiri kolekcije se ZAMENJUJU u celini, u jednoj transakciji — isti obrazac koji
+ * `projects.ts` koristi za tehnologije projekta. Redosled je deo podatka, a pozicija u
+ * poslatom nizu ga nosi; šesnaest ruta koje bi održavale `sortOrder` po redu rešava isti
+ * problem uz mnogo više površine za greške.
+ *
+ * Cena je da dva admina koja istovremeno uređuju isti CV pišu jedan preko drugog. Uz
+ * jednog korisnika to nije slučaj koji postoji.
+ */
+adminRouter.put('/team/:id/cv', async (req, res) => {
+  const parsed = cvSchema.safeParse(req.body)
+  if (!parsed.success) throw new HttpError(400, 'cv.errors.invalid')
+
+  const { experiences, projects, skills, languages, ...fields } = parsed.data
+  const memberId = req.params.id
+
+  const member = await withPrismaErrors(() =>
+    prisma.$transaction(async (tx) => {
+      await tx.teamMember.update({ where: { id: memberId }, data: fields })
+
+      await tx.cvExperience.deleteMany({ where: { memberId } })
+      await tx.cvProject.deleteMany({ where: { memberId } })
+      await tx.cvSkill.deleteMany({ where: { memberId } })
+      await tx.cvLanguage.deleteMany({ where: { memberId } })
+
+      // `sortOrder` iz indeksa: poslati redosled JESTE redosled u dokumentu.
+      if (experiences.length > 0) {
+        await tx.cvExperience.createMany({
+          data: experiences.map((e, sortOrder) => ({ ...e, memberId, sortOrder })),
+        })
+      }
+      if (projects.length > 0) {
+        await tx.cvProject.createMany({
+          data: projects.map((p, sortOrder) => ({ ...p, memberId, sortOrder })),
+        })
+      }
+      if (skills.length > 0) {
+        await tx.cvSkill.createMany({
+          data: skills.map((s, sortOrder) => ({ ...s, memberId, sortOrder })),
+        })
+      }
+      if (languages.length > 0) {
+        await tx.cvLanguage.createMany({
+          data: languages.map((l, sortOrder) => ({ ...l, memberId, sortOrder })),
+        })
+      }
+
+      return tx.teamMember.findUniqueOrThrow({ where: { id: memberId }, include: cvInclude })
+    }),
+  )
+
+  res.json(adminCv(member))
+})
+
+/**
+ * Gotov PDF.
+ *
+ * `.pdf` je u putanji, ne samo u `Content-Type`: pretraživač i alati koji čuvaju odgovor
+ * iz adresne linije tako dobiju ispravnu ekstenziju čak i kad zaglavlje promakne.
+ */
+adminRouter.get('/team/:id/cv.pdf', async (req, res) => {
+  const lang = req.query.lang === 'en' ? 'en' : 'sr'
+
+  const member = await prisma.teamMember.findUnique({
+    where: { id: req.params.id },
+    include: cvInclude,
+  })
+  if (!member) throw new HttpError(404, 'errors.notFound')
+
+  const pdf = await renderCv(localizeCv(member, lang), lang)
+
+  /*
+   * Ime datoteke se svodi na ASCII.
+   *
+   * `Content-Disposition` je po RFC-u latin-1, pa „Dušan Pavlović" ovde postaje niz upitnika
+   * ili obara zaglavlje. Puno ime i dalje stoji U dokumentu (`info.Title`); ovo je samo
+   * predlog imena za snimanje.
+   */
+  const slug =
+    member.fullName
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9]+/g, '-')
+      .replace(/^-|-$/g, '') || 'cv'
+
+  res.setHeader('Content-Type', 'application/pdf')
+  res.setHeader('Content-Length', pdf.length)
+  res.setHeader('Content-Disposition', `attachment; filename="${slug}-CV-${lang}.pdf"`)
+  res.send(pdf)
 })
 
 teamRouter.use('/admin', adminRouter)

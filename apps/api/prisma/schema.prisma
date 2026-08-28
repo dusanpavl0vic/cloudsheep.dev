@@ -94,14 +94,14 @@ model Project {
   /// Skica. Javni API je ne vraća — vidi se samo u adminu.
   isPublished Boolean @default(false)
 
-  titleSr String
-  titleEn String
+  titleSr   String
+  titleEn   String
   /// Potpis ispod naslova („full-stack", „frontend · mobilne"). NIJE `category`:
   /// kategorija filtrira, ovo se prikazuje, i danas se već razlikuju.
-  catSr   String
-  catEn   String
-  descSr  String @db.Text
-  descEn  String @db.Text
+  catSr     String
+  catEn     String
+  descSr    String @db.Text
+  descEn    String @db.Text
   /// Opis slike projekta. Stoji ovde, a ne uz otpremljenu datoteku, jer opisuje projekat
   /// u kontekstu — ista slika u drugom projektu tražila bi drugi opis. Koristi ga Faza 3.
   captionSr String @default("")
@@ -154,8 +154,8 @@ model Asset {
 
   projectImages ProjectImage[]
   technologies  Technology[]
-  memberAvatars TeamMember[]  @relation("MemberAvatar")
-  memberSeals   TeamMember[]  @relation("MemberSeal")
+  memberAvatars TeamMember[]   @relation("MemberAvatar")
+  memberSeals   TeamMember[]   @relation("MemberSeal")
 }
 
 /// Slika u galeriji projekta. Zaseban model, a ne niz na projektu, zbog redosleda i
@@ -222,9 +222,9 @@ model ProjectTechnology {
 model Profile {
   id String @id @default("singleton")
 
-  fullName String
+  fullName    String
   /// Grad i vremenska zona, kako se prikazuje u podnožju.
-  location String @default("")
+  location    String  @default("")
   /// Prima li nove poslove — prikazuje se kao oznaka u sekciji „Studio".
   isAvailable Boolean @default(true)
 
@@ -251,8 +251,8 @@ model SocialLink {
   /// Slobodan tekst da nova mreža ne traži migraciju; frontend bira ikonicu po njemu.
   platform String
   /// Za `email` ovde stoji `mailto:` adresa — link je link, bez posebnog slučaja.
-  url   String
-  label String
+  url      String
+  label    String
 
   sortOrder Int     @default(0)
   isVisible Boolean @default(true)
@@ -292,6 +292,42 @@ model TeamMember {
   sealId String?
   seal   Asset?  @relation("MemberSeal", fields: [sealId], references: [id], onDelete: SetNull)
 
+  // ── Podaci koji postoje SAMO zbog CV-a ────────────────────────────────────────
+  //
+  // Kontakt je po ČOVEKU, ne po sajtu. `Profile` i `SocialLink` nose kontakt studija i
+  // ostaju netaknuti — čim u timu bude drugi čovek, njegov CV ne sme da nosi tuđi mejl.
+
+  email       String @default("")
+  phone       String @default("")
+  githubUrl   String @default("")
+  linkedinUrl String @default("")
+  websiteUrl  String @default("")
+
+  /// Mesto uz kontakt („Niš, Srbija" / „Niš, Serbia"). Odvojeno od `city`, koje je grad
+  /// FAKULTETA na diplomi — to su dva različita podatka koja se slučajno poklapaju.
+  locationSr String @default("")
+  locationEn String @default("")
+
+  /// Dve-tri rečenice na vrhu CV-a. Prvo što pročita čovek koji gleda četrdeset CV-jeva.
+  summarySr String @default("") @db.Text
+  summaryEn String @default("") @db.Text
+
+  /// Status studija: „Student završne godine" / „Final-year student".
+  educationStatusSr String @default("")
+  educationStatusEn String @default("")
+
+  /// Prosek kao TEKST, ne broj. U CV-u se piše sa skalom („8.57/10.0"); `Decimal` bi tražio
+  /// još jednu kolonu za skalu i formatiranje po jeziku, a ništa se po njemu ne sortira.
+  gpa String @default("")
+
+  educationStartYear Int?
+  educationEndYear   Int?
+
+  cvExperiences CvExperience[]
+  cvProjects    CvProject[]
+  cvSkills      CvSkill[]
+  cvLanguages   CvLanguage[]
+
   sortOrder Int     @default(0)
   isVisible Boolean @default(true)
 
@@ -322,9 +358,114 @@ model ContactMessage {
   /// Kad je `null`, mejl NIJE poslat — poruka je i dalje sačuvana.
   emailSentAt DateTime?
   /// Poruka greške SMTP-a, za dijagnostiku u adminu.
-  emailError String?
+  emailError  String?
 
   createdAt DateTime @default(now())
 
   @@index([isRead, createdAt])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════════
+// CV — podaci koji postoje samo za generisanje PDF-a, po članu tima
+//
+// Nisu vezani za `Project` sa sajta, i to je odluka: CV nosi fakultetske i lične radove
+// kojih na sajtu nema i nikad neće biti („TimberGame", „Triggle"), a sajt nosi studije
+// slučaja koje se pišu za klijente. Deljeni model bi jednu od te dve svrhe kvario.
+//
+// `technologies` je `String[]`, dakle slobodan tekst. `Project.tech` je nekad bio isto to
+// pa je prešao u `Technology` tabelu — ali ZBOG LOGOTIPA, koji se bez tabele nisu mogli
+// dodati bez izmene koda. CV je čist tekst u PDF-u i logotipe nema, pa taj razlog ovde ne
+// važi; obavezan unos u katalog sajta bi samo smetao.
+// ═══════════════════════════════════════════════════════════════════════════════════
+
+/// Radno mesto. Otvoren kraj (`endYear = null`) znači „i dalje traje".
+model CvExperience {
+  id       String     @id @default(uuid())
+  memberId String
+  member   TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  company    String
+  positionSr String @default("")
+  positionEn String @default("")
+  locationSr String @default("")
+  locationEn String @default("")
+
+  /// Mesec je opcion: kad se ne zna, u CV-u stoji samo godina.
+  startYear  Int
+  startMonth Int?
+  endYear    Int?
+  endMonth   Int?
+
+  summarySr String @default("") @db.Text
+  summaryEn String @default("") @db.Text
+
+  bulletsSr    String[]
+  bulletsEn    String[]
+  technologies String[]
+
+  sortOrder Int @default(0)
+
+  @@index([memberId, sortOrder])
+}
+
+/// Projekat u CV-u. Naziv NIJE lokalizovan — imena projekata se ne prevode.
+model CvProject {
+  id       String     @id @default(uuid())
+  memberId String
+  member   TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  name String
+
+  summarySr String @default("") @db.Text
+  summaryEn String @default("") @db.Text
+
+  bulletsSr    String[]
+  bulletsEn    String[]
+  technologies String[]
+
+  /// Napomena u zagradi ispod: „(Kurs: Baze podataka, Elektronski fakultet)".
+  noteSr String @default("")
+  noteEn String @default("")
+
+  year    Int?
+  repoUrl String @default("")
+  liveUrl String @default("")
+
+  sortOrder Int @default(0)
+
+  @@index([memberId, sortOrder])
+}
+
+/// Veština sa godinama iskustva. `group` prazan → stavka se prikazuje bez zaglavlja grupe.
+model CvSkill {
+  id       String     @id @default(uuid())
+  memberId String
+  member   TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  name    String
+  groupSr String @default("")
+  groupEn String @default("")
+
+  /// Godine iskustva, sa jednom decimalom („1.5"). `null` = ne prikazuje se.
+  years Decimal? @db.Decimal(3, 1)
+
+  sortOrder Int @default(0)
+
+  @@index([memberId, sortOrder])
+}
+
+/// Jezik. Nivo je slobodan tekst jer nije uvek CEFR — „B2" i „maternji" stoje jedno uz drugo.
+model CvLanguage {
+  id       String     @id @default(uuid())
+  memberId String
+  member   TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  nameSr  String
+  nameEn  String
+  levelSr String @default("")
+  levelEn String @default("")
+
+  sortOrder Int @default(0)
+
+  @@index([memberId, sortOrder])
 }

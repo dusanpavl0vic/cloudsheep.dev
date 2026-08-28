@@ -1,14 +1,22 @@
 import request from 'supertest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+const cvModelMock = () => ({ deleteMany: vi.fn(), createMany: vi.fn() })
+
 const prismaMock = {
   teamMember: {
     findMany: vi.fn(),
+    findUnique: vi.fn(),
+    findUniqueOrThrow: vi.fn(),
     count: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
     delete: vi.fn(),
   },
+  cvExperience: cvModelMock(),
+  cvProject: cvModelMock(),
+  cvSkill: cvModelMock(),
+  cvLanguage: cvModelMock(),
   $transaction: vi.fn(),
 }
 
@@ -214,5 +222,150 @@ describe('DELETE /admin/team/:id', () => {
       .set('Authorization', `Bearer ${adminToken}`)
 
     expect(res.status).toBe(404)
+  })
+})
+
+describe('CV', () => {
+  /** Član sa praznim CV kolekcijama — `cvInclude` ih uvek vraća, makar kao prazne nizove. */
+  const withCv = (overrides = {}) => ({
+    ...member(),
+    email: 'dusan@primer.dev',
+    phone: '+381 60 000',
+    githubUrl: 'https://github.com/x',
+    linkedinUrl: '',
+    websiteUrl: '',
+    locationSr: 'Niš, Srbija',
+    locationEn: 'Niš, Serbia',
+    summarySr: 'Sažetak',
+    summaryEn: 'Summary',
+    educationStatusSr: 'Student završne godine',
+    educationStatusEn: 'Final-year student',
+    gpa: '8.57/10.0',
+    educationStartYear: 2020,
+    educationEndYear: 2025,
+    cvExperiences: [],
+    cvProjects: [],
+    cvSkills: [],
+    cvLanguages: [],
+    ...overrides,
+  })
+
+  const validCv = {
+    email: 'dusan@primer.dev',
+    experiences: [
+      {
+        company: 'Tremium Software',
+        positionSr: 'Junior inženjer',
+        positionEn: 'Junior Engineer',
+        startYear: 2025,
+        bulletsSr: ['Radio na API-jima.'],
+        bulletsEn: ['Worked on APIs.'],
+        technologies: ['.NET'],
+      },
+    ],
+    skills: [{ name: '.NET', groupSr: 'Backend', groupEn: 'Backend', years: 2 }],
+    languages: [{ nameSr: 'Srpski', nameEn: 'Serbian', levelSr: 'maternji', levelEn: 'native' }],
+  }
+
+  beforeEach(() => {
+    prismaMock.teamMember.findUnique.mockResolvedValue(withCv())
+    prismaMock.teamMember.findUniqueOrThrow.mockResolvedValue(withCv())
+    // `$transaction` dobija funkciju (interaktivna transakcija), pa joj se prosleđuje mock
+    prismaMock.$transaction.mockImplementation((fn: unknown) =>
+      typeof fn === 'function' ? (fn as (tx: unknown) => unknown)(prismaMock) : fn,
+    )
+  })
+
+  it('GET /admin/team/:id/cv vraća ravan oblik za formu', async () => {
+    const res = await request(app())
+      .get('/admin/team/m1/cv')
+      .set('Authorization', `Bearer ${adminToken}`)
+
+    expect(res.status).toBe(200)
+    const body = res.body as { gpa: string; experiences: unknown[]; memberId: string }
+    expect(body.memberId).toBe('m1')
+    expect(body.gpa).toBe('8.57/10.0')
+    expect(body.experiences).toEqual([])
+  })
+
+  it('GET /admin/team/:id/cv daje 404 za nepostojećeg člana', async () => {
+    prismaMock.teamMember.findUnique.mockResolvedValue(null)
+
+    const res = await request(app())
+      .get('/admin/team/nema/cv')
+      .set('Authorization', `Bearer ${adminToken}`)
+
+    expect(res.status).toBe(404)
+  })
+
+  it('PUT /admin/team/:id/cv briše stare kolekcije pre upisa novih', async () => {
+    const res = await request(app())
+      .put('/admin/team/m1/cv')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(validCv)
+
+    expect(res.status).toBe(200)
+    // Zamena u celini je ceo ugovor ove rute — bez brisanja bi se stavke gomilale
+    expect(prismaMock.cvExperience.deleteMany).toHaveBeenCalledWith({ where: { memberId: 'm1' } })
+    expect(prismaMock.cvProject.deleteMany).toHaveBeenCalled()
+    expect(prismaMock.cvSkill.deleteMany).toHaveBeenCalled()
+    expect(prismaMock.cvLanguage.deleteMany).toHaveBeenCalled()
+  })
+
+  it('PUT upisuje sortOrder iz redosleda u nizu', async () => {
+    await request(app())
+      .put('/admin/team/m1/cv')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        ...validCv,
+        skills: [
+          { name: 'A', years: null },
+          { name: 'B', years: null },
+        ],
+      })
+
+    expect(prismaMock.cvSkill.createMany).toHaveBeenCalledWith({
+      data: [
+        expect.objectContaining({ name: 'A', sortOrder: 0 }) as unknown,
+        expect.objectContaining({ name: 'B', sortOrder: 1 }) as unknown,
+      ],
+    })
+  })
+
+  it('PUT odbija godinu van opsega', async () => {
+    const res = await request(app())
+      .put('/admin/team/m1/cv')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ experiences: [{ company: 'X', startYear: 12 }] })
+
+    expect(res.status).toBe(400)
+  })
+
+  it('GET /admin/team/:id/cv.pdf vraća PDF sa imenom datoteke bez dijakritike', async () => {
+    const res = await request(app())
+      .get('/admin/team/m1/cv.pdf?lang=en')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .buffer(true)
+      .parse((response, callback) => {
+        const chunks: Buffer[] = []
+        response.on('data', (c: Buffer) => chunks.push(c))
+        response.on('end', () => {
+          callback(null, Buffer.concat(chunks))
+        })
+      })
+
+    expect(res.status).toBe(200)
+    expect(res.headers['content-type']).toBe('application/pdf')
+    // `Content-Disposition` je latin-1 po RFC-u, pa „Dušan" mora izaći kao „Dusan"
+    expect(res.headers['content-disposition']).toContain('Dusan-Pavlovic-CV-en.pdf')
+    expect((res.body as Buffer).subarray(0, 5).toString()).toBe('%PDF-')
+  })
+
+  it('CV rute traže prijavu i ulogu admina', async () => {
+    expect((await request(app()).get('/admin/team/m1/cv')).status).toBe(401)
+    expect(
+      (await request(app()).get('/admin/team/m1/cv').set('Authorization', `Bearer ${viewerToken}`))
+        .status,
+    ).toBe(403)
   })
 })

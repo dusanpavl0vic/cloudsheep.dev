@@ -1,9 +1,14 @@
 import type {
   Asset,
+  CvExperience,
+  CvLanguage,
+  CvProject,
+  CvSkill,
   GalleryLayout,
   MediaSide,
   Project,
   ProjectImage,
+  TeamMember,
   Technology,
 } from '@prisma/client'
 
@@ -172,3 +177,104 @@ export const adminProject = (p: ProjectWithRelations): AdminProject => ({
   })),
   updatedAt: p.updatedAt,
 })
+
+// ─── CV ─────────────────────────────────────────────────────────────────────────────
+
+/** Član sa svim CV kolekcijama. */
+export type MemberWithCv = TeamMember & {
+  cvExperiences: CvExperience[]
+  cvProjects: CvProject[]
+  cvSkills: CvSkill[]
+  cvLanguages: CvLanguage[]
+}
+
+/**
+ * `include` za CV. Redosled je deo podatka, pa se sortira ovde, jednom — inače bi svako
+ * mesto koje čita CV moralo da ga sortira samo, i pre ili kasnije bi neko zaboravio.
+ */
+export const cvInclude = {
+  cvExperiences: { orderBy: { sortOrder: 'asc' } },
+  cvProjects: { orderBy: { sortOrder: 'asc' } },
+  cvSkills: { orderBy: { sortOrder: 'asc' } },
+  cvLanguages: { orderBy: { sortOrder: 'asc' } },
+} as const
+
+/**
+ * Admin oblik CV-a — RAVAN, jer puni formu, isto kao `adminProject` i `adminMember`.
+ *
+ * `sortOrder` se NE šalje: redosled je već primenjen u `cvInclude`, pa je pozicija u nizu
+ * jedina istina koju forma treba. Slanje oba bi značilo dva izvora redosleda, i pitanje
+ * koji od njih važi kad se raziđu.
+ *
+ * `years` je `Prisma.Decimal`, koji se u JSON-u serijalizuje kao string — otud `Number()`,
+ * da klijent dobije broj kakav i očekuje.
+ */
+export const adminCv = (m: MemberWithCv) => ({
+  memberId: m.id,
+  fullName: m.fullName,
+  roleSr: m.roleSr,
+  roleEn: m.roleEn,
+
+  email: m.email,
+  phone: m.phone,
+  githubUrl: m.githubUrl,
+  linkedinUrl: m.linkedinUrl,
+  websiteUrl: m.websiteUrl,
+  locationSr: m.locationSr,
+  locationEn: m.locationEn,
+  summarySr: m.summarySr,
+  summaryEn: m.summaryEn,
+
+  educationStatusSr: m.educationStatusSr,
+  educationStatusEn: m.educationStatusEn,
+  gpa: m.gpa,
+  educationStartYear: m.educationStartYear,
+  educationEndYear: m.educationEndYear,
+
+  experiences: m.cvExperiences.map((e) => ({
+    company: e.company,
+    positionSr: e.positionSr,
+    positionEn: e.positionEn,
+    locationSr: e.locationSr,
+    locationEn: e.locationEn,
+    startYear: e.startYear,
+    startMonth: e.startMonth,
+    endYear: e.endYear,
+    endMonth: e.endMonth,
+    summarySr: e.summarySr,
+    summaryEn: e.summaryEn,
+    bulletsSr: e.bulletsSr,
+    bulletsEn: e.bulletsEn,
+    technologies: e.technologies,
+  })),
+
+  projects: m.cvProjects.map((p) => ({
+    name: p.name,
+    summarySr: p.summarySr,
+    summaryEn: p.summaryEn,
+    bulletsSr: p.bulletsSr,
+    bulletsEn: p.bulletsEn,
+    technologies: p.technologies,
+    noteSr: p.noteSr,
+    noteEn: p.noteEn,
+    year: p.year,
+    repoUrl: p.repoUrl,
+    liveUrl: p.liveUrl,
+  })),
+
+  skills: m.cvSkills.map((s) => ({
+    name: s.name,
+    groupSr: s.groupSr,
+    groupEn: s.groupEn,
+    years: s.years === null ? null : Number(s.years),
+  })),
+
+  languages: m.cvLanguages.map((l) => ({
+    nameSr: l.nameSr,
+    nameEn: l.nameEn,
+    levelSr: l.levelSr,
+    levelEn: l.levelEn,
+  })),
+})
+
+export type AdminCv = ReturnType<typeof adminCv>
