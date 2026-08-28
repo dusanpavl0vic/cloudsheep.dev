@@ -82,6 +82,14 @@ export const router = createBrowserRouter([
                 },
               },
               {
+                path: ROUTES.TEAM_CV,
+                handle: { crumb: 'nav.team' },
+                lazy: async () => {
+                  const { TeamCvPage } = await import('@/pages/TeamCvPage')
+                  return { Component: TeamCvPage }
+                },
+              },
+              {
                 path: ROUTES.MESSAGES,
                 handle: { crumb: 'nav.messages' },
                 lazy: async () => {

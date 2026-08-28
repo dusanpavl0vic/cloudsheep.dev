@@ -15,6 +15,7 @@ export const ROUTES = {
   TECHNOLOGIES: '/technologies',
   PROFILE: '/profile',
   TEAM: '/team',
+  TEAM_CV: '/team/:id/cv',
   MESSAGES: '/messages',
   NOT_FOUND: '*',
 } as const

@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
 
+import { ROUTES } from '@/lib/routes'
 import { Button, Checkbox } from '@app/ui'
 
 import type { TeamMember } from '../../types'
@@ -112,6 +114,11 @@ export const TeamList = ({
               }}
             >
               {t('common:common.edit')}
+            </Button>
+            {/* CV je zasebna strana, ne još jedna sekcija u formi člana: nosi četiri
+                kolekcije i duplo više polja od svega ostalog zajedno. */}
+            <Button asChild variant="ghost" size="sm">
+              <Link to={ROUTES.TEAM_CV.replace(':id', member.id)}>{t('team.list.cv')}</Link>
             </Button>
             <Button
               variant="ghost"

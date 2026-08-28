@@ -7,7 +7,10 @@
     "editTitle": "Izmena člana",
     "loading": "Učitavanje tima",
     "loadError": "Tim se ne može učitati.",
-    "locales": { "Sr": "sr", "En": "en" },
+    "locales": {
+      "Sr": "sr",
+      "En": "en"
+    },
     "empty": {
       "title": "Još nema članova",
       "body": "Dodaj prvog da bi se sekcija „Studio\" pojavila na sajtu.",
@@ -19,7 +22,8 @@
       "noDiploma": "Bez diplome",
       "noRole": "bez uloge",
       "moveUp": "Pomeri gore",
-      "moveDown": "Pomeri dole"
+      "moveDown": "Pomeri dole",
+      "cv": "CV"
     },
     "form": {
       "fullName": "Ime i prezime",
@@ -44,6 +48,9 @@
       "body": "Obrisati „{fullName}\"? Ova radnja se ne može poništiti.",
       "confirm": "Obriši"
     },
-    "errors": { "required": "Ovo polje je obavezno", "tooLong": "Vrednost je predugačka" }
+    "errors": {
+      "required": "Ovo polje je obavezno",
+      "tooLong": "Vrednost je predugačka"
+    }
   }
 }

@@ -1,0 +1,123 @@
+{
+  "cv": {
+    "title": "CV",
+    "subtitle": "Podaci se čuvaju odvojeno od profila na sajtu i koriste samo za PDF.",
+    "back": "Nazad na tim",
+    "form": {
+      "save": "Sačuvaj CV",
+      "remove": "Ukloni",
+      "downloadSr": "Preuzmi PDF (srpski)",
+      "downloadEn": "Preuzmi PDF (engleski)",
+      "saveFirst": "Sačuvaj izmene pre preuzimanja — PDF se crta iz baze.",
+      "saved": "CV je sačuvan.",
+      "failed": "Čuvanje nije uspelo. Pokušaj ponovo.",
+      "downloadFailed": "Preuzimanje nije uspelo. Pokušaj ponovo."
+    },
+    "hint": {
+      "bothLangs": "Popuni oba jezika — CV se generiše na oba.",
+      "onePerLine": "Jedna stavka po redu.",
+      "commaList": "Odvojeno zarezom.",
+      "monthOptional": "Mesec je opcion.",
+      "emptyMeansNow": "Prazno = posao i dalje traje.",
+      "notTranslated": "Naziv se ne prevodi.",
+      "note": "Npr. „(Kurs: Baze podataka)“.",
+      "yearsOptional": "Godine iskustva, opciono.",
+      "groupOptional": "Npr. „Backend“. Prazno ide na kraj.",
+      "level": "Npr. „B2“ ili „maternji“.",
+      "gpa": "Sa skalom, npr. „8.57/10.0“."
+    },
+    "contact": {
+      "title": "Kontakt",
+      "hint": "Po čoveku, ne po sajtu",
+      "email": "E-mail",
+      "phone": "Telefon",
+      "location": "Lokacija",
+      "locationEn": "Lokacija (EN)",
+      "github": "GitHub",
+      "linkedin": "LinkedIn",
+      "website": "Sajt"
+    },
+    "summary": {
+      "title": "O meni",
+      "hint": "Dve-tri rečenice na vrhu CV-a",
+      "sr": "Sažetak (SR)",
+      "en": "Sažetak (EN)"
+    },
+    "experience": {
+      "title": "Radno iskustvo",
+      "hint": "Trajanje se računa iz datuma",
+      "row": "Posao",
+      "add": "Dodaj posao",
+      "empty": "Još nema unetog radnog iskustva.",
+      "company": "Firma",
+      "position": "Pozicija (SR)",
+      "positionEn": "Pozicija (EN)",
+      "location": "Mesto (SR)",
+      "locationEn": "Mesto (EN)",
+      "start": "Početak",
+      "end": "Kraj",
+      "year": "Godina",
+      "month": "Mesec",
+      "summary": "Opis (SR)",
+      "summaryEn": "Opis (EN)",
+      "bullets": "Stavke (SR)",
+      "bulletsEn": "Stavke (EN)",
+      "technologies": "Tehnologije"
+    },
+    "education": {
+      "title": "Obrazovanje",
+      "hint": "Ostalo se povlači iz podataka o diplomi",
+      "status": "Status (SR)",
+      "statusEn": "Status (EN)",
+      "gpa": "Prosek",
+      "years": "Godine studija"
+    },
+    "projects": {
+      "title": "Projekti",
+      "hint": "Odvojeni od projekata na sajtu",
+      "row": "Projekat",
+      "add": "Dodaj projekat",
+      "empty": "Još nema unetih projekata.",
+      "name": "Naziv",
+      "year": "Godina",
+      "summary": "Opis (SR)",
+      "summaryEn": "Opis (EN)",
+      "bullets": "Stavke (SR)",
+      "bulletsEn": "Stavke (EN)",
+      "technologies": "Tehnologije",
+      "note": "Napomena (SR)",
+      "noteEn": "Napomena (EN)",
+      "repoUrl": "Repozitorijum",
+      "liveUrl": "Adresa uživo"
+    },
+    "skills": {
+      "title": "Veštine",
+      "hint": "Sa godinama iskustva",
+      "row": "Veština",
+      "add": "Dodaj veštinu",
+      "empty": "Još nema unetih veština.",
+      "name": "Naziv",
+      "years": "Godine",
+      "group": "Grupa (SR)",
+      "groupEn": "Grupa (EN)"
+    },
+    "languages": {
+      "title": "Jezici",
+      "hint": "Naziv i nivo",
+      "row": "Jezik",
+      "add": "Dodaj jezik",
+      "empty": "Još nema unetih jezika.",
+      "name": "Jezik (SR)",
+      "nameEn": "Jezik (EN)",
+      "level": "Nivo (SR)",
+      "levelEn": "Nivo (EN)"
+    },
+    "errors": {
+      "required": "Ovo polje je obavezno",
+      "tooLong": "Predugačko",
+      "year": "Unesi ispravnu godinu",
+      "month": "Mesec je broj od 1 do 12",
+      "years": "Unesi broj godina"
+    }
+  }
+}

@@ -6,6 +6,8 @@ import profileEn from '@/features/profile/locales/en.json'
 import profileSr from '@/features/profile/locales/sr.json'
 import projectsEn from '@/features/projects/locales/en.json'
 import projectsSr from '@/features/projects/locales/sr.json'
+import cvEn from '@/features/team/locales/cv.en.json'
+import cvSr from '@/features/team/locales/cv.sr.json'
 import teamEn from '@/features/team/locales/en.json'
 import teamSr from '@/features/team/locales/sr.json'
 import technologiesEn from '@/features/technologies/locales/en.json'
@@ -31,6 +33,7 @@ export const i18n = createI18n({
       technologies: technologiesSr,
       profile: profileSr,
       team: teamSr,
+      cv: cvSr,
       messages: messagesSr,
     },
     en: {
@@ -40,6 +43,7 @@ export const i18n = createI18n({
       technologies: technologiesEn,
       profile: profileEn,
       team: teamEn,
+      cv: cvEn,
       messages: messagesEn,
     },
   },

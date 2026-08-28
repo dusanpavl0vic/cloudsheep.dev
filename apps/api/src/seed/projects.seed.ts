@@ -53,20 +53,20 @@ const PROJECTS = [
   },
   {
     slug: 'booksphere',
-    category: 'backend',
+    category: 'fullStack',
     year: 2026,
     titleSr: 'BookSphere',
     titleEn: 'BookSphere',
-    catSr: 'backend · tri baze',
-    catEn: 'backend · three databases',
+    catSr: 'full-stack · tri baze',
+    catEn: 'full-stack · three databases',
     descSr:
-      'Društvena platforma za čitaoce — preporuke knjiga, klubovi i interakcija uživo. Backend je slojevit: kontroleri, servisi i repozitorijumi stoje odvojeno, a `drivers` sloj drži tri baze iza istog interfejsa. Neo4j nosi veze između čitalaca i naslova, MongoDB sadržaj, Redis keš i stanje sesija.',
+      'Društvena platforma za čitaoce — preporuke knjiga, klubovi i razgovor uživo. Rađen i backend i frontend: Express sa slojevima kontrolera, servisa i repozitorijuma, React klijent na Tailwind-u, a Socket.IO nosi poruke u realnom vremenu. Tri baze iza istog `drivers` sloja — Neo4j za veze između čitalaca i naslova, MongoDB za sadržaj, Redis za keš i sesije.',
     descEn:
-      'A social platform for readers — book recommendations, clubs and live interaction. The backend is layered: controllers, services and repositories stay separate, and a `drivers` layer keeps three databases behind one interface. Neo4j holds relationships between readers and titles, MongoDB the content, Redis cache and session state.',
+      'A social platform for readers — book recommendations, clubs and live conversation. Both backend and frontend: Express with layered controllers, services and repositories, a React client on Tailwind, and Socket.IO carrying real-time messages. Three databases behind one `drivers` layer — Neo4j for relationships between readers and titles, MongoDB for content, Redis for cache and sessions.',
     captionSr: 'BookSphere — pregled aplikacije',
     captionEn: 'BookSphere — application overview',
     repoUrl: 'https://github.com/Aarass/BookSphere',
-    tech: ['TypeScript', 'Node.js', 'MongoDB', 'Redis'],
+    tech: ['TypeScript', 'Node.js', 'React', 'MongoDB', 'Redis'],
   },
   {
     slug: 'sporthub',

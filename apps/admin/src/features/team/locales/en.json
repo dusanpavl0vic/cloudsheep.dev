@@ -7,7 +7,10 @@
     "editTitle": "Edit member",
     "loading": "Loading team",
     "loadError": "Team could not be loaded.",
-    "locales": { "Sr": "sr", "En": "en" },
+    "locales": {
+      "Sr": "sr",
+      "En": "en"
+    },
     "empty": {
       "title": "No members yet",
       "body": "Add the first one so the “Studio” section shows up on the site.",
@@ -19,7 +22,8 @@
       "noDiploma": "No diploma",
       "noRole": "no role",
       "moveUp": "Move up",
-      "moveDown": "Move down"
+      "moveDown": "Move down",
+      "cv": "CV"
     },
     "form": {
       "fullName": "Full name",
@@ -44,6 +48,9 @@
       "body": "Delete “{fullName}”? This cannot be undone.",
       "confirm": "Delete"
     },
-    "errors": { "required": "This field is required", "tooLong": "The value is too long" }
+    "errors": {
+      "required": "This field is required",
+      "tooLong": "The value is too long"
+    }
   }
 }
