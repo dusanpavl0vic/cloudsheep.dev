@@ -173,6 +173,16 @@ export const renderCv = (cv: CvDoc, lang: CvLang): Promise<Buffer> => {
   // ── iskustvo ─────────────────────────────────────────────────────────────────
   if (cv.experiences.length > 0) {
     section('experience', () => {
+      // Ukupno iskustvo stoji IZNAD spiska: to je broj koji se traži prvi, a sabiranje
+      // datuma po stavkama je posao koji čitalac ne treba da radi.
+      if (cv.totalExperience) {
+        text(`${label('totalExperience', lang)}: ${cv.totalExperience}`, {
+          size: SIZE.meta,
+          bold: true,
+        })
+        doc.y += GAP.entry
+      }
+
       cv.experiences.forEach((exp, index) => {
         if (index > 0) doc.y += GAP.entry
 
@@ -182,7 +192,7 @@ export const renderCv = (cv: CvDoc, lang: CvLang): Promise<Buffer> => {
         text(title, { size: SIZE.heading, bold: true })
         doc.y += GAP.line
 
-        const meta = [exp.range, exp.location].filter(Boolean).join(' · ')
+        const meta = [exp.range, exp.duration, exp.location].filter(Boolean).join(' · ')
         if (meta) {
           text(meta, { size: SIZE.meta, color: COLOR.muted })
           doc.y += GAP.line

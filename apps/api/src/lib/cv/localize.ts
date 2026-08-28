@@ -1,5 +1,5 @@
 import type { MemberWithCv } from '../serialize.ts'
-import { formatRange, type CvLang } from './labels.ts'
+import { formatDuration, formatRange, monthsBetween, type CvLang } from './labels.ts'
 
 /**
  * CV sveden na JEDAN jezik.
@@ -31,10 +31,14 @@ export interface CvDoc {
     position: string
     location: string
     range: string
+    /** „8 meseci" / „2 godine 3 meseca" — računa se iz datuma, ne unosi. */
+    duration: string
     summary: string
     bullets: string[]
     technologies: string[]
   }[]
+  /** Zbir svih zaposlenja. Prazan string kad iskustva nema. */
+  totalExperience: string
 
   projects: {
     name: string
@@ -130,6 +134,10 @@ export const localizeCv = (m: MemberWithCv, lang: CvLang): CvDoc => {
       position: pick(e.positionSr, e.positionEn, lang),
       location: pick(e.locationSr, e.locationEn, lang),
       range: formatRange(e.startYear, e.startMonth, e.endYear, e.endMonth, lang),
+      duration: formatDuration(
+        monthsBetween(e.startYear, e.startMonth, e.endYear, e.endMonth),
+        lang,
+      ),
       summary: pick(e.summarySr, e.summaryEn, lang),
       bullets: lang === 'sr' ? e.bulletsSr : e.bulletsEn,
       technologies: e.technologies,
@@ -159,5 +167,22 @@ export const localizeCv = (m: MemberWithCv, lang: CvLang): CvDoc => {
       name: pick(l.nameSr, l.nameEn, lang),
       level: pick(l.levelSr, l.levelEn, lang),
     })),
+
+    /*
+     * Zbir meseci, ne razlika od prvog do poslednjeg datuma.
+     *
+     * Razlika bi uračunala i pauze između poslova kao radno iskustvo. Zbir preceni samo ako
+     * se dva posla PREKLAPAJU, što je redak slučaj i uvek svestan — a pauze su česte.
+     */
+    totalExperience:
+      m.cvExperiences.length === 0
+        ? ''
+        : formatDuration(
+            m.cvExperiences.reduce(
+              (sum, e) => sum + monthsBetween(e.startYear, e.startMonth, e.endYear, e.endMonth),
+              0,
+            ),
+            lang,
+          ),
   }
 }

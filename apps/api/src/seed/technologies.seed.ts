@@ -16,6 +16,32 @@ import { storeUpload } from '../lib/uploads.ts'
  * u `Technology.slug`. Zato se poklapanje traži po slugu, ne po nazivu.
  */
 
+/**
+ * Nazivi za prikaz. Slug je `csharp`, ali na kartici projekta mora pisati `C#`.
+ *
+ * Ranije je `label` bio postavljan na sam slug, uz napomenu „ispravlja se u adminu" — pa je
+ * na javnom sajtu stajalo `csharp`, `dotnet` i `redis` malim slovima. Ime marke se ne piše
+ * malim slovima, a čekati ručnu ispravku za šesnaest zapisa nema smisla kad su poznati.
+ */
+const LABELS: Record<string, string> = {
+  react: 'React',
+  nextjs: 'Next.js',
+  typescript: 'TypeScript',
+  javascript: 'JavaScript',
+  reactnative: 'React Native',
+  nodejs: 'Node.js',
+  postgresql: 'PostgreSQL',
+  mongodb: 'MongoDB',
+  redis: 'Redis',
+  graphql: 'GraphQL',
+  csharp: 'C#',
+  dotnet: '.NET',
+  docker: 'Docker',
+  github: 'GitHub',
+  chrome: 'Chrome',
+  figma: 'Figma',
+}
+
 /** Grupe su preslikane iz starog `lib/tech.ts`; nove tehnologije dobijaju `tooling`. */
 const GROUPS: Record<string, string> = {
   react: 'frontend',
@@ -64,8 +90,7 @@ export async function seedTechnologies(prisma: PrismaClient, iconDir: string): P
       create: {
         slug,
         // Bez unosa u `Technology` (npr. `redis`, koji nijedan projekat ne koristi)
-        // naziv se izvodi iz sluga — ispravlja se u adminu.
-        label: slug,
+        label: LABELS[slug] ?? slug,
         group: GROUPS[slug] ?? 'tooling',
         logoId: asset.id,
       },

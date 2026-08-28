@@ -1,89 +1,89 @@
 import type { PrismaClient } from '@prisma/client'
 
 /**
- * Pet projekata koji su do sada bili hardkodovani.
+ * Stvarni radovi, sa `github.com/dusanpavl0vic`.
  *
- * Prepisano iz `apps/web/src/features/projects/projects.constants.ts` (struktura) i
- * `apps/web/src/features/projects/locales/{sr,en}.json` (tekst) — dva sloja koja su
- * opisivala isti sadržaj, a sada su jedan red u bazi.
+ * Do sada je ovde stajalo pet IZMIŠLJENIH projekata prepisanih iz starih konstanti —
+ * „Atlas Analytics" sa 40k događaja u minuti, „Forge CMS" sa 1.2k zvezdica. Portfolio sa
+ * netačnim brojkama je gori od praznog: prvo pitanje na razgovoru je „pokaži", a pokazati
+ * se nema šta.
  *
- * Bez ovoga bi sajt posle deploya bio prazan: baza je prazna, a konstante su obrisane.
+ * **Opisi nose ARHITEKTURU, ne spisak alata.** Tagovi ispod kartice pokrivaju stek; ono
+ * što se iz njega ne vidi — kako su servisi podeljeni, čime komuniciraju, koji sloj gde
+ * stoji — stoji u tekstu. To je jedino što razlikuje projekat od `package.json`-a.
+ *
+ * Tagovi koriste SAMO tehnologije koje već postoje u katalogu, dakle one sa logotipom.
+ * `TechTile` bez logotipa pada na inicijal, pa bi MQTT, gRPC i NATS mrežu na početnoj
+ * pretvorili u niz slova u kvadratićima. Te tehnologije su zato imenovane u opisu.
  */
 const PROJECTS = [
   {
-    slug: 'atlas-analytics',
+    slug: 'f1-race-iot-platform',
+    category: 'fullStack',
+    year: 2026,
+    titleSr: 'F1 Race IoT Platform',
+    titleEn: 'F1 Race IoT Platform',
+    catSr: 'mikroservisi · IoT',
+    catEn: 'microservices · IoT',
+    descSr:
+      'Platforma koja reprodukuje telemetriju Formule 1 i obrađuje je u realnom vremenu. Tri nezavisna servisa — reprodukcija zapisa, normalizacija događaja i stanje trke — razmenjuju poruke preko MQTT-a, a svaki je iznutra podeljen na Domain, Application i API sloj. Dashboard prati trku uživo. Ceo sistem se diže jednom `docker compose` komandom.',
+    descEn:
+      'A platform that replays Formula 1 telemetry and processes it in real time. Three independent services — feed replay, event normalization and race state — exchange messages over MQTT, and each is split internally into Domain, Application and API layers. A dashboard follows the race live. The whole system comes up with one `docker compose` command.',
+    captionSr: 'F1 Race IoT Platform — dashboard trke',
+    captionEn: 'F1 Race IoT Platform — race dashboard',
+    repoUrl: 'https://github.com/dusanpavl0vic/F1RaceIoTSimulationPlatform',
+    tech: ['csharp', 'dotnet', 'TypeScript', 'PostgreSQL', 'Docker'],
+  },
+  {
+    slug: 'health-monitoring',
     category: 'fullStack',
     year: 2025,
-    titleSr: 'Atlas Analytics',
-    titleEn: 'Atlas Analytics',
-    catSr: 'full-stack',
-    catEn: 'full-stack',
+    titleSr: 'HealthMonitoring',
+    titleEn: 'HealthMonitoring',
+    catSr: 'mikroservisi · IoT',
+    catEn: 'microservices · IoT',
     descSr:
-      'Analitički dashboard za fintech tim — 40k događaja u minuti, upiti ispod sekunde, isporučen za 14 nedelja.',
+      'IoT sistem za praćenje zdravstvenih parametara, napisan u četiri jezika jer svaki servis rešava drugačiji problem: C# nosi upis i migracije, TypeScript obradu događaja, Python analitiku i modele, Go generator senzora. Komunikacija ide kroz gateway, MQTT i NATS, a između servisa gRPC-om preko deljenih `.proto` ugovora.',
     descEn:
-      'Analytics dashboard for a fintech team — 40k events/min, sub-second queries, shipped in 14 weeks.',
-    captionSr: 'Atlas Analytics — snimak dashboarda',
-    captionEn: 'Atlas Analytics — dashboard screenshot',
-    tech: ['Next.js', 'TypeScript', 'PostgreSQL'],
+      'An IoT system for health monitoring, written in four languages because each service solves a different problem: C# handles persistence and migrations, TypeScript event processing, Python analytics and models, Go the sensor generator. Traffic goes through a gateway, MQTT and NATS, and between services over gRPC with shared `.proto` contracts.',
+    captionSr: 'HealthMonitoring — pregled servisa',
+    captionEn: 'HealthMonitoring — service overview',
+    repoUrl: 'https://github.com/dusanpavl0vic/HealthMonitoring',
+    tech: ['csharp', 'TypeScript', 'PostgreSQL', 'Docker'],
   },
   {
-    slug: 'nis-transit',
-    category: 'frontend',
-    year: 2024,
-    titleSr: 'Niš Transit',
-    titleEn: 'Niš Transit',
-    catSr: 'frontend · mobilne',
-    catEn: 'frontend · mobile',
-    descSr:
-      'Praćenje autobusa u realnom vremenu za grad Niš — 12k mesečnih korisnika na iOS-u i Androidu.',
-    descEn: 'Real-time bus tracking for the city of Niš — 12k monthly riders on iOS and Android.',
-    captionSr: 'Niš Transit — ekrani aplikacije',
-    captionEn: 'Niš Transit — app screens',
-    tech: ['React Native', 'Node.js', 'GTFS'],
-  },
-  {
-    slug: 'forge-cms',
-    category: 'openSource',
-    year: 2024,
-    titleSr: 'Forge CMS',
-    titleEn: 'Forge CMS',
-    catSr: 'otvoreni kod',
-    catEn: 'open source',
-    descSr:
-      'Headless CMS zasnovan na blokovima sa drag-and-drop graditeljem stranica — 1.2k zvezdica na GitHub-u.',
-    descEn: 'Block-based headless CMS with a drag-and-drop page builder — 1.2k GitHub stars.',
-    captionSr: 'Forge CMS — snimak editora',
-    captionEn: 'Forge CMS — editor screenshot',
-    tech: ['React', 'MongoDB', 'Docker'],
-  },
-  {
-    slug: 'pulse-api',
+    slug: 'booksphere',
     category: 'backend',
-    year: 2023,
-    titleSr: 'Pulse API',
-    titleEn: 'Pulse API',
-    catSr: 'backend',
-    catEn: 'backend',
-    descSr: 'API za prikupljanje zdravstvenih metrika — 99.98% uptime kroz dve godine produkcije.',
-    descEn: 'Health-metrics ingestion API — 99.98% uptime across two years of production traffic.',
-    captionSr: 'Pulse API — dokumentacija / dashboard',
-    captionEn: 'Pulse API — docs / dashboard',
-    tech: ['Node.js', 'PostgreSQL', 'Docker'],
+    year: 2026,
+    titleSr: 'BookSphere',
+    titleEn: 'BookSphere',
+    catSr: 'backend · tri baze',
+    catEn: 'backend · three databases',
+    descSr:
+      'Društvena platforma za čitaoce — preporuke knjiga, klubovi i interakcija uživo. Backend je slojevit: kontroleri, servisi i repozitorijumi stoje odvojeno, a `drivers` sloj drži tri baze iza istog interfejsa. Neo4j nosi veze između čitalaca i naslova, MongoDB sadržaj, Redis keš i stanje sesija.',
+    descEn:
+      'A social platform for readers — book recommendations, clubs and live interaction. The backend is layered: controllers, services and repositories stay separate, and a `drivers` layer keeps three databases behind one interface. Neo4j holds relationships between readers and titles, MongoDB the content, Redis cache and session state.',
+    captionSr: 'BookSphere — pregled aplikacije',
+    captionEn: 'BookSphere — application overview',
+    repoUrl: 'https://github.com/Aarass/BookSphere',
+    tech: ['TypeScript', 'Node.js', 'MongoDB', 'Redis'],
   },
   {
-    slug: 'meridian',
+    slug: 'sporthub',
     category: 'fullStack',
-    year: 2023,
-    titleSr: 'Meridian',
-    titleEn: 'Meridian',
+    year: 2026,
+    titleSr: 'SportHub',
+    titleEn: 'SportHub',
     catSr: 'full-stack',
     catEn: 'full-stack',
     descSr:
-      'Platforma za rezervacije za berlinski studio — sinhronizacija kalendara, plaćanja, višejezični UI.',
-    descEn: 'Booking platform for a Berlin studio — calendar sync, payments, multilingual UI.',
-    captionSr: 'Meridian — tok rezervacije',
-    captionEn: 'Meridian — booking flow',
-    tech: ['Next.js', 'Stripe', 'PostgreSQL'],
+      'Full-stack aplikacija za sportske sadržaje, podeljena na API i klijent u istom repou. Backend je NestJS sa Prisma ORM-om nad PostgreSQL-om, prijava ide kroz JWT i Passport.js, a klijent je Angular. Oba dela se pokreću iz jednog `docker compose` fajla.',
+    descEn:
+      'A full-stack sports application, split into API and client in one repository. The backend is NestJS with Prisma ORM over PostgreSQL, authentication goes through JWT and Passport.js, and the client is Angular. Both parts run from a single `docker compose` file.',
+    captionSr: 'SportHub — ekrani aplikacije',
+    captionEn: 'SportHub — app screens',
+    repoUrl: 'https://github.com/dusanpavl0vic/SportHub',
+    tech: ['TypeScript', 'PostgreSQL', 'Node.js', 'Docker'],
   },
 ] as const
 
