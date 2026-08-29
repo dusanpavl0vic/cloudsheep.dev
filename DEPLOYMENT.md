@@ -62,7 +62,7 @@ I obrnuto: pošto završe u bundle-u, `VITE_*` vrednosti su **javno čitljive**.
 
 ### Spisak
 
-Pun ugovor sa komentarima je u [`.env.example`](.env.example). Ukratko:
+Pun ugovor sa komentarima je u [`.env.production.example`](.env.production.example). Ukratko:
 
 | Promenljiva        | Tip     | Resurs         | Napomena                                     |
 | ------------------ | ------- | -------------- | -------------------------------------------- |
@@ -74,7 +74,7 @@ Pun ugovor sa komentarima je u [`.env.example`](.env.example). Ukratko:
 | `COOKIE_DOMAIN`    | runtime | `api`          | `.cloudsheep.dev` — vodeća tačka je obavezna |
 | `NODE_ENV`, `PORT` | runtime | `api`          | `production`, `3000`                         |
 
-Prave vrednosti žive **samo u Coolify UI-ju**. U repou je samo `.env.example`.
+Prave vrednosti žive **samo u Coolify UI-ju**. U repou su samo ugovori: `.env.production.example` za deploy, `apps/*/.env.example` za lokalni rad.
 
 ### Lokalno
 
@@ -84,7 +84,7 @@ cp apps/admin/.env.example apps/admin/.env
 cp apps/web/.env.example apps/web/.env
 ```
 
-`.env` i `.env.*` su u `.gitignore` (osim `.env.example`).
+`.env` i `.env.*` su u `.gitignore` (osim ta dva ugovora).
 
 ## 4. Pre push-a u `prod`
 

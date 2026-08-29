@@ -39,11 +39,14 @@ brand/
 # Deploy
 
 # Env
-# `.env.example` je ugovor i JESTE praćen; sve ostalo nosi stvarne vrednosti.
-# Nijedan obrazac nema kosu crtu, pa negacija važi i u `apps/*/`.
+# Ugovori se PRATE, vrednosti nikad. Dva su, i imena kažu koje okruženje opisuju:
+#   `apps/*/.env.example`      → lokalni rad, kopira se u `.env`
+#   `.env.production.example`  → šta se upisuje u Coolify; ovde se ne kopira nigde
+# Nijedan obrazac nema kosu crtu, pa negacije važe i u `apps/*/`.
 .env
 .env.*
 !.env.example
+!.env.production.example
 *.local
 
 # Tajne koje ne smeju u repo ni slučajno

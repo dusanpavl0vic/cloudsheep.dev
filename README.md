@@ -111,7 +111,7 @@ Najvažnija razlika, i najčešći uzrok „radi lokalno, ne radi na serveru":
 | `NODE_ENV`, `PORT` | runtime                                  | Environment Variables      | `api`          |
 
 `VITE_*` postavljena kao obična env varijabla **nema nikakvog efekta** — bundle je već
-napravljen. Pun spisak sa komentarima: [`.env.example`](.env.example).
+napravljen. Pun spisak sa komentarima: [`.env.production.example`](.env.production.example).
 
 ### Rollback
 

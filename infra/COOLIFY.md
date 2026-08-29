@@ -94,7 +94,7 @@ SEED_ADMIN_NAME=<ime>
 ```
 
 `SEED_ADMIN_*` postoje da bi nalog bio u bazi **odmah posle prvog deploya**, bez ručnog
-koraka. Ovde im je jedino mesto — u repou ne postoje ni u `.env.example` (tamo je samo
+koraka. Ovde im je jedino mesto — u repou ne postoje ni u `.env.production.example` (tamo je samo
 prazan placeholder). Coolify ih čuva šifrovane; obeleži ih kao secret ako ti nudi.
 
 Kad nalog jednom postoji, ove tri varijable slobodno mogu i da se obrišu — seed će se
