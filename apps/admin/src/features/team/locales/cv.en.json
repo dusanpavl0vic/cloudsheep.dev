@@ -11,7 +11,8 @@
       "saveFirst": "Save your changes first — the PDF is drawn from the database.",
       "saved": "CV saved.",
       "failed": "Saving failed. Please try again.",
-      "downloadFailed": "Download failed. Please try again."
+      "downloadFailed": "Download failed. Please try again.",
+      "invalid": "Some fields are invalid — check the sections above."
     },
     "hint": {
       "bothLangs": "Fill both languages — the CV is generated in both.",
@@ -19,10 +20,6 @@
       "commaList": "Comma-separated.",
       "monthOptional": "Month is optional.",
       "emptyMeansNow": "Empty = still working there.",
-      "notTranslated": "Names are not translated.",
-      "note": "E.g. “(Course: Databases)”.",
-      "yearsOptional": "Years of experience, optional.",
-      "groupOptional": "E.g. “Backend”. Empty goes last.",
       "level": "E.g. “B2” or “native”.",
       "gpa": "With the scale, e.g. “8.57/10.0”."
     },
@@ -72,35 +69,6 @@
       "gpa": "GPA",
       "years": "Study years"
     },
-    "projects": {
-      "title": "Projects",
-      "hint": "Separate from the site projects",
-      "row": "Project",
-      "add": "Add project",
-      "empty": "No projects added yet.",
-      "name": "Name",
-      "year": "Year",
-      "summary": "Summary (SR)",
-      "summaryEn": "Summary (EN)",
-      "bullets": "Bullets (SR)",
-      "bulletsEn": "Bullets (EN)",
-      "technologies": "Technologies",
-      "note": "Note (SR)",
-      "noteEn": "Note (EN)",
-      "repoUrl": "Repository",
-      "liveUrl": "Live URL"
-    },
-    "skills": {
-      "title": "Skills",
-      "hint": "With years of experience",
-      "row": "Skill",
-      "add": "Add skill",
-      "empty": "No skills added yet.",
-      "name": "Name",
-      "years": "Years",
-      "group": "Group (SR)",
-      "groupEn": "Group (EN)"
-    },
     "languages": {
       "title": "Languages",
       "hint": "Name and level",
@@ -116,8 +84,7 @@
       "required": "This field is required",
       "tooLong": "Too long",
       "year": "Enter a valid year",
-      "month": "Month is a number from 1 to 12",
-      "years": "Enter a number of years"
+      "month": "Month is a number from 1 to 12"
     },
     "siteProjects": {
       "title": "Site projects",

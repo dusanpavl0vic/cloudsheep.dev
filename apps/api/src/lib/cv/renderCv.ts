@@ -285,29 +285,6 @@ export const renderCv = (cv: CvDoc, lang: CvLang): Promise<Buffer> => {
     })
   }
 
-  // ── veštine ──────────────────────────────────────────────────────────────────
-  if (cv.skillGroups.length > 0) {
-    section('skills', () => {
-      cv.skillGroups.forEach((group, index) => {
-        if (index > 0) doc.y += GAP.line * 2
-
-        const items = group.items
-          .map((s) =>
-            s.years === null
-              ? s.name
-              : `${s.name} (${String(s.years)} ${label('yearsShort', lang)})`,
-          )
-          .join(' · ')
-
-        if (group.group !== '') {
-          text(group.group, { size: SIZE.meta, bold: true })
-          doc.y += GAP.bullet
-        }
-        text(items, { color: COLOR.muted })
-      })
-    })
-  }
-
   // ── jezici ───────────────────────────────────────────────────────────────────
   if (cv.languages.length > 0) {
     section('languages', () => {

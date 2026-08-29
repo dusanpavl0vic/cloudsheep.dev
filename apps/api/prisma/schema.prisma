@@ -325,8 +325,6 @@ model TeamMember {
   educationEndYear   Int?
 
   cvExperiences  CvExperience[]
-  cvProjects     CvProject[]
-  cvSkills       CvSkill[]
   cvLanguages    CvLanguage[]
   cvSiteProjects CvSiteProject[]
 
@@ -386,9 +384,9 @@ model ContactMessage {
 /// CV-u nose iste podatke — naziv, opis, tehnologije, adrese — pa se u CV povlače odatle,
 /// a menjaju na jednom mestu.
 ///
-/// `CvProject` ostaje uz ovo, za radove kojih na sajtu nema i neće biti: fakultetski
-/// projekti, vežbe, tuđi repozitorijumi. Redosled je zajednički — `sortOrder` iz obe tabele
-/// se spaja pri renderovanju, pa se u CV-u mogu prepletati.
+/// Ovo je JEDINI izvor projekata u CV-u. Postojala je i tabela slobodnih CV projekata, pa je
+/// uklonjena prazna: dva mesta na kojima se opisuje isti rad znače dva opisa koja se raziđu.
+/// Rad koji treba u CV, a nije za javni prikaz, ide na sajt kao `isPublished: false`.
 model CvSiteProject {
   id        String     @id @default(uuid())
   memberId  String
@@ -431,52 +429,6 @@ model CvExperience {
   bulletsSr    String[]
   bulletsEn    String[]
   technologies String[]
-
-  sortOrder Int @default(0)
-
-  @@index([memberId, sortOrder])
-}
-
-/// Projekat u CV-u. Naziv NIJE lokalizovan — imena projekata se ne prevode.
-model CvProject {
-  id       String     @id @default(uuid())
-  memberId String
-  member   TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
-
-  name String
-
-  summarySr String @default("") @db.Text
-  summaryEn String @default("") @db.Text
-
-  bulletsSr    String[]
-  bulletsEn    String[]
-  technologies String[]
-
-  /// Napomena u zagradi ispod: „(Kurs: Baze podataka, Elektronski fakultet)".
-  noteSr String @default("")
-  noteEn String @default("")
-
-  year    Int?
-  repoUrl String @default("")
-  liveUrl String @default("")
-
-  sortOrder Int @default(0)
-
-  @@index([memberId, sortOrder])
-}
-
-/// Veština sa godinama iskustva. `group` prazan → stavka se prikazuje bez zaglavlja grupe.
-model CvSkill {
-  id       String     @id @default(uuid())
-  memberId String
-  member   TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
-
-  name    String
-  groupSr String @default("")
-  groupEn String @default("")
-
-  /// Godine iskustva, sa jednom decimalom („1.5"). `null` = ne prikazuje se.
-  years Decimal? @db.Decimal(3, 1)
 
   sortOrder Int @default(0)
 

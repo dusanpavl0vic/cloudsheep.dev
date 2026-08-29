@@ -49,27 +49,6 @@ export interface CvExperience {
   technologies: string[]
 }
 
-export interface CvProject {
-  name: string
-  summarySr: string
-  summaryEn: string
-  bulletsSr: string[]
-  bulletsEn: string[]
-  technologies: string[]
-  noteSr: string
-  noteEn: string
-  year: number | null
-  repoUrl: string
-  liveUrl: string
-}
-
-export interface CvSkill {
-  name: string
-  groupSr: string
-  groupEn: string
-  years: number | null
-}
-
 export interface CvLanguage {
   nameSr: string
   nameEn: string
@@ -82,6 +61,9 @@ export interface CvSiteProject {
   projectId: string
   title: string
   year: number
+  /** Samo za prikaz u formi; dolazi iz `Project` tabele i tamo se menja. */
+  summary: string
+  technologies: string[]
   noteSr: string
   noteEn: string
 }
@@ -100,6 +82,16 @@ export interface Cv {
   locationEn: string
   summarySr: string
   summaryEn: string
+  hasDiploma: boolean
+  universitySr: string
+  universityEn: string
+  degreeSr: string
+  degreeEn: string
+  programmeSr: string
+  programmeEn: string
+  facultySr: string
+  facultyEn: string
+  city: string
   educationStatusSr: string
   educationStatusEn: string
   gpa: string
@@ -107,8 +99,6 @@ export interface Cv {
   educationEndYear: number | null
   siteProjects: CvSiteProject[]
   experiences: CvExperience[]
-  projects: CvProject[]
-  skills: CvSkill[]
   languages: CvLanguage[]
 }
 

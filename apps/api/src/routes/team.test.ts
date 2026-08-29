@@ -265,7 +265,6 @@ describe('CV', () => {
         technologies: ['.NET'],
       },
     ],
-    skills: [{ name: '.NET', groupSr: 'Backend', groupEn: 'Backend', years: 2 }],
     languages: [{ nameSr: 'Srpski', nameEn: 'Serbian', levelSr: 'maternji', levelEn: 'native' }],
   }
 
@@ -310,27 +309,27 @@ describe('CV', () => {
     // Zamena u celini je ceo ugovor ove rute — bez brisanja bi se stavke gomilale
     expect(prismaMock.cvSiteProject.deleteMany).toHaveBeenCalledWith({ where: { memberId: 'm1' } })
     expect(prismaMock.cvExperience.deleteMany).toHaveBeenCalledWith({ where: { memberId: 'm1' } })
-    expect(prismaMock.cvProject.deleteMany).toHaveBeenCalled()
-    expect(prismaMock.cvSkill.deleteMany).toHaveBeenCalled()
     expect(prismaMock.cvLanguage.deleteMany).toHaveBeenCalled()
   })
 
   it('PUT upisuje sortOrder iz redosleda u nizu', async () => {
+    const a = '11111111-1111-4111-8111-111111111111'
+    const b = '22222222-2222-4222-8222-222222222222'
+
     await request(app())
       .put('/admin/team/m1/cv')
       .set('Authorization', `Bearer ${adminToken}`)
       .send({
         ...validCv,
-        skills: [
-          { name: 'A', years: null },
-          { name: 'B', years: null },
-        ],
+        siteProjects: [{ projectId: a }, { projectId: b }],
       })
 
-    expect(prismaMock.cvSkill.createMany).toHaveBeenCalledWith({
+    // Pozicija u poslatom nizu JESTE redosled u dokumentu — bez ovoga bi se projekti
+    // vraćali proizvoljnim redom pri sledećem učitavanju.
+    expect(prismaMock.cvSiteProject.createMany).toHaveBeenCalledWith({
       data: [
-        expect.objectContaining({ name: 'A', sortOrder: 0 }) as unknown,
-        expect.objectContaining({ name: 'B', sortOrder: 1 }) as unknown,
+        expect.objectContaining({ projectId: a, sortOrder: 0 }) as unknown,
+        expect.objectContaining({ projectId: b, sortOrder: 1 }) as unknown,
       ],
     })
   })

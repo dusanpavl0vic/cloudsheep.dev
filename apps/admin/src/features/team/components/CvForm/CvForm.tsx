@@ -15,10 +15,9 @@ import {
   sectionVariants,
 } from './CvForm.variants'
 import { ExperienceRows } from './ExperienceRows'
+import { LanguageRows } from './LanguageRows'
 import { OPTIONAL_NUMBER } from './numberField'
-import { ProjectRows } from './ProjectRows'
 import { SiteProjectRows } from './SiteProjectRows'
-import { LanguageRows, SkillRows } from './SkillRows'
 import { cvSchema, type CvFormInput } from '../../schemas/cv.schema'
 import type { CvLang } from '../../types'
 
@@ -26,6 +25,8 @@ interface SiteProject {
   id: string
   title: string
   year: number
+  summary: string
+  technologies: string[]
 }
 
 interface CvFormProps {
@@ -39,6 +40,8 @@ interface CvFormProps {
   onDownload: (lang: CvLang) => void
   isSaving: boolean
   isDownloading: boolean
+  /** Ishod poslednjeg čuvanja. `null` dok se ne pokuša. */
+  status: 'saved' | 'failed' | null
 }
 
 /**
@@ -58,6 +61,7 @@ export const CvForm = ({
   onDownload,
   isSaving,
   isDownloading,
+  status,
 }: CvFormProps) => {
   const { t } = useTranslation(['cv', 'common'])
 
@@ -78,6 +82,7 @@ export const CvForm = ({
     await onSubmit(data)
   })
   const busy = isSaving || isSubmitting
+  const hasErrors = Object.keys(errors).length > 0
 
   const section = (title: string, hint: string, body: React.ReactNode) => (
     <section className={sectionVariants()}>
@@ -177,18 +182,6 @@ export const CvForm = ({
       )}
 
       {section(
-        t('cv.projects.title'),
-        t('cv.projects.hint'),
-        <ProjectRows control={control} register={register} />,
-      )}
-
-      {section(
-        t('cv.skills.title'),
-        t('cv.skills.hint'),
-        <SkillRows control={control} register={register} />,
-      )}
-
-      {section(
         t('cv.languages.title'),
         t('cv.languages.hint'),
         <LanguageRows control={control} register={register} />,
@@ -220,6 +213,15 @@ export const CvForm = ({
           {t('cv.form.downloadEn')}
         </Button>
 
+        {/* Tri stanja, jedno mesto. Bez ovoga tiho odbijanje zod validacije izgleda
+            identično kao uspešno čuvanje — u oba slučaja se ništa ne pomeri. */}
+        {hasErrors && <span className={sectionHintVariants()}>{t('cv.form.invalid')}</span>}
+        {!hasErrors && status === 'failed' && (
+          <span className={sectionHintVariants()}>{t('cv.form.failed')}</span>
+        )}
+        {!hasErrors && !isDirty && status === 'saved' && (
+          <span className={sectionHintVariants()}>{t('cv.form.saved')}</span>
+        )}
         {isDirty && <span className={sectionHintVariants()}>{t('cv.form.saveFirst')}</span>}
       </div>
     </form>

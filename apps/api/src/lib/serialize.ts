@@ -2,9 +2,7 @@ import type {
   Asset,
   CvExperience,
   CvLanguage,
-  CvProject,
   CvSiteProject,
-  CvSkill,
   GalleryLayout,
   MediaSide,
   Project,
@@ -184,8 +182,6 @@ export const adminProject = (p: ProjectWithRelations): AdminProject => ({
 /** Član sa svim CV kolekcijama. */
 export type MemberWithCv = TeamMember & {
   cvExperiences: CvExperience[]
-  cvProjects: CvProject[]
-  cvSkills: CvSkill[]
   cvLanguages: CvLanguage[]
   cvSiteProjects: (CvSiteProject & { project: ProjectWithRelations })[]
 }
@@ -200,8 +196,6 @@ export const cvInclude = {
     include: { project: { include: projectInclude } },
   },
   cvExperiences: { orderBy: { sortOrder: 'asc' } },
-  cvProjects: { orderBy: { sortOrder: 'asc' } },
-  cvSkills: { orderBy: { sortOrder: 'asc' } },
   cvLanguages: { orderBy: { sortOrder: 'asc' } },
 } as const
 
@@ -230,6 +224,24 @@ export const adminCv = (m: MemberWithCv) => ({
   locationEn: m.locationEn,
   summarySr: m.summarySr,
   summaryEn: m.summaryEn,
+
+  /*
+   * Polja diplome se vraćaju i OVDE, iako ih nosi i `adminMember`.
+   *
+   * Uređuju se na dva mesta jer se koriste na dva: kartica člana ih prikazuje na sajtu,
+   * CV ih štampa u dokumentu. Ko piše CV misli o obrazovanju kao o celini i ne treba da
+   * skače na drugi ekran zbog naziva smera. Isti red u bazi, dva ulaza.
+   */
+  hasDiploma: m.hasDiploma,
+  universitySr: m.universitySr,
+  universityEn: m.universityEn,
+  degreeSr: m.degreeSr,
+  degreeEn: m.degreeEn,
+  programmeSr: m.programmeSr,
+  programmeEn: m.programmeEn,
+  facultySr: m.facultySr,
+  facultyEn: m.facultyEn,
+  city: m.city,
 
   educationStatusSr: m.educationStatusSr,
   educationStatusEn: m.educationStatusEn,
@@ -262,29 +274,12 @@ export const adminCv = (m: MemberWithCv) => ({
     projectId: sp.projectId,
     title: sp.project.titleSr || sp.project.titleEn,
     year: sp.project.year,
+    /* Opis i tehnologije su SAMO za prikaz u formi — da se vidi šta se dodaje u CV, bez
+       otvaranja projekta u drugom tabu. Server ih pri čuvanju ignoriše. */
+    summary: sp.project.descSr || sp.project.descEn,
+    technologies: sp.project.technologies.map((pt) => pt.technology.label),
     noteSr: sp.noteSr,
     noteEn: sp.noteEn,
-  })),
-
-  projects: m.cvProjects.map((p) => ({
-    name: p.name,
-    summarySr: p.summarySr,
-    summaryEn: p.summaryEn,
-    bulletsSr: p.bulletsSr,
-    bulletsEn: p.bulletsEn,
-    technologies: p.technologies,
-    noteSr: p.noteSr,
-    noteEn: p.noteEn,
-    year: p.year,
-    repoUrl: p.repoUrl,
-    liveUrl: p.liveUrl,
-  })),
-
-  skills: m.cvSkills.map((s) => ({
-    name: s.name,
-    groupSr: s.groupSr,
-    groupEn: s.groupEn,
-    years: s.years === null ? null : Number(s.years),
   })),
 
   languages: m.cvLanguages.map((l) => ({

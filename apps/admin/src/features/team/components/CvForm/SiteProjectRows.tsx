@@ -14,6 +14,8 @@ interface SiteProject {
   id: string
   title: string
   year: number
+  summary: string
+  technologies: string[]
 }
 
 interface Props {
@@ -52,6 +54,13 @@ export const SiteProjectRows = ({ control, register, available }: Props) => {
             remove(index)
           }}
         >
+          {/* Opis i tehnologije se ČITAJU, ne unose: menjaju se na projektu, ne u CV-u.
+              Stoje ovde da se vidi šta ulazi u dokument bez otvaranja drugog ekrana. */}
+          <p className="text-muted-foreground text-[13px]">{field.summary}</p>
+          {field.technologies.length > 0 && (
+            <p className="text-faint font-mono text-[12px]">{field.technologies.join(' · ')}</p>
+          )}
+
           <div className={gridVariants()}>
             <FormField
               label={t('cv.siteProjects.note')}
@@ -83,6 +92,8 @@ export const SiteProjectRows = ({ control, register, available }: Props) => {
                   projectId: project.id,
                   title: project.title,
                   year: project.year,
+                  summary: project.summary,
+                  technologies: project.technologies,
                   noteSr: '',
                   noteEn: '',
                 })

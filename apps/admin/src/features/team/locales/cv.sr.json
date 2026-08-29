@@ -11,7 +11,8 @@
       "saveFirst": "Sačuvaj izmene pre preuzimanja — PDF se crta iz baze.",
       "saved": "CV je sačuvan.",
       "failed": "Čuvanje nije uspelo. Pokušaj ponovo.",
-      "downloadFailed": "Preuzimanje nije uspelo. Pokušaj ponovo."
+      "downloadFailed": "Preuzimanje nije uspelo. Pokušaj ponovo.",
+      "invalid": "Neka polja nisu ispravna — proveri sekcije iznad."
     },
     "hint": {
       "bothLangs": "Popuni oba jezika — CV se generiše na oba.",
@@ -19,10 +20,6 @@
       "commaList": "Odvojeno zarezom.",
       "monthOptional": "Mesec je opcion.",
       "emptyMeansNow": "Prazno = posao i dalje traje.",
-      "notTranslated": "Naziv se ne prevodi.",
-      "note": "Npr. „(Kurs: Baze podataka)“.",
-      "yearsOptional": "Godine iskustva, opciono.",
-      "groupOptional": "Npr. „Backend“. Prazno ide na kraj.",
       "level": "Npr. „B2“ ili „maternji“.",
       "gpa": "Sa skalom, npr. „8.57/10.0“."
     },
@@ -72,35 +69,6 @@
       "gpa": "Prosek",
       "years": "Godine studija"
     },
-    "projects": {
-      "title": "Projekti",
-      "hint": "Odvojeni od projekata na sajtu",
-      "row": "Projekat",
-      "add": "Dodaj projekat",
-      "empty": "Još nema unetih projekata.",
-      "name": "Naziv",
-      "year": "Godina",
-      "summary": "Opis (SR)",
-      "summaryEn": "Opis (EN)",
-      "bullets": "Stavke (SR)",
-      "bulletsEn": "Stavke (EN)",
-      "technologies": "Tehnologije",
-      "note": "Napomena (SR)",
-      "noteEn": "Napomena (EN)",
-      "repoUrl": "Repozitorijum",
-      "liveUrl": "Adresa uživo"
-    },
-    "skills": {
-      "title": "Veštine",
-      "hint": "Sa godinama iskustva",
-      "row": "Veština",
-      "add": "Dodaj veštinu",
-      "empty": "Još nema unetih veština.",
-      "name": "Naziv",
-      "years": "Godine",
-      "group": "Grupa (SR)",
-      "groupEn": "Grupa (EN)"
-    },
     "languages": {
       "title": "Jezici",
       "hint": "Naziv i nivo",
@@ -116,8 +84,7 @@
       "required": "Ovo polje je obavezno",
       "tooLong": "Predugačko",
       "year": "Unesi ispravnu godinu",
-      "month": "Mesec je broj od 1 do 12",
-      "years": "Unesi broj godina"
+      "month": "Mesec je broj od 1 do 12"
     },
     "siteProjects": {
       "title": "Projekti sa sajta",

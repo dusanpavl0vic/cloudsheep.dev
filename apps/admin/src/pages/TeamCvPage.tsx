@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 
@@ -22,6 +23,13 @@ export const TeamCvPage = () => {
   // Projekti sa sajta se dohvataju OVDE: `features/team` ne sme da uvozi `features/projects`,
   // a strana sme oba (docs/01 §2). Otud i prolaze kroz props, a ne kroz hook u formi.
   const { projects, isLoading: projectsLoading } = useProjects()
+  /*
+   * Jedan `useState` za poruku posle čuvanja.
+   *
+   * Bez nje klik na „Sačuvaj" ne menja ništa vidljivo ni kad uspe — a forma je toliko duga
+   * da dugme i vrh strane nikad nisu u istom kadru. „Ne radi" i „radi ćutke" izgledaju isto.
+   */
+  const [status, setStatus] = useState<'saved' | 'failed' | null>(null)
 
   if (isLoading || projectsLoading) return <Spinner label={t('common:common.loading')} />
 
@@ -46,10 +54,16 @@ export const TeamCvPage = () => {
           id: p.id,
           title: p.titleSr || p.titleEn,
           year: p.year,
+          summary: p.descSr || p.descEn,
+          technologies: p.technologies.map((tech) => tech.label),
         }))}
         isSaving={isSaving}
         isDownloading={isDownloading}
-        onSubmit={save}
+        status={status}
+        onSubmit={async (data) => {
+          const result = await save(data)
+          setStatus(result.ok ? 'saved' : 'failed')
+        }}
         onDownload={(lang) => void download(lang)}
       />
     </>

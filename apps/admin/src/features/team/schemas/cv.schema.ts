@@ -63,31 +63,6 @@ export const cvExperienceSchema = z.object({
   technologies: text(600),
 })
 
-export const cvProjectSchema = z.object({
-  name: z.string().trim().min(1, { message: 'cv.errors.required' }).max(120, {
-    message: 'cv.errors.tooLong',
-  }),
-  summarySr: text(600),
-  summaryEn: text(600),
-  bulletsSr: linesText(),
-  bulletsEn: linesText(),
-  technologies: text(600),
-  noteSr: text(160),
-  noteEn: text(160),
-  year: optionalYear(),
-  repoUrl: text(300),
-  liveUrl: text(300),
-})
-
-export const cvSkillSchema = z.object({
-  name: z.string().trim().min(1, { message: 'cv.errors.required' }).max(60, {
-    message: 'cv.errors.tooLong',
-  }),
-  groupSr: text(60),
-  groupEn: text(60),
-  years: z.number().min(0).max(60, { message: 'cv.errors.years' }).nullable(),
-})
-
 export const cvLanguageSchema = z.object({
   nameSr: z.string().trim().min(1, { message: 'cv.errors.required' }).max(60),
   nameEn: z.string().trim().min(1, { message: 'cv.errors.required' }).max(60),
@@ -100,6 +75,8 @@ export const cvSiteProjectSchema = z.object({
   /** Samo za prikaz u formi — server ih ignoriše i čita iz svoje tabele. */
   title: z.string(),
   year: z.number(),
+  summary: z.string(),
+  technologies: z.array(z.string()),
   noteSr: text(160),
   noteEn: text(160),
 })
@@ -114,6 +91,16 @@ export const cvSchema = z.object({
   locationEn: text(80),
   summarySr: text(900),
   summaryEn: text(900),
+  hasDiploma: z.boolean(),
+  universitySr: text(120),
+  universityEn: text(120),
+  degreeSr: text(160),
+  degreeEn: text(160),
+  programmeSr: text(160),
+  programmeEn: text(160),
+  facultySr: text(120),
+  facultyEn: text(120),
+  city: text(80),
   educationStatusSr: text(120),
   educationStatusEn: text(120),
   gpa: text(20),
@@ -122,13 +109,9 @@ export const cvSchema = z.object({
 
   siteProjects: z.array(cvSiteProjectSchema).max(40),
   experiences: z.array(cvExperienceSchema).max(20),
-  projects: z.array(cvProjectSchema).max(40),
-  skills: z.array(cvSkillSchema).max(60),
   languages: z.array(cvLanguageSchema).max(10),
 })
 
 export type CvFormInput = z.infer<typeof cvSchema>
 export type CvExperienceInput = z.infer<typeof cvExperienceSchema>
-export type CvProjectInput = z.infer<typeof cvProjectSchema>
-export type CvSkillInput = z.infer<typeof cvSkillSchema>
 export type CvLanguageInput = z.infer<typeof cvLanguageSchema>

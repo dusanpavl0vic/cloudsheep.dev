@@ -52,31 +52,6 @@ export const cvExperienceSchema = z.object({
   technologies: technologies(),
 })
 
-export const cvProjectSchema = z.object({
-  name: z.string().trim().min(1).max(120),
-  summarySr: text(600),
-  summaryEn: text(600),
-  bulletsSr: bullets(),
-  bulletsEn: bullets(),
-  technologies: technologies(),
-  noteSr: text(160),
-  noteEn: text(160),
-  year: year().nullable().default(null),
-  repoUrl: text(300),
-  liveUrl: text(300),
-})
-
-export const cvSkillSchema = z.object({
-  name: z.string().trim().min(1).max(60),
-  groupSr: text(60),
-  groupEn: text(60),
-  /**
-   * Godine iskustva. `number`, ne `z.coerce.number()` — isti razlog kao kod `Project.year`:
-   * `coerce` lomi tipove `zodResolver`-a na klijentu, pa se pretvaranje radi u formi.
-   */
-  years: z.number().min(0).max(60).nullable().default(null),
-})
-
 export const cvLanguageSchema = z.object({
   nameSr: z.string().trim().min(1).max(60),
   nameEn: z.string().trim().min(1).max(60),
@@ -111,6 +86,18 @@ export const cvSchema = z.object({
   locationEn: text(80),
   summarySr: text(900),
   summaryEn: text(900),
+  /* Polja diplome — ista kolona koju piše i `teamMemberSchema`, drugi ulaz. */
+  hasDiploma: z.boolean().default(false),
+  universitySr: text(120),
+  universityEn: text(120),
+  degreeSr: text(160),
+  degreeEn: text(160),
+  programmeSr: text(160),
+  programmeEn: text(160),
+  facultySr: text(120),
+  facultyEn: text(120),
+  city: text(80),
+
   educationStatusSr: text(120),
   educationStatusEn: text(120),
   gpa: text(20),
@@ -119,8 +106,6 @@ export const cvSchema = z.object({
 
   siteProjects: z.array(cvSiteProjectSchema).max(40).default([]),
   experiences: z.array(cvExperienceSchema).max(20).default([]),
-  projects: z.array(cvProjectSchema).max(40).default([]),
-  skills: z.array(cvSkillSchema).max(60).default([]),
   languages: z.array(cvLanguageSchema).max(10).default([]),
 })
 

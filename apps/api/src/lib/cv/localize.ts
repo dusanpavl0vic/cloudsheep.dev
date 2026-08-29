@@ -50,7 +50,6 @@ export interface CvDoc {
     links: string[]
   }[]
 
-  skillGroups: { group: string; items: { name: string; years: number | null }[] }[]
   languages: { name: string; level: string }[]
 }
 
@@ -60,33 +59,6 @@ const pick = (sr: string, en: string, lang: CvLang) => (lang === 'sr' ? sr : en)
 const studyYears = (from: number | null, to: number | null): string => {
   if (from !== null && to !== null) return `${String(from)} — ${String(to)}`
   return from !== null ? String(from) : to !== null ? String(to) : ''
-}
-
-/**
- * Veštine grupisane po nazivu grupe, uz čuvanje redosleda unosa.
- *
- * Stavke bez grupe idu u jednu bezimenu grupu NA KRAJU — tako se ne meša sa imenovanim
- * grupama i ne traži poseban prolaz u rendereru.
- */
-const groupSkills = (
-  skills: { name: string; groupSr: string; groupEn: string; years: number | null }[],
-  lang: CvLang,
-): CvDoc['skillGroups'] => {
-  const order: string[] = []
-  const byGroup = new Map<string, { name: string; years: number | null }[]>()
-
-  for (const skill of skills) {
-    const group = pick(skill.groupSr, skill.groupEn, lang)
-    if (!byGroup.has(group)) {
-      byGroup.set(group, [])
-      order.push(group)
-    }
-    byGroup.get(group)?.push({ name: skill.name, years: skill.years })
-  }
-
-  return order
-    .sort((a, b) => (a === '' ? 1 : b === '' ? -1 : 0))
-    .map((group) => ({ group, items: byGroup.get(group) ?? [] }))
 }
 
 export const localizeCv = (m: MemberWithCv, lang: CvLang): CvDoc => {
@@ -143,13 +115,7 @@ export const localizeCv = (m: MemberWithCv, lang: CvLang): CvDoc => {
       technologies: e.technologies,
     })),
 
-    /*
-     * Projekti sa SAJTA idu prvi, pa CV-only radovi.
-     *
-     * Studije slučaja pisane za klijente nose više težine od fakultetskih vežbi, a čitalac
-     * CV-a dalje od prve trećine spiska retko stigne. Unutar svake grupe važi redosled iz
-     * admina.
-     */
+    /* Projekti dolaze ISKLJUČIVO sa sajta; redosled je onaj iz admina. */
     projects: [
       ...m.cvSiteProjects.map((sp) => ({
         name: pick(sp.project.titleSr, sp.project.titleEn, lang),
@@ -162,26 +128,7 @@ export const localizeCv = (m: MemberWithCv, lang: CvLang): CvDoc => {
           Boolean(url),
         ),
       })),
-      ...m.cvProjects.map((p) => ({
-        name: p.name,
-        summary: pick(p.summarySr, p.summaryEn, lang),
-        bullets: lang === 'sr' ? p.bulletsSr : p.bulletsEn,
-        technologies: p.technologies,
-        note: pick(p.noteSr, p.noteEn, lang),
-        year: p.year,
-        links: [p.liveUrl, p.repoUrl].filter(Boolean),
-      })),
     ],
-
-    skillGroups: groupSkills(
-      m.cvSkills.map((s) => ({
-        name: s.name,
-        groupSr: s.groupSr,
-        groupEn: s.groupEn,
-        years: s.years === null ? null : Number(s.years),
-      })),
-      lang,
-    ),
 
     languages: m.cvLanguages.map((l) => ({
       name: pick(l.nameSr, l.nameEn, lang),
