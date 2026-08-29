@@ -143,15 +143,35 @@ export const localizeCv = (m: MemberWithCv, lang: CvLang): CvDoc => {
       technologies: e.technologies,
     })),
 
-    projects: m.cvProjects.map((p) => ({
-      name: p.name,
-      summary: pick(p.summarySr, p.summaryEn, lang),
-      bullets: lang === 'sr' ? p.bulletsSr : p.bulletsEn,
-      technologies: p.technologies,
-      note: pick(p.noteSr, p.noteEn, lang),
-      year: p.year,
-      links: [p.liveUrl, p.repoUrl].filter(Boolean),
-    })),
+    /*
+     * Projekti sa SAJTA idu prvi, pa CV-only radovi.
+     *
+     * Studije slučaja pisane za klijente nose više težine od fakultetskih vežbi, a čitalac
+     * CV-a dalje od prve trećine spiska retko stigne. Unutar svake grupe važi redosled iz
+     * admina.
+     */
+    projects: [
+      ...m.cvSiteProjects.map((sp) => ({
+        name: pick(sp.project.titleSr, sp.project.titleEn, lang),
+        summary: pick(sp.project.descSr, sp.project.descEn, lang),
+        bullets: [] as string[],
+        technologies: sp.project.technologies.map((pt) => pt.technology.label),
+        note: pick(sp.noteSr, sp.noteEn, lang),
+        year: sp.project.year,
+        links: [sp.project.liveUrl, sp.project.repoUrl].filter((url): url is string =>
+          Boolean(url),
+        ),
+      })),
+      ...m.cvProjects.map((p) => ({
+        name: p.name,
+        summary: pick(p.summarySr, p.summaryEn, lang),
+        bullets: lang === 'sr' ? p.bulletsSr : p.bulletsEn,
+        technologies: p.technologies,
+        note: pick(p.noteSr, p.noteEn, lang),
+        year: p.year,
+        links: [p.liveUrl, p.repoUrl].filter(Boolean),
+      })),
+    ],
 
     skillGroups: groupSkills(
       m.cvSkills.map((s) => ({

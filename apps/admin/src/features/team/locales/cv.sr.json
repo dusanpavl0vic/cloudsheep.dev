@@ -118,6 +118,16 @@
       "year": "Unesi ispravnu godinu",
       "month": "Mesec je broj od 1 do 12",
       "years": "Unesi broj godina"
+    },
+    "siteProjects": {
+      "title": "Projekti sa sajta",
+      "hint": "Povlače se iz Projekata — opis i tehnologije se ne kucaju ponovo",
+      "empty": "Nijedan projekat sa sajta nije uvršten.",
+      "note": "Napomena (SR)",
+      "noteEn": "Napomena (EN)",
+      "noteHint": "Npr. „moja uloga: backend“. Prazno se ne prikazuje.",
+      "add": "Uvrsti projekat",
+      "none": "Nema projekata na sajtu."
     }
   }
 }

@@ -28,6 +28,7 @@ export const EMPTY_CV: CvFormInput = {
   gpa: '',
   educationStartYear: null,
   educationEndYear: null,
+  siteProjects: [],
   experiences: [],
   projects: [],
   skills: [],
@@ -72,6 +73,8 @@ const toFormValues = (cv: Cv): CvFormInput => ({
   educationStartYear: cv.educationStartYear,
   educationEndYear: cv.educationEndYear,
 
+  siteProjects: cv.siteProjects,
+
   experiences: cv.experiences.map((e) => ({
     ...e,
     bulletsSr: toLines(e.bulletsSr),
@@ -91,6 +94,18 @@ const toFormValues = (cv: Cv): CvFormInput => ({
 /** Oblik forme → telo zahteva. */
 const toPayload = (values: CvFormInput) => ({
   ...values,
+  /*
+   * `title` i `year` se NE šalju nazad.
+   *
+   * Stigli su sa servera samo da forma ima šta da prikaže; slanje bi značilo da klijent
+   * tvrdi kako se projekat zove, a to je podatak koji živi u `Project` tabeli. Server bi ih
+   * ionako odbio — `cvSiteProjectSchema` tamo nema ta polja.
+   */
+  siteProjects: values.siteProjects.map(({ projectId, noteSr, noteEn }) => ({
+    projectId,
+    noteSr,
+    noteEn,
+  })),
   experiences: values.experiences.map((e) => ({
     ...e,
     bulletsSr: fromLines(e.bulletsSr),

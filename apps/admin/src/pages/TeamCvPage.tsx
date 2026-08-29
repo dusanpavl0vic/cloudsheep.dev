@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 
-import { CvForm } from '@/features/team'
-import { useCv } from '@/features/team'
+import { useProjects } from '@/features/projects'
+import { CvForm, useCv } from '@/features/team'
 import { ROUTES } from '@/lib/routes'
 import { PageHeader, Spinner, TextLink } from '@app/ui'
 
@@ -19,8 +19,11 @@ export const TeamCvPage = () => {
   const { t } = useTranslation(['cv', 'common'])
   const { id = '' } = useParams()
   const { cv, values, save, download, isLoading, isSaving, isDownloading } = useCv(id)
+  // Projekti sa sajta se dohvataju OVDE: `features/team` ne sme da uvozi `features/projects`,
+  // a strana sme oba (docs/01 §2). Otud i prolaze kroz props, a ne kroz hook u formi.
+  const { projects, isLoading: projectsLoading } = useProjects()
 
-  if (isLoading) return <Spinner label={t('common:common.loading')} />
+  if (isLoading || projectsLoading) return <Spinner label={t('common:common.loading')} />
 
   return (
     <>
@@ -39,6 +42,11 @@ export const TeamCvPage = () => {
 
       <CvForm
         values={values}
+        siteProjects={projects.map((p) => ({
+          id: p.id,
+          title: p.titleSr || p.titleEn,
+          year: p.year,
+        }))}
         isSaving={isSaving}
         isDownloading={isDownloading}
         onSubmit={save}

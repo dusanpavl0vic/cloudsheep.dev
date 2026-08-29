@@ -13,6 +13,7 @@ const prismaMock = {
     update: vi.fn(),
     delete: vi.fn(),
   },
+  cvSiteProject: cvModelMock(),
   cvExperience: cvModelMock(),
   cvProject: cvModelMock(),
   cvSkill: cvModelMock(),
@@ -243,6 +244,7 @@ describe('CV', () => {
     gpa: '8.57/10.0',
     educationStartYear: 2020,
     educationEndYear: 2025,
+    cvSiteProjects: [],
     cvExperiences: [],
     cvProjects: [],
     cvSkills: [],
@@ -306,6 +308,7 @@ describe('CV', () => {
 
     expect(res.status).toBe(200)
     // Zamena u celini je ceo ugovor ove rute — bez brisanja bi se stavke gomilale
+    expect(prismaMock.cvSiteProject.deleteMany).toHaveBeenCalledWith({ where: { memberId: 'm1' } })
     expect(prismaMock.cvExperience.deleteMany).toHaveBeenCalledWith({ where: { memberId: 'm1' } })
     expect(prismaMock.cvProject.deleteMany).toHaveBeenCalled()
     expect(prismaMock.cvSkill.deleteMany).toHaveBeenCalled()

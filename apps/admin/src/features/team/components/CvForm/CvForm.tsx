@@ -17,12 +17,24 @@ import {
 import { ExperienceRows } from './ExperienceRows'
 import { OPTIONAL_NUMBER } from './numberField'
 import { ProjectRows } from './ProjectRows'
+import { SiteProjectRows } from './SiteProjectRows'
 import { LanguageRows, SkillRows } from './SkillRows'
 import { cvSchema, type CvFormInput } from '../../schemas/cv.schema'
 import type { CvLang } from '../../types'
 
+interface SiteProject {
+  id: string
+  title: string
+  year: number
+}
+
 interface CvFormProps {
   values: CvFormInput
+  /**
+   * Projekti sa sajta, za izbor. Stižu kroz props iz strane, ne uvozom `features/projects` —
+   * feature ne sme da uvozi feature (docs/01 §2), a strana sme oba.
+   */
+  siteProjects: readonly SiteProject[]
   onSubmit: (values: CvFormInput) => Promise<unknown>
   onDownload: (lang: CvLang) => void
   isSaving: boolean
@@ -39,7 +51,14 @@ interface CvFormProps {
  * **Preuzimanje ne čuva.** Dugmad za PDF šalju ono što je POSLEDNJE sačuvano, ne ono što je
  * u formi — server crta iz baze. Zato tekst uz dugmad na to i podseća.
  */
-export const CvForm = ({ values, onSubmit, onDownload, isSaving, isDownloading }: CvFormProps) => {
+export const CvForm = ({
+  values,
+  siteProjects,
+  onSubmit,
+  onDownload,
+  isSaving,
+  isDownloading,
+}: CvFormProps) => {
   const { t } = useTranslation(['cv', 'common'])
 
   const {
@@ -149,6 +168,12 @@ export const CvForm = ({ values, onSubmit, onDownload, isSaving, isDownloading }
             )}
           </FormField>
         </div>,
+      )}
+
+      {section(
+        t('cv.siteProjects.title'),
+        t('cv.siteProjects.hint'),
+        <SiteProjectRows control={control} register={register} available={siteProjects} />,
       )}
 
       {section(

@@ -124,8 +124,9 @@ model Project {
   liveUrl String?
   repoUrl String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  cvSiteProjects CvSiteProject[]
 
   /// Javna lista uvek filtrira po `isPublished` i sortira po `sortOrder`.
   @@index([isPublished, sortOrder])
@@ -323,10 +324,11 @@ model TeamMember {
   educationStartYear Int?
   educationEndYear   Int?
 
-  cvExperiences CvExperience[]
-  cvProjects    CvProject[]
-  cvSkills      CvSkill[]
-  cvLanguages   CvLanguage[]
+  cvExperiences  CvExperience[]
+  cvProjects     CvProject[]
+  cvSkills       CvSkill[]
+  cvLanguages    CvLanguage[]
+  cvSiteProjects CvSiteProject[]
 
   sortOrder Int     @default(0)
   isVisible Boolean @default(true)
@@ -377,6 +379,33 @@ model ContactMessage {
 // dodati bez izmene koda. CV je čist tekst u PDF-u i logotipe nema, pa taj razlog ovde ne
 // važi; obavezan unos u katalog sajta bi samo smetao.
 // ═══════════════════════════════════════════════════════════════════════════════════
+
+/// Projekat SA SAJTA uvršten u CV.
+///
+/// Veza postoji da se isti rad ne bi opisivao dvaput. Studija slučaja na sajtu i stavka u
+/// CV-u nose iste podatke — naziv, opis, tehnologije, adrese — pa se u CV povlače odatle,
+/// a menjaju na jednom mestu.
+///
+/// `CvProject` ostaje uz ovo, za radove kojih na sajtu nema i neće biti: fakultetski
+/// projekti, vežbe, tuđi repozitorijumi. Redosled je zajednički — `sortOrder` iz obe tabele
+/// se spaja pri renderovanju, pa se u CV-u mogu prepletati.
+model CvSiteProject {
+  id        String     @id @default(uuid())
+  memberId  String
+  member    TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  /// Napomena specifična za CV („moja uloga: backend"). Prazna se ne prikazuje.
+  noteSr String @default("")
+  noteEn String @default("")
+
+  sortOrder Int @default(0)
+
+  /// Isti projekat se ne može uvrstiti dvaput u isti CV.
+  @@unique([memberId, projectId])
+  @@index([memberId, sortOrder])
+}
 
 /// Radno mesto. Otvoren kraj (`endYear = null`) znači „i dalje traje".
 model CvExperience {

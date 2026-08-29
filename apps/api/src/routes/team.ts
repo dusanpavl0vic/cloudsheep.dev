@@ -167,19 +167,25 @@ adminRouter.put('/team/:id/cv', async (req, res) => {
   const parsed = cvSchema.safeParse(req.body)
   if (!parsed.success) throw new HttpError(400, 'cv.errors.invalid')
 
-  const { experiences, projects, skills, languages, ...fields } = parsed.data
+  const { siteProjects, experiences, projects, skills, languages, ...fields } = parsed.data
   const memberId = req.params.id
 
   const member = await withPrismaErrors(() =>
     prisma.$transaction(async (tx) => {
       await tx.teamMember.update({ where: { id: memberId }, data: fields })
 
+      await tx.cvSiteProject.deleteMany({ where: { memberId } })
       await tx.cvExperience.deleteMany({ where: { memberId } })
       await tx.cvProject.deleteMany({ where: { memberId } })
       await tx.cvSkill.deleteMany({ where: { memberId } })
       await tx.cvLanguage.deleteMany({ where: { memberId } })
 
       // `sortOrder` iz indeksa: poslati redosled JESTE redosled u dokumentu.
+      if (siteProjects.length > 0) {
+        await tx.cvSiteProject.createMany({
+          data: siteProjects.map((sp, sortOrder) => ({ ...sp, memberId, sortOrder })),
+        })
+      }
       if (experiences.length > 0) {
         await tx.cvExperience.createMany({
           data: experiences.map((e, sortOrder) => ({ ...e, memberId, sortOrder })),

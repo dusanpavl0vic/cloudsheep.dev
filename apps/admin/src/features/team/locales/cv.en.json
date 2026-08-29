@@ -118,6 +118,16 @@
       "year": "Enter a valid year",
       "month": "Month is a number from 1 to 12",
       "years": "Enter a number of years"
+    },
+    "siteProjects": {
+      "title": "Site projects",
+      "hint": "Pulled from Projects — description and technologies are not retyped",
+      "empty": "No site projects included yet.",
+      "note": "Note (SR)",
+      "noteEn": "Note (EN)",
+      "noteHint": "E.g. “my role: backend”. Empty is not shown.",
+      "add": "Include project",
+      "none": "No projects on the site."
     }
   }
 }

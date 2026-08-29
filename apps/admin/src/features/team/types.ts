@@ -77,6 +77,15 @@ export interface CvLanguage {
   levelEn: string
 }
 
+/** Projekat sa sajta uvršten u CV. `title` i `year` dolaze sa servera, samo za prikaz. */
+export interface CvSiteProject {
+  projectId: string
+  title: string
+  year: number
+  noteSr: string
+  noteEn: string
+}
+
 export interface Cv {
   memberId: string
   fullName: string
@@ -96,6 +105,7 @@ export interface Cv {
   gpa: string
   educationStartYear: number | null
   educationEndYear: number | null
+  siteProjects: CvSiteProject[]
   experiences: CvExperience[]
   projects: CvProject[]
   skills: CvSkill[]

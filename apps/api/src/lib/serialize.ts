@@ -3,6 +3,7 @@ import type {
   CvExperience,
   CvLanguage,
   CvProject,
+  CvSiteProject,
   CvSkill,
   GalleryLayout,
   MediaSide,
@@ -186,6 +187,7 @@ export type MemberWithCv = TeamMember & {
   cvProjects: CvProject[]
   cvSkills: CvSkill[]
   cvLanguages: CvLanguage[]
+  cvSiteProjects: (CvSiteProject & { project: ProjectWithRelations })[]
 }
 
 /**
@@ -193,6 +195,10 @@ export type MemberWithCv = TeamMember & {
  * mesto koje čita CV moralo da ga sortira samo, i pre ili kasnije bi neko zaboravio.
  */
 export const cvInclude = {
+  cvSiteProjects: {
+    orderBy: { sortOrder: 'asc' },
+    include: { project: { include: projectInclude } },
+  },
   cvExperiences: { orderBy: { sortOrder: 'asc' } },
   cvProjects: { orderBy: { sortOrder: 'asc' } },
   cvSkills: { orderBy: { sortOrder: 'asc' } },
@@ -246,6 +252,18 @@ export const adminCv = (m: MemberWithCv) => ({
     bulletsSr: e.bulletsSr,
     bulletsEn: e.bulletsEn,
     technologies: e.technologies,
+  })),
+
+  /*
+   * Projekti SA SAJTA, samo kao izbor — forma šalje nazad `projectId`, ne kopiju podataka.
+   * `title` i `year` idu uz njega da lista u adminu ne mora ponovo da dohvata projekte.
+   */
+  siteProjects: m.cvSiteProjects.map((sp) => ({
+    projectId: sp.projectId,
+    title: sp.project.titleSr || sp.project.titleEn,
+    year: sp.project.year,
+    noteSr: sp.noteSr,
+    noteEn: sp.noteEn,
   })),
 
   projects: m.cvProjects.map((p) => ({

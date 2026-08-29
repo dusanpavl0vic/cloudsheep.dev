@@ -95,6 +95,15 @@ export const cvLanguageSchema = z.object({
   levelEn: text(40),
 })
 
+export const cvSiteProjectSchema = z.object({
+  projectId: z.string(),
+  /** Samo za prikaz u formi — server ih ignoriše i čita iz svoje tabele. */
+  title: z.string(),
+  year: z.number(),
+  noteSr: text(160),
+  noteEn: text(160),
+})
+
 export const cvSchema = z.object({
   email: text(120),
   phone: text(40),
@@ -111,6 +120,7 @@ export const cvSchema = z.object({
   educationStartYear: optionalYear(),
   educationEndYear: optionalYear(),
 
+  siteProjects: z.array(cvSiteProjectSchema).max(40),
   experiences: z.array(cvExperienceSchema).max(20),
   projects: z.array(cvProjectSchema).max(40),
   skills: z.array(cvSkillSchema).max(60),

@@ -84,6 +84,13 @@ export const cvLanguageSchema = z.object({
   levelEn: text(40),
 })
 
+/** Projekat sa sajta uvršten u CV: samo veza i napomena, nikad kopija sadržaja. */
+export const cvSiteProjectSchema = z.object({
+  projectId: z.uuid(),
+  noteSr: text(160),
+  noteEn: text(160),
+})
+
 /**
  * Ceo CV u jednom telu.
  *
@@ -110,6 +117,7 @@ export const cvSchema = z.object({
   educationStartYear: year().nullable().default(null),
   educationEndYear: year().nullable().default(null),
 
+  siteProjects: z.array(cvSiteProjectSchema).max(40).default([]),
   experiences: z.array(cvExperienceSchema).max(20).default([]),
   projects: z.array(cvProjectSchema).max(40).default([]),
   skills: z.array(cvSkillSchema).max(60).default([]),
