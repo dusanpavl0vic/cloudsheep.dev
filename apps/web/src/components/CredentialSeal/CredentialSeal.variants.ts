@@ -10,10 +10,22 @@ import { cva } from 'class-variance-authority'
  * oko njega ne skače.
  */
 export const paperVariants = cva(
-  // Senka tek od `sm`. Na telefonu je papir skoro pune širine ekrana, pa se meki oreol
-  // od 40px razliva do ivica i čita kao zamućenje, ne kao dubina. Na širem ekranu papir
-  // ima vazduha oko sebe i senka radi ono zbog čega postoji.
-  'relative isolate rotate-[-0.6deg] rounded-sm bg-plate px-7 py-6 text-start text-plate-ink sm:px-9 sm:py-8 sm:shadow-[0_1px_2px_rgb(0_0_0/0.06),0_18px_40px_-14px_rgb(0_0_0/0.28)]',
+  // Dve senke, ne jedna sa `sm:` prefiksom. Široki oreol od 40px se na telefonu razlivao do
+  // ivica ekrana i čitao kao zamućenje — ali BEZ ijedne senke papir se stapao sa podlogom
+  // sekcije i ostajao samo tačkasti pravougaonik sa linijom, dakle nije se čitao kao
+  // dokument. Zato je na telefonu senka uža i plića, a od `sm` ista kao pre.
+  //
+  // Tekst je centriran do `sm`: papir tamo stoji ispod centrirane kolone (avatar, ime,
+  // uloga), pa je levo poravnat blok izgledao kao da je promašio osu. Od `sm` se vraća na
+  // levo, jer tada papir ima svoju širinu i čita se kao dokument, a ne kao nastavak kartice.
+  //
+  // **Rotacija tek od `sm`.** Scena ringišpila je `overflow-hidden`, a zarotiran papir šalje
+  // uglove izvan svoje kutije — na 375px su ti uglovi padali tačno na rez i papir je delovao
+  // odsečeno. Na širem ekranu ima vazduha oko sebe, pa nagib radi ono zbog čega postoji.
+  //
+  // Padding je na telefonu upola manji (`px-4` naspram `px-9`): sa `px-7` + `px-5` okvira je
+  // od 295px scene ostajalo 199px za tekst, pa se zvanje lomilo u tri reda.
+  'relative isolate rounded-sm bg-plate px-4 py-5 text-center text-plate-ink shadow-[0_1px_2px_rgb(0_0_0/0.05),0_8px_18px_-10px_rgb(0_0_0/0.22)] sm:rotate-[-0.6deg] sm:px-9 sm:py-8 sm:text-start sm:shadow-[0_1px_2px_rgb(0_0_0/0.06),0_18px_40px_-14px_rgb(0_0_0/0.28)]',
   {
     variants: {
       /**
@@ -48,7 +60,7 @@ export const paperVariants = cva(
  * dokument nego kartica. Zato linija, a papir ispod nje i dalje nosi senku, ne drugu ivicu.
  */
 export const paperFrameVariants = cva(
-  'relative flex flex-col gap-3 border border-plate-line/70 px-5 py-6 sm:px-7 sm:py-7',
+  'relative flex flex-col gap-3 border border-plate-line/70 px-4 py-5 sm:px-7 sm:py-7',
 )
 
 /**
@@ -66,10 +78,10 @@ export const paperUniversityVariants = cva(
 
 /** Zvanje — nosivi podatak dokumenta, pa ide u naslovnom fontu i punom mastilu. */
 export const paperDegreeVariants = cva(
-  'font-heading text-[clamp(1.05rem,2.4vw,1.35rem)] leading-tight font-bold text-balance',
+  'font-heading text-[clamp(1rem,2.4vw,1.35rem)] leading-tight font-bold text-balance',
 )
 
-export const paperProgrammeVariants = cva('text-[14px] leading-snug text-plate-ink')
+export const paperProgrammeVariants = cva('text-[14px] leading-snug text-balance text-plate-ink')
 
 /** Linija iznad podnožja — deli zvanje od podataka o ustanovi. */
 export const paperRuleVariants = cva('mt-1 h-px w-full bg-plate-line/60')
@@ -94,7 +106,12 @@ export const paperFooterVariants = cva(
   'font-mono text-[11.5px] leading-relaxed text-plate-ink-muted',
   {
     variants: {
-      stamped: { true: 'pe-[4.5rem] sm:pe-[5.25rem]', false: '' },
+      /**
+       * Razmak za pečat postoji **samo od `sm`**. Do te širine pečat je u GORNJEM desnom
+       * uglu (vidi `paperStampVariants`), pa mu podnožje nije na putu — a `pe` bi tamo
+       * pomerilo centrirani tekst ulevo i pokvarilo osu.
+       */
+      stamped: { true: 'sm:pe-[5.25rem]', false: '' },
     },
     defaultVariants: { stamped: false },
   },
@@ -112,7 +129,14 @@ export const paperFooterSepVariants = cva('text-plate-line')
  * `-end-2` ga gura preko desne ivice okvira — bez toga bi izgledao kao ikonica u uglu.
  */
 export const paperStampVariants = cva(
-  'pointer-events-none absolute -end-2 -bottom-3 size-[86px] rotate-[-11deg] opacity-[0.82] mix-blend-multiply sm:size-[104px]',
+  // Na telefonu pečat NIJE otisnut preko sadržaja nego stoji u toku, centriran ispod
+  // podnožja. Tamo je tekst centriran i papir uzak, pa nema ugla u koji pečat staje: u
+  // donjem desnom je gurao podnožje ulevo, a u gornjem desnom je pokrivao „UNIVERSITY OF
+  // NIŠ". Blago zarotiran ostaje, da se i dalje čita kao otisak a ne kao ikonica.
+  //
+  // Od `sm` se vraća na svoje mesto — otisnut preko sadržaja, dole desno, kako pečat i stoji
+  // na dokumentu.
+  'pointer-events-none relative mx-auto mt-3 block size-[72px] rotate-[-6deg] opacity-[0.82] mix-blend-multiply sm:absolute sm:-end-2 sm:-bottom-3 sm:mx-0 sm:mt-0 sm:size-[104px] sm:rotate-[-11deg]',
 )
 
 export const paperStampImageVariants = cva('size-full object-contain')

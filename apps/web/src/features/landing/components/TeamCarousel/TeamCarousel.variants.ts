@@ -17,7 +17,9 @@ export const carouselWrapVariants = cva('relative mx-auto w-full max-w-[1100px] 
  * `pb-12` pravi mesta pečatu, koji je `absolute -bottom-3` i namerno visi izvan kartice.
  */
 export const carouselStageVariants = cva(
-  'grid items-start justify-items-center overflow-hidden pt-2 pb-12',
+  // `pb` je manji na telefonu: tamo pečat nije `absolute` nego stoji u toku ispod podnožja
+  // (`CredentialSeal.variants.ts`), pa mesto za njegovo visenje izvan kartice nije potrebno.
+  'grid items-start justify-items-center overflow-hidden pt-2 pb-6 sm:pb-12',
 )
 
 /**
@@ -32,7 +34,12 @@ export const carouselStageVariants = cva(
  * i `opacity` — obe se menjaju u istom kadru, pa moraju istom krivom.
  */
 export const carouselCardVariants = cva(
-  'col-start-1 row-start-1 flex w-[min(86vw,460px)] origin-top flex-col items-center gap-5 transition-[transform,opacity,filter] duration-500 ease-[cubic-bezier(0.22,0.61,0.36,1)] motion-reduce:transition-none',
+  // `w-full max-w-[460px]`, ne `w-[min(86vw,460px)]`. Na 375px je `86vw` = 322px, a scena je
+  // tamo široka 295px (`px-4` na omotaču): kartica je bila 27px šira od svog okvira, pa ju je
+  // `overflow-hidden` sekao zdesna — a `justify-items-center` stavku širu od trake poravnava
+  // na POČETAK, pa je uz to izgledala i pomereno ulevo. Vezivanje za `vw` ovde nema šta da
+  // reši: širinu diktira scena, ne prozor.
+  'col-start-1 row-start-1 flex w-full max-w-[460px] origin-top flex-col items-center gap-5 transition-[transform,opacity,filter] duration-500 ease-[cubic-bezier(0.22,0.61,0.36,1)] motion-reduce:transition-none',
   {
     variants: {
       /** Bočne kartice ne primaju klik na svoj sadržaj — klik na njih pomera ringišpil. */
