@@ -40,6 +40,12 @@ merge-om `dev → main`, pa `main → prod`. Nikad ne commit-uj direktno u `main
 TLS radi Traefik uz Let's Encrypt, automatski. `web` i `admin` **nikad ne pričaju
 direktno međusobno** — sve ide kroz `api`.
 
+**DNS drži Cloudflare, domen je registrovan na Namecheapu** — tamo su promenjeni samo
+nameserveri (`infra/SERVER-SETUP.md` §3). Proxy je namerno **isključen** na sva četiri zapisa:
+Cloudflare je imenik, saobraćaj ide pravo na Hetzner. Uključivanje proxyja nije bezopasno —
+traži `Full (strict)` i firewall ograničen na Cloudflare opsege, inače `trust proxy` u
+`apps/api/src/app.ts` počne da veruje zaglavlju koje svako može da pošalje.
+
 ## 3. Env promenljive
 
 ### Build-time vs runtime
