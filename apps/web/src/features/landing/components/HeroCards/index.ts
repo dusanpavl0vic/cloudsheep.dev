@@ -1,1 +1,0 @@
-export { HeroCards } from './HeroCards'

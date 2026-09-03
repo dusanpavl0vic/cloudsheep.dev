@@ -1,0 +1,1 @@
+export { NotFoundThoughts } from './NotFoundThoughts'

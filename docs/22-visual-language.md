@@ -47,6 +47,38 @@ nikad tamna i uska.
 
 Radijus je velik: `rounded-2xl` za kartice, `rounded-3xl` za panele i okvire sekcija.
 
+### 3b. Lebdeći ukras je oblak, ne kartica
+
+Papirne površine koje **lebde oko naslova** (hero, 404) su **oblaci misli**: silueta oblačića
+iz stripa i **rep od tri kružića** koji opadaju ka izvoru misli — naslovu.
+
+Razlog je značenje, ne ukus. Sadržaj tih površina („poslednji deploy", „u toku",
+„lighthouse") nije dokument nego razmišljanje studija; kartica obećava sadržaj koji se može
+otvoriti, oblak ne obećava ništa.
+
+- **Silueta je jedna nacrtana putanja**, `--cloud-mask` u `theme.css`: zatvoren niz od osam
+  lukova oko elipse, bez ijedne prave ivice, primenjen kao `mask-image`.
+  Poluprečnik svakog luka je ~58% njegove tetive — manje daje plitke doline, više izboči luk
+  u balon.
+- **Ne krugovi preko pravougaonika.** Tako je prvo bilo napravljeno i nikad nije dalo oblak:
+  bokovi ostaju pravi, krugovi blizu uglova vise izvan plohe, a `justify-between` uz nužno
+  preklapanje izbacuje poslednji krug van reda. Jedna putanja nema nijedan od tih problema i
+  ne zavisi od širine sadržaja.
+- **Maska ide na zaseban sloj**, nikad na element sa tekstom — inače seče i slova.
+- **Rep uvek gleda ka izvoru.** Oblak gore-levo ima rep na donjem-desnom uglu i obrnuto. Rep
+  koji pokazuje u prazno je crtež, ne znak.
+- **Senka je `drop-shadow` na omotaču**, ne `box-shadow`: prati alfu maske, pa obilazi
+  konturu oblaka umesto njegovog pravougaonog okvira.
+- **Ispod `xl` oblaka nema uopšte.** Naslov je tamo centriran preko cele širine i za lebdeći
+  raspored nema mesta. Probana su i odbačena dva surogata: vodoravna traka koja se prevlači
+  (sakrivala je 3 od 5 misli iza pokreta koji većina posetilaca ne napravi) i jedna misao koja
+  plovi preko kadra (jedna od pet ne opravdava stalan pokret ispod naslova). Ništa je bolje od
+  surogata.
+- **Gasi se u komponenti, ne klasom.** `hidden` bi ostavio pet oblaka u DOM-u da se crtaju i
+  animiraju bez ijednog vidljivog piksela; granicu zato bira `useDevice`.
+- **Ovo važi samo za ukras.** Panelne sekcije (usluge, proces, cene) nose sadržaj i ostaju
+  paneli po §3. Oblak sa domenskom akcijom u sebi je greška.
+
 ### 4. Jedan akcenat, i to štedljivo
 
 Paleta je skoro monohromna — pozadina, tekst, sivi tonovi. **Plava se koristi samo za ono

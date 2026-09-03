@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
-import { HeroCards } from '@/features/landing/components/HeroCards'
+import { HeroThoughts } from '@/features/landing/components/HeroThoughts'
 import { HERO_TERMINAL_KEYS } from '@/features/landing/landing.constants'
 import type { Technology } from '@/features/projects'
 import { useTypewriter } from '@/hooks/useTypewriter'
@@ -155,9 +155,9 @@ export const HeroSection = ({ technologies }: HeroSectionProps) => {
         </Button>
       </div>
 
-      {/* Posle poziva na akciju, jer ispod `xl` postaje traka u toku. Lebdeći raspored je
-          `absolute` u odnosu na sekciju, pa mu mesto u DOM-u ništa ne menja. */}
-      <HeroCards technologies={technologies} />
+      {/* Lebdeći sloj je `absolute` u odnosu na sekciju, pa mu mesto u DOM-u ništa ne menja.
+          Ispod `xl` se ne renderuje uopšte. */}
+      <HeroThoughts technologies={technologies} />
 
       <button type="button" onClick={scrollToNext} className={heroScrollVariants()}>
         {t('hero.scroll')}

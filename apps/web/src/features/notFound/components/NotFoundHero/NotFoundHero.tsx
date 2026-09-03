@@ -6,7 +6,7 @@ import { BRAND, GLYPHS } from '@/lib/glyphs'
 import { ROUTES } from '@/lib/routes'
 import { Button, cn, dottedSurfaceVariants } from '@app/ui'
 
-import { NotFoundCards } from '../NotFoundCards'
+import { NotFoundThoughts } from '../NotFoundThoughts'
 import {
   notFoundCtaVariants,
   notFoundDotsVariants,
@@ -38,7 +38,7 @@ export const NotFoundHero = () => {
         style={{ backgroundImage: AMBIENT_GLOW }}
       />
 
-      <NotFoundCards />
+      <NotFoundThoughts />
 
       <p className={notFoundTerminalVariants()}>
         <span className="text-primary">{GLYPHS.PROMPT}</span>

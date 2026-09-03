@@ -1,0 +1,1 @@
+export { HeroThoughts } from './HeroThoughts'
