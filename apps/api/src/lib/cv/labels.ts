@@ -45,11 +45,7 @@ const MONTHS = {
 } as const
 
 /** `2024` kad meseca nema, `mar 2024` kad ga ima. */
-export const formatMonthYear = (
-  year: number | null,
-  month: number | null,
-  lang: CvLang,
-): string => {
+const formatMonthYear = (year: number | null, month: number | null, lang: CvLang): string => {
   if (year === null) return ''
   if (month === null) return String(year)
 

@@ -3,7 +3,7 @@ import { useLocation } from 'react-router'
 
 /**
  * Skroluje na sidro (#hash) kad ruta ima hash, inače na vrh pri promeni stranice.
- * Radi na promenu location-a — legitiman useEffect (subscribe na router/DOM, PROJECT_GUIDE 2.1).
+ * Radi na promenu location-a — legitiman useEffect (subscribe na router/DOM, docs/07-performance.md §1).
  */
 export const useRouteScroll = () => {
   const { pathname, hash } = useLocation()
@@ -17,7 +17,9 @@ export const useRouteScroll = () => {
         if (el) el.scrollIntoView({ behavior: 'smooth' })
         else window.scrollTo({ top: 0 })
       })
-      return () => { cancelAnimationFrame(raf); }
+      return () => {
+        cancelAnimationFrame(raf)
+      }
     }
     window.scrollTo({ top: 0 })
   }, [pathname, hash])

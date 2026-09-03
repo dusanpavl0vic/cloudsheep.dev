@@ -13,7 +13,7 @@ import type { Cv, CvLang } from '../types'
  * `values` u `useForm` poredi reference; nov objekat pri svakom renderu bi resetovao formu
  * dok korisnik kuca (docs/07 §2).
  */
-export const EMPTY_CV: CvFormInput = {
+const EMPTY_CV: CvFormInput = {
   email: '',
   phone: '',
   githubUrl: '',

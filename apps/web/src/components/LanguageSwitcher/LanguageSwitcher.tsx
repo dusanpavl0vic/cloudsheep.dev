@@ -21,7 +21,7 @@ export const LanguageSwitcher = () => {
     LANGUAGE_OPTIONS.find((option) => option.code === i18n.resolvedLanguage) ??
     DEFAULT_LANGUAGE_OPTION
 
-  // Zatvaranje na klik van menija i na Escape — subscribe na DOM evente (PROJECT_GUIDE 2.1)
+  // Zatvaranje na klik van menija i na Escape — subscribe na DOM evente (docs/07-performance.md §1)
   // effect: document — klik van menija i Escape su globalni DOM događaji
   useEffect(() => {
     if (!open) return

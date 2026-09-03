@@ -8,7 +8,7 @@ import { Accordion, SectionBlock } from '@app/ui'
 export const FaqSection = () => {
   const { t } = useTranslation(['landing', 'common'])
 
-  // Izvedena vrednost — mapiranje ključeva u prevode tokom rendera (PROJECT_GUIDE.md 2.1)
+  // Izvedena vrednost — mapiranje ključeva u prevode tokom rendera (docs/07-performance.md §1)
   const items = useMemo(
     () =>
       FAQ_ITEMS.map((item) => ({

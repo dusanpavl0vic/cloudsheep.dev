@@ -33,7 +33,7 @@ const teamMemberSchema = z.object({
     .nullable(),
 })
 
-export const teamListSchema = z.object({ items: z.array(teamMemberSchema) })
+const teamListSchema = z.object({ items: z.array(teamMemberSchema) })
 
 export type TeamMember = z.infer<typeof teamMemberSchema>
 
