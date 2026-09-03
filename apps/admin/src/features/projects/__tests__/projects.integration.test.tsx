@@ -26,7 +26,6 @@ const makeProject = (overrides: Partial<AdminProject> = {}): AdminProject => ({
   sortOrder: 0,
   isFeatured: true,
   isPublished: true,
-  mediaSide: 'start',
   galleryLayout: 'grid',
   technologyIds: [],
   technologies: [],

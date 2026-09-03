@@ -48,8 +48,6 @@
       "isPublished": "Published on the site",
       "isFeatured": "Featured on the home page",
       "noTech": "No technologies yet — add them on the “Technologies” page.",
-      "mediaSide": "Image side",
-      "mediaSideHint": "Which side the image sits on in the “Work” section.",
       "galleryLayout": "Gallery layout",
       "galleryLayoutHint": "How images are shown on the project page.",
       "techHint": "Pick from the list. New ones are added on the “Technologies” page."
@@ -73,10 +71,6 @@
       "urlInvalid": "Invalid URL",
       "saveFailed": "Saving failed.",
       "tooManyTech": "At most twelve technologies per project"
-    },
-    "mediaSides": {
-      "start": "Left",
-      "end": "Right"
     },
     "galleryLayouts": {
       "grid": "Grid",

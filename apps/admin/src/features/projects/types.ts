@@ -12,10 +12,8 @@ export type ProjectCategory = (typeof PROJECT_CATEGORIES)[number]
  *
  * Javni API isti projekat vraća ugnežđeno (`title.sr`), jer se tamo prikazuje.
  */
-export const MEDIA_SIDES = ['start', 'end'] as const
 export const GALLERY_LAYOUTS = ['grid', 'feature', 'none'] as const
 
-export type MediaSide = (typeof MEDIA_SIDES)[number]
 export type GalleryLayout = (typeof GALLERY_LAYOUTS)[number]
 
 export interface ProjectTechnology {
@@ -44,7 +42,6 @@ export interface AdminProject {
   sortOrder: number
   isFeatured: boolean
   isPublished: boolean
-  mediaSide: MediaSide
   galleryLayout: GalleryLayout
   technologyIds: string[]
   technologies: ProjectTechnology[]

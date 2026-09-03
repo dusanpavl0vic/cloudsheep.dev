@@ -62,7 +62,6 @@ const makeProject = (overrides: Partial<ProjectWithRelations> = {}): ProjectWith
   descEn: 'Description',
   captionSr: '',
   captionEn: '',
-  mediaSide: 'start',
   galleryLayout: 'grid',
   // Relacije su prazne u većini testova — serijalizacija ih mapira, ne izmišlja
   technologies: [],

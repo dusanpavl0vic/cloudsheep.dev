@@ -54,9 +54,15 @@ export const WorkSection = ({ projects }: WorkSectionProps) => {
               }))}
               to={projectPath(project.slug)}
               {...(image ? { imageSrc: image } : {})}
-              /* Strana slike je sada PODATAK, ne parnost indeksa: ranije se menjala sama
-               od sebe čim se doda projekat ispred. */
-              media={project.mediaSide}
+              /**
+               * Strane se SMENJUJU po rednom broju: neparni (01, 03…) imaju sliku desno,
+               * parni (02, 04…) sliku levo i tekst desno.
+               *
+               * Ritam je time zagarantovan, ali zavisi od POZICIJE: dodavanje projekta ispred
+               * okreće strane svima ispod njega. Ranije je strana bila podatak u bazi
+               * (`mediaSide`); polje je uklonjeno jer ga ništa nije čitalo.
+               */
+              media={(index + 1) % 2 === 0 ? 'start' : 'end'}
               action={
                 <TextLink asChild className="mt-1">
                   <Link to={projectPath(project.slug)}>{t('work.readCase')} →</Link>

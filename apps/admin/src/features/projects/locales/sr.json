@@ -48,8 +48,6 @@
       "isPublished": "Objavljen na sajtu",
       "isFeatured": "Izdvojen na početnoj strani",
       "noTech": "Još nema nijedne tehnologije — dodaj ih na strani „Tehnologije\".",
-      "mediaSide": "Strana slike",
-      "mediaSideHint": "Na kojoj strani stoji slika u sekciji „Radovi\" na početnoj.",
       "galleryLayout": "Raspored galerije",
       "galleryLayoutHint": "Kako se slike prikazuju na stranici projekta.",
       "techHint": "Izaberi iz spiska. Nove se dodaju na strani „Tehnologije\"."
@@ -73,10 +71,6 @@
       "urlInvalid": "Neispravan URL",
       "saveFailed": "Čuvanje nije uspelo.",
       "tooManyTech": "Najviše dvanaest tehnologija po projektu"
-    },
-    "mediaSides": {
-      "start": "Levo",
-      "end": "Desno"
     },
     "galleryLayouts": {
       "grid": "Mreža",

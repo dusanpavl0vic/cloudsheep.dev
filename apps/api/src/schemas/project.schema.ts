@@ -18,7 +18,7 @@ const slug = z
 
 const localizedText = (max: number) => z.string().trim().min(1).max(max)
 
-export const projectCategories = ['frontend', 'backend', 'fullStack', 'openSource'] as const
+const projectCategories = ['frontend', 'backend', 'fullStack', 'openSource'] as const
 
 export const createProjectSchema = z.object({
   slug,
@@ -45,8 +45,6 @@ export const createProjectSchema = z.object({
   /** Tehnologije se biraju iz spiska, ne kucaju — otud id-evi, ne nazivi. */
   technologyIds: z.array(z.uuid()).max(12).default([]),
 
-  /** Na kojoj strani stoji slika u sekciji „Radovi" na početnoj. */
-  mediaSide: z.enum(['start', 'end']).default('start'),
   /** `none` znači „bez medija" — projekat se prikazuje kao šira tekstualna kartica. */
   galleryLayout: z.enum(['grid', 'feature', 'none']).default('grid'),
 

@@ -8,7 +8,6 @@ const project = (slug: string, isFeatured = false) => ({
   category: 'frontend',
   year: 2025,
   isFeatured,
-  mediaSide: 'start',
   galleryLayout: 'grid',
   technologies: [],
   images: [],

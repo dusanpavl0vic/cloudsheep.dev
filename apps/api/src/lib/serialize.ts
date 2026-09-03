@@ -4,7 +4,6 @@ import type {
   CvLanguage,
   CvSiteProject,
   GalleryLayout,
-  MediaSide,
   Project,
   ProjectImage,
   TeamMember,
@@ -61,7 +60,6 @@ export interface PublicProject {
   category: Project['category']
   year: number
   isFeatured: boolean
-  mediaSide: MediaSide
   galleryLayout: GalleryLayout
   liveUrl: string | null
   repoUrl: string | null
@@ -101,7 +99,6 @@ export const publicProject = (p: ProjectWithRelations): PublicProject => ({
   category: p.category,
   year: p.year,
   isFeatured: p.isFeatured,
-  mediaSide: p.mediaSide,
   galleryLayout: p.galleryLayout,
   liveUrl: p.liveUrl,
   repoUrl: p.repoUrl,
@@ -127,7 +124,6 @@ export interface AdminProject {
   sortOrder: number
   isFeatured: boolean
   isPublished: boolean
-  mediaSide: MediaSide
   galleryLayout: GalleryLayout
   liveUrl: string | null
   repoUrl: string | null
@@ -154,7 +150,6 @@ export const adminProject = (p: ProjectWithRelations): AdminProject => ({
   sortOrder: p.sortOrder,
   isFeatured: p.isFeatured,
   isPublished: p.isPublished,
-  mediaSide: p.mediaSide,
   galleryLayout: p.galleryLayout,
   liveUrl: p.liveUrl,
   repoUrl: p.repoUrl,

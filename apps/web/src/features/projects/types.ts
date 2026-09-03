@@ -36,7 +36,6 @@ export const projectSchema = z.object({
   year: z.number(),
   isFeatured: z.boolean(),
   /** Na kojoj strani stoji slika u sekciji „Radovi" — bira se po projektu u adminu. */
-  mediaSide: z.enum(['start', 'end']),
   /** `none` = projekat se prikazuje bez medija, kao šira tekstualna kartica. */
   galleryLayout: z.enum(['grid', 'feature', 'none']),
   liveUrl: z.string().nullable(),

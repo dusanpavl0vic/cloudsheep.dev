@@ -30,7 +30,6 @@ const project = (images: unknown[] = [image()]): AdminProject =>
     sortOrder: 0,
     isFeatured: false,
     isPublished: true,
-    mediaSide: 'start',
     galleryLayout: 'grid',
     technologyIds: [],
     technologies: [],

@@ -13,7 +13,6 @@ const project = (slug: string, category: Project['category']): Project => ({
   category,
   year: 2025,
   isFeatured: false,
-  mediaSide: 'start',
   galleryLayout: 'grid',
   technologies: [],
   images: [],

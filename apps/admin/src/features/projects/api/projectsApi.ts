@@ -22,7 +22,6 @@ export interface ProjectPayload {
   captionSr: string
   captionEn: string
   technologyIds: string[]
-  mediaSide: 'start' | 'end'
   galleryLayout: 'grid' | 'feature' | 'none'
   liveUrl: string | null
   repoUrl: string | null

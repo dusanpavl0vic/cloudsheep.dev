@@ -15,7 +15,6 @@ const valid = {
   captionSr: '',
   captionEn: '',
   technologyIds: [],
-  mediaSide: 'start' as const,
   galleryLayout: 'grid',
   liveUrl: '',
   repoUrl: '',

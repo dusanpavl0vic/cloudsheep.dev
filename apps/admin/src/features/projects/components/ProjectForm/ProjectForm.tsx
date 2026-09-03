@@ -16,7 +16,7 @@ import {
   projectFormVariants,
 } from './ProjectForm.variants'
 import { projectSchema, type ProjectInput } from '../../schemas/project.schema'
-import { GALLERY_LAYOUTS, MEDIA_SIDES, PROJECT_CATEGORIES, type AdminProject } from '../../types'
+import { GALLERY_LAYOUTS, PROJECT_CATEGORIES, type AdminProject } from '../../types'
 import { ProjectImages } from '../ProjectImages'
 
 const LOCALES = ['Sr', 'En'] as const
@@ -37,7 +37,6 @@ const EMPTY: ProjectInput = {
   captionSr: '',
   captionEn: '',
   technologyIds: [],
-  mediaSide: 'start',
   galleryLayout: 'grid',
   liveUrl: '',
   repoUrl: '',
@@ -172,21 +171,6 @@ export const ProjectForm = ({
         </fieldset>
 
         <div className={projectFormRowVariants()}>
-          <FormField
-            label={t('projects.form.mediaSide')}
-            description={t('projects.form.mediaSideHint')}
-          >
-            {(field) => (
-              <Select {...field} {...register('mediaSide')}>
-                {MEDIA_SIDES.map((side) => (
-                  <option key={side} value={side}>
-                    {t(`projects.mediaSides.${side}`)}
-                  </option>
-                ))}
-              </Select>
-            )}
-          </FormField>
-
           <FormField
             label={t('projects.form.galleryLayout')}
             description={t('projects.form.galleryLayoutHint')}

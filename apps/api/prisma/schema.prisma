@@ -46,12 +46,6 @@ model RefreshToken {
   @@index([userId])
 }
 
-/// Strana na kojoj stoji slika u sekciji „Radovi".
-enum MediaSide {
-  start
-  end
-}
-
 /// Raspored galerije na stranici projekta.
 enum GalleryLayout {
   /// Mreža jednakih slika.
@@ -112,10 +106,6 @@ model Project {
 
   /// Slike projekta, po redosledu.
   images ProjectImage[]
-
-  /// Na kojoj strani stoji slika u sekciji „Radovi" na početnoj.
-  /// Ranije se računalo po parnosti indeksa, pa se menjalo samo od sebe kad se doda projekat.
-  mediaSide MediaSide @default(start)
 
   /// Kako se galerija prikazuje na stranici projekta.
   galleryLayout GalleryLayout @default(grid)

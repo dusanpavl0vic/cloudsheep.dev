@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { GALLERY_LAYOUTS, MEDIA_SIDES, PROJECT_CATEGORIES } from '../types'
+import { GALLERY_LAYOUTS, PROJECT_CATEGORIES } from '../types'
 
 /**
  * Zod šema je jedini izvor istine — tip forme se izvodi iz nje, ne piše ručno.
@@ -49,7 +49,6 @@ export const projectSchema = z.object({
   technologyIds: z.array(z.string()).max(12, { message: 'projects.errors.tooManyTech' }),
 
   /** Na kojoj strani stoji slika u sekciji „Radovi" na početnoj. */
-  mediaSide: z.enum(MEDIA_SIDES),
   /** `none` = bez medija: projekat se prikazuje kao šira tekstualna kartica. */
   galleryLayout: z.enum(GALLERY_LAYOUTS),
 

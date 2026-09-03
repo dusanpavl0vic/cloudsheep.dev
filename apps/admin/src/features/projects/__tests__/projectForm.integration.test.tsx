@@ -25,7 +25,6 @@ const existing: AdminProject = {
   sortOrder: 0,
   isFeatured: true,
   isPublished: true,
-  mediaSide: 'start',
   galleryLayout: 'grid',
   technologyIds: [],
   technologies: [],
@@ -188,19 +187,18 @@ describe('izmena postojećeg projekta', () => {
     expect(field('titleEn')).toHaveValue('Atlas EN')
   })
 
-  it('raspored medija dolazi sa servera, ne iz podrazumevane vrednosti', async () => {
+  it('raspored galerije dolazi sa servera, ne iz podrazumevane vrednosti', async () => {
     server.use(
       http.get(`${API}/admin/projects/p1`, () =>
-        HttpResponse.json({ ...existing, mediaSide: 'end', galleryLayout: 'feature' }),
+        HttpResponse.json({ ...existing, galleryLayout: 'feature' }),
       ),
     )
 
     renderEdit()
 
     await waitFor(() => {
-      expect(screen.getByLabelText('projects.form.mediaSide')).toHaveValue('end')
+      expect(screen.getByLabelText('projects.form.galleryLayout')).toHaveValue('feature')
     })
-    expect(screen.getByLabelText('projects.form.galleryLayout')).toHaveValue('feature')
   })
 
   it('čuvanje šalje PATCH, ne POST', async () => {
