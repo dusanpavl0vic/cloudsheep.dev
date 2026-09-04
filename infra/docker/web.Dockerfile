@@ -62,8 +62,13 @@ COPY infra/nginx/security-headers.conf /etc/nginx/conf.d/security-headers.conf
 
 # CSP `connect-src` mora da zna gde je API. Ista vrednost kao VITE_API_URL — ako se
 # raziđu, app zove adresu koju CSP blokira.
+#
+# `g` NIJE opcion: `__API_ORIGIN__` stoji DVAPUT u istom redu (`img-src` i `connect-src`),
+# jer je CSP jedan dugačak `add_header`. Bez `g` se menja samo prvo pojavljivanje — slike
+# prolaze, a svaki `fetch` ka API-ju pretraživač blokira. U logovima servera se ne vidi
+# ništa; greška postoji samo u konzoli pretraživača.
 ARG VITE_API_URL
-RUN sed -i "s|__API_ORIGIN__|${VITE_API_URL}|" /etc/nginx/conf.d/security-headers.conf
+RUN sed -i "s|__API_ORIGIN__|${VITE_API_URL}|g" /etc/nginx/conf.d/security-headers.conf
 
 COPY --from=build /app/apps/web/dist /usr/share/nginx/html
 
