@@ -107,6 +107,18 @@ function render(html, { route, title, description, jsonLd }) {
       `<meta property="og:description" content="${escape(description)}" />`,
     )
 
+  /*
+   * Prvo se briše ono što je možda već ubačeno, pa se ubacuje ponovo. Bez ovog koraka
+   * drugo pokretanje nad istim `dist`-om ostavlja DVA `canonical`-a sa različitim adresama,
+   * a na dva različita `canonical`-a Google ignoriše oba. `vite build` doduše svaki put
+   * prepiše `index.html` iz izvora, pa se to u pravom buildu ne dešava — ali skripta se
+   * pokreće i ručno, i tada je razlika nevidljiva u izlazu a vidljiva pretraživaču.
+   */
+  out = out
+    .replace(/\s*<link rel="canonical"[^>]*>/g, '')
+    .replace(/\s*<meta property="og:url"[^>]*>/g, '')
+    .replace(/\s*<script type="application\/ld\+json">[\s\S]*?<\/script>/g, '')
+
   const injected = [
     `<link rel="canonical" href="${url}" />`,
     `<meta property="og:url" content="${url}" />`,
@@ -136,10 +148,19 @@ if (missing.length > 0) {
 const pages = [...staticPages, ...(await projectPages())]
 
 for (const page of pages) {
+  /*
+   * `/projects` → `dist/projects.html`, NE `dist/projects/index.html`.
+   *
+   * Sa `index.html` u folderu nginx vidi direktorijum i po pravilu preusmerava `/projects`
+   * na `/projects/` — a `canonical` i `sitemap.xml` govore adresu bez kose crte. Ispadne da
+   * adresa iz sitemapa preusmerava na drugu adresu, što je zbrka koja se šalje u indeks.
+   *
+   * Uz `try_files $uri $uri.html …` u `spa.conf` fajl se servira direktno, bez skoka.
+   */
   const target =
     page.route === '/'
       ? path.join(DIST, 'index.html')
-      : path.join(DIST, page.route.replace(/^\//, ''), 'index.html')
+      : path.join(DIST, `${page.route.replace(/^\//, '')}.html`)
 
   mkdirSync(path.dirname(target), { recursive: true })
   writeFileSync(target, render(html, page))
