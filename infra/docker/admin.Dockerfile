@@ -51,7 +51,7 @@ COPY infra/nginx/security-headers.conf /etc/nginx/conf.d/security-headers.conf
 ARG VITE_API_URL
 RUN sed -i "s|__API_ORIGIN__|${VITE_API_URL}|g" /etc/nginx/conf.d/security-headers.conf \
     # Interni panel nema šta da traži u pretrazi. `web` ovu liniju namerno nema.
- && sed -i 's|# __ROBOTS__|add_header X-Robots-Tag "noindex, nofollow" always;|' /etc/nginx/conf.d/default.conf
+ && sed -i 's|# __ROBOTS__|add_header X-Robots-Tag "noindex, nofollow" always;|' /etc/nginx/conf.d/security-headers.conf
 
 COPY --from=build /app/apps/admin/dist /usr/share/nginx/html
 
