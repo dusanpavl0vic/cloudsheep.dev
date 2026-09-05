@@ -53,5 +53,23 @@
       "statusMeta": "not found",
       "statusTitle": "status odgovora"
     }
+  },
+  "seo": {
+    "home": {
+      "title": "CloudSheep — produktni studio iz Niša",
+      "description": "Jednočlani produktni studio: dizajn, web i mobilne aplikacije iz jednog para ruku. Bez primopredaja, jedan vlasnik od prve skice do lansiranja."
+    },
+    "projects": {
+      "title": "Radovi — CloudSheep",
+      "description": "Izabrane studije slučaja: web i mobilne aplikacije, od prve skice do produkcije. Dokazi, ne obećanja."
+    },
+    "contact": {
+      "title": "Kontakt — CloudSheep",
+      "description": "Pokreni projekat sa jednočlanim studijom iz Niša. Odgovor u roku od 48 sati."
+    },
+    "uses": {
+      "title": "Alati — CloudSheep",
+      "description": "Stack, alati i oprema koje koristim u svakodnevnom radu — i one koje namerno ne koristim."
+    }
   }
 }

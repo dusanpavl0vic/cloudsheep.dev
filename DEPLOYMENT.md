@@ -144,6 +144,15 @@ fajla popravka.
 `apps/web`, čitajući rute i slug-ove projekata iz koda. Ručno pisan bi zastario čim se
 doda projekat, i to tiho.
 
+**Statični HTML po ruti** gradi `scripts/build-seo-pages.mjs` kao `postbuild` u `apps/web`.
+Kopira `dist/index.html` po ruti i menja samo `<head>`: naslov, opis, `canonical`, `og:*` i
+JSON-LD. Sadržaj i dalje crta JS.
+
+Postoji zbog pregleda linkova: Googlebot renderuje JavaScript, ali **LinkedIn, WhatsApp,
+Slack i X ne** — oni čitaju sirov HTML. Bez ovog koraka svaka podeljena studija slučaja
+pokazuje karticu početne strane. Spisak ruta i i18n ključeva deli sa `apps/web/src/lib/seo.ts`,
+isti koji čita `useDocumentHead` — da se runtime i build ne raziđu.
+
 `canonical` i `og:url` postavlja `useDocumentHead` **po ruti**. Statična vrednost u
 `index.html` bi važila za svaku rutu i rekla pretraživaču da su `/projects`, `/contact` i
 `/uses` duplikati početne — dakle izbacila ih iz indeksa.

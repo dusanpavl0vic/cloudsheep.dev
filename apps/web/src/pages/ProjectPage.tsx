@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLoaderData } from 'react-router'
 
 import { ProjectGallery, TechTags, localize, type Project } from '@/features/projects'
+import { useDocumentTitle } from '@/hooks/useDocumentHead'
 import { ROUTES, projectPath } from '@/lib/routes'
 import { Button, Container, PageHeader, Reveal, TextLink } from '@app/ui'
 
@@ -25,6 +26,9 @@ export const ProjectPage = () => {
   const { project, next } = useLoaderData<ProjectPageData>()
 
   const lang = i18n.language
+
+  // Naslov i opis dolaze iz baze, pa ih postavlja stranica — vidi `useDocumentHead`.
+  useDocumentTitle(`${localize(project.title, lang)} — CloudSheep`, localize(project.desc, lang))
 
   return (
     <Container as="article" width="article" className="pt-20 pb-24">

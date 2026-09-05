@@ -116,11 +116,13 @@ Izuzetak: hook sa tačno dva člana koji imitira `useState` (`const [value, setV
 
 ### `apps/web/src/hooks`
 
-| Hook             | Namena                                                                        |
-| ---------------- | ----------------------------------------------------------------------------- |
-| `useRouteScroll` | scroll na vrh pri promeni rute                                                |
-| `useTypewriter`  | animacija kucanja; poštuje `prefers-reduced-motion`                           |
-| `usePointerGlow` | svetlo koje prati kursor po grupi panela; vraća ref za KONTEJNER, ne za panel |
+| Hook               | Namena                                                                        |
+| ------------------ | ----------------------------------------------------------------------------- |
+| `useRouteScroll`   | scroll na vrh pri promeni rute                                                |
+| `useTypewriter`    | animacija kucanja; poštuje `prefers-reduced-motion`                           |
+| `usePointerGlow`   | svetlo koje prati kursor po grupi panela; vraća ref za KONTEJNER, ne za panel |
+| `useDocumentHead`  | naslov, opis, `canonical` i `og:url` po ruti; studiju slučaja preskače        |
+| `useDocumentTitle` | naslov i opis za stranicu čiji sadržaj dolazi iz podataka (`ProjectPage`)     |
 
 ### `features/auth/hooks`
 
