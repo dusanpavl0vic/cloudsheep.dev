@@ -5,6 +5,7 @@ import { SiteHeader } from '@/components/SiteHeader'
 import { useDocumentHead } from '@/hooks/useDocumentHead'
 import { useRouteScroll } from '@/hooks/useRouteScroll'
 import type { SiteProfile } from '@/lib/site'
+import { auroraVariants } from '@app/ui'
 
 import { appBackdropVariants, appFrameVariants } from './MainLayout.variants'
 
@@ -28,6 +29,13 @@ export const MainLayout = ({ footer = 'full' }: MainLayoutProps) => {
 
   return (
     <div className={appBackdropVariants()}>
+      {/*
+        Ambijentalno svetlo iza stakla (docs/22 §3a). Bez njega `backdrop-blur` na karticama
+        nema šta da zamuti — zamućena ravna boja je ta ista boja.
+
+        `aria-hidden` jer je čisto dekorativan sloj; čitač ekrana nema šta da mu kaže.
+      */}
+      <div aria-hidden className={auroraVariants()} />
       <div className={appFrameVariants()}>
         <SiteHeader />
         {/*

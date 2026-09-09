@@ -5,7 +5,9 @@ import { cva } from 'class-variance-authority'
  * nosi hairline koji se gasi na krajevima — inače linija seče zaobljene uglove.
  */
 export const siteHeaderVariants = cva(
-  "sticky top-0 z-60 w-full bg-background/80 backdrop-blur-xl after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-linear-to-r after:from-transparent after:via-border after:to-transparent after:content-['']",
+  // Header je jedina površina koja je i pre redizajna bila staklena. Sad uzima iste
+  // tokene kao ostale, umesto sopstvenog `/80` i `blur-xl`.
+  "sticky top-0 z-60 w-full bg-glass-strong backdrop-blur-glass-strong after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-linear-to-r after:from-transparent after:via-glass-edge after:to-transparent after:content-['']",
 )
 
 export const siteHeaderInnerVariants = cva('flex h-[72px] items-center gap-7')

@@ -40,9 +40,12 @@
   --muted: oklch(95.07% 0.0066 106.53); /* Surface-2 — hover redova */
   --muted-foreground: oklch(46% 0.0988 263.8); /* Ink-soft — paragrafi */
   --faint: oklch(
-    54% 0.0485 267.2
+    47% 0.0485 267.2
   ); /* Ink-faint — meta labele i prigušena polovina naslova.
-     Potamnjen sa 66.71%: na 66.71% je bio 2.73:1 prema panelu, ispod WCAG AA (docs/15). */
+     Potamnjen dvaput. Prvo sa 66.71% na 54%: na 66.71% je bio 2.73:1 prema panelu.
+     Zatim sa 54% na 47% zbog aurore (docs/22 §3a): providna ploča propušta obojeno svetlo
+     ispod sebe, pa je 54% palo na 3.90:1 nad najjačim delom aurore. Izmereno, ne procenjeno —
+     na 47% je 4.56:1 u najgorem slučaju (aurora u punoj snazi, oba svetla preklopljena). */
   --accent: oklch(51.04% 0.2178 263.62); /* isti plavi akcenat kao primary */
   --accent-foreground: oklch(97.83% 0.004 106.47);
   --success: oklch(71.19% 0.152 158.69); /* Jungle Green */
@@ -114,6 +117,38 @@
      gradijent posvetli sredinu. U tamnoj temi marka je svetla na navy podlozi i razdvaja se
      sama, pa je obrub tamo suvišan. Nula ga gasi. */
   --logo-edge-width: 3.4;
+
+  /* ── Staklo (docs/22 §3) ────────────────────────────────────────────────
+     Materijal površina. Podloga je Ivory sa alfom: kroz nju se vidi aurora ispod, pa
+     kartica dobija boju od mesta na kom stoji umesto da svuda bude ista.
+
+     Alfa 0.62 nije estetska nego merena: ispod ~0.5 tekst pada ispod 4.5:1 kad se kartica
+     zatekne nad jačim delom aurore (docs/15). `strong` je za slojeve koji stoje IZNAD
+     sadržaja (dijalog, mobilna navigacija) — tamo se kroz staklo vidi tekst stranice, a ne
+     samo podloga, pa mora da zatvori više.
+
+     Zamućenje je 14px. Preko ~30px ne izgleda staklenije, samo košta više po kadru. */
+  --glass: oklch(99.35% 0.0026 106.45 / 0.55);
+  --glass-strong: oklch(99.35% 0.0026 106.45 / 0.8);
+  --glass-blur: 14px;
+  --glass-blur-strong: 22px;
+
+  /* Ivica ploče. Gornja hvata svetlo (skoro bela), donja i bočne su senka mastila —
+     tako oko čita DEBLJINU stakla. Jedna ivica u istoj boji svuda čita kao okvir. */
+  --glass-edge: oklch(100% 0 0 / 0.72);
+  --glass-edge-soft: oklch(38.13% 0.1312 260.45 / 0.09);
+
+  /* ── Aurora (docs/22 §3a) ───────────────────────────────────────────────
+     Svetlo IZA stakla. Bez ovoga `backdrop-blur` nema šta da zamuti: zamućena ravna
+     boja je ista ta boja, pa bi cela ova izmena bila nevidljiva.
+
+     Boje su `mark-*` paleta iz §4b. Ne krše pravilo o jednom akcentu (§4) jer ne stoje ni
+     na jednoj akcionoj površini — difuzne su, iza svega, i ništa se njima ne označava.
+     Alfa je namerno mala: svetlo koje se primeti kao mrlja je greška, ne ambijent. */
+  --aurora-1: oklch(51.04% 0.2178 263.62 / 0.3); /* plava — primary */
+  --aurora-2: oklch(55% 0.19 295 / 0.26); /* ljubičasta */
+  --aurora-3: oklch(56% 0.11 195 / 0.26); /* tirkiz */
+  --aurora-4: oklch(62% 0.15 72 / 0.22); /* ćilibar */
 }
 
 /* Tamna tema — izvedena iz iste palete (override samo boja) */
@@ -131,7 +166,7 @@
   --secondary-foreground: oklch(95.79% 0.0099 267.36);
   --muted: oklch(31.72% 0.0897 261.14);
   --muted-foreground: oklch(82.01% 0.0385 267.3);
-  --faint: oklch(66.71% 0.0485 267.2);
+  --faint: oklch(79% 0.0485 267.2); /* posvetljen sa 66.71% — isti razlog kao u svetloj temi */
   --accent: oklch(61.23% 0.2092 263.53);
   --accent-foreground: oklch(20.07% 0.058 260.54);
   --success: oklch(71.19% 0.152 158.69);
@@ -157,6 +192,22 @@
 
   /* Bez obruba: svetla marka na navy podlozi se razdvaja sama. */
   --logo-edge-width: 0;
+
+  /* Staklo u tamnoj temi zatvara VIŠE, ne manje: tamna providna ploča nad tamnom podlogom
+     se gubi, pa 0.55 nosi istu čitljivost koju 0.62 nosi u svetloj. */
+  --glass: oklch(27.68% 0.0805 261.52 / 0.5);
+  --glass-strong: oklch(27.68% 0.0805 261.52 / 0.82);
+
+  /* Svetlosna ivica je ovde jedva vidljiva belina — puna bela bi na navy podlozi
+     iscrtala ploču kao neonski okvir. Senka-ivica je crna, ne mastilo. */
+  --glass-edge: oklch(95.79% 0.0099 267.36 / 0.15);
+  --glass-edge-soft: oklch(0% 0 0 / 0.28);
+
+  /* Aurora je jača: na navy podlozi ista alfa daje upola manje vidljivog svetla. */
+  --aurora-1: oklch(61.23% 0.2092 263.53 / 0.42);
+  --aurora-2: oklch(72% 0.16 295 / 0.34);
+  --aurora-3: oklch(72% 0.1 195 / 0.3);
+  --aurora-4: oklch(76% 0.14 72 / 0.24);
 }
 
 /* Mapiranje tokena na Tailwind klase (bg-background, text-primary, border-border...) */
@@ -207,6 +258,25 @@
   --color-inverse-faint: var(--inverse-faint);
   --color-inverse-primary: var(--inverse-primary);
   --color-inverse-border: var(--inverse-border);
+
+  /* Staklo. `--blur-*` i `--shadow-*` su Tailwind namespace-i, pa daju
+     `backdrop-blur-glass` i `shadow-glass` bez ijedne proizvoljne vrednosti u komponenti. */
+  --color-glass: var(--glass);
+  --color-glass-strong: var(--glass-strong);
+  --color-glass-edge: var(--glass-edge);
+  --color-glass-edge-soft: var(--glass-edge-soft);
+  --blur-glass: var(--glass-blur);
+  --blur-glass-strong: var(--glass-blur-strong);
+
+  /* Senka stakla: uska bliska + široka bleda. Nasleđena iz starog §3 i namerno
+     nepromenjena — staklo lebdi isto kao što je papir lebdeo. */
+  --shadow-glass: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 32px -12px rgb(0 0 0 / 0.14);
+  --shadow-glass-lifted: 0 2px 6px rgb(0 0 0 / 0.06), 0 24px 56px -20px rgb(0 0 0 / 0.22);
+
+  --color-aurora-1: var(--aurora-1);
+  --color-aurora-2: var(--aurora-2);
+  --color-aurora-3: var(--aurora-3);
+  --color-aurora-4: var(--aurora-4);
 
   /* ── Animacije ───────────────────────────────────────────────────────────
      Prvi animacijski tokeni u projektu, i namerno OVDE a ne u

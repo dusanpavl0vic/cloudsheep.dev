@@ -55,7 +55,8 @@ export const carouselCardVariants = cva(
 export const memberHeadVariants = cva('flex flex-col items-center gap-3 text-center')
 
 export const avatarVariants = cva(
-  'flex size-20 items-center justify-center overflow-hidden rounded-full border border-border bg-card font-heading text-[22px] font-bold text-muted-foreground',
+  // Sitna površina: providnost bez `backdrop-blur` (docs/22 §3b-glass).
+  'flex size-20 items-center justify-center overflow-hidden rounded-full border border-glass-edge-soft border-t-glass-edge bg-glass font-heading text-[22px] font-bold text-muted-foreground',
 )
 
 export const memberNameVariants = cva(
@@ -92,7 +93,7 @@ export const noDiplomaVariants = cva(
  * `origin-top`), pa je razmak od vrha do avatara i imena uvek isti; menja se samo ono ispod.
  */
 export const arrowVariants = cva(
-  'absolute top-[12.5rem] z-30 hidden size-11 sm:flex -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card text-[18px] text-foreground shadow-lg transition-colors hover:border-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none',
+  'absolute top-[12.5rem] z-30 hidden size-11 sm:flex -translate-y-1/2 items-center justify-center rounded-full border border-glass-edge-soft border-t-glass-edge bg-glass-strong text-[18px] text-foreground shadow-glass transition-colors hover:border-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none',
   {
     variants: { side: { start: 'start-0 sm:start-2', end: 'end-0 sm:end-2' } },
   },

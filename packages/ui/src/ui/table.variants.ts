@@ -1,8 +1,10 @@
 import { cva } from 'class-variance-authority'
 
+import { glassVariants } from '../lib/surface.variants'
+
 /** Omotač nosi horizontalno skrolovanje — tabela na telefonu inače širi celu stranicu. */
 export const tableWrapperVariants = cva(
-  'w-full overflow-x-auto rounded-xl border border-border bg-card',
+  [glassVariants({ radius: 'md' }), 'w-full overflow-x-auto'].join(' '),
 )
 
 export const tableVariants = cva('w-full border-collapse text-[15px]')

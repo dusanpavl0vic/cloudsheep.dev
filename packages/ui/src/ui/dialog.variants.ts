@@ -1,5 +1,7 @@
 import { cva } from 'class-variance-authority'
 
+import { glassVariants } from '../lib/surface.variants'
+
 /**
  * `m-auto` je OBAVEZAN, ne ukras.
  *
@@ -9,7 +11,12 @@ import { cva } from 'class-variance-authority'
  * i kad je sadržaj duži od prozora.
  */
 export const dialogVariants = cva(
-  'm-auto max-h-[calc(100dvh-4rem)] w-[calc(100vw-2rem)] overflow-y-auto rounded-xl border border-border bg-card p-0 text-foreground shadow-lg backdrop:bg-foreground/40 backdrop:backdrop-blur-sm',
+  [
+    glassVariants({ radius: 'md', elevation: 'floating', overlay: true }),
+    'm-auto max-h-[calc(100dvh-4rem)] w-[calc(100vw-2rem)] overflow-y-auto p-0 text-foreground',
+    // Zastor iza dijaloga muti STRANICU, ne sebe — otud `backdrop:`, a ne `overlay` varijanta.
+    'backdrop:bg-foreground/40 backdrop:backdrop-blur-sm',
+  ].join(' '),
   {
     variants: {
       size: {

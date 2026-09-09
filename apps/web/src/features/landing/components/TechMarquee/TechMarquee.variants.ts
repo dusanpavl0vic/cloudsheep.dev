@@ -1,5 +1,7 @@
 import { cva } from 'class-variance-authority'
 
+import { glassVariants } from '@app/ui'
+
 /**
  * Dijagonalna traka sa tehnologijama.
  *
@@ -10,7 +12,10 @@ import { cva } from 'class-variance-authority'
  * `overflow-hidden` je obavezan — bez njega druga kopija liste širi stranicu.
  */
 export const techMarqueeVariants = cva(
-  'relative -mx-[2%] my-10 w-[104%] -rotate-2 overflow-hidden bg-card py-6 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_18px_44px_-16px_rgb(0_0_0/0.16)] ring-1 ring-border/50 select-none ring-inset',
+  [
+    glassVariants({ radius: 'md' }),
+    'relative -mx-[2%] my-10 w-[104%] -rotate-2 overflow-hidden py-6 select-none',
+  ].join(' '),
 )
 
 /** Traka koja klizi. Sadrži DVE identične kopije liste. */
