@@ -101,7 +101,11 @@ export const glassVariants = cva(
 export const auroraVariants = cva(
   [
     'pointer-events-none fixed inset-0 -z-10',
-    'bg-[radial-gradient(60vw_46vw_at_12%_-6%,var(--color-aurora-1),transparent_60%),radial-gradient(52vw_40vw_at_92%_8%,var(--color-aurora-2),transparent_62%),radial-gradient(58vw_44vw_at_78%_88%,var(--color-aurora-3),transparent_60%),radial-gradient(46vw_38vw_at_4%_82%,var(--color-aurora-4),transparent_64%)]',
+    // Prvi sloj je VEO — ravan poluprovidan pravougaonik preko svih radijala. Crta se
+    // iznad njih (prvi u `background-image` je najgornji) i temperira svetlo jednako na
+    // celom prozoru, uključujući razmak oko okvira. Ranije je stajao na okviru i pravio
+    // vidljiv stepenik na njegovoj ivici.
+    'bg-[linear-gradient(var(--color-aurora-veil),var(--color-aurora-veil)),radial-gradient(60vw_46vw_at_12%_-6%,var(--color-aurora-1),transparent_60%),radial-gradient(52vw_40vw_at_92%_8%,var(--color-aurora-2),transparent_62%),radial-gradient(58vw_44vw_at_78%_88%,var(--color-aurora-3),transparent_60%),radial-gradient(46vw_38vw_at_4%_82%,var(--color-aurora-4),transparent_64%)]',
   ].join(' '),
 )
 

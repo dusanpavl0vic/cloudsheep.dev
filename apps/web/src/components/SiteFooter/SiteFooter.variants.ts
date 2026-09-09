@@ -1,7 +1,5 @@
 import { cva } from 'class-variance-authority'
 
-import { glassVariants } from '@app/ui'
-
 /**
  * Svetli panel sa tačkastom teksturom (docs/22 §3, §6).
  *
@@ -9,18 +7,25 @@ import { glassVariants } from '@app/ui'
  * dva tamna bloka jedan do drugog su se slila u jedan — footer je gubio granicu.
  */
 /**
- * Staklena ploča na dnu, bez radijusa (nalegla je na ivicu okvira).
+ * Kraj stranice, ne druga površina.
  *
- * Ranije `bg-muted/55`: i druga boja i druga alfa od okvira, pa se na vrhu footera videla
- * traka gde jedan ton naglo prelazi u drugi. Sad je isti materijal kao ostatak stranice,
- * a gornja ivica je gradijent koji se gasi ka krajevima — ista tehnika kojom header rešava
- * svoju donju ivicu, pa se ne seče zaobljeni ugao okvira.
+ * Staklo stoji na sloju ispod sadržaja i nosi masku koja ga gasi NAVIŠE — ista tehnika kao
+ * header (`SiteHeader.variants.ts`), samo obrnuta. Gornja ivica footera zato ne postoji kao
+ * linija nego kao prelaz od 160px.
+ *
+ * Maska se zaustavlja na 0.88, ne na punoj: footer naleže na donju ivicu okvira, a puna
+ * jačina tu pravi stepenik prema razmaku oko okvira koji staklo nema.
+ *
+ * Dve ranije verzije su tu imale rez: prvo `bg-muted/55` (i druga boja i druga alfa od
+ * okvira, pa vidljiva traka), pa hairline gradijent koji je granicu samo naglasio. Obe su
+ * crtale liniju tamo gde linija ne treba da se vidi.
  */
 export const siteFooterVariants = cva(
   [
-    glassVariants({ elevation: 'flat', radius: 'md' }),
-    'relative w-full overflow-hidden rounded-none border-x-0 border-b-0 border-t-0 text-foreground',
-    "before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-linear-to-r before:from-transparent before:via-glass-edge before:to-transparent before:content-['']",
+    'relative isolate w-full overflow-hidden text-foreground',
+    "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:bg-glass before:content-['']",
+    'before:supports-[backdrop-filter]:backdrop-blur-glass before:supports-[backdrop-filter]:backdrop-saturate-[1.7]',
+    'before:[-webkit-mask-image:linear-gradient(to_bottom,transparent,rgb(0_0_0/0.88)_160px)] before:[mask-image:linear-gradient(to_bottom,transparent,rgb(0_0_0/0.88)_160px)]',
   ].join(' '),
 )
 

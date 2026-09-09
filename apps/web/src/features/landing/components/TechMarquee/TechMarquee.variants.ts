@@ -13,8 +13,16 @@ import { glassVariants } from '@app/ui'
  */
 export const techMarqueeVariants = cva(
   [
-    glassVariants({ radius: 'md' }),
-    'relative -mx-[2%] my-10 w-[104%] -rotate-2 overflow-hidden py-6 select-none',
+    glassVariants({ radius: 'md', elevation: 'flat' }),
+    'relative -mx-[2%] my-10 w-[104%] -rotate-2 overflow-hidden border-transparent py-6 select-none',
+    /*
+     * Meko gašenje po VISINI, 10px gore i dole.
+     *
+     * Traka ostaje traka — 10px na 88px visine se čita kao mek rub, ne kao nestajanje. Bez
+     * ovoga su joj ivice bile najgrublji prelaz na stranici posle headera (54 nivoa razlike
+     * na jednom pikselu), jer je zarotirana ploča sekla auroru pod uglom.
+     */
+    'mask-[linear-gradient(to_bottom,transparent,#000_10px,#000_calc(100%-10px),transparent)]',
   ].join(' '),
 )
 
@@ -29,7 +37,9 @@ export const techItemVariants = cva(
 
 /** Meko gašenje na krajevima, da stavke ne „iskaču" iz trake. */
 export const techEdgeVariants = cva(
-  'pointer-events-none absolute inset-y-0 z-10 w-24 from-card to-transparent',
+  // `from-glass`, ne `from-card`: `card` je NEPROVIDNA boja i unutar providne trake je
+  // bila vidljiva zakrpa na oba kraja.
+  'pointer-events-none absolute inset-y-0 z-10 w-24 from-glass to-transparent',
   {
     variants: {
       side: {

@@ -139,6 +139,26 @@ razotkrio kao rez preko stranice.
 - Izuzetak je `tone: 'inverse'` (tamna CTA traka): ona je namerno druga površina, i prelaz
   joj rešavaju radijus i senka, ne ton podloge.
 
+**Površina koja naleže na ivicu okvira gasi se maskom, ne ivicom.** Header i footer su
+puna ploča koja naglo prestaje — na dnu headera je to bilo 81 nivo razlike na jednom
+pikselu, dakle vidljiva linija preko cele širine. Rešenje nije tanja linija nego nikakva:
+staklo ide na sloj ispod sadržaja (`before:`), a taj sloj nosi
+`mask-image: linear-gradient(...)` koji ga gasi ka sadržaju. `backdrop-filter` se maskira
+zajedno sa podlogom, pa se i zamućenje gasi postepeno — bez toga ostaje oštra granica
+zamućenja i kad granica boje nestane.
+
+> Maska **mora** na zaseban sloj. Na samom headeru bi gasila i logo i navigaciju.
+
+**Izmereno** skeniranjem kolone piksela niz celu stranicu (skok > 12 nivoa = rez):
+
+| prelaz                      | pre | posle   |
+| --------------------------- | --- | ------- |
+| dno headera                 | 81  | 36      |
+| vrh footera                 | 81  | nema ga |
+| ivice dijagonalne trake     | 54  | nema ih |
+| ivica okvira (namerna)      | 97  | 57      |
+| **ukupno rezova na strani** | 6   | **4**   |
+
 ### 3b. Lebdeći ukras je oblak, ne kartica
 
 Papirne površine koje **lebde oko naslova** (hero, 404) su **oblaci misli**: silueta oblačića

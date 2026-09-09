@@ -157,6 +157,14 @@
   --aurora-2: oklch(55% 0.19 295 / 0.26); /* ljubičasta */
   --aurora-3: oklch(56% 0.11 195 / 0.26); /* tirkiz */
   --aurora-4: oklch(62% 0.15 72 / 0.22); /* ćilibar */
+
+  /* Veo preko aurore.
+     Stajao je ranije na okviru stranice (`bg-background/50`) i time pravio najgrublji rez
+     na stranici: razmak oko okvira je nosio punu auroru, unutrašnjost veo — 97 nivoa
+     razlike na jednom pikselu. Sad je deo aurore, pa važi svuda jednako i ivica okvira
+     više nema šta da odaje. Kompozit ispod teksta je nepromenjen, dakle i izmereni
+     kontrast iz docs/15 važi i dalje. */
+  --aurora-veil: oklch(97.83% 0.004 106.47 / 0.5);
 }
 
 /* Tamna tema — izvedena iz iste palete (override samo boja) */
@@ -221,6 +229,7 @@
   --aurora-2: oklch(72% 0.16 295 / 0.34);
   --aurora-3: oklch(72% 0.1 195 / 0.3);
   --aurora-4: oklch(76% 0.14 72 / 0.24);
+  --aurora-veil: oklch(24.82% 0.0762 261.71 / 0.5);
 }
 
 /* Mapiranje tokena na Tailwind klase (bg-background, text-primary, border-border...) */
@@ -298,6 +307,7 @@
     inset 0 1px 0 0 var(--glass-specular), inset 0 -1px 0 0 var(--glass-underside),
     0 2px 6px rgb(0 0 0 / 0.06), 0 24px 56px -20px rgb(0 0 0 / 0.22);
 
+  --color-aurora-veil: var(--aurora-veil);
   --color-aurora-1: var(--aurora-1);
   --color-aurora-2: var(--aurora-2);
   --color-aurora-3: var(--aurora-3);

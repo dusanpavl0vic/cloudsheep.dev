@@ -1,7 +1,5 @@
 import { cva } from 'class-variance-authority'
 
-import { glassVariants } from '@app/ui'
-
 /**
  * Header prati zaobljeni okvir stranice, pa umesto pune ivice preko celog ekrana
  * nosi hairline koji se gasi na krajevima — inače linija seče zaobljene uglove.
@@ -11,9 +9,22 @@ export const siteHeaderVariants = cva(
   // materijal kao sve ostalo — uključujući saturaciju i spekular — umesto sopstvenog
   // `/80` i `blur-xl`. Bez radijusa i bočnih ivica: naleže na ivicu okvira.
   [
-    glassVariants({ elevation: 'flat', radius: 'md', overlay: true }),
-    'sticky top-0 z-60 w-full rounded-none border-x-0 border-t-0 border-b-0',
-    "after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-linear-to-r after:from-transparent after:via-glass-edge after:to-transparent after:content-['']",
+    'sticky top-0 z-60 isolate w-full',
+    /*
+     * Staklo NE stoji na samom headeru nego na sloju ispod sadržaja, i taj sloj nosi masku
+     * koja ga gasi ka dnu.
+     *
+     * Ranije je header bio ploča pune jačine koja naglo prestaje: na 84. pikselu je bilo
+     * 81 nivo razlike prema sadržaju ispod — vidljiva vodoravna linija preko cele širine.
+     * Hairline ispod nje je taj rez samo naglašavao, pa ga više nema.
+     *
+     * Maska mora na zaseban sloj, ne na header: na headeru bi gasila i logo i navigaciju.
+     * `backdrop-filter` se maskira zajedno sa podlogom, pa se i zamućenje gasi postepeno —
+     * upravo to i hoćemo, inače bi ostala oštra granica zamućenja bez granice boje.
+     */
+    "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:bg-glass-strong before:content-['']",
+    'before:supports-[backdrop-filter]:backdrop-blur-glass-strong before:supports-[backdrop-filter]:backdrop-saturate-[1.7]',
+    'before:[-webkit-mask-image:linear-gradient(to_bottom,#000_52%,transparent)] before:[mask-image:linear-gradient(to_bottom,#000_52%,transparent)]',
   ].join(' '),
 )
 
