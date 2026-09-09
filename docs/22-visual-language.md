@@ -148,6 +148,19 @@ zajedno sa podlogom, pa se i zamućenje gasi postepeno — bez toga ostaje oštr
 zamućenja i kad granica boje nestane.
 
 > Maska **mora** na zaseban sloj. Na samom headeru bi gasila i logo i navigaciju.
+>
+> I sloj mora biti **viši od sadržaja**: header ga produžava 40px naniže i gasi tek u tom
+> produžetku. Prva verzija je gasila kroz samu navigaciju — linkovi su pola stajali na
+> staklu a pola u prazno, što je u svetloj temi izgledalo isprano.
+
+**Dve susedne sekcije mogu deliti dijagonalu umesto da se dodiruju po vodoravnoj liniji.**
+Hero se završava kosom ivicom pod istim uglom pod kojim je nagnuta traka sa tehnologijama
+(`-rotate-2`), a traka se podvlači pod tu ivicu. Umesto dva reza — kraj hero-a i početak
+trake — ostaje jedan potez.
+
+Ugao se ne bira odokativno: `tan(2°) × 1440px ≈ 52px` razlike u visini između leve i desne
+ivice, i to u smeru u kom rotacija naginje traku. `clip-path` ide na **zaseban sloj**, iz
+istog razloga kao maska — na elementu sa tekstom bi odsekao i sadržaj.
 
 **Izmereno** skeniranjem kolone piksela niz celu stranicu (skok > 12 nivoa = rez):
 

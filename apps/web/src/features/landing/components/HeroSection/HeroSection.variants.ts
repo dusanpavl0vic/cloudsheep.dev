@@ -1,15 +1,35 @@
 import { cva } from 'class-variance-authority'
 
 /**
- * BEZ podloge, namerno.
+ * Hero se ne završava vodoravnom linijom nego KOSOM — pod istim uglom pod kojim je nagnuta
+ * traka sa tehnologijama ispod njega (`TechMarquee`, `-rotate-2`).
  *
- * Ranije je stajalo `bg-background` — neprovidno. Dok je i okvir bio neprovidan to se nije
- * videlo, ali otkad okvir propušta auroru (docs/22 §3a) hero je postao ostrvo pune boje
- * usred providne stranice: na njegovom dnu se pojavila oštra vodoravna linija tamo gde
- * ostrvo prestaje. Providan hero pušta isto svetlo kao i sve ispod njega, pa prelaza nema.
+ * Time nestaje prelaz koji se ranije video kao rez preko cele širine: hero ploča i traka
+ * dele istu dijagonalu, pa se čitaju kao jedan potez a ne kao dve sekcije koje se dodiruju.
+ *
+ * `pb-32` je zbog kosine: donjih ~52px desne strane odseca `clip-path`, pa sadržaj mora
+ * imati rezervu ili bi „SCROLL" strelica upala u odsečeni ugao.
  */
 export const heroVariants = cva(
-  'relative flex min-h-[calc(100svh-72px)] w-full flex-col items-center justify-center overflow-hidden px-5 py-20 text-center',
+  'relative isolate flex min-h-[calc(100svh-72px)] w-full flex-col items-center justify-center px-5 pt-20 pb-32 text-center',
+)
+
+/**
+ * Staklena ploča hero-a sa kosom donjom ivicom.
+ *
+ * Ugao: `tan(2°) × 1440px ≈ 52px` razlike u visini između leve i desne ivice. Levo niže,
+ * desno više — isti smer u kom `-rotate-2` naginje traku (rotacija u smeru suprotnom od
+ * kazaljke podiže desnu stranu).
+ *
+ * Ploča je zaseban sloj, ne podloga na `heroVariants`: `clip-path` na elementu sa tekstom
+ * bi odsekao i sadržaj, ne samo podlogu.
+ */
+export const heroSurfaceVariants = cva(
+  [
+    'pointer-events-none absolute inset-0 -z-10',
+    'bg-glass supports-[backdrop-filter]:backdrop-blur-glass supports-[backdrop-filter]:backdrop-saturate-[1.7]',
+    '[clip-path:polygon(0_0,100%_0,100%_calc(100%-52px),0_100%)]',
+  ].join(' '),
 )
 
 /** Statični ambijentalni sjaj — sloj koji se nikad ne pomera. */

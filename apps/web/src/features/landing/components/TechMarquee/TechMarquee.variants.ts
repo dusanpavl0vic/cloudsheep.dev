@@ -14,7 +14,9 @@ import { glassVariants } from '@app/ui'
 export const techMarqueeVariants = cva(
   [
     glassVariants({ radius: 'md', elevation: 'flat' }),
-    'relative -mx-[2%] my-10 w-[104%] -rotate-2 overflow-hidden border-transparent py-6 select-none',
+    // `-mt-7`: traka se podvlači pod kosu ivicu hero-a, pa dijagonala teče bez prekida.
+    // Bez toga između njih ostaje klin nepokrivene podloge.
+    'relative -mx-[2%] -mt-7 mb-14 w-[104%] -rotate-2 overflow-hidden border-transparent py-6 select-none',
     /*
      * Meko gašenje po VISINI, 10px gore i dole.
      *

@@ -22,9 +22,12 @@ export const siteHeaderVariants = cva(
      * `backdrop-filter` se maskira zajedno sa podlogom, pa se i zamućenje gasi postepeno —
      * upravo to i hoćemo, inače bi ostala oštra granica zamućenja bez granice boje.
      */
-    "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:bg-glass-strong before:content-['']",
+    // Sloj je VIŠI od headera: seže 40px ispod njega, i maska se gasi tek u tom produžetku.
+    // Ranije je `inset-0` značilo da se gašenje dešava KROZ navigaciju — logo i linkovi su
+    // pola stajali na staklu a pola u prazno, što je u svetloj temi izgledalo isprano.
+    "before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:-bottom-10 before:-z-10 before:bg-glass-strong before:content-['']",
     'before:supports-[backdrop-filter]:backdrop-blur-glass-strong before:supports-[backdrop-filter]:backdrop-saturate-[1.7]',
-    'before:[-webkit-mask-image:linear-gradient(to_bottom,#000_52%,transparent)] before:[mask-image:linear-gradient(to_bottom,#000_52%,transparent)]',
+    'before:[-webkit-mask-image:linear-gradient(to_bottom,#000_64%,transparent)] before:[mask-image:linear-gradient(to_bottom,#000_64%,transparent)]',
   ].join(' '),
 )
 
