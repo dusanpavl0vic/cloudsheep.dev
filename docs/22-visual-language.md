@@ -45,19 +45,30 @@ Zamenjuje raniji `//` marker: pilula nosi isti podatak, a ne traži da čitalac 
 Površina je **providna ploča iznad podloge**: propušta boju i oblik onoga što je iza,
 zamućeno, i hvata svetlo po gornjoj ivici.
 
-Materijal ima četiri sastojka i nijedan nije opcion:
+Materijal ima šest sastojaka i nijedan nije opcion:
 
-| Sastojak           | Token                 | Zašto                                                    |
-| ------------------ | --------------------- | -------------------------------------------------------- |
-| providna podloga   | `bg-glass`            | boja podloge se vidi kroz nju; puna podloga nije staklo  |
-| zamućenje iza      | `backdrop-blur-glass` | bez njega je ploča samo prozirna, ne staklena            |
-| svetlosna ivica    | `border-glass-edge`   | gornja ivica hvata svetlo — tako oko čita debljinu ploče |
-| široka bleda senka | `shadow-glass`        | odvaja ploču od podloge; nasleđeno iz starog §3          |
+| Sastojak           | Token                     | Zašto                                                   |
+| ------------------ | ------------------------- | ------------------------------------------------------- |
+| providna podloga   | `bg-glass`                | boja podloge se vidi kroz nju; puna podloga nije staklo |
+| zamućenje iza      | `backdrop-blur-glass`     | bez njega je ploča prozirna, ne staklena                |
+| **saturacija iza** | `backdrop-saturate-[1.7]` | zamućenje razmaže boju u sivo; saturacija je vrati      |
+| **spekular**       | `--glass-specular`        | `inset` odsjaj uz gornju ivicu — daje ploči DEBLJINU    |
+| prigušena ivica    | `border-glass-edge-soft`  | rub ploče; **jedne boje sa svih strana**                |
+| široka bleda senka | `shadow-glass`            | odvaja ploču od podloge; nasleđeno iz starog §3         |
+
+Poslednja tri stižu kroz `shadow-glass`, koja nosi tri sloja: `inset` odsjaj gore, `inset`
+senku dole, pa spoljnu senku.
+
+> **Gornja ivica se ne crta borderom.** Prva verzija je imala i `border-t-glass-edge` i
+> `inset` spekular — dve bele linije jedna na drugoj, što je na ekranu debela pruga umesto
+> odsjaja, i najgore na zaobljenim uglovima gde ravna linija ne prati luk. Debljinu nosi
+> isključivo spekular.
 
 ```
-✅ bg-glass backdrop-blur-glass border border-glass-edge shadow-glass
-❌ bg-card shadow-md              — puna podloga, uska senka: nije staklo
-❌ bg-glass                       — providno bez zamućenja je prozor, ne staklo
+✅ glassVariants({ elevation: 'raised' })
+❌ bg-card shadow-md                     — puna podloga, uska senka: nije staklo
+❌ bg-glass                              — providno bez zamućenja je prozor, ne staklo
+❌ border-t-glass-edge uz shadow-glass   — dve svetle linije, pruga umesto odsjaja
 ```
 
 Radijus je velik: `rounded-2xl` za kartice, `rounded-3xl` za panele i okvire sekcija.
@@ -86,15 +97,47 @@ meka radijalna svetla u `--aurora-*` bojama.
 `backdrop-filter` je skup: pretraživač mora da uzorkuje i zamuti sve ispod elementa, na
 svaki kadar u kom se nešto pomeri. Zato:
 
-- **Zamućenje ide samo na velike površine** — kartice, paneli, header, dijalozi, footer.
-  Nikad na dugme, značku, tag ili ikonicu; tamo je providnost bez `backdrop-blur` dovoljna.
-- **Poluprečnik je 14px** (`--glass-blur`), 22px samo za lebdeće slojeve iznad sadržaja
-  (`--glass-blur-strong`: dijalog, mobilna navigacija). Vrednosti preko 30px ne izgledaju
-  staklenije, samo koštaju više.
-- **Gornja granica je ~12 staklenih površina u jednom kadru.** Preko toga se skrol trza na
-  slabijem uređaju. Ako sekcija traži više, to nisu kartice nego lista.
+- **Poluprečnik prati veličinu površine.** 14px (`--glass-blur`) za kartice i panele,
+  22px (`--glass-blur-strong`) za slojeve iznad sadržaja (dijalog, mobilna navigacija,
+  header), **8px za kontrole** (`control` varijanta: dugme, pilula, polje). Poluprečnik
+  veći od pola visine elementa nije materijal nego zamućena fleka.
+- **Kontrole SMEJU nositi staklo.** Prva verzija ovog dokumenta je to zabranjivala; zabrana
+  je pala na merenju, ne na raspravi. Ali `default` dugme ostaje **puna plava** — plava je
+  jedina boja akcije (§4), a staklo na primarnom dugmetu ga izjednačava sa sekundarnim.
+- **Broji ploče U KADRU, ne u dokumentu.** Element van ekrana se ne kompozituje. Stranica
+  ima 26 staklenih elemenata a u kadru su istovremeno 2 — granica od ~12 važi za ono što
+  se vidi.
+
+**Izmereno** (produkcijski build, 4× usporen CPU, skrol kroz celu stranicu):
+
+|                                | pre redizajna | posle   |
+| ------------------------------ | ------------- | ------- |
+| elemenata sa `backdrop-filter` | 12            | 26      |
+| p50 kadra                      | 21.9 ms       | 23.3 ms |
+| p95 kadra                      | 47.4 ms       | 53.5 ms |
+| kadrova preko 50 ms            | 0 / 84        | 11 / 78 |
+
+Trošak je stvaran i nije nula: p95 raste 13%, i pojave se kadrovi preko 50 ms kojih pre nije
+bilo. Na neusporenom uređaju je to oko četvrtine toga. **Ako broj ploča u kadru poraste, ovo
+se ponovo meri** — vrednosti gore su prag, ne istorijska beleška.
+
 - **Tekst nikad ne stoji na providnosti bez podloge.** Tokeni teksta ostaju puni
   (`text-foreground`, `text-muted-foreground`); providna je samo podloga ispod njih.
+
+### 3c. Nijedno neprovidno ostrvo u providnom okviru
+
+Okvir stranice propušta auroru. Sekcija koja nosi **punu** podlogu postaje ostrvo pune boje
+usred providne stranice, a na njegovoj ivici se pojavi oštra vodoravna linija tamo gde
+ostrvo prestaje.
+
+Tako je i bilo: hero je imao `bg-background`, footer `bg-muted/55` — i druga boja i druga
+alfa od okvira. Dok je okvir bio neprovidan ništa se nije videlo; providan okvir je to
+razotkrio kao rez preko stranice.
+
+- Sekcija koja treba da se izdvoji uzima **isti materijal** (`glassVariants`), ne drugu boju.
+- Sekcija koja se ne izdvaja nema podlogu uopšte — aurora prolazi kroz nju.
+- Izuzetak je `tone: 'inverse'` (tamna CTA traka): ona je namerno druga površina, i prelaz
+  joj rešavaju radijus i senka, ne ton podloge.
 
 ### 3b. Lebdeći ukras je oblak, ne kartica
 
@@ -246,7 +289,9 @@ pa ide `aria-hidden`.
 | Animiran uzorak u pozadini             | trza se, vuče pogled, ponovno crtanje po kadru | statična tekstura        |
 | Puna podloga (`bg-card`) na kartici    | staklo mora propuštati podlogu                 | `glassVariants`          |
 | `bg-glass` bez `backdrop-blur`         | providno bez zamućenja je prozor, ne staklo    | ceo recept iz §3         |
-| `backdrop-blur` na dugmetu ili znački  | skupo po kadru, a na 32px se ne vidi           | providnost bez zamućenja |
+| Pun poluprečnik (14px) na dugmetu      | veći od pola visine = zamućena fleka           | `control` varijanta, 8px |
+| Staklo na primarnom dugmetu            | izjednačava ga sa sekundarnim (§4)             | puna plava               |
+| Puna podloga na sekciji                | neprovidno ostrvo → rez preko stranice (§3c)   | isti materijal ili ništa |
 | Više od ~12 staklenih ploča u kadru    | skrol se trza na slabijem uređaju              | lista umesto kartica     |
 | Tri različite akcenatske boje          | ništa se ne ističe kad se sve ističe           | jedan akcenat            |
 | Naslov u dve veličine slova            | lomi tipografsku skalu                         | dvotonski, ista veličina |
@@ -262,8 +307,9 @@ pa ide `aria-hidden`.
 - [ ] Naslov je dvotonski, u jednoj veličini slova
 - [ ] Kartica koristi `glassVariants`, ne ručno sklopljen recept
 - [ ] Staklo ima sva četiri sastojka (podloga, zamućenje, ivica, senka)
-- [ ] `backdrop-blur` nije ni na jednom sitnom elementu
-- [ ] U kadru nema više od ~12 staklenih ploča
+- [ ] Kontrole koriste `control` (8px), ne pun poluprečnik
+- [ ] Nijedna sekcija ne nosi punu podlogu (§3c)
+- [ ] U kadru (ne u dokumentu) nema više od ~12 staklenih ploča
 - [ ] Radijus je `rounded-2xl` ili veći
 - [ ] Na ekranu je najviše jedna akcenatska površina po grupi
 - [ ] Nijedan uzorak u pozadini se ne animira

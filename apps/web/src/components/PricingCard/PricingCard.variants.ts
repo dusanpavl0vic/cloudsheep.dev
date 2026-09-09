@@ -56,5 +56,5 @@ export const pricingFeatureVariants = cva('flex items-start gap-2 text-[14.5px]'
 
 export const pricingBadgeVariants = cva(
   // Značka je sitna: providnost bez `backdrop-blur` (docs/22 §3b-glass).
-  'absolute -top-3 right-6 border border-glass-edge-soft border-t-glass-edge bg-glass-strong text-primary shadow-glass',
+  'absolute -top-3 right-6 border border-glass-edge-soft bg-glass-strong text-primary shadow-glass',
 )

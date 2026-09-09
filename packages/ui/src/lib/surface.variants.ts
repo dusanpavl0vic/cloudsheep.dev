@@ -18,8 +18,15 @@ import { cva } from 'class-variance-authority'
  */
 export const glassVariants = cva(
   [
-    'border border-glass-edge-soft border-t-glass-edge',
-    'bg-card supports-[backdrop-filter]:bg-glass supports-[backdrop-filter]:backdrop-blur-glass',
+    // Ivica je JEDNE boje, tanka i prigušena. Gornju svetlu liniju je ranije crtao
+    // `border-t-glass-edge`, ali otkad `--shadow-glass` nosi `inset` spekular, to su bile
+    // dve bele linije jedna na drugoj — debela pruga umesto odsjaja, i najgora na
+    // zaobljenim uglovima gde se ravna linija ne poklapa sa lukom.
+    // Debljinu ploče sad nosi isključivo spekular iz senke.
+    'border border-glass-edge-soft',
+    // `backdrop-saturate` je ono što razlikuje staklo od mlečnog plastika: zamućenje samo
+    // razmaže boju ispod, saturacija je vrati. Bez nje ploča ispere auroru u sivo.
+    'bg-card supports-[backdrop-filter]:bg-glass supports-[backdrop-filter]:backdrop-blur-glass supports-[backdrop-filter]:backdrop-saturate-[1.7]',
     'transition-[box-shadow,transform,background-color] duration-300',
   ].join(' '),
   {
@@ -50,12 +57,29 @@ export const glassVariants = cva(
         md: 'rounded-xl',
         lg: 'rounded-2xl',
         xl: 'rounded-3xl',
+        /** Kapsula — kontrole i pilule. */
+        full: 'rounded-full',
+      },
+      /**
+       * Sitna kontrola (dugme, pilula, polje).
+       *
+       * Ranije je §3b-glass ovo zabranjivao. Zabrana je pala na merenju, ne na ukusu:
+       * na 8px poluprečnika je trošak po ploči ispod praga merenja, a bez njih je stranica
+       * bila staklena samo na karticama i to se videlo kao nedoslednost.
+       *
+       * Poluprečnik je manji jer je i površina manja: 14px preko dugmeta od 40px visine
+       * zamuti sve do neprepoznatljivosti i pilula izgleda kao mrlja.
+       */
+      control: {
+        true: 'supports-[backdrop-filter]:backdrop-blur-[8px]',
+        false: '',
       },
     },
     defaultVariants: {
       elevation: 'raised',
       overlay: false,
       interactive: false,
+      control: false,
       radius: 'lg',
     },
   },

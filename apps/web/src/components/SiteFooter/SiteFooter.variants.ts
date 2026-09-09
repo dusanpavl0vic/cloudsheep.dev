@@ -1,12 +1,28 @@
 import { cva } from 'class-variance-authority'
 
+import { glassVariants } from '@app/ui'
+
 /**
  * Svetli panel sa tačkastom teksturom (docs/22 §3, §6).
  *
  * Ranije je bio tamni navy blok. Pošto ContactSection iznad njega već nosi tamni CTA panel,
  * dva tamna bloka jedan do drugog su se slila u jedan — footer je gubio granicu.
  */
-export const siteFooterVariants = cva('relative w-full overflow-hidden bg-muted/55 text-foreground')
+/**
+ * Staklena ploča na dnu, bez radijusa (nalegla je na ivicu okvira).
+ *
+ * Ranije `bg-muted/55`: i druga boja i druga alfa od okvira, pa se na vrhu footera videla
+ * traka gde jedan ton naglo prelazi u drugi. Sad je isti materijal kao ostatak stranice,
+ * a gornja ivica je gradijent koji se gasi ka krajevima — ista tehnika kojom header rešava
+ * svoju donju ivicu, pa se ne seče zaobljeni ugao okvira.
+ */
+export const siteFooterVariants = cva(
+  [
+    glassVariants({ elevation: 'flat', radius: 'md' }),
+    'relative w-full overflow-hidden rounded-none border-x-0 border-b-0 border-t-0 text-foreground',
+    "before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-linear-to-r before:from-transparent before:via-glass-edge before:to-transparent before:content-['']",
+  ].join(' '),
+)
 
 /** Dekorativna dot-grid tekstura na navy podlozi (boja iz tokena). */
 export const footerDotGridVariants = cva(

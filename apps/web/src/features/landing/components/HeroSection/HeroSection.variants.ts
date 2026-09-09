@@ -1,7 +1,15 @@
 import { cva } from 'class-variance-authority'
 
+/**
+ * BEZ podloge, namerno.
+ *
+ * Ranije je stajalo `bg-background` — neprovidno. Dok je i okvir bio neprovidan to se nije
+ * videlo, ali otkad okvir propušta auroru (docs/22 §3a) hero je postao ostrvo pune boje
+ * usred providne stranice: na njegovom dnu se pojavila oštra vodoravna linija tamo gde
+ * ostrvo prestaje. Providan hero pušta isto svetlo kao i sve ispod njega, pa prelaza nema.
+ */
 export const heroVariants = cva(
-  'relative flex min-h-[calc(100svh-72px)] w-full flex-col items-center justify-center overflow-hidden bg-background px-5 py-20 text-center',
+  'relative flex min-h-[calc(100svh-72px)] w-full flex-col items-center justify-center overflow-hidden px-5 py-20 text-center',
 )
 
 /** Statični ambijentalni sjaj — sloj koji se nikad ne pomera. */
