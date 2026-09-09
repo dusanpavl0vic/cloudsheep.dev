@@ -23,7 +23,14 @@ import { fileURLToPath } from 'node:url'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const SITE = 'https://cloudsheep.dev'
 const DIST = path.join(ROOT, 'apps/web/dist')
-const LOCALE = path.join(ROOT, 'apps/web/src/locales/sr.json')
+/**
+ * Statični HTML je ono što vidi PRETRAŽIVAČ i pregled linka, a taj jezik je engleski.
+ *
+ * Sajt i dalje bira jezik po pregledaču — srpski posetilac dobija srpski čim se JS izvrši.
+ * Ali sirov HTML ima samo jednu vrednost naslova i opisa, pa mora biti na jeziku šire
+ * publike; inače Google prikazuje srpski isečak svima.
+ */
+const LOCALE = path.join(ROOT, 'apps/web/src/locales/en.json')
 const SEO_FILE = path.join(ROOT, 'apps/web/src/lib/seo.ts')
 
 const API_URL = process.env.VITE_API_URL
@@ -53,19 +60,27 @@ async function projectPages() {
     const body = await res.json()
     const items = Array.isArray(body) ? body : (body.items ?? [])
 
-    return items.map((p) => ({
-      route: `/projects/${p.slug}`,
-      title: `${p.title?.sr ?? p.slug} — CloudSheep`,
-      description: p.desc?.sr ?? '',
-      jsonLd: {
-        '@context': 'https://schema.org',
-        '@type': 'CreativeWork',
-        name: p.title?.sr ?? p.slug,
-        description: p.desc?.sr ?? '',
-        url: `${SITE}/projects/${p.slug}`,
-        author: { '@type': 'Organization', name: 'CloudSheep' },
-      },
-    }))
+    // Engleski oblik, srpski kao rezerva — isti razlog kao za `LOCALE` iznad. Prazan `en`
+    // u bazi ne sme da ostavi stranicu bez naslova, pa se pada na `sr`, pa na slug.
+    return items.map((p) => {
+      const title = p.title?.en || p.title?.sr || p.slug
+      const description = p.desc?.en || p.desc?.sr || ''
+
+      return {
+        route: `/projects/${p.slug}`,
+        title: `${title} — CloudSheep`,
+        description,
+        jsonLd: {
+          '@context': 'https://schema.org',
+          '@type': 'CreativeWork',
+          name: title,
+          description,
+          inLanguage: 'en',
+          url: `${SITE}/projects/${p.slug}`,
+          author: { '@type': 'Organization', name: 'CloudSheep' },
+        },
+      }
+    })
   } catch (error) {
     console.warn(`build-seo-pages: projekti nisu dohvaćeni (${error.message})`)
     return []
@@ -81,6 +96,7 @@ const HOME_JSON_LD = {
   logo: `${SITE}/og.png`,
   image: `${SITE}/og.png`,
   areaServed: 'Worldwide',
+  inLanguage: 'en',
   address: { '@type': 'PostalAddress', addressLocality: 'Niš', addressCountry: 'RS' },
   knowsLanguage: ['sr', 'en'],
   sameAs: ['https://github.com/dusanpavl0vic'],
