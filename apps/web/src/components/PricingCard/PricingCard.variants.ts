@@ -1,5 +1,7 @@
 import { cva } from 'class-variance-authority'
 
+import { glassVariants } from '@app/ui'
+
 /**
  * Istaknuta kartica u grupi (docs/22 §5).
  *
@@ -12,8 +14,8 @@ export const pricingCardVariants = cva(
     variants: {
       featured: {
         true: 'bg-primary text-primary-foreground shadow-[0_2px_6px_rgb(0_0_0/0.06),0_28px_64px_-20px_color-mix(in_oklch,var(--color-primary)_55%,transparent)] lg:-translate-y-4 lg:scale-[1.03]',
-        false:
-          'bg-card shadow-[0_1px_2px_rgb(0_0_0/0.04),0_12px_32px_-12px_rgb(0_0_0/0.14)] ring-1 ring-border/50 ring-inset hover:shadow-[0_2px_6px_rgb(0_0_0/0.06),0_24px_48px_-16px_rgb(0_0_0/0.2)]',
+        // Istaknuta ostaje PUNA plava (§5): staklo bi joj pojelo baš ono po čemu se ističe.
+        false: glassVariants({ interactive: true }),
       },
     },
     defaultVariants: {
@@ -53,5 +55,6 @@ export const pricingFeatureVariants = cva('flex items-start gap-2 text-[14.5px]'
 })
 
 export const pricingBadgeVariants = cva(
-  'absolute -top-3 right-6 bg-card text-primary shadow-[0_2px_8px_rgb(0_0_0/0.12)] ring-1 ring-border/60 ring-inset',
+  // Značka je sitna: providnost bez `backdrop-blur` (docs/22 §3b-glass).
+  'absolute -top-3 right-6 border border-glass-edge-soft bg-glass-strong text-primary shadow-glass',
 )

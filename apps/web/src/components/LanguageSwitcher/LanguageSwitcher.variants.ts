@@ -1,5 +1,7 @@
 import { cva } from 'class-variance-authority'
 
+import { glassVariants } from '@app/ui'
+
 export const languageSwitcherVariants = cva('relative')
 
 export const languageTriggerVariants = cva(
@@ -7,7 +9,10 @@ export const languageTriggerVariants = cva(
 )
 
 export const languageMenuVariants = cva(
-  'menu-in absolute top-[calc(100%+8px)] right-0 z-70 min-w-[136px] overflow-hidden rounded-xl border border-border bg-popover p-1 shadow-xl shadow-inverse/15',
+  [
+    glassVariants({ radius: 'md', elevation: 'floating', overlay: true }),
+    'menu-in absolute top-[calc(100%+8px)] right-0 z-70 min-w-[136px] overflow-hidden p-1',
+  ].join(' '),
 )
 
 export const languageOptionVariants = cva(

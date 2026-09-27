@@ -1,5 +1,7 @@
 import { cva } from 'class-variance-authority'
 
+import { glassVariants } from '@app/ui'
+
 /**
  * Disciplina kao PANEL, ne kao red u tabeli.
  *
@@ -12,7 +14,12 @@ import { cva } from 'class-variance-authority'
  * slaganja `-z-10` ih izbaci ISPOD podloge panela, pa se ne vide uopšte.
  */
 export const panelVariants = cva(
-  'group relative isolate overflow-hidden rounded-2xl bg-card p-7 ring-1 ring-border/70 ring-inset transition-[transform,box-shadow,--tw-ring-color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:ring-primary/30 hover:shadow-[0_2px_6px_rgb(0_0_0/0.05),0_24px_56px_-24px_rgb(0_0_0/0.2)] motion-reduce:transition-none motion-reduce:hover:translate-y-0',
+  [
+    glassVariants({ interactive: true }),
+    'group relative isolate overflow-hidden p-7',
+    // Ivica se na hover pali u plavo — jedini deo recepta koji panel dopunjuje.
+    'duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-primary/30',
+  ].join(' '),
 )
 
 /** Sloj svetla. Gradijent dolazi iz `DisciplineCard.constants.ts`, jer čita CSS promenljive. */

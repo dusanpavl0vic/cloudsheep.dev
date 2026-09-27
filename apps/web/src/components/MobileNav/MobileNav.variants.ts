@@ -1,5 +1,7 @@
 import { cva } from 'class-variance-authority'
 
+import { glassVariants } from '@app/ui'
+
 /** Dugme sa hamburgerom — vidi se samo ispod `lg`, gde puna navigacija ne staje. */
 export const navTriggerVariants = cva(
   'grid size-10 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:hidden',
@@ -16,7 +18,11 @@ export const navTriggerVariants = cva(
  * tamo, jer `@starting-style` i `transition-behavior: allow-discrete` nemaju Tailwind ekvivalent.
  */
 export const navSheetVariants = cva(
-  'nav-sheet fixed m-0 max-h-none max-w-none border-0 bg-background p-0 text-foreground',
+  // Sloj iznad stranice: `overlay` zatvara više, jer se kroz njega vidi tekst a ne podloga.
+  [
+    glassVariants({ radius: 'md', elevation: 'flat', overlay: true }),
+    'nav-sheet fixed m-0 max-h-none max-w-none rounded-none border-0 p-0 text-foreground',
+  ].join(' '),
   {
     variants: {
       layout: {

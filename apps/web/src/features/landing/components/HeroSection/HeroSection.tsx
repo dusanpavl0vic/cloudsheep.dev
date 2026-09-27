@@ -21,6 +21,7 @@ import {
   heroMonoVariants,
   heroScrollArrowVariants,
   heroScrollVariants,
+  heroSurfaceVariants,
   heroTerminalVariants,
   heroTextVariants,
   heroTitleMutedVariants,
@@ -107,6 +108,8 @@ export const HeroSection = ({ technologies }: HeroSectionProps) => {
 
   return (
     <section ref={sectionRef} id={SECTION_IDS.TOP} className={heroVariants()}>
+      {/* Kosa staklena ploča — donja ivica prati nagib trake ispod (docs/22 §3c). */}
+      <span aria-hidden className={heroSurfaceVariants()} />
       {/* Statična tačkasta tekstura — gasi se ka centru da ne smeta naslovu */}
       <div aria-hidden className={heroDotsVariants()} />
 

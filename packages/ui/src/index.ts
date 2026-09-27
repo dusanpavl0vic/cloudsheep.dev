@@ -45,4 +45,4 @@ export { SectionBlock } from './layouts/SectionBlock'
 
 // ── lib ──
 export { cn } from './lib/cn'
-export { dottedSurfaceVariants, surfaceVariants } from './lib/surface.variants'
+export { auroraVariants, dottedSurfaceVariants, glassVariants } from './lib/surface.variants'

@@ -1,5 +1,7 @@
 import { cva } from 'class-variance-authority'
 
+import { glassVariants } from '../../lib/surface.variants'
+
 export const sectionBlockVariants = cva('w-full', {
   variants: {
     spacing: {
@@ -28,8 +30,13 @@ export const sectionSurfaceVariants = cva('', {
   variants: {
     surface: {
       plain: '',
-      panel:
-        "relative rounded-3xl bg-muted/45 ring-1 ring-border/50 ring-inset before:pointer-events-none before:absolute before:inset-0 before:rounded-3xl before:bg-[radial-gradient(currentColor_1px,transparent_1px)] before:bg-[length:22px_22px] before:text-border-strong/35 before:content-['']",
+      panel: [
+        glassVariants({ radius: 'xl', elevation: 'flat' }),
+        'relative',
+        // Tekstura ostaje (§6) i ostaje statična. Sad leži NA staklu, pa je slabija:
+        // preko providne ploče je isti uzorak čitljiviji nego preko pune `bg-muted`.
+        "before:pointer-events-none before:absolute before:inset-0 before:rounded-3xl before:bg-[radial-gradient(currentColor_1px,transparent_1px)] before:bg-[length:22px_22px] before:text-border-strong/25 before:content-['']",
+      ].join(' '),
     },
   },
   defaultVariants: { surface: 'plain' },

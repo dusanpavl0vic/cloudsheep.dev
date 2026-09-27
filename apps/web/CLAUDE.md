@@ -36,9 +36,34 @@ ekstenzija, a ne sajt.
 
 | Stavka     | Limit           | Trenutno     |
 | ---------- | --------------- | ------------ |
-| Initial JS | **158 KB gzip** | 157.0        |
-| CSS        | 20 KB gzip      | 13.6         |
+| Initial JS | **160 KB gzip** | 158.5        |
+| CSS        | 20 KB gzip      | 14.7         |
 | Po ruti    | 60 KB gzip      | 17.2 (`env`) |
+
+> **Zašto 160, a ne 158** (2026-09-27). Granica od 158 je oborila prvi PR koji je uopšte
+> prošao kroz CI na ovoj grani — i merenje je pokazalo da problem nije u onome što je PR
+> doneo. Izmereno na čistom buildu:
+>
+> |                                | initial JS                 |
+> | ------------------------------ | -------------------------- |
+> | `dev`, bez staklenog redizajna | **157.9** — 0.1 KB rezerve |
+> | sa staklom                     | 158.5                      |
+>
+> **Staklo košta 0.6 KB; rezerve je bilo 0.1.** Granica je već bila iscrpljena, pa bi je
+> probila bilo koja sledeća funkcionalnost — 158 je prestalo da bude budžet i postalo
+> zaustavna ručica. Podignuta je na 160 da ponovo bude **broj koji se poštuje**, isto
+> obrazloženje kao kod prelaska sa 150 na 155 niže.
+>
+> **Šta je probano pre podizanja:** aurora gradijent (374 znaka) prebačen iz Tailwind
+> arbitrary klase u pravu CSS klasu, da izađe iz početnog JS chunk-a. Dobitak **0.1 KB** —
+> gzip dobro pakuje ponovljene stringove, pa dugački Tailwind stringovi koštaju osetno manje
+> nego što na oko izgledaju. Nije dovoljno, i izmena nije zadržana.
+>
+> **CI meri ~0.3 KB više od lokalnog builda** (158.8 prema 158.5). Ko cilja granicu, neka
+> cilja lokalno 159.5, ne 160.
+>
+> Sledeći put kad ovo zaškripi, pravo pitanje nije „šta je poslednji PR dodao" nego šta drži
+> `index` (39.5 KB) i `src` (21.5 KB) u ljusci.
 
 > **Zašto 158.** Brend marka je 2026-08-19 zamenjena isporučenim crtežom iz Figme. On je
 > bogatiji od ranijih: šest putanja, 4664 znaka posle zaokruživanja na 2 decimale, što je

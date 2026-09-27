@@ -1,12 +1,22 @@
 import { cva } from 'class-variance-authority'
 
+import { glassVariants } from '../lib/surface.variants'
+
 export const badgeVariants = cva(
   'inline-flex items-center gap-2 whitespace-nowrap transition-colors',
   {
     variants: {
       variant: {
         outline: 'border border-border-strong text-muted-foreground',
-        soft: 'border border-border bg-background text-muted-foreground',
+        /**
+         * Staklena pilula. `soft` je ranije bila `bg-background` — puna podloga, koja je
+         * nad aurorom bila vidljiva zakrpa. Zamućenje je plitko (`control`): 14px preko
+         * pilule od 24px visine zamuti sve u mrlju.
+         */
+        soft: [
+          glassVariants({ elevation: 'flat', radius: 'md', control: true }),
+          'rounded-none border-glass-edge-soft text-muted-foreground shadow-glass',
+        ].join(' '),
         solid: 'bg-primary text-primary-foreground',
         accent: 'bg-accent text-accent-foreground',
         plain: 'text-faint',

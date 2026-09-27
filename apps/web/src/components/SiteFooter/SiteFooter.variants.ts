@@ -6,7 +6,28 @@ import { cva } from 'class-variance-authority'
  * Ranije je bio tamni navy blok. Pošto ContactSection iznad njega već nosi tamni CTA panel,
  * dva tamna bloka jedan do drugog su se slila u jedan — footer je gubio granicu.
  */
-export const siteFooterVariants = cva('relative w-full overflow-hidden bg-muted/55 text-foreground')
+/**
+ * Kraj stranice, ne druga površina.
+ *
+ * Staklo stoji na sloju ispod sadržaja i nosi masku koja ga gasi NAVIŠE — ista tehnika kao
+ * header (`SiteHeader.variants.ts`), samo obrnuta. Gornja ivica footera zato ne postoji kao
+ * linija nego kao prelaz od 160px.
+ *
+ * Maska se zaustavlja na 0.88, ne na punoj: footer naleže na donju ivicu okvira, a puna
+ * jačina tu pravi stepenik prema razmaku oko okvira koji staklo nema.
+ *
+ * Dve ranije verzije su tu imale rez: prvo `bg-muted/55` (i druga boja i druga alfa od
+ * okvira, pa vidljiva traka), pa hairline gradijent koji je granicu samo naglasio. Obe su
+ * crtale liniju tamo gde linija ne treba da se vidi.
+ */
+export const siteFooterVariants = cva(
+  [
+    'relative isolate w-full overflow-hidden text-foreground',
+    "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:bg-glass before:content-['']",
+    'before:supports-[backdrop-filter]:backdrop-blur-glass before:supports-[backdrop-filter]:backdrop-saturate-[1.7]',
+    'before:[-webkit-mask-image:linear-gradient(to_bottom,transparent,rgb(0_0_0/0.88)_160px)] before:[mask-image:linear-gradient(to_bottom,transparent,rgb(0_0_0/0.88)_160px)]',
+  ].join(' '),
+)
 
 /** Dekorativna dot-grid tekstura na navy podlozi (boja iz tokena). */
 export const footerDotGridVariants = cva(

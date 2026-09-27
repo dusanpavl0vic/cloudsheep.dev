@@ -1,5 +1,7 @@
 import { cva } from 'class-variance-authority'
 
+import { glassVariants } from '@app/ui'
+
 /**
  * Dijagonalna traka sa tehnologijama.
  *
@@ -10,7 +12,20 @@ import { cva } from 'class-variance-authority'
  * `overflow-hidden` je obavezan — bez njega druga kopija liste širi stranicu.
  */
 export const techMarqueeVariants = cva(
-  'relative -mx-[2%] my-10 w-[104%] -rotate-2 overflow-hidden bg-card py-6 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_18px_44px_-16px_rgb(0_0_0/0.16)] ring-1 ring-border/50 select-none ring-inset',
+  [
+    glassVariants({ radius: 'md', elevation: 'flat' }),
+    // `-mt-7`: traka se podvlači pod kosu ivicu hero-a, pa dijagonala teče bez prekida.
+    // Bez toga između njih ostaje klin nepokrivene podloge.
+    'relative -mx-[2%] -mt-7 mb-14 w-[104%] -rotate-2 overflow-hidden border-transparent py-6 select-none',
+    /*
+     * Meko gašenje po VISINI, 10px gore i dole.
+     *
+     * Traka ostaje traka — 10px na 88px visine se čita kao mek rub, ne kao nestajanje. Bez
+     * ovoga su joj ivice bile najgrublji prelaz na stranici posle headera (54 nivoa razlike
+     * na jednom pikselu), jer je zarotirana ploča sekla auroru pod uglom.
+     */
+    'mask-[linear-gradient(to_bottom,transparent,#000_10px,#000_calc(100%-10px),transparent)]',
+  ].join(' '),
 )
 
 /** Traka koja klizi. Sadrži DVE identične kopije liste. */
@@ -24,7 +39,9 @@ export const techItemVariants = cva(
 
 /** Meko gašenje na krajevima, da stavke ne „iskaču" iz trake. */
 export const techEdgeVariants = cva(
-  'pointer-events-none absolute inset-y-0 z-10 w-24 from-card to-transparent',
+  // `from-glass`, ne `from-card`: `card` je NEPROVIDNA boja i unutar providne trake je
+  // bila vidljiva zakrpa na oba kraja.
+  'pointer-events-none absolute inset-y-0 z-10 w-24 from-glass to-transparent',
   {
     variants: {
       side: {
