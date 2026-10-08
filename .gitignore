@@ -3,19 +3,16 @@ node_modules
 .pnpm-store
 
 # Build izlazi
-# Bez vodeće kose crte — mora da hvata i `apps/*/dist` i `packages/*/dist`.
+.next
+out
 dist
-dist-ssr
 build
-storybook-static
 
-# Monorepo i keš alata
-.turbo
+# Keš alata
 *.tsbuildinfo
 .eslintcache
-.vite
-# Vite prepisuje config u privremeni modul kad ga mora transpilovati
-vite.config.*.timestamp-*
+# Next ga generiše pri svakom `dev`/`build` — tipovi ruta i `next/root-params`
+next-env.d.ts
 vitest.config.*.timestamp-*
 
 # Test, pokrivenost i budžeti
@@ -26,11 +23,6 @@ playwright/.cache
 test-results
 .lighthouseci
 
-# Generisani artefakti
-# sitemap.xml pravi scripts/build-sitemap.mjs iz ruta i slug-ova pri svakom buildu.
-# Commit-ovan bi bio drugi izvor istine koji tiho zastari.
-apps/web/public/sitemap.xml
-
 # Izvezeni logotipi (`brand/README.md`)
 # Kopije marke iz `packages/ui/src/atoms/Logo/SheepMark.tsx`, za upotrebu van koda.
 # Ne prate se: izvor je komponenta, a dva izvora istine se tiho raziđu. Regenerišu se ručno.
@@ -40,9 +32,8 @@ brand/
 
 # Env
 # Ugovori se PRATE, vrednosti nikad. Dva su, i imena kažu koje okruženje opisuju:
-#   `apps/*/.env.example`      → lokalni rad, kopira se u `.env`
+#   `.env.example`             → lokalni rad, kopira se u `.env`
 #   `.env.production.example`  → šta se upisuje u Coolify; ovde se ne kopira nigde
-# Nijedan obrazac nema kosu crtu, pa negacije važe i u `apps/*/`.
 .env
 .env.*
 !.env.example

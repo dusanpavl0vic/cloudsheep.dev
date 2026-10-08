@@ -1,150 +1,68 @@
 # 08 — Stilovi i UI
 
-> Status: active | Last review: 2026-08-15
+> Status: active | Last review: 2026-10-08
 
-Tailwind CSS v4 (CSS-first, `@theme`) + shadcn/ui + Radix + CVA.
-Obrazloženje izbora: [`adr/0003-styling-choice.md`](adr/0003-styling-choice.md).
+styled-components 6 (ADR 0010). Vizuelni jezik (staklo, aurora, animacije):
+[`22-visual-language.md`](22-visual-language.md).
 
-**Runtime CSS-in-JS (Emotion, styled-components) je zabranjen** — protivreči Lighthouse cilju.
+## 1. Fajlovi
 
-## Pravila
+| Fajl                     | Sadrži                                                                                                                                    |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `constants/theme/*.ts`   | vrednosti tokena: `PALETTE` (svetla/tamna), `SPACING`, `RADII`, `SHADOWS`, `BLUR`, `TYPOGRAPHY`, `BREAKPOINTS`/`MEDIA`, veličine, fontovi |
+| `styles/theme.ts`        | tema sastavljena iz tokena (`theme.colors.ink`, `theme.media.desktop`…)                                                                   |
+| `styles/GlobalStyles.ts` | reset, `@font-face`, vrednosti CSS promenljivih za obe teme                                                                               |
+| `styles/mixins.ts`       | `focusRing`, `visuallyHidden`, `resetButton`, `lineClamp`, `typography(v)`, `glass(s)`, `gradientText`                                    |
+| `styles/keyframes.ts`    | animacije iz dizajna (`bob`, `drift`, `popIn`, `marquee`…)                                                                                |
+| `<Komponenta>.styles.ts` | styled elementi te komponente                                                                                                             |
 
-1. **Tokeni samo u `packages/config/tailwind-config/theme.css`.**
-   Nijedna hex vrednost, nijedan `text-[#333]`, nijedan `bg-blue-500` u komponenti.
-2. **Samo semantičke klase:** `bg-primary`, `text-muted-foreground`, `border-border`.
-3. **Varijante isključivo preko CVA**, nikad lestvica uslova u `clsx`.
-4. **`cn()`** (`clsx` + `tailwind-merge`) iz `@app/ui/lib` za spajanje klasa.
-5. **shadcn output ide u `packages/ui/src/ui/` flat** i **wrap-uje se** pre upotrebe u app-u.
-6. **Dark mode kroz `data-theme` atribut** ([`adr/0008`](adr/0008-theme-data-attribute.md)),
-   tema u Redux + `localStorage`, inline script u `index.html` protiv FOUC-a.
-7. **RTL: logička svojstva** — `ps-4` umesto `pl-4`, `ms-auto` umesto `ml-auto`, svuda.
-8. **Boje u OKLCH.** Paleta je definisana u hex-u u izvornom dizajnu; u `theme.css` se
-   upisuje OKLCH ekvivalent (shadcn v4 default, bolja interpolacija).
+## 2. Pravila
 
-## Tokeni
+- **Svaki `.styles.ts` počinje sa `'use client'`** — styled-components radi samo u klijentskom
+  modulu. Komponenta koja ih renderuje može da ostane serverska.
+- **Boje samo iz teme** (`theme.colors.x`) ili iz konstanti tokena (`BRAND_COLORS`, `GLOW`).
+  Hex i `rgb()` u `.styles.ts` su lint greška (`@app/no-raw-colors`).
+- **Razmaci, radijusi, senke, prelomne tačke iz teme**: `${({ theme }) => theme.spacing[4]}px`,
+  `${({ theme }) => theme.media.desktop} { … }`. Vrednosti koje ima samo jedna komponenta idu u
+  njen `.constants.ts`.
+- **Transient props** za sve što ide samo u stil: `$variant`, `$active` — ne završavaju u DOM-u.
+- **Kratka imena** styled elemenata: `Root`, `Header`, `Item`, `Actions`.
+- **Komponenta prima `className`**, da bi mogla da se stilizuje spolja (`styled(Komponenta)`).
+- **Dinamička vrednost koja se često menja** (pozicija, procenat) ide kroz CSS promenljivu u
+  `style` (`style={{ '--progress': '42%' }}`), ne kroz interpolaciju propa — svaka nova vrednost
+  propa pravi novu CSS klasu.
+- **Mobile-first**: osnovni stil je za telefon, `theme.media.tablet/desktop/wide` dodaju.
+
+## 3. Teme
+
+Tema je **objekat čije su vrednosti CSS promenljive**: `theme.colors.primary = 'var(--c-primary)'`.
+Stvarne vrednosti su u `GlobalStyles`:
 
 ```css
-/* packages/config/tailwind-config/theme.css */
-@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
-
-:root {
-  --radius: 0.75rem;
-  --background: oklch(97.6% 0.005 106);
-  --foreground: oklch(36.5% 0.121 264);
-  --primary: oklch(50.4% 0.221 264);
-  --muted-foreground: oklch(46.8% 0.078 264);
-  --border: oklch(90.7% 0.008 106);
-  /* … */
-}
-
-[data-theme='dark'] { --background: oklch(23.1% 0.062 264); /* … */ }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  /* … */
+:root { --c-primary: #0D47A1; … }                 /* svetla */
+:root[data-theme='dark'] { --c-primary: #2196F3; … }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) { …tamna… }      /* korisnik nije birao → sistem */
 }
 ```
 
-Pored standardnih shadcn tokena postoje i:
+- Izabrana tema je u kolačiću `cs-theme`. Server ga čita u `[locale]/layout.tsx` i postavlja
+  `data-theme` na `<html>` — **bez treptaja i bez inline skripte** (CSP je ne bi pustio).
+- Promena teme: `setTheme` → listener menja `data-theme` i upisuje kolačić. React se ne
+  rerenderuje.
 
-| Grupa | Tokeni | Namena |
-|---|---|---|
-| `success` | `--success`, `--success-foreground` | uptime, dostupnost |
-| `display` | `--display` | gigant hero naslov (near-black, ne ink) |
-| `faint` | `--faint` | meta tekst, mono labele |
-| **inverzna površina** | `--inverse`, `--inverse-foreground`, `--inverse-muted`, `--inverse-faint`, `--inverse-border`, `--inverse-primary` | tamne trake (CTA panel, footer) koje ostaju tamne i u svetloj temi |
+## 4. Fontovi
 
-**Komponenta koja može da stoji na obe podloge dobija cva varijantu `tone: 'default' | 'inverse'`**
-umesto da se piše dva puta.
-
-`accent` je brend akcenat — **ne** koristi se za hover neutralnih elemenata; za to je `muted`.
-
-## Varijante — CVA
-
-```ts
-// packages/ui/src/molecules/Badge/Badge.variants.ts
-export const badgeVariants = cva(
-  'inline-flex items-center rounded-full font-mono text-xs tracking-wide',
-  {
-    variants: {
-      tone: {
-        default: 'bg-muted text-muted-foreground',
-        accent: 'bg-primary/10 text-primary',
-        inverse: 'bg-inverse-border text-inverse-muted',
-      },
-      size: { sm: 'px-2 py-0.5', md: 'px-3 py-1' },
-    },
-    defaultVariants: { tone: 'default', size: 'md' },
-  },
-);
-export type BadgeVariants = VariantProps<typeof badgeVariants>;
-```
-
-```tsx
-// Badge.tsx — struktura, bez Tailwind class stringova
-export function Badge({ tone, size, className, ...props }: BadgeProps) {
-  return <span className={cn(badgeVariants({ tone, size }), className)} {...props} />;
-}
-```
-
-**Sav vizuelni stil živi u `.variants.ts`, i kad komponenta nema varijante** — tada je fajl
-samo `cva('...klase...')`. U `.tsx` ostaju isključivo layout utility klase (`flex`, `gap`, `max-w`).
-
-## Tema
-
-Tema se menja postavljanjem `data-theme` na `<html>`. To radi **listener middleware** u
-`packages/core`, ne `useEffect`:
-
-```ts
-themeListener.startListening({
-  matcher: isAnyOf(themeToggled, themeSet),
-  effect: (_action, api) => applyTheme(selectTheme(api.getState())),
-});
-```
-
-Pri prvom ulasku koristi se `prefers-color-scheme`. Protiv FOUC-a — inline script u `index.html`
-koji postavi atribut pre prvog paint-a.
-
-**Komponente nikad ne znaju koja je tema aktivna.** Koriste semantičke klase i tema "samo radi".
-
-## Prvo platforma, pa biblioteka
-
-Kada platforma rešava problem, ne dodaje se zavisnost. FAQ akordeon koristi native
-`<details>`/`<summary>` — otvaranje radi browser, bez `useState`-a, bez `useEffect`-a i bez
-Radix paketa, uz besplatnu pristupačnost i rad bez JavaScript-a.
-
-Radix se uzima kada treba focus trap, roving tabindex ili ARIA koje platforma nema (Dialog,
-Popover, Select).
-
-## SVG iz dizajna
-
-Pre upotrebe: skloni `<rect>` pozadinu · boje zameni sa `currentColor` (tema radi sama) ·
-zaokruži koordinate na 2 decimale (Figma piše 10 — ušteda ~17% bez vidljive razlike).
-Za nekvadratne SVG-ove koristi `h-* w-auto`, ne `size-*`.
+Self-hostovani u `public/fonts/` (latin + latin-ext, varijabilni), `@font-face` sa `unicode-range`
+iz `constants/theme/fonts.ts`. `next/font` se ne koristi: ne podržava dva fajla iste porodice sa
+različitim `unicode-range`, pa bi č/ć/š/ž/đ pala na sistemski font. Preload samo latin podskupa
+za DM Sans i Space Grotesk (`Document`).
 
 ## Anti-patterns
 
-| ❌ | ✅ |
-|---|---|
-| `className="bg-blue-500"` | `className="bg-primary"` |
-| `className="text-[#133E87]"` | `className="text-foreground"` |
-| `clsx(a && 'p-2', b && 'p-4', c && 'p-6')` | cva `size` varijanta |
-| `className="pl-4 ml-auto"` | `className="ps-4 ms-auto"` (RTL) |
-| Tailwind klase u `.tsx` komponente | `.variants.ts` |
-| `styled.div\`color: red\`` | zabranjeno — runtime CSS-in-JS |
-| `useTheme()` pa `if (dark)` u komponenti | semantički token |
-| dve komponente `Card` i `CardDark` | jedna sa `tone` varijantom |
-| `size-6` na SVG 120×32 | `h-8 w-auto` |
-
-## Checklist
-
-- [ ] Nijedna hex/RGB vrednost i nijedna sirova Tailwind boja u komponenti
-- [ ] Stil je u `.variants.ts`, `.tsx` ima samo layout klase
-- [ ] Varijante su CVA, ne uslovni `clsx`
-- [ ] Logička svojstva (`ps`/`pe`/`ms`/`me`) umesto `pl`/`pr`/`ml`/`mr`
-- [ ] Komponenta radi u obe teme bez da zna koja je aktivna
-- [ ] Ako stoji na tamnoj traci — ima `tone: 'inverse'` varijantu
-- [ ] Kontrast ≥ 4.5:1 u obe teme ([`15-accessibility.md`](15-accessibility.md))
-- [ ] Novi shadcn primitiv je u `ui/` flat i wrap-ovan pre upotrebe
+| ❌                                          | ✅                                          |
+| ------------------------------------------- | ------------------------------------------- |
+| `color: #0D47A1`                            | `color: ${({ theme }) => theme.colors.ink}` |
+| `@media (min-width: 1024px)`                | `${({ theme }) => theme.media.desktop}`     |
+| `<Box $x={mouseX}>` (nova klasa po pikselu) | `style={{ '--x': `${mouseX}px` }}`          |
+| `'use client'` na View-u zbog stila         | stil u `.styles.ts`, View ostaje serverski  |

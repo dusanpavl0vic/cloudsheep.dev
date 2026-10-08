@@ -23,29 +23,35 @@ Admin nije indeksiran i nema prefiks; jezik admin-a je u `preferences` slice-u (
 ## Consequences
 
 ### Pozitivne
+
 - Obe jezičke verzije su indeksabilne i povezane hreflang-om.
 - Nema preusmeravanja po `Accept-Language`, pa Googlebot i keš uvek dobijaju isto.
 - `sr.ts` koji nema ključ iz `en.ts` je greška tipa, ne prazan string na ekranu.
 
 ### Negativne
+
 - Broj stranica za održavanje (i sitemap) se duplira.
 - Posetilac iz Srbije prvo vidi engleski i mora da klikne SR.
 - Postojeći srpski linkovi bez prefiksa sada daju engleski.
 
 ### Neutralne / posledice po proces
+
 - `docs/05-routing.md`, `docs/09-i18n.md`; `Link` i `useRouter` se uvoze iz `@/i18n/navigation`.
 
 ## Alternatives considered
 
-| Opcija | Za | Protiv | Zašto odbačena |
-|---|---|---|---|
-| Jedna adresa, jezik iz kolačića | jednostavno | Google vidi samo jedan jezik | to je problem koji rešavamo |
-| Prefiks za oba (`/en`, `/sr`) | simetrično | lomi sve postojeće indeksirane adrese | `as-needed` čuva postojeće |
-| Detekcija + preusmeravanje | posetilac odmah na svom jeziku | Google odvraća od toga; keš i bot dobijaju različito | rizik za indeksiranje |
+| Opcija                          | Za                             | Protiv                                               | Zašto odbačena              |
+| ------------------------------- | ------------------------------ | ---------------------------------------------------- | --------------------------- |
+| Jedna adresa, jezik iz kolačića | jednostavno                    | Google vidi samo jedan jezik                         | to je problem koji rešavamo |
+| Prefiks za oba (`/en`, `/sr`)   | simetrično                     | lomi sve postojeće indeksirane adrese                | `as-needed` čuva postojeće  |
+| Detekcija + preusmeravanje      | posetilac odmah na svom jeziku | Google odvraća od toga; keš i bot dobijaju različito | rizik za indeksiranje       |
 
 ## Revisit when
 
-Ako srpski saobraćaj pređe engleski — tada razmotriti `sr` kao podrazumevani.
+- Ako srpski saobraćaj pređe engleski — tada razmotriti `sr` kao podrazumevani.
+- Kad next-intl 5 ukloni `setRequestLocale` / `requestLocale`, ili kad `global-not-found` u
+  Next-u izađe iz eksperimentalnog statusa: `[locale]` i `admin` postaju dva korenska layout-a,
+  a jezik se čita iz `next/root-params` (`src/i18n/locale.ts`).
 
 ## Reference
 
