@@ -30,7 +30,7 @@
   },
   "prisma": {
     "schema": "prisma/schema.prisma",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx --conditions=react-server --env-file=.env prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "5.7.1",

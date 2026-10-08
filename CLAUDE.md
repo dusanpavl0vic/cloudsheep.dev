@@ -48,28 +48,28 @@ pnpm validate               # typecheck · lint · test · build · size — mor
 
 ## Mapa dokumentacije
 
-| Radiš… | Čitaj |
-|---|---|
-| bilo šta, prvi put | `docs/README.md` → `docs/01-architecture.md` |
-| performanse, hookove, bundle | **`docs/07-performance.md`** ← najvažniji |
-| gde kod treba da živi | `docs/01-architecture.md`, `docs/02-folder-structure.md` |
-| imenovanje | `docs/03-naming-conventions.md` |
-| state, slice, selektore | `docs/04-state-management.md` |
-| rute, jezik u URL-u, SEO | `docs/05-routing.md` |
-| dijalog, dropdown, sheet | `docs/06-modals.md` |
-| stil, tokene, teme | `docs/08-styling-ui.md`, `docs/22-visual-language.md` |
-| prevode | `docs/09-i18n.md` |
-| formu | `docs/10-forms-validation.md` |
-| podatke (server i klijent) | `docs/11-data-fetching.md` |
-| testove | `docs/12-testing.md` |
-| hook | `docs/13-hooks.md` |
-| helper funkciju | `docs/14-helpers-utils.md` |
-| pristupačnost | `docs/15-accessibility.md` |
-| lint, CI, verzije | `docs/16-tooling-ci.md` |
-| API, auth, mejl, upload | `docs/17-backend.md` |
-| novu stranicu ili domen | `docs/18-adding-new-feature.md` |
-| sigurnost | `docs/20-security.md` |
-| nepoznat pojam | `docs/21-glossary.md` |
+| Radiš…                       | Čitaj                                                    |
+| ---------------------------- | -------------------------------------------------------- |
+| bilo šta, prvi put           | `docs/README.md` → `docs/01-architecture.md`             |
+| performanse, hookove, bundle | **`docs/07-performance.md`** ← najvažniji                |
+| gde kod treba da živi        | `docs/01-architecture.md`, `docs/02-folder-structure.md` |
+| imenovanje                   | `docs/03-naming-conventions.md`                          |
+| state, slice, selektore      | `docs/04-state-management.md`                            |
+| rute, jezik u URL-u, SEO     | `docs/05-routing.md`                                     |
+| dijalog, dropdown, sheet     | `docs/06-modals.md`                                      |
+| stil, tokene, teme           | `docs/08-styling-ui.md`, `docs/22-visual-language.md`    |
+| prevode                      | `docs/09-i18n.md`                                        |
+| formu                        | `docs/10-forms-validation.md`                            |
+| podatke (server i klijent)   | `docs/11-data-fetching.md`                               |
+| testove                      | `docs/12-testing.md`                                     |
+| hook                         | `docs/13-hooks.md`                                       |
+| helper funkciju              | `docs/14-helpers-utils.md`                               |
+| pristupačnost                | `docs/15-accessibility.md`                               |
+| lint, CI, verzije            | `docs/16-tooling-ci.md`                                  |
+| API, auth, mejl, upload      | `docs/17-backend.md`                                     |
+| novu stranicu ili domen      | `docs/18-adding-new-feature.md`                          |
+| sigurnost                    | `docs/20-security.md`                                    |
+| nepoznat pojam               | `docs/21-glossary.md`                                    |
 
 Arhitektonske odluke i njihova obrazloženja: `docs/adr/`.
 
@@ -87,3 +87,13 @@ Arhitektonske odluke i njihova obrazloženja: `docs/adr/`.
   proverava mašinski biće prekršeno.
 - Arhitektonska odluka koja se ne može izvesti iz koda ide u ADR (`/adr <naslov>`).
 - Novi deljeni hook ili helper se upisuje u katalog (`docs/13`, `docs/14`).
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

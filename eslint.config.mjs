@@ -35,6 +35,8 @@ const CLIENT_REACHABLE = [
   'src/helpers/**',
   'src/constants/**',
   'src/styles/**',
+  'src/schemas/**',
+  'src/types/**',
   'src/i18n/navigation.ts',
 ]
 
@@ -51,6 +53,7 @@ const DEFAULT_EXPORT_ALLOWED = [
   'src/i18n/request.ts',
   'src/constants/i18n/{en,sr}.ts',
   'prisma/seed.ts',
+  'src/test/dbGlobalSetup.ts',
   '*.config.{ts,mjs,js}',
 ]
 
@@ -92,6 +95,13 @@ export default tseslint.config(
         { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
       ],
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
+      // Pretvara `x as T` u `x!` — a `!` je zabranjen iznad. Dva pravila koja se svađaju.
+      '@typescript-eslint/non-nullable-type-assertion-style': 'off',
+      // `_` prefiks = namerno neiskorišćeno (izbacivanje polja iz objekta pre slanja klijentu).
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', ignoreRestSiblings: true },
+      ],
 
       // ── Šablon §4.1: default export samo za komponente (izuzeci niže) ───────
       'import/no-default-export': 'error',
@@ -197,6 +207,18 @@ export default tseslint.config(
               ],
               message:
                 'Konstante uvoze samo tipove i druge konstante (docs/01-architecture.md §4).',
+            },
+            {
+              target: './src/schemas',
+              from: [
+                './src/store',
+                './src/hooks',
+                './src/components',
+                './src/server',
+                './src/modals',
+              ],
+              message:
+                'Šema validira i formu i API — uvozi samo konstante i tipove (docs/10-forms-validation.md).',
             },
             {
               target: './src/server',

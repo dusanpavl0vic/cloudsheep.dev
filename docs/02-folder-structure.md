@@ -3,7 +3,8 @@
 > Status: active | Last review: 2026-10-08
 
 ```
-prisma/                      schema.prisma, migrations/, seed.ts
+prisma/                      schema.prisma, migrations/, seed.ts, seed/
+assets/fonts/                fontovi za PDF CV (server, ne pregledač)
 public/                      fontovi, favicon, og.png (statično, verzionisano u repou)
 scripts/                     check-size.mjs (JS budžet), lighthouse
 e2e/                         Playwright testovi
@@ -52,12 +53,14 @@ src/
   helpers/                   čiste funkcije, jedan fajl po temi
   providers/                 StoreProvider, I18nProvider, ThemeProvider, StyledRegistry, SessionProvider
   styles/                    theme.ts, GlobalStyles.ts, mixins.ts, keyframes.ts
-  types/                     domenski modeli + styled.d.ts, use-intl.d.ts
+  types/                     domenski modeli (oblici API odgovora) + styled.d.ts, use-intl.d.ts
+  schemas/                   zod šeme — ISTA šema validira formu na klijentu i telo zahteva na serveru
   i18n/                      routing.ts, navigation.ts, request.ts (next-intl)
   server/                    SAMO server — vidi docs/17-backend.md
-    env.ts db.ts http.ts rateLimit.ts
+    env.ts db.ts http.ts cache.ts rateLimit.ts request.ts log.ts markdown.ts
     auth/ mail/ email-verification/ uploads/ cv/
-    services/<domen>.ts
+    services/<domen>.ts       logika + serializeri; *.db.test.ts pored
+  test/                      setup za Vitest (jsdom, test baza)
   proxy.ts                   jezik, CSP nonce, security headeri, admin. host
 ```
 

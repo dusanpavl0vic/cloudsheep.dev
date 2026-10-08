@@ -1,1 +1,4 @@
 export * from './object'
+export * from './email'
+export * from './locale'
+export * from './date'

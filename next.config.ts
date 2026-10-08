@@ -25,6 +25,8 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
   // pdfkit čita AFM fajlove fontova sa diska relativno na sopstveni paket — bundlovan ih ne nađe.
   serverExternalPackages: ['pdfkit'],
+  // Fontovi CV-a se čitaju sa diska u runtime-u, pa ih file tracing sam ne vidi.
+  outputFileTracingIncludes: { '/api/admin/team/[id]/cv.pdf': ['./assets/fonts/**'] },
   redirects: () =>
     Promise.resolve([
       // Stranica „Uses" je postala sekcija „Stack" na početnoj.

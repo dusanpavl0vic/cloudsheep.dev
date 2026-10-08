@@ -92,3 +92,5 @@ Desktop.ini
 # Izvezena uputstva. Izvor istine su `docs/` i `infra/*.md`; PDF je izvod koji
 # ne prati njihove izmene, pa se ne prati ni u gitu.
 *.pdf
+uploads/
+.test-uploads/

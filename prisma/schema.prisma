@@ -114,6 +114,22 @@ model Project {
   liveUrl String?
   repoUrl String?
 
+  /// Studija slučaja (redizajn 2026-10): uloga studija, trajanje, klijent.
+  roleSr     String @default("")
+  roleEn     String @default("")
+  timelineSr String @default("")
+  timelineEn String @default("")
+  client     String @default("")
+
+  /// Merljivi rezultati: `[{ value: "40%", labelSr, labelEn }]`. Redosled je deo podatka.
+  metrics  Json  @default("[]")
+  /// Poglavlja priče: `[{ titleSr, titleEn, bodySr, bodyEn }]`.
+  chapters Json  @default("[]")
+  /// Aktivni korisnici po mesecu posle lansiranja — grafikon na studiji slučaja. Prazno = bez grafikona.
+  growth   Int[] @default([])
+
+  testimonials Testimonial[]
+
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   cvSiteProjects CvSiteProject[]
@@ -143,10 +159,12 @@ model Asset {
 
   createdAt DateTime @default(now())
 
-  projectImages ProjectImage[]
-  technologies  Technology[]
-  memberAvatars TeamMember[]   @relation("MemberAvatar")
-  memberSeals   TeamMember[]   @relation("MemberSeal")
+  projectImages      ProjectImage[]
+  technologies       Technology[]
+  memberAvatars      TeamMember[]   @relation("MemberAvatar")
+  memberSeals        TeamMember[]   @relation("MemberSeal")
+  noteCovers         Note[]         @relation("NoteCover")
+  testimonialAvatars Testimonial[]  @relation("TestimonialAvatar")
 }
 
 /// Slika u galeriji projekta. Zaseban model, a ne niz na projektu, zbog redosleda i
@@ -163,9 +181,17 @@ model ProjectImage {
   altSr String @default("")
   altEn String @default("")
 
+  /// Ekran za pregled po uređaju na studiji slučaja; `null` = obična slika galerije.
+  device DeviceKind?
+
   sortOrder Int @default(0)
 
   @@index([projectId, sortOrder])
+}
+
+enum DeviceKind {
+  phone
+  browser
 }
 
 /// Tehnologija kao ZAPIS, ne kao slobodan tekst.
@@ -343,6 +369,15 @@ model ContactMessage {
   ip        String?
   userAgent String?
 
+  /// Upit iz koraka forme (redizajn 2026-10). Prazno za poruke iz stare forme.
+  projectType String       @default("")
+  budget      String       @default("")
+  timeline    String       @default("")
+  /// Procena iz kalkulatora na početnoj, ako je upit poslat iz nje.
+  estimate    Json?
+  locale      String       @default("en")
+  bookingSlot BookingSlot?
+
   isRead Boolean @default(false)
 
   /// Kad je `null`, mejl NIJE poslat — poruka je i dalje sačuvana.
@@ -439,4 +474,84 @@ model CvLanguage {
   sortOrder Int @default(0)
 
   @@index([memberId, sortOrder])
+}
+
+/// Beleška (blog). Telo je markdown; renderuje se na serveru, bez JS-a na klijentu.
+model Note {
+  id   String @id @default(uuid())
+  slug String @unique
+
+  titleSr   String
+  titleEn   String
+  excerptSr String   @default("")
+  excerptEn String   @default("")
+  bodySr    String   @db.Text
+  bodyEn    String   @db.Text
+  tags      String[] @default([])
+
+  coverId String?
+  cover   Asset?  @relation("NoteCover", fields: [coverId], references: [id], onDelete: SetNull)
+
+  /// Skica se ne vidi javno. `publishedAt` se postavlja pri prvom objavljivanju i ne menja se.
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isPublished, publishedAt])
+}
+
+/// Utisak klijenta za sekciju „Clients" na početnoj.
+model Testimonial {
+  id String @id @default(uuid())
+
+  quoteSr      String @db.Text
+  quoteEn      String @db.Text
+  authorName   String
+  authorRoleSr String @default("")
+  authorRoleEn String @default("")
+  company      String @default("")
+
+  avatarId String?
+  avatar   Asset?  @relation("TestimonialAvatar", fields: [avatarId], references: [id], onDelete: SetNull)
+
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  sortOrder   Int     @default(0)
+  isPublished Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isPublished, sortOrder])
+}
+
+/// Prijava na newsletter. Adresa je proverena (MX + disposable) pre upisa — ADR 0013.
+model NewsletterSubscriber {
+  id     String @id @default(uuid())
+  email  String @unique
+  locale String @default("en")
+
+  /// Odjava jednim klikom — link u svakom mejlu nosi ovaj token, ne adresu.
+  unsubscribeToken String    @unique @default(uuid())
+  unsubscribedAt   DateTime?
+
+  createdAt DateTime @default(now())
+}
+
+/// Termin za uvodni poziv. Slobodan dok ga upit ne zauzme; zauzimanje je atomično
+/// (`updateMany where contactMessageId: null`), pa dva upita ne mogu dobiti isti termin.
+model BookingSlot {
+  id          String   @id @default(uuid())
+  startsAt    DateTime @unique
+  durationMin Int      @default(30)
+
+  contactMessageId String?         @unique
+  contactMessage   ContactMessage? @relation(fields: [contactMessageId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([startsAt])
 }
