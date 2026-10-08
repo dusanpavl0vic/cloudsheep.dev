@@ -20,6 +20,10 @@ styled-components 6 (ADR 0010). Vizuelni jezik (staklo, aurora, animacije):
 
 - **Svaki `.styles.ts` počinje sa `'use client'`** — styled-components radi samo u klijentskom
   modulu. Komponenta koja ih renderuje može da ostane serverska.
+- **`.styles.ts` izvozi samo styled komponente.** Serverska komponenta iz `'use client'` modula
+  dobija klijentsku referencu, ne vrednost — izvezen broj ili objekat bi na serveru bio
+  `undefined` (tiho: prazan `stroke`, `max-width: undefinedpx`). Vrednosti idu u `.constants.ts`.
+  Lint: `no-restricted-syntax` nad `*.styles.ts`.
 - **Boje samo iz teme** (`theme.colors.x`) ili iz konstanti tokena (`BRAND_COLORS`, `GLOW`).
   Hex i `rgb()` u `.styles.ts` su lint greška (`@app/no-raw-colors`).
 - **Razmaci, radijusi, senke, prelomne tačke iz teme**: `${({ theme }) => theme.spacing[4]}px`,

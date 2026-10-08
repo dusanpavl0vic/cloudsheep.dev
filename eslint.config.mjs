@@ -322,9 +322,20 @@ export default tseslint.config(
   },
 
   // ── Stil: boje samo iz teme ──────────────────────────────────────────────────
+  // `.styles.ts` je 'use client' modul: serverska komponenta iz njega dobija klijentsku
+  // referencu, ne vrednost — izvezen objekat ili broj bi na serveru bio `undefined`.
   {
     files: ['src/**/*.styles.ts'],
-    rules: { '@app/no-raw-colors': 'error' },
+    rules: {
+      '@app/no-raw-colors': 'error',
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'ExportNamedDeclaration > VariableDeclaration > VariableDeclarator[init.type!="TaggedTemplateExpression"]',
+          message: '`.styles.ts` izvozi samo styled komponente; vrednosti idu u `.constants.ts` (docs/08 §2).',
+        },
+      ],
+    },
   },
 
   // ── default export gde ga okvir ili šablon traži ─────────────────────────────

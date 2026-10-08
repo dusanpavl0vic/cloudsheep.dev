@@ -12,6 +12,8 @@ export const SHELL_NAMESPACES = [
   'theme',
   'language',
   'errors',
+  'shell',
+  'footer',
 ] as const satisfies readonly MessageNamespace[]
 
 interface I18nProviderProps {

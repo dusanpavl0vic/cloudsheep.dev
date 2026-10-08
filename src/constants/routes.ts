@@ -47,6 +47,7 @@ const withQuery = (path: string, query: Record<string, string | undefined>) => {
 
 /** Sekcije početne strane — `id` u HTML-u i sidro u linku. */
 export const HOME_SECTIONS = {
+  INSIGHT: 'insight',
   STUDIO: 'studio',
   SERVICES: 'services',
   PROCESS: 'process',

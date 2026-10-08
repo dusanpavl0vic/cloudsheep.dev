@@ -94,4 +94,76 @@ export const GLOW = {
   cursor: 'rgba(33,150,243,.14)',
   hero: 'rgba(33,150,243,.22)',
   selection: '#2196F3',
+  shine: 'rgba(255,255,255,.45)',
 } as const
+
+/**
+ * Površine koje su UVEK tamne, bez obzira na temu: podnožje, završna CTA traka, istaknut
+ * cenovni paket. Iz dizajna; ne prate `data-theme` namerno.
+ */
+export const INVERSE = {
+  bg: '#061634',
+  surface: '#071D45',
+  heading: '#FFFFFF',
+  text: '#B9D8F6',
+  soft: '#E3F2FD',
+  faint: '#90B4DD',
+  accent: '#90CAF9',
+  button: '#2196F3',
+  onButton: '#04122C',
+  line: 'rgba(144,202,249,.16)',
+  lineStrong: 'rgba(144,202,249,.35)',
+  wash: 'rgba(144,202,249,.07)',
+  glowA: 'rgba(33,150,243,.45)',
+  glowB: 'rgba(144,202,249,.3)',
+  dots: 'rgba(144,202,249,.25)',
+} as const
+
+/** Senke u boji marke koje dizajn koristi na istaknutim elementima. */
+export const BRAND_SHADOWS = {
+  ctaBanner: '0 50px 100px -50px rgba(13,71,161,.8)',
+  ctaButton: '0 18px 40px -16px rgba(33,150,243,.8)',
+  thought: 'inset 0 1px 0 0 rgba(255,255,255,.9), 0 2px 6px rgba(13,71,161,.06), 0 24px 48px -20px rgba(13,71,161,.35)',
+  tile: '0 1px 2px rgba(0,0,0,.05), 0 8px 20px -8px rgba(13,71,161,.3)',
+  langActive: '0 1px 3px rgba(13,71,161,.2)',
+  terminal: '0 18px 40px -20px rgba(13,71,161,.7)',
+  ribbon: '0 30px 60px -30px rgba(13,71,161,.6)',
+  primaryCta: '0 16px 34px -14px rgba(13,71,161,.75)',
+  section: '0 24px 60px -30px rgba(13,71,161,.35)',
+  panel: '0 30px 60px -34px rgba(13,71,161,.55)',
+  avatar: '0 18px 36px -16px rgba(13,71,161,.5)',
+  deck: '0 40px 80px -40px rgba(13,71,161,.55)',
+  progress: '0 0 16px rgba(33,150,243,.6)',
+} as const
+
+/** Akcentne linije i sjaj kartica (dizajn: gornja ivica, hover okvir). */
+export const ACCENTS = {
+  topLine: 'rgba(33,150,243,.6)',
+  hoverEdge: 'rgba(33,150,243,.45)',
+  cardGlow: 'rgba(33,150,243,.18)',
+  cardShadow: '0 1px 2px rgba(0,0,0,.04), 0 12px 32px -12px rgba(13,71,161,.2)',
+  cardShadowHover: '0 30px 60px -28px rgba(13,71,161,.45)',
+} as const
+
+/** „Oblaci misli" u hero-u su UVEK svetli (beli papirići nad aurorom), i u tamnoj temi. */
+export const THOUGHT = {
+  ink: PALETTE.light.ink,
+  text: PALETTE.light.ink2,
+  track: PALETTE.light.muted,
+  edge: 'rgba(144,202,249,.55)',
+  card: 'rgba(255,255,255,.92)',
+  note: `linear-gradient(160deg, ${PALETTE.light.muted}, ${PALETTE.light.card})`,
+} as const
+
+/** Diploma u Studio sekciji je papir — uvek svetla (dizajn). */
+export const DIPLOMA = {
+  paper: '#FDFDFB',
+  ink: '#0D47A1',
+  soft: '#2F5A99',
+  frame: 'rgba(80,112,159,.45)',
+  grain: 'rgba(13,71,161,.1)',
+  shadow: '0 1px 2px rgba(0,0,0,.06), 0 18px 40px -14px rgba(0,0,0,.28)',
+} as const
+
+/** Ton svake faze procesa (dizajn) — broj, gornja traka i krupna cifra karte. */
+export const PROCESS_TONES = ['#0D47A1', '#1E6FD9', '#2196F3', '#42A5F5'] as const
