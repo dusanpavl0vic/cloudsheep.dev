@@ -105,6 +105,13 @@ const HOME_JSON_LD = {
 const escape = (value) =>
   String(value).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
 
+/** Skida sve što je vezano za konkretnu adresu: `canonical`, `og:url` i JSON-LD. */
+const stripRouteTags = (html) =>
+  html
+    .replace(/\s*<link rel="canonical"[^>]*>/g, '')
+    .replace(/\s*<meta property="og:url"[^>]*>/g, '')
+    .replace(/\s*<script type="application\/ld\+json">[\s\S]*?<\/script>/g, '')
+
 /** Menja SAMO `<head>`; telo dokumenta ostaje netaknuto. */
 function render(html, { route, title, description, jsonLd }) {
   const url = `${SITE}${route}`
@@ -130,10 +137,7 @@ function render(html, { route, title, description, jsonLd }) {
    * prepiše `index.html` iz izvora, pa se to u pravom buildu ne dešava — ali skripta se
    * pokreće i ručno, i tada je razlika nevidljiva u izlazu a vidljiva pretraživaču.
    */
-  out = out
-    .replace(/\s*<link rel="canonical"[^>]*>/g, '')
-    .replace(/\s*<meta property="og:url"[^>]*>/g, '')
-    .replace(/\s*<script type="application\/ld\+json">[\s\S]*?<\/script>/g, '')
+  out = stripRouteTags(out)
 
   const injected = [
     `<link rel="canonical" href="${url}" />`,
@@ -181,5 +185,15 @@ for (const page of pages) {
   mkdirSync(path.dirname(target), { recursive: true })
   writeFileSync(target, render(html, page))
 }
+
+/*
+ * Telo 404 odgovora (`error_page` u `spa.conf`) — isti SPA, ali BEZ `canonical`-a.
+ *
+ * Ranije je nginx za nepostojeću adresu vraćao `index.html`, a on posle ove skripte nosi
+ * `canonical` početne. Pretraživač je tako za svaku staru ili pogrešnu adresu čuo „ovo je
+ * početna" — i prijavljivao je kao duplikat. Prazan `canonical` ne govori ništa, što je
+ * ovde jedini tačan odgovor; kod 404 kaže ostalo.
+ */
+writeFileSync(path.join(DIST, '404.html'), stripRouteTags(html))
 
 console.log(`build-seo-pages: ${pages.length} stranica (${pages.length - staticPages.length} projekata)`)

@@ -129,6 +129,7 @@ blokira, i to se vidi **samo** u konzoli, ne u mrežnom tabu.
 | `/assets/*`   | `1y, immutable`             | Vite stavlja heš u ime — nova verzija je novo ime |
 | `/fonts/*`    | `1y, immutable`             | **nemaju heš** (`dm-sans-latin.woff2`)            |
 | `/index.html` | `no-cache, must-revalidate` | jedini fajl koji zna koja je trenutna verzija     |
+| `/404.html`   | `no-cache, must-revalidate` | isti razlog — to je isti shell                    |
 
 Posledica za fontove: **promena fonta traži promenu imena fajla.** Inače posetioci sa
 keširanom verzijom neću videti novi font godinu dana.
@@ -156,6 +157,16 @@ isti koji čita `useDocumentHead` — da se runtime i build ne raziđu.
 `canonical` i `og:url` postavlja `useDocumentHead` **po ruti**. Statična vrednost u
 `index.html` bi važila za svaku rutu i rekla pretraživaču da su `/projects`, `/contact` i
 `/uses` duplikati početne — dakle izbacila ih iz indeksa.
+
+**Nepostojeća adresa vraća kod 404**, ne `index.html` sa 200. Telo odgovora je i dalje SPA
+(`dist/404.html`, isti shell bez `canonical`-a), pa React crta našu 404 stranicu. Ranije je
+svaka stara ili pogrešna adresa dobijala 200 i `canonical` početne, pa ih je Search Console
+brojao kao „soft 404" i duplikate. Adresa sa kosom crtom na kraju (`/projects/`) preusmerava
+se 301 na istu bez nje.
+
+Cena: projekat objavljen u admin-u na direktnom učitavanju vraća 404 kod dok se `web` ne
+rebuilduje, jer njegov HTML još ne postoji. Posetilac vidi stranicu normalno, a pretraživač
+ga do tada ne zna, jer sitemap nastaje u istom koraku.
 
 `admin` image sam sebi dodaje `X-Robots-Tag: noindex, nofollow`.
 
