@@ -1,1 +1,0 @@
-export { CredentialSeal } from './CredentialSeal'

@@ -1,1 +1,0 @@
-export { ThoughtBubble } from './ThoughtBubble'

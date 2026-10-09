@@ -1,1 +1,0 @@
-export { TeamCarousel } from './TeamCarousel'

@@ -1,1 +1,0 @@
-export { WorkSection } from './WorkSection'

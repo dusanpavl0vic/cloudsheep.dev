@@ -7,6 +7,12 @@ import { listNoteSlugs } from '@/server/services/notes'
 import { listProjectSlugs } from '@/server/services/projects'
 
 /**
+ * Renderuje se po zahtevu, ne pri build-u: inače bi se zamrznuo u trenutku deploy-a (novi
+ * projekat ne bi ušao do sledećeg build-a), a CI build nema bazu. Podaci su keširani po tagu.
+ */
+export const dynamic = 'force-dynamic'
+
+/**
  * Sitemap iz baze, samo engleske adrese — u pretrazi je samo engleski (ADR 0012, dopuna);
  * `/sr` stranice su `noindex`. Nov projekat ili beleška ulaze bez rebuild-a (docs/11 §2).
  */
