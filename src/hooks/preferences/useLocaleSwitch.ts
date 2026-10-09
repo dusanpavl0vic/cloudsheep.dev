@@ -8,7 +8,8 @@ import { usePathname, useRouter } from '@/i18n/navigation'
 
 /**
  * Promena jezika na ISTOJ stranici: `/projects/booksphere` → `/sr/projects/booksphere`. Slug je
- * isti na oba jezika, pa putanja ostaje važeća.
+ * isti na oba jezika, pa putanja ostaje važeća. Filter (`?category=`) i sidro (`#pricing`) idu
+ * sa njom — čitaju se u trenutku klika, ne pri renderu.
  */
 export const useLocaleSwitch = () => {
   const locale = useLocale()
@@ -18,8 +19,9 @@ export const useLocaleSwitch = () => {
 
   const switchTo = (next: Locale) => {
     if (next === locale) return
+    const { search, hash } = window.location
     startTransition(() => {
-      router.replace(pathname, { locale: next, scroll: false })
+      router.replace(`${pathname}${search}${hash}`, { locale: next, scroll: false })
     })
   }
 

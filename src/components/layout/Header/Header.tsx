@@ -4,15 +4,14 @@ import { useTranslations } from 'next-intl'
 
 import Button from '@/components/buttons/Button'
 import IconButton from '@/components/buttons/IconButton'
-import SegmentedControl from '@/components/buttons/SegmentedControl'
 import ThemeToggle from '@/components/buttons/ThemeToggle'
 import Logo from '@/components/foundations/Logo'
+import LanguageSwitch from '@/components/navigation/LanguageSwitch'
 import ScrollProgress from '@/components/navigation/ScrollProgress'
-import { LOCALE_LABELS } from '@/constants/i18n'
 import { MODALS } from '@/constants/modals'
 import { ROUTES } from '@/constants/routes'
 import { useMainNav } from '@/hooks/navigation'
-import { useLocaleSwitch, useThemeToggle } from '@/hooks/preferences'
+import { useThemeToggle } from '@/hooks/preferences'
 import { useModal } from '@/hooks/useModal'
 
 import { Actions, Bar, BelowDesktop, HomeLink, Nav, NavLink, OnTablet, Root } from './Header.styles'
@@ -22,7 +21,6 @@ const Header = () => {
   const t = useTranslations()
   const { links } = useMainNav()
   const { isDark, toggle } = useThemeToggle()
-  const { locale, locales, switchTo } = useLocaleSwitch()
   const mobileNav = useModal(MODALS.MOBILE_NAV)
 
   return (
@@ -41,13 +39,9 @@ const Header = () => {
         </Nav>
 
         <Actions>
-          <SegmentedControl
-            mono
-            label={t('language.label')}
-            value={locale}
-            onChange={switchTo}
-            options={locales.map((value) => ({ value, label: LOCALE_LABELS[value], ariaLabel: t(`shell.languageNames.${value}`) }))}
-          />
+          <OnTablet>
+            <LanguageSwitch />
+          </OnTablet>
           <ThemeToggle isDark={isDark} onToggle={toggle} label={t(isDark ? 'theme.toLight' : 'theme.toDark')} />
           <OnTablet>
             <Button href={ROUTES.CONTACT} size="s" iconRight="arrowRight">

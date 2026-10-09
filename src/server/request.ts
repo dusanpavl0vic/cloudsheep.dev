@@ -1,5 +1,6 @@
 import 'server-only'
 
+import { headers } from 'next/headers'
 import type { NextRequest } from 'next/server'
 
 /**
@@ -16,3 +17,6 @@ export const clientIp = (request: NextRequest) => {
 
 export const userAgent = (request: NextRequest) =>
   request.headers.get('user-agent')?.slice(0, 300) ?? null
+
+/** CSP nonce ovog zahteva (postavlja ga `proxy.ts`) — za `<script>` koji renderuje stranica (JSON-LD). */
+export const cspNonce = async () => (await headers()).get('x-nonce') ?? undefined

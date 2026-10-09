@@ -51,3 +51,61 @@ export const buildPageMetadata = ({ locale, path, title, description, image, typ
     twitter: { card: 'summary_large_image', title, description, ...(image ? { images: [image.url] } : {}) },
   }
 }
+
+/** JSON-LD studija kao `ProfessionalService` (početna). */
+export const studioJsonLd = ({ locale, name, description, email, sameAs, city }: {
+  locale: Locale
+  name: string
+  description: string
+  email: string | null
+  sameAs: string[]
+  city: string
+}) => ({
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name,
+  description,
+  url: absoluteUrl(localizedPath('/', locale)),
+  logo: absoluteUrl('/favicon.svg'),
+  image: absoluteUrl('/og.png'),
+  ...(email ? { email } : {}),
+  address: { '@type': 'PostalAddress', addressLocality: city, addressCountry: 'RS' },
+  areaServed: 'Worldwide',
+  inLanguage: LOCALE_TAGS[locale],
+  ...(sameAs.length > 0 ? { sameAs } : {}),
+})
+
+/** JSON-LD studije slučaja: `CreativeWork` sa autorom, godinom i tehnologijama. */
+export const projectJsonLd = ({ locale, path, title, description, year, image, keywords, studio }: {
+  locale: Locale
+  path: string
+  title: string
+  description: string
+  year: number
+  image: string | null
+  keywords: string[]
+  studio: string
+}) => ({
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: title,
+  description,
+  url: absoluteUrl(localizedPath(path, locale)),
+  dateCreated: String(year),
+  inLanguage: LOCALE_TAGS[locale],
+  creator: { '@type': 'Organization', name: studio, url: absoluteUrl(localizedPath('/', locale)) },
+  ...(image ? { image: image.startsWith('http') ? image : absoluteUrl(image) } : {}),
+  ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
+})
+
+/** JSON-LD putanje do stranice (Početna › Radovi › BookSphere). */
+export const breadcrumbJsonLd = (locale: Locale, items: { name: string; path: string }[]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.name,
+    item: absoluteUrl(localizedPath(item.path, locale)),
+  })),
+})

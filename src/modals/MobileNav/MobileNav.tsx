@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 
 import Button from '@/components/buttons/Button'
 import Logo from '@/components/foundations/Logo'
+import LanguageSwitch from '@/components/navigation/LanguageSwitch'
 import SideDrawer from '@/components/overlays/SideDrawer'
 import { ROUTES } from '@/constants/routes'
 import { useMainNav } from '@/hooks/navigation'
@@ -33,6 +34,7 @@ const MobileNav = ({ onClose }: OverlayModalProps) => {
         </List>
       </nav>
       <Footer>
+        <LanguageSwitch />
         <Button href={ROUTES.CONTACT} size="l" fullWidth iconRight="arrowRight">
           {t('common.primaryCta')}
         </Button>

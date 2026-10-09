@@ -14,9 +14,10 @@ Sve što je u klijentskom bundle-u je **javno** — to je polazna pretpostavka.
 3. **`NEXT_PUBLIC_*` je javno.** Tajne su bez prefiksa i čita ih samo `server/env.ts` (zod).
 4. **Nijedna greška ne izlazi kao stack trace** — ni iz API-ja (`server/http.ts`), ni sa stranice
    (`error.tsx`). Klijent dobija `{ messageKey }`, detalj ide u log.
-5. **HTML iz izvora se ekranira.** `dangerouslySetInnerHTML` postoji na tačno jednom mestu: telo
+5. **HTML iz izvora se ekranira.** `dangerouslySetInnerHTML` postoji na tačno dva mesta: telo
    beleške, koje je markdown renderovan na serveru (`server/markdown.ts`, sirov HTML ekraniran,
-   `javascript:` linkovi neutralisani).
+   `javascript:` linkovi neutralisani), i `JsonLd` (JSON sa `<` ekraniranim u `\u003c`, pa
+   string iz baze ne može da zatvori `<script>`).
 6. **Eksterni linkovi:** `rel="noopener noreferrer"`.
 
 ## 2. Zaglavlja i CSP

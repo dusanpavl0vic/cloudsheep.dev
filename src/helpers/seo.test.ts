@@ -32,3 +32,22 @@ describe('buildPageMetadata', () => {
     expect(meta.title).toEqual({ absolute: 'T' })
   })
 })
+
+describe('JSON-LD', async () => {
+  const { breadcrumbJsonLd, projectJsonLd } = await import('./seo')
+
+  it('studija slučaja: apsolutna adresa na jeziku stranice i relativna slika postaje apsolutna', () => {
+    const data = projectJsonLd({ locale: 'sr', path: '/projects/x', title: 'X', description: 'D', year: 2025, image: '/uploads/a.png', keywords: ['React'], studio: 'CloudSheep' })
+    expect(data.url).toBe('https://cloudsheep.dev/sr/projects/x')
+    expect(data.image).toBe('https://cloudsheep.dev/uploads/a.png')
+    expect(data.keywords).toBe('React')
+  })
+
+  it('breadcrumb numeriše od 1', () => {
+    const data = breadcrumbJsonLd('en', [{ name: 'Home', path: '/' }, { name: 'Work', path: '/projects' }])
+    expect(data.itemListElement.map((i) => [i.position, i.item])).toEqual([
+      [1, 'https://cloudsheep.dev/'],
+      [2, 'https://cloudsheep.dev/projects'],
+    ])
+  })
+})
