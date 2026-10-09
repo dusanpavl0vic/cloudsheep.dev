@@ -486,6 +486,18 @@ const sr: Messages = {
       next: 'Sledeći projekat',
     },
   },
+  notes: {
+    eyebrow: 'Blog',
+    title: 'Beleške sa',
+    muted: 'radnog stola.',
+    empty: 'Prva beleška je u pripremi.',
+    readMinutes: '{count} min čitanja',
+    back: 'Sve beleške',
+    published: 'Objavljeno {date}',
+    updated: 'Ažurirano {date}',
+    coverAlt: '{title} — naslovna slika',
+    more: 'Još beleški',
+  },
 }
 
 export default sr

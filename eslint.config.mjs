@@ -243,6 +243,23 @@ export default tseslint.config(
     },
   },
 
+  // ── Datumi: next-intl formatter za `sr` piše ćirilicom — samo `formatDate` (helpers/date) ──
+  // Posebno pravilo (TS verzija), da ga blokovi sa `no-restricted-imports` ispod ne pregaze.
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: 'next-intl', importNames: ['useFormatter'], message: 'Datum kroz formatDate (helpers/date) — `sr` bi bio ćirilica (docs/09 §4).' },
+            { name: 'next-intl/server', importNames: ['getFormatter'], message: 'Datum kroz formatDate (helpers/date) — `sr` bi bio ćirilica (docs/09 §4).' },
+          ],
+        },
+      ],
+    },
+  },
+
   // ── `src/server` je nedostupan klijentskom kodu (tajne, baza) ──────────────
   {
     files: CLIENT_REACHABLE,

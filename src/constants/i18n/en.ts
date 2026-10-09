@@ -486,6 +486,18 @@ const en = {
       next: 'Next project',
     },
   },
+  notes: {
+    eyebrow: 'Notes',
+    title: 'Notes from',
+    muted: 'the desk.',
+    empty: 'The first note is on its way.',
+    readMinutes: '{count} min read',
+    back: 'All notes',
+    published: 'Published {date}',
+    updated: 'Updated {date}',
+    coverAlt: '{title} — cover',
+    more: 'More notes',
+  },
 }
 
 export default en

@@ -109,3 +109,30 @@ export const breadcrumbJsonLd = (locale: Locale, items: { name: string; path: st
     item: absoluteUrl(localizedPath(item.path, locale)),
   })),
 })
+
+/** JSON-LD beleške: `BlogPosting` sa datumima i autorom (studio). */
+export const notePostingJsonLd = ({ locale, path, title, description, publishedAt, updatedAt, image, keywords, studio }: {
+  locale: Locale
+  path: string
+  title: string
+  description: string
+  publishedAt: string
+  updatedAt: string
+  image: string | null
+  keywords: string[]
+  studio: string
+}) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  url: absoluteUrl(localizedPath(path, locale)),
+  mainEntityOfPage: absoluteUrl(localizedPath(path, locale)),
+  datePublished: publishedAt,
+  dateModified: updatedAt,
+  inLanguage: LOCALE_TAGS[locale],
+  author: { '@type': 'Organization', name: studio, url: absoluteUrl(localizedPath('/', locale)) },
+  publisher: { '@type': 'Organization', name: studio, logo: { '@type': 'ImageObject', url: absoluteUrl('/favicon.svg') } },
+  ...(image ? { image: image.startsWith('http') ? image : absoluteUrl(image) } : {}),
+  ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
+})

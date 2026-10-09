@@ -1,3 +1,5 @@
+import { INTL_LOCALES, type Locale } from '@/constants/i18n'
+
 /** Pomak vremenske zone (ms) u datom trenutku: lokalno vreme u zoni minus UTC. */
 const zoneOffset = (instant: Date, timeZone: string) => {
   const parts = Object.fromEntries(
@@ -60,3 +62,15 @@ export const addMonths = (months: number, from: Date = new Date()) => {
   date.setMonth(date.getMonth() + months)
   return date
 }
+
+/** Vremenska zona studija — svi datumi na sajtu su u njoj (docs/09-i18n.md §4). */
+const STUDIO_TIME_ZONE = 'Europe/Belgrade'
+
+/**
+ * Datum na jeziku stranice. Uvek kroz `INTL_LOCALES` (`sr-Latn-RS`): `Intl` za goli `sr` piše
+ * ćirilicom, pa `useFormatter()` iz next-intl ne sme za datume (lint).
+ */
+export const formatDate = (value: string | Date, locale: Locale, options: Intl.DateTimeFormatOptions = { dateStyle: 'medium' }) =>
+  new Intl.DateTimeFormat(INTL_LOCALES[locale], { timeZone: STUDIO_TIME_ZONE, ...options }).format(
+    typeof value === 'string' ? new Date(value) : value,
+  )

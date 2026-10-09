@@ -1,4 +1,4 @@
-import { useFormatter, useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 import Button from '@/components/buttons/Button'
 import Icon from '@/components/foundations/Icon'
@@ -7,7 +7,7 @@ import SectionHeader from '@/components/sections/SectionHeader'
 import { EFFECT_ATTRS } from '@/constants/effects'
 import { EARLIEST_START_MONTHS } from '@/constants/estimator'
 import { contactHref, HOME_SECTIONS } from '@/constants/routes'
-import { addMonths } from '@/helpers/date'
+import { addMonths, formatDate } from '@/helpers/date'
 import I18nProvider from '@/providers/I18nProvider'
 
 import Estimator from './Estimator'
@@ -17,7 +17,7 @@ import { Badge, Description, Feature, Features, Name, Plan, Plans, Price, Rule }
 /** „Tri načina da uđemo u posao" — paketi i procena. Procena je jedino klijentsko ostrvo. */
 const Pricing = () => {
   const t = useTranslations('home.pricing')
-  const format = useFormatter()
+  const locale = useLocale()
 
   return (
     <Section id={HOME_SECTIONS.PRICING} labelledBy="pricing-title">
@@ -45,7 +45,7 @@ const Pricing = () => {
         ))}
       </Plans>
       <I18nProvider namespaces={['home.estimator']}>
-        <Estimator earliestStart={format.dateTime(addMonths(EARLIEST_START_MONTHS), { month: 'short', year: 'numeric' })} />
+        <Estimator earliestStart={formatDate(addMonths(EARLIEST_START_MONTHS), locale, { month: 'short', year: 'numeric' })} />
       </I18nProvider>
     </Section>
   )

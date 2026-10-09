@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { daysBetween, isoWeekday, zonedTimeToUtc } from './date'
+import { daysBetween, isoWeekday, zonedTimeToUtc, formatDate } from './date'
 
 const TZ = 'Europe/Belgrade'
 
@@ -31,5 +31,17 @@ describe('kalendar', () => {
       '2026-11-01',
       '2026-11-02',
     ])
+  })
+})
+
+describe('formatDate', () => {
+  it('srpski je latinica, ne ćirilica', () => {
+    const text = formatDate('2026-09-08T10:00:00Z', 'sr', { dateStyle: 'long' })
+    expect(text).toContain('septembar')
+    expect(text).not.toMatch(/[\u0400-\u04FF]/)
+  })
+
+  it('engleski (en-GB)', () => {
+    expect(formatDate('2026-09-08T10:00:00Z', 'en', { dateStyle: 'long' })).toBe('8 September 2026')
   })
 })
