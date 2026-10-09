@@ -94,3 +94,7 @@ Desktop.ini
 *.pdf
 uploads/
 .test-uploads/
+
+# Lokalne pomoćne skripte (snimci, probe) — nikad u repo
+*.tmp.mjs
+*.tmp.cjs
