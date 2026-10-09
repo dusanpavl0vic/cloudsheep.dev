@@ -1,8 +1,13 @@
 import { styled } from 'next-yak'
 
+import { glassStrong } from '@/styles/mixins'
 import { colors } from '@/styles/tokens.yak'
 
 export const Body = styled.div`
+  ${glassStrong};
+  /* Dijalog je pun — tekst se ne meša sa sadržajem iza zamućene pozadine. */
+  background: ${colors.card};
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   gap: 22px;

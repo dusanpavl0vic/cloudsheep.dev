@@ -20,3 +20,6 @@ export const technologySchema = z.object({
 export const updateTechnologySchema = technologySchema.partial()
 
 export type TechnologyInput = z.input<typeof technologySchema>
+
+/** Forma u admin-u: redosled se menja strelicama, ne formom — inače bi čuvanje vratilo 0. */
+export const technologyFormSchema = technologySchema.omit({ sortOrder: true })

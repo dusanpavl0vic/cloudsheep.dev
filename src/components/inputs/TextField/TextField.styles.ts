@@ -54,6 +54,11 @@ export const TextArea = styled.textarea<{ $invalid: boolean }>`
   font-family: ${fonts.sans};
 `
 
+export const Select = styled.select<{ $invalid: boolean }>`
+  ${control}
+  appearance: auto;
+`
+
 export const ErrorText = styled.p`
   font-size: 14px;
   color: ${colors.danger};

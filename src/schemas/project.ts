@@ -65,3 +65,4 @@ export const updateImageSchema = attachImageSchema.omit({ assetId: true }).parti
 
 export type ProjectInput = z.input<typeof projectSchema>
 export type AttachImageInput = z.input<typeof attachImageSchema>
+export type UpdateImageInput = z.input<typeof updateImageSchema>

@@ -14,6 +14,7 @@ export const ICON_NAMES = [
   'plus',
   'minus',
   'chevronDown',
+  'chevronUp',
   'chevronLeft',
   'chevronRight',
   'calendar',
