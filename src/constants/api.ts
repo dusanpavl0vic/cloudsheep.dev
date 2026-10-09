@@ -31,6 +31,8 @@ export const API_ENDPOINTS = {
   AUTH_LOGOUT: '/auth/logout',
 
   CONTACT: '/contact',
+  CONTACT_CONFIRM: '/contact/confirm',
+  NEWSLETTER_CONFIRM: '/newsletter/confirm',
   EMAIL_CHECK: '/email/check',
   NEWSLETTER: '/newsletter',
   BOOKING_SLOTS: '/booking/slots',

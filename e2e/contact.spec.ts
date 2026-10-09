@@ -44,7 +44,16 @@ test('upit: provera koraka, adrese i termina, pa slanje', async ({ page }) => {
   const sent = page.waitForResponse((r) => r.url().endsWith('/api/contact') && r.request().method() === 'POST')
   await submit.click()
   expect((await sent).status()).toBe(202)
-  await expect(page.getByRole('heading', { name: 'Thanks, E2E Klijent.' })).toBeFocused()
+  // Upit čeka potvrdu adrese (ADR 0016) — posetilac je upućen na sanduče.
+  await expect(page.getByRole('heading', { name: 'Almost there, E2E Klijent.' })).toBeFocused()
+  await expect(page.getByText(/We sent a confirmation link to ana@gmail\.com/)).toBeVisible()
+})
+
+test('stranica potvrde: nevažeći link daje jasnu poruku i nije za indeks', async ({ page }) => {
+  await page.goto('/contact/confirm?token=nevazeci-e2e')
+  await expect(page.getByRole('heading', { name: 'This link is not valid' })).toBeVisible()
+  await expect(page.locator('meta[name=robots]')).toHaveAttribute('content', /noindex/)
+  await expect(page.getByRole('button', { name: 'Confirm and send' })).toHaveCount(0)
 })
 
 test('upit iz procene popunjava tip i poruku', async ({ page }) => {

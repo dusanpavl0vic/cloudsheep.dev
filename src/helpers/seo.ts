@@ -21,6 +21,8 @@ interface PageMetadataInput {
   image?: { url: string; width: number; height: number; alt: string } | null
   type?: 'website' | 'article'
   publishedTime?: string
+  /** Stranica koja nikad ne ide u pretragu (potvrda adrese). */
+  noindex?: boolean
 }
 
 /**
@@ -29,9 +31,9 @@ interface PageMetadataInput {
  * prekidač jezika, ali Google prikazuje engleski. Filtrirane varijante (`?category=`) kanonski
  * pokazuju na osnovnu stranicu — page.tsx prosleđuje putanju bez query-ja.
  */
-export const buildPageMetadata = ({ locale, path, title, description, image, type = 'website', publishedTime }: PageMetadataInput): Metadata => {
+export const buildPageMetadata = ({ locale, path, title, description, image, type = 'website', publishedTime, noindex = false }: PageMetadataInput): Metadata => {
   const url = absoluteUrl(localizedPath(path, locale))
-  const indexed = locale === DEFAULT_LOCALE
+  const indexed = locale === DEFAULT_LOCALE && !noindex
 
   return {
     title: { absolute: title },

@@ -68,11 +68,14 @@ javne stranice čitaju servise direktno (docs/11 §1), a manje površine je manj
 
 1. honeypot popunjen → tiho ništa (ruta i dalje vraća 202);
 2. adresa mora da prima poštu → inače **422** na polju `email`, bez upisa i slanja (§6);
+2a. **upit je nepotvrđen** dok posetilac ne klikne link iz mejla (ADR 0016): studiju ide tek
+   posle `POST /api/contact/confirm`; termin se drži 24 h, nepotvrđeno se briše posle 7 dana;
 3. **jedna transakcija**: upis poruke + zauzimanje termina
    `updateMany({ where: { id, contactMessageId: null, startsAt: { gt: sada + 12 h } } })` — uslov je
    deo istog UPDATE-a, pa dva istovremena upita ne mogu oba da dobiju termin (drugi → **409** na
    `slotId`, poruka se poništava). Test: `contact.db.test.ts`;
-4. **prvo upis, pa slanje**: pad SMTP-a ne gubi upit — `emailError` se vidi u admin-u;
+4. **prvo upis, pa slanje** (posle potvrde): pad SMTP-a ne gubi upit — `emailError` se vidi u
+   admin-u; pad slanja POTVRDE poništava nepotvrđen upit (posetilac dobija grešku);
 5. potvrda posetiocu u zasebnom `try` — njegov pun sandučić ne poništava zapis o mejlu studiju.
 
 Termine pravi admin generatorom (dani u nedelji × satnice, u vremenu `Europe/Belgrade`; letnje

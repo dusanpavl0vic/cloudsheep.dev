@@ -10,6 +10,8 @@ export const ROUTES = {
   NOTES: '/notes',
   NOTE: '/notes/:slug',
   CONTACT: '/contact',
+  CONTACT_CONFIRM: '/contact/confirm',
+  NEWSLETTER_CONFIRM: '/newsletter/confirm',
 
   ADMIN: '/admin',
   ADMIN_LOGIN: '/admin/login',

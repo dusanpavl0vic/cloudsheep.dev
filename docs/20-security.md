@@ -64,6 +64,8 @@ dobijaju `X-Robots-Tag: noindex, nofollow`. HSTS se ne postavlja: `.dev` je na p
 | IP iza Traefika: **poslednji** element `X-Forwarded-For` (prvi može da podmetne klijent)   | `server/request.ts`                     |
 | Honeypot polje `website` — popunjeno se prihvata pa tiho odbacuje, isti 202                | servisi                                 |
 | Adresa mora da prima poštu (MX) pre upisa i slanja                                         | `server/email-verification/` (ADR 0013) |
+| Upit i prijava važe tek posle potvrde linkom; potvrda je POST (skeneri pošte otvaraju GET) | `services/contact.ts`, `newsletter.ts` (ADR 0016) |
+| Token iz linka: 32 bajta, u bazi samo SHA-256; nepotvrđeno se briše posle 7 dana          | `server/confirmation.ts`                |
 | Newsletter: isti odgovor za novu i postojeću adresu (ne otkriva ko je prijavljen)          | `services/newsletter.ts`                |
 | CSV izvoz: ćelija na `= + - @` dobija apostrof (CSV injection)                             | `services/newsletter.ts`                |
 
@@ -93,6 +95,6 @@ dobijaju `X-Robots-Tag: noindex, nofollow`. HSTS se ne postavlja: `.dev` je na p
 - [ ] Nijedan token u `localStorage`/`sessionStorage`
 - [ ] Nijedna tajna u `NEXT_PUBLIC_*`; serverski modul počinje sa `import 'server-only'`
 - [ ] Nova admin ruta koristi `handleAdmin`
-- [ ] Nova javna forma: rate limit, honeypot, provera adrese ako prima mejl
+- [ ] Nova javna forma: rate limit, honeypot, provera adrese i potvrda linkom ako prima mejl
 - [ ] Greške ne otkrivaju detalje (samo `messageKey`)
 - [ ] Eksterni linkovi imaju `rel="noopener noreferrer"`

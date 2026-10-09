@@ -6,6 +6,6 @@ export interface BookingSlot {
 }
 
 export interface AdminBookingSlot extends BookingSlot {
-  /** Upit koji je zauzeo termin — `null` je slobodan. */
-  booking: { messageId: string; name: string; email: string } | null
+  /** Upit koji drži termin — `null` je slobodan. `confirmed: false` — čeka potvrdu adrese (24 h). */
+  booking: { messageId: string; name: string; email: string; confirmed: boolean } | null
 }

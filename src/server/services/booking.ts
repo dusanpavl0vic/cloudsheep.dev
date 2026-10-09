@@ -1,5 +1,6 @@
 import 'server-only'
 
+import type { Prisma } from '@prisma/client'
 import type { z } from 'zod'
 
 import {
@@ -13,6 +14,7 @@ import { daysBetween, isoWeekday, zonedTimeToUtc } from '@/helpers/date'
 import type { generateSlotsSchema } from '@/schemas/booking'
 import type { AdminBookingSlot, BookingSlot } from '@/types/booking'
 
+import { linkCutoff } from '../confirmation'
 import { prisma } from '../db'
 import { HttpError } from '../http'
 
@@ -23,13 +25,21 @@ export const earliestBookable = (now = new Date()) =>
   new Date(now.getTime() + BOOKING_MIN_LEAD_HOURS * HOUR)
 
 /**
+ * Termin je slobodan ako ga niko ne drži, ili ga drži upit koji nije potvrđen u roku
+ * (ADR 0016: nepotvrđen upit drži termin 24 h). Isti uslov važi za spisak, zauzimanje i admin.
+ */
+export const freeSlotWhere = (now = new Date()): Prisma.BookingSlotWhereInput => ({
+  OR: [{ contactMessageId: null }, { contactMessage: { confirmedAt: null, createdAt: { lt: linkCutoff(now) } } }],
+})
+
+/**
  * Slobodni termini za narednih dve nedelje. NE kešira se: lista se menja sa svakim upitom, a
  * upit je jedan red u indeksu (`startsAt`).
  */
 export const listFreeSlots = async (now = new Date()): Promise<BookingSlot[]> => {
   const slots = await prisma.bookingSlot.findMany({
     where: {
-      contactMessageId: null,
+      ...freeSlotWhere(now),
       startsAt: {
         gt: earliestBookable(now),
         lt: new Date(now.getTime() + BOOKING_DAYS_AHEAD * 24 * HOUR),
@@ -51,20 +61,22 @@ export const listAdminSlots = async (now = new Date()): Promise<AdminBookingSlot
   const slots = await prisma.bookingSlot.findMany({
     where: { startsAt: { gt: new Date(now.getTime() - 7 * 24 * HOUR) } },
     orderBy: { startsAt: 'asc' },
-    include: { contactMessage: { select: { id: true, name: true, email: true } } },
+    include: { contactMessage: { select: { id: true, name: true, email: true, confirmedAt: true, createdAt: true } } },
   })
-  return slots.map((s) => ({
-    id: s.id,
-    startsAt: s.startsAt.toISOString(),
-    durationMin: s.durationMin,
-    booking: s.contactMessage
-      ? {
-          messageId: s.contactMessage.id,
-          name: s.contactMessage.name,
-          email: s.contactMessage.email,
-        }
-      : null,
-  }))
+  const cutoff = linkCutoff(now)
+  return slots.map((s) => {
+    const holder = s.contactMessage
+    // Nepotvrđen upit stariji od roka više ne drži termin — admin ga vidi kao slobodan.
+    const holds = holder && (holder.confirmedAt !== null || holder.createdAt >= cutoff)
+    return {
+      id: s.id,
+      startsAt: s.startsAt.toISOString(),
+      durationMin: s.durationMin,
+      booking: holds
+        ? { messageId: holder.id, name: holder.name, email: holder.email, confirmed: holder.confirmedAt !== null }
+        : null,
+    }
+  })
 }
 
 /**
@@ -90,7 +102,7 @@ export const generateSlots = async (input: z.output<typeof generateSlotsSchema>)
 
 /** Briše SAMO slobodan termin — zauzet se prvo oslobađa, da posetilac ne izgubi poziv tiho. */
 export const deleteSlot = async (id: string) => {
-  const { count } = await prisma.bookingSlot.deleteMany({ where: { id, contactMessageId: null } })
+  const { count } = await prisma.bookingSlot.deleteMany({ where: { id, ...freeSlotWhere() } })
   if (count === 0) throw new HttpError(HTTP_STATUS.CONFLICT, 'booking.errors.booked')
 }
 

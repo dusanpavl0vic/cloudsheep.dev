@@ -12,7 +12,10 @@ interface BriefDoneProps {
   slotLabel: string | null
 }
 
-/** Potvrda posle slanja, sa pregledom upita (dizajn). Fokus prelazi na naslov — čitač ga najavi. */
+/**
+ * Posle slanja upit čeka potvrdu adrese (ADR 0016): poruka da proveri sanduče, sa pregledom
+ * upita. Fokus prelazi na naslov — čitač ga najavi.
+ */
 const BriefDone = ({ values, slotLabel }: BriefDoneProps) => {
   const t = useTranslations('contact')
   const rows = [
@@ -30,7 +33,8 @@ const BriefDone = ({ values, slotLabel }: BriefDoneProps) => {
       <DoneTitle tabIndex={-1} ref={(node) => node?.focus()}>
         {t('done.title', { name: values.name ?? '' })}
       </DoneTitle>
-      <Muted>{t('done.body')}</Muted>
+      <Muted>{t('done.body', { email: values.email ?? '' })}</Muted>
+      <Muted>{t('done.spam')}</Muted>
       <Summary>
         {rows.map(([label, value]) => (
           <div key={label}>

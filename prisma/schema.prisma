@@ -380,6 +380,11 @@ model ContactMessage {
 
   isRead Boolean @default(false)
 
+  /// Potvrda adrese linkom (ADR 0016): `null` — upit nije potvrđen i studio ga ne vidi.
+  confirmedAt      DateTime?
+  /// SHA-256 tokena iz linka; sam token se nigde ne čuva.
+  confirmTokenHash String?   @unique
+
   /// Kad je `null`, mejl NIJE poslat — poruka je i dalje sačuvana.
   emailSentAt DateTime?
   /// Poruka greške SMTP-a, za dijagnostiku u adminu.
@@ -537,6 +542,10 @@ model NewsletterSubscriber {
   /// Odjava jednim klikom — link u svakom mejlu nosi ovaj token, ne adresu.
   unsubscribeToken String    @unique @default(uuid())
   unsubscribedAt   DateTime?
+
+  /// Potvrda adrese linkom (ADR 0016): prijava je aktivna tek kad je `confirmedAt` postavljen.
+  confirmedAt      DateTime?
+  confirmTokenHash String?   @unique
 
   createdAt DateTime @default(now())
 }

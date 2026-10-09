@@ -59,6 +59,8 @@ export const rateLimit = ({
 }
 
 export const LIMITS = {
+  /** Potvrda linkom: dugme sa stranice; token je 32 bajta — ograničenje je protiv šuma, ne pogađanja. */
+  confirm: rateLimit({ name: 'confirm', limit: 30, windowMs: 10 * 60 * 1000 }),
   /** Prijava: 10 / 15 min po IP-u. */
   login: rateLimit({ name: 'login', limit: 10, windowMs: 15 * 60 * 1000 }),
   /** Kontakt forma: 5 / sat — javna je i nema lozinku koja bi zaustavila bota. */
