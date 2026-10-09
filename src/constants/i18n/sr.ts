@@ -108,6 +108,7 @@ const sr: Messages = {
     title: 'Reci mi šta',
     titleMuted: 'gradiš.',
     lead: 'Tri kratka koraka. Vođa projekta čita svaki upit i odgovara u roku od jednog radnog dana.',
+    progress: 'Korak {step} od {total}',
     localTime: 'lokalno vreme',
     steps: {
       need: 'Šta vam je potrebno?',
@@ -119,6 +120,7 @@ const sr: Messages = {
       name: 'Ime i prezime',
       email: 'Email',
       message: 'Nekoliko rečenica o projektu',
+      website: 'Ostavi ovo polje prazno',
     },
     types: {
       webapp: { label: 'Web aplikacija', hint: 'SaaS, dashboard, portal' },
@@ -143,6 +145,11 @@ const sr: Messages = {
       subtitle: '30 minuta · video poziv · centralnoevropsko vreme',
       none: 'Nema slobodnih termina u naredne dve nedelje — pošaljite upit i predložićemo termin.',
       optional: 'Nije obavezno — upit prolazi i bez poziva.',
+      loading: 'Učitavam slobodne termine…',
+      unavailable: 'Termini trenutno nisu dostupni — pošalji upit, predložićemo vreme.',
+      pick: 'Zakaži {time}',
+      picked: 'Zakazano: {time}',
+      clear: 'Ukloni',
     },
     summary: {
       type: 'Projekat',
@@ -151,13 +158,17 @@ const sr: Messages = {
       call: 'Uvodni poziv',
       noCall: 'Nije zakazano',
     },
+    prefill: {
+      plan: 'Zanima me paket „{plan}“.',
+      estimate: 'Iz procene: {summary}.',
+    },
     actions: {
       back: '← Nazad',
       next: 'Nastavi',
       send: 'Pošalji upit',
     },
     done: {
-      title: 'Hvala',
+      title: 'Hvala, {name}.',
       body: 'Upit je stigao. Odgovor očekujte u roku od jednog radnog dana.',
     },
     errors: {

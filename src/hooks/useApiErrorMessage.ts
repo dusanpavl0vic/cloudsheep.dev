@@ -5,16 +5,23 @@ import { useTranslations } from 'next-intl'
 import type { ParsedApiError } from '@/helpers/apiError'
 
 /**
- * Prevod greške sa servera. Ključ stiže kao string (server ne zna za tipove poruka), pa se
- * proverava sa `t.has`; nepoznat ključ pada na `errors.unexpected` umesto da ispiše sam ključ.
- * Komponenta mora biti ispod `I18nProvider`-a sa namespace-om tog ključa.
+ * Prevod ključa koji stiže kao string (greška polja iz zod šeme ili sa servera — tipovi poruka
+ * ga ne poznaju). Proverava se sa `t.has`; nepoznat ključ pada na `errors.unexpected` umesto da
+ * ispiše sam ključ. Komponenta mora biti ispod `I18nProvider`-a sa namespace-om tog ključa.
  */
-export const useApiErrorMessage = () => {
+export const useKeyTranslator = () => {
   const t = useTranslations()
 
-  return (error: ParsedApiError | null) => {
-    if (!error) return null
-    const values = error.suggestion ? { suggestion: error.suggestion } : undefined
-    return t.has(error.messageKey as never) ? t(error.messageKey as never, values as never) : t('errors.unexpected')
+  return (key: string | undefined, values?: Record<string, string>) => {
+    if (!key) return null
+    return t.has(key as never) ? t(key as never, values as never) : t('errors.unexpected')
   }
+}
+
+/** Prevod greške sa servera (`ParsedApiError`), sa predlogom ispravke ako ga ima. */
+export const useApiErrorMessage = () => {
+  const translate = useKeyTranslator()
+
+  return (error: ParsedApiError | null) =>
+    error ? translate(error.messageKey, error.suggestion ? { suggestion: error.suggestion } : undefined) : null
 }

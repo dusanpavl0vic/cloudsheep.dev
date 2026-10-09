@@ -3,9 +3,11 @@
 import { useTranslations } from 'next-intl'
 import { useRef, type SubmitEvent } from 'react'
 
+
 import Icon from '@/components/foundations/Icon'
 import { useNewsletterSignup } from '@/hooks/newsletter'
 import { useApiErrorMessage } from '@/hooks/useApiErrorMessage'
+import { useHydrated } from '@/hooks/useHydrated'
 
 import { Badge, Done, Error, Field, Fine, Form, Input, Intro, Root, Submit, Subtitle, Title, TextAction, Trap } from './NewsletterForm.styles'
 
@@ -15,6 +17,7 @@ import { Badge, Done, Error, Field, Fine, Form, Input, Intro, Root, Submit, Subt
  */
 const NewsletterForm = () => {
   const t = useTranslations()
+  const hydrated = useHydrated()
   const errorMessage = useApiErrorMessage()
   const { submit, isSubmitting, isDone, error } = useNewsletterSignup()
   const email = useRef<HTMLInputElement>(null)
@@ -63,7 +66,7 @@ const NewsletterForm = () => {
               aria-describedby={error ? 'newsletter-error' : undefined}
             />
             <Trap ref={trap} name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
-            <Submit type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
+            <Submit type="submit" disabled={isSubmitting || !hydrated} aria-busy={isSubmitting}>
               {t('newsletter.submit')}
               <Icon name="arrowRight" size="s" />
             </Submit>

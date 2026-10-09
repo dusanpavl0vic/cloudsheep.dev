@@ -127,6 +127,11 @@ export default tseslint.config(
           message:
             'Tokeni nikad u localStorage (docs/20-security.md). Upis ide samo kroz store/persistence.',
         },
+        {
+          property: 'formState',
+          message:
+            'RHF formState je proxy koji React Compiler memoizuje zauvek — useFormState({ control }) u hooku (docs/10).',
+        },
       ],
       'no-restricted-globals': [
         'error',

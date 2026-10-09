@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl'
 
+import LocalClock from '@/components/data-display/LocalClock'
 import Logo from '@/components/foundations/Logo'
 import { BRAND } from '@/constants/brand'
 import { EFFECT_ATTRS } from '@/constants/effects'
@@ -28,7 +29,6 @@ import {
   WordWrap,
 } from './Footer.styles'
 import type { FooterProps } from './Footer.types'
-import LocalClock from './LocalClock'
 import NewsletterForm from './NewsletterForm'
 
 /** Namespace-i koje ostrvo newsletter-a prevodi na klijentu (greške stižu kao ključevi). */

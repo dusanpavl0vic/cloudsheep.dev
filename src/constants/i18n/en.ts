@@ -107,6 +107,7 @@ const en = {
     title: 'Tell me what',
     titleMuted: 'you are building.',
     lead: 'Three short steps. The lead reads every brief and replies within one working day.',
+    progress: 'Step {step} of {total}',
     localTime: 'local time',
     steps: {
       need: 'What do you need?',
@@ -118,6 +119,7 @@ const en = {
       name: 'Your name',
       email: 'Email',
       message: 'A few sentences about the project',
+      website: 'Leave this field empty',
     },
     types: {
       webapp: { label: 'Web app', hint: 'SaaS, dashboard, portal' },
@@ -142,6 +144,11 @@ const en = {
       subtitle: '30 minutes · video call · Central European Time',
       none: 'No open slots in the next two weeks — send the brief and we will propose a time.',
       optional: 'Optional — the brief goes through without a call too.',
+      loading: 'Loading open times…',
+      unavailable: 'Open times could not be loaded — send the brief and we will propose a time.',
+      pick: 'Book {time}',
+      picked: 'Booked: {time}',
+      clear: 'Remove',
     },
     summary: {
       type: 'Project',
@@ -150,13 +157,17 @@ const en = {
       call: 'Intro call',
       noCall: 'Not booked',
     },
+    prefill: {
+      plan: 'I am interested in the “{plan}” package.',
+      estimate: 'From the estimator: {summary}.',
+    },
     actions: {
       back: '← Back',
       next: 'Continue',
       send: 'Send brief',
     },
     done: {
-      title: 'Thanks',
+      title: 'Thanks, {name}.',
       body: 'Your brief is in. Expect a reply within one working day.',
     },
     errors: {
