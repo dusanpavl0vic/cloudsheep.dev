@@ -1,6 +1,6 @@
 # ADR 0012 — Jezik u URL-u (`/`, `/sr`) preko next-intl
 
-> Status: accepted
+> Status: accepted (dopunjen 2026-10-09 — u pretrazi samo engleski)
 > Datum: 2026-10-08
 > Učesnici: Dušan Pavlović
 
@@ -45,6 +45,21 @@ Admin nije indeksiran i nema prefiks; jezik admin-a je u `preferences` slice-u (
 | Jedna adresa, jezik iz kolačića | jednostavno                    | Google vidi samo jedan jezik                         | to je problem koji rešavamo |
 | Prefiks za oba (`/en`, `/sr`)   | simetrično                     | lomi sve postojeće indeksirane adrese                | `as-needed` čuva postojeće  |
 | Detekcija + preusmeravanje      | posetilac odmah na svom jeziku | Google odvraća od toga; keš i bot dobijaju različito | rizik za indeksiranje       |
+
+## Dopuna 2026-10-09 — u pretrazi samo engleski
+
+Na zahtev vlasnika: **u rezultatima pretrage sve mora biti na engleskom**, a podrazumevani jezik
+pri ulasku je engleski (to je već važilo: `/` je engleski, bez detekcije pregledača).
+
+- `/sr/**` je **`noindex, follow`** (meta + `X-Robots-Tag`) — Google prati linkove, ali stranice
+  ne prikazuje; srpska verzija ostaje dostupna kroz prekidač EN/SR.
+- **Nema hreflang-a** ni u metapodacima ni u sitemap-u (hreflang ka `noindex` stranicama je
+  kontradiktoran signal); sitemap ima samo engleske adrese.
+- Canonical i dalje pokazuje na sopstvenu adresu (ne na engleski — sadržaj nije isti).
+
+Posledica: pozitivna stavka „obe jezičke verzije su indeksabilne" više ne važi — namerno.
+Okidač za vraćanje: vlasnik želi srpske rezultate pretrage → ukloniti `robots` iz
+`buildPageMetadata`, vratiti hreflang i `/sr` u sitemap.
 
 ## Revisit when
 

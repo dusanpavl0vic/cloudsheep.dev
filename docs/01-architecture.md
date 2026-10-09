@@ -59,7 +59,7 @@ od koje zavisi i SEO i JS budžet.
 | podaci samo kroz RTK Query | javne stranice čitaju `server/services` na serveru | Google mora da dobije sadržaj u HTML-u |
 | jezik u `preferences` slice-u + localStorage | jezik iz URL-a (`/`, `/sr`) za javni sajt; admin ga čuva u slice-u | indeksiranje obe jezičke verzije (ADR [0012](adr/0012-locale-prefix.md)) |
 | tema u localStorage | tema u kolačiću `cs-theme` | server odmah renderuje tačnu temu, bez treptaja i bez inline skripte (CSP) |
-| `<title>` u View-u | `generateMetadata` u `page.tsx` | canonical, hreflang i OG oznake idu zajedno |
+| `<title>` u View-u | `generateMetadata` u `page.tsx` (`buildPageMetadata`) | canonical, robots i OG oznake idu zajedno; `/sr` je noindex (ADR 0012) |
 | `import.meta.env` u `constants/env.ts` | `process.env.NEXT_PUBLIC_*` u `constants/env.ts`; serverske promenljive u `server/env.ts` (zod) | Next ugrađuje samo `NEXT_PUBLIC_*` u klijentski kod |
 | — | `src/server/` | backend je deo iste aplikacije (ADR [0009](adr/0009-nextjs-fullstack.md)) |
 | — | admin domeni su u `components/admin/<domen>/`, `hooks/admin/<domen>/` | admin i javni sajt imaju isti domen (`projects`) sa potpuno drugačijim View-ovima |

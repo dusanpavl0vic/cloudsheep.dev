@@ -14,6 +14,9 @@ const SECURITY_HEADERS = [
 /** Admin i API se nikad ne indeksiraju — zaglavlje, ne samo meta, jer API nema HTML. */
 const NOINDEX = [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }]
 
+/** Srpska verzija je za posetioce, ne za pretragu — u Google-u je samo engleski (ADR 0012). */
+const NOINDEX_FOLLOW = [{ key: 'X-Robots-Tag', value: 'noindex, follow' }]
+
 const nextConfig: NextConfig = {
   output: 'standalone',
   poweredByHeader: false,
@@ -43,6 +46,8 @@ const nextConfig: NextConfig = {
       { source: '/admin/:path*', headers: NOINDEX },
       { source: '/admin', headers: NOINDEX },
       { source: '/api/:path*', headers: NOINDEX },
+      { source: '/sr', headers: NOINDEX_FOLLOW },
+      { source: '/sr/:path*', headers: NOINDEX_FOLLOW },
     ]),
 }
 

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 import { SITE_URL } from '@/constants/env'
-import { DEFAULT_LOCALE, LOCALE_TAGS, LOCALES, OG_LOCALES, type Locale } from '@/constants/i18n'
+import { DEFAULT_LOCALE, LOCALE_TAGS, OG_LOCALES, type Locale } from '@/constants/i18n'
 
 /** `/projects` na jeziku: engleski bez prefiksa, srpski pod `/sr` (ADR 0012). */
 export const localizedPath = (path: string, locale: Locale) => {
@@ -24,21 +24,20 @@ interface PageMetadataInput {
 }
 
 /**
- * Metapodaci stranice: canonical na sopstveni jezik, hreflang parovi za oba jezika i
- * `x-default` (engleski), OG/Twitter. Filtrirane varijante (`?category=`) kanonski pokazuju na
- * osnovnu stranicu — page.tsx prosleđuje putanju bez query-ja.
+ * Metapodaci stranice: canonical na sopstvenu adresu, OG/Twitter. U pretrazi je samo engleski
+ * (ADR 0012, dopuna): srpska stranica je `noindex, follow` i nema hreflang — dostupna je kroz
+ * prekidač jezika, ali Google prikazuje engleski. Filtrirane varijante (`?category=`) kanonski
+ * pokazuju na osnovnu stranicu — page.tsx prosleđuje putanju bez query-ja.
  */
 export const buildPageMetadata = ({ locale, path, title, description, image, type = 'website', publishedTime }: PageMetadataInput): Metadata => {
   const url = absoluteUrl(localizedPath(path, locale))
-  const languages: Record<string, string> = {
-    ...Object.fromEntries(LOCALES.map((l): [string, string] => [LOCALE_TAGS[l], absoluteUrl(localizedPath(path, l))])),
-    'x-default': absoluteUrl(localizedPath(path, DEFAULT_LOCALE)),
-  }
+  const indexed = locale === DEFAULT_LOCALE
 
   return {
     title: { absolute: title },
     description,
-    alternates: { canonical: url, languages },
+    alternates: { canonical: url },
+    ...(indexed ? {} : { robots: { index: false, follow: true } }),
     openGraph: {
       type,
       url,

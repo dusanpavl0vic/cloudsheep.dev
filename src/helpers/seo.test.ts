@@ -14,22 +14,20 @@ describe('localizedPath', () => {
 })
 
 describe('buildPageMetadata', () => {
-  const meta = buildPageMetadata({ locale: 'sr', path: '/projects/booksphere', title: 'T', description: 'D' })
-
-  it('canonical pokazuje na sopstveni jezik', () => {
-    expect(meta.alternates?.canonical).toBe('https://cloudsheep.dev/sr/projects/booksphere')
+  it('engleska stranica: canonical na sebe, indeksira se, bez hreflang-a', () => {
+    const meta = buildPageMetadata({ locale: 'en', path: '/projects/booksphere', title: 'T', description: 'D' })
+    expect(meta.alternates).toEqual({ canonical: 'https://cloudsheep.dev/projects/booksphere' })
+    expect(meta.robots).toBeUndefined()
   })
 
-  it('hreflang: en, sr-Latn i x-default (engleski)', () => {
-    expect(meta.alternates?.languages).toEqual({
-      en: 'https://cloudsheep.dev/projects/booksphere',
-      'sr-Latn': 'https://cloudsheep.dev/sr/projects/booksphere',
-      'x-default': 'https://cloudsheep.dev/projects/booksphere',
-    })
+  it('srpska stranica: noindex, follow — u pretrazi je samo engleski (ADR 0012)', () => {
+    const meta = buildPageMetadata({ locale: 'sr', path: '/projects/booksphere', title: 'T', description: 'D' })
+    expect(meta.alternates).toEqual({ canonical: 'https://cloudsheep.dev/sr/projects/booksphere' })
+    expect(meta.robots).toEqual({ index: false, follow: true })
   })
 
   it('naslov je apsolutan — layout ga ne dopunjuje šablonom', () => {
-    expect(meta.title).toEqual({ absolute: 'T' })
+    expect(buildPageMetadata({ locale: 'en', path: '/', title: 'T', description: 'D' }).title).toEqual({ absolute: 'T' })
   })
 })
 
