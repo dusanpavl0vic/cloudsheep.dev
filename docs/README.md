@@ -62,6 +62,7 @@ Odluka koja se ne može izvesti iz koda mora biti zapisana. Nova se pravi sa `/a
 | [0011](adr/0011-layered-structure.md) | Struktura po slojevima (`REACT_FRONTEND_STRUCTURE.md`) | accepted |
 | [0012](adr/0012-locale-prefix.md) | Jezik u URL-u (`/`, `/sr`) preko next-intl | accepted |
 | [0013](adr/0013-email-verification.md) | Provera mejla: sintaksa + MX + disposable, bez SMTP probe | accepted |
+| [0014](adr/0014-js-budget-200kb.md) | JS budžet javnih ruta 200 KB gzip, produkcioni build kroz webpack | accepted |
 
 [`adr/template.md`](adr/template.md) — šablon: Context / Decision / Consequences / Alternatives.
 

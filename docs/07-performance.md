@@ -113,12 +113,21 @@ Provera: `/audit-state`.
 
 ## 6. Bundle
 
-- Route-level splitting **obavezan**; feature-level za teške feature-e.
-- Manual chunks: `react-vendor`, `redux-vendor`, `ui-vendor`. Ne granularnije — previše
-  malih chunkova je sporije od par većih.
-- **Budžeti (CI fail):** initial JS gzip ≤ **150 KB**, CSS gzip ≤ **20 KB**, po ruti ≤ **60 KB**.
+- **Budžet (CI fail): ≤ 200 KB gzip početnog JS-a po javnoj ruti** (ADR 0014). React 19 + Next
+  16 runtime je 128 KB od toga — za sajt ostaje ~70 KB. Meri `pnpm size`
+  (`scripts/check-size.mjs`) **u pravom pregledaču** (Playwright): App Router deo chunk-ova
+  učitava iz runtime-a, pa brojanje `<script>` tagova u HTML-u potceni rutu i za 40 KB.
+  Prefetch susednih ruta se ne broji; `noModule` polyfill-e moderan pregledač ne preuzima.
+- **Produkcija se gradi webpack-om** (`next build --webpack`) — 29 KB manji runtime od
+  Turbopack-a. Dev ostaje na Turbopack-u.
+- **`page.tsx` ne stoji u korenu route group-a koja ima i podstranice** — webpack ga tada učitava
+  i na podstranicama (merenjem +20 KB na `/projects`). Zato je početna u `(public)/`, a
+  `(cta)/` sadrži samo podstranice.
+- Klijentski kod se deli po ruti sam (App Router). Teške stvari samo u klijentskom ostrvu i
+  kroz `import()`: grafikoni, editor, PDF, mape, date picker.
+- **Šta je na svakoj stranici, mora biti lako:** header, footer i forma u podnožju ne uvoze
+  RTK Query ni zod šeme koje vuku pola biblioteke.
 - **Zabranjeno:** `moment`, ceo `lodash`, cele icon biblioteke (`import * as Icons`).
-- `import()` za: chart, rich text editor, PDF, mape, date picker.
 - **Novi dependency > 20 KB gzip → ADR.**
 
 ```ts

@@ -11,7 +11,7 @@ styled-components: stil u `.styles.ts`, transient props (`$variant`), sve vredno
 Redizajn donosi novi vizuelni jezik (staklo, aurora, spekular) sa dve teme.
 
 U App Router-u styled-components radi samo u klijentskim modulima, a CSS putuje i kao JS.
-Zato je JS budžet (160 KB gzip po javnoj ruti) rizik koji se mora meriti.
+Zato je JS budžet (tada 160 KB gzip po javnoj ruti, sada 200 KB — ADR 0014) rizik koji se mora meriti.
 
 ## Decision
 
@@ -48,7 +48,7 @@ i samo renderuju styled elemente. **Tema je objekat čije su vrednosti CSS prome
 
 ## Revisit when
 
-Ako merenje (`pnpm size`) pokaže > 160 KB gzip na bilo kojoj javnoj ruti — prvi kandidat je
+Ako merenje (`pnpm size`) pokaže > 200 KB gzip na bilo kojoj javnoj ruti (ADR 0014) — prvi kandidat je
 prelazak `.styles.ts` fajlova na `next-yak`, koji ima isti API.
 
 ## Reference

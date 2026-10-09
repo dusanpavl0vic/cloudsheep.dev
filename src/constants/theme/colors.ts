@@ -177,3 +177,13 @@ export const PROCESS_TONES = ['#0D47A1', '#1E6FD9', '#2196F3', '#42A5F5'] as con
 
 /** Boje faza na traci procene, od svetle ka tamnoj (dizajn). */
 export const ESTIMATE_PHASE_COLORS = ['#90CAF9', '#2196F3', '#0D47A1', '#071D45'] as const
+
+/** Okviri uređaja u studiji slučaja — telefon je uvek taman, pregledač uvek beo (dizajn). */
+export const DEVICE_FRAME = {
+  phone: '#04122C',
+  screen: '#E3F2FD',
+  browser: '#FFFFFF',
+  browserLine: '#D6E6F7',
+  url: '#2F5A99',
+  shadow: '0 40px 80px -30px rgba(13,71,161,.6)',
+} as const

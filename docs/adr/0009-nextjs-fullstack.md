@@ -63,7 +63,7 @@ handleri nad `src/server/services`). Image se gradi u CI-u i objavljuje na GHCR.
 
 ## Revisit when
 
-Ako javni JS pređe 160 KB gzip po ruti i to ne može da se reši u okviru Next.js-a, ili ako
+Ako javni JS pređe 200 KB gzip po ruti (ADR 0014) i to ne može da se reši u okviru Next.js-a, ili ako
 RSS kontejnera trajno pređe 400 MB.
 
 ## Reference

@@ -477,6 +477,8 @@ const en = {
       device: { phone: 'Phone', browser: 'Browser' },
       screen: 'Screen {index}',
       growth: 'Active users after launch',
+      growthLaunch: 'Launch',
+      growthMonth: 'M{index}',
       growthSummary: 'Grew from {first} to {last} over {count} months.',
       gallery: 'Gallery',
       live: 'Visit live site',

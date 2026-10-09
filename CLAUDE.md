@@ -42,7 +42,7 @@ pnpm validate               # typecheck · lint · test · build · size — mor
 - **`useMemo`/`useCallback` samo u 3 slučaja** iz `docs/07-performance.md` §2, sa `// memo:` komentarom.
 - **Sve što se otvara ide kroz `useModal`** i `ui.modals` u Redux-u.
 - **URL je izvor istine za filtere i paginaciju**, ne Redux.
-- **Novi dependency > 20 KB gzip → ADR.** Javni JS ≤ 160 KB gzip po ruti.
+- **Novi dependency > 20 KB gzip → ADR.** Javni JS ≤ 200 KB gzip po ruti (ADR 0014).
 - **Fajl ≤ 200 linija, komponenta ≤ 150.**
 - **Nikad JWT u `localStorage`.**
 

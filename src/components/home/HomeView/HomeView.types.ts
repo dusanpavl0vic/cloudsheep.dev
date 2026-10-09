@@ -10,4 +10,6 @@ export interface HomeViewProps {
   team: TeamMember[]
   projects: ProjectSummary[]
   testimonials: Testimonial[]
+  /** Adresa studija za CTA traku. */
+  email: string | null
 }

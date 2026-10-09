@@ -1,3 +1,5 @@
+import CtaBanner from '@/components/sections/CtaBanner'
+
 import Faq from '../Faq'
 import Hero from '../Hero'
 import Insight from '../Insight'
@@ -12,7 +14,7 @@ import Work from '../Work'
 import type { HomeViewProps } from './HomeView.types'
 
 /** `/` — početna: redosled sekcija iz dizajna. Podatke čita `page.tsx` na serveru. */
-const HomeView = ({ technologies, profile, team, projects, testimonials }: HomeViewProps) => (
+const HomeView = ({ technologies, profile, team, projects, testimonials, email }: HomeViewProps) => (
   <>
     <Hero technologies={technologies} />
     <TechRibbon technologies={technologies} />
@@ -25,6 +27,7 @@ const HomeView = ({ technologies, profile, team, projects, testimonials }: HomeV
     <Stack technologies={technologies} />
     <Pricing />
     <Faq />
+    <CtaBanner email={email} />
   </>
 )
 

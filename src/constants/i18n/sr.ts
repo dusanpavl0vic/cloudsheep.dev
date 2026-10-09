@@ -477,6 +477,8 @@ const sr: Messages = {
       device: { phone: 'Telefon', browser: 'Pregledač' },
       screen: 'Ekran {index}',
       growth: 'Aktivni korisnici nakon lansiranja',
+      growthLaunch: 'Lans.',
+      growthMonth: 'M{index}',
       growthSummary: 'Rast sa {first} na {last} za {count} meseci.',
       gallery: 'Galerija',
       live: 'Poseti sajt',
