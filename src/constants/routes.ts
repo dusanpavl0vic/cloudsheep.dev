@@ -79,6 +79,10 @@ export interface ContactPrefill {
   budget?: string
   timeline?: string
   plan?: string
+  /** Procena: liste su spojene zarezom (`web,ios`). */
+  platforms?: string
+  features?: string
+  pace?: string
 }
 
 /** /contact?type=webapp&budget=… */

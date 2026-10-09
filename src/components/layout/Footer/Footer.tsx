@@ -5,9 +5,10 @@ import { BRAND } from '@/constants/brand'
 import { EFFECT_ATTRS } from '@/constants/effects'
 import { CLIENT_CITIES } from '@/constants/navigation'
 import { HOME_SECTIONS, ROUTES, homeSectionHref, projectHref, contactHref } from '@/constants/routes'
+import { emailFrom } from '@/helpers/links'
 import I18nProvider from '@/providers/I18nProvider'
 
-import { emailFrom, shortFor } from './Footer.constants'
+import { shortFor } from './Footer.constants'
 import {
   Bottom,
   BottomGroup,

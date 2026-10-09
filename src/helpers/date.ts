@@ -53,3 +53,10 @@ export const daysBetween = (from: string, to: string) => {
   }
   return days
 }
+
+/** Isti dan za `months` meseci (procena: „najraniji početak" je za mesec dana). */
+export const addMonths = (months: number, from: Date = new Date()) => {
+  const date = new Date(from)
+  date.setMonth(date.getMonth() + months)
+  return date
+}

@@ -33,3 +33,17 @@ export const ESTIMATE_DEFAULTS = {
 
 /** Raspon oko izračunate vrednosti i najkraći mogući projekat (nedelje). */
 export const ESTIMATE_RANGE = { low: 0.9, high: 1.15, min: 2 } as const
+
+/** Faze na traci procene, redom (tekst u `home.estimator.phases.<key>`). */
+export const ESTIMATE_PHASES = ['discover', 'design', 'build', 'launch'] as const
+export type EstimatePhase = (typeof ESTIMATE_PHASES)[number]
+
+/** Udeo dizajna u ukupnom trajanju; otkrivanje i lansiranje su po nedelju dana. */
+export const ESTIMATE_DESIGN_SHARE = 0.25
+export const ESTIMATE_FIXED_PHASE_WEEKS = 1
+
+/** Kada procena traži specijalistu uz vođu projekta (dizajn). */
+export const ESTIMATE_TEAM = { manyFeatures: 4, smallSiteFeatures: 3 } as const
+
+/** Najraniji početak novog projekta: za ovoliko meseci (dizajn). */
+export const EARLIEST_START_MONTHS = 1

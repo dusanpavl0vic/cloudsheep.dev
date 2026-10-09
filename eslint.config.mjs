@@ -159,6 +159,9 @@ export default tseslint.config(
       ...nextPlugin.configs['core-web-vitals'].rules,
       // Pravilo je za Pages Router; u App Router layout-u `<head>` je ispravan način.
       '@next/next/no-head-element': 'off',
+      // Slike se ne optimizuju u runtime-u (`images.unoptimized`, docs/17 §8) — `next/image` bi
+      // dodao JS bez koristi. `<img>` uvek nosi width/height (CLS, docs/07 §7).
+      '@next/next/no-img-element': 'off',
 
       // Performanse (docs/07)
       '@app/max-usestate': ['error', { max: 2 }],

@@ -19,7 +19,7 @@ const Studio = ({ profile, team }: StudioProps) => {
         eyebrow={t('eyebrow')}
         title={t('title')}
         muted={t('muted')}
-        lead={profile?.headline ? profile.headline : t('headline')}
+        lead={profile?.headline.length ? profile.headline : t('headline')}
         leadTone="statement"
         titleId="studio-title"
         align="center"

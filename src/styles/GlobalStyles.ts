@@ -89,7 +89,9 @@ export const GlobalStyles = createGlobalStyle`
     margin: 0;
   }
 
-  ul[role='list'], ol[role='list'] {
+  /* Liste u interfejsu su raspored (oznake, kartice, koraci) — bez markera. Telo beleške
+     (markdown) vraća markere u svom stilu. */
+  ul, ol {
     margin: 0;
     padding: 0;
     list-style: none;

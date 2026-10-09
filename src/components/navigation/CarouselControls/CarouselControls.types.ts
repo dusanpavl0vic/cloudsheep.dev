@@ -8,5 +8,7 @@ export interface CarouselControlsProps {
   prevLabel: string
   nextLabel: string
   dotLabel: (index: number) => string
+  /** Utisci prikazuju strelice gore, a tačke dole (dizajn) — dve instance sa `parts`. */
+  parts?: 'all' | 'arrows' | 'dots'
   className?: string
 }

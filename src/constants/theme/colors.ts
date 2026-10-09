@@ -134,6 +134,13 @@ export const BRAND_SHADOWS = {
   avatar: '0 18px 36px -16px rgba(13,71,161,.5)',
   deck: '0 40px 80px -40px rgba(13,71,161,.55)',
   progress: '0 0 16px rgba(33,150,243,.6)',
+  featured: '0 30px 60px -32px rgba(13,71,161,.45)',
+  listCard: '0 20px 50px -34px rgba(13,71,161,.5)',
+  listCardHover: '0 34px 70px -34px rgba(33,150,243,.6)',
+  testimonial: '0 40px 80px -40px rgba(13,71,161,.45)',
+  tileHover: '0 2px 4px rgba(0,0,0,.06), 0 22px 36px -12px rgba(33,150,243,.55)',
+  estimator: '0 40px 80px -44px rgba(13,71,161,.5)',
+  estimateResult: '0 30px 60px -30px rgba(13,71,161,.7)',
 } as const
 
 /** Akcentne linije i sjaj kartica (dizajn: gornja ivica, hover okvir). */
@@ -167,3 +174,6 @@ export const DIPLOMA = {
 
 /** Ton svake faze procesa (dizajn) — broj, gornja traka i krupna cifra karte. */
 export const PROCESS_TONES = ['#0D47A1', '#1E6FD9', '#2196F3', '#42A5F5'] as const
+
+/** Boje faza na traci procene, od svetle ka tamnoj (dizajn). */
+export const ESTIMATE_PHASE_COLORS = ['#90CAF9', '#2196F3', '#0D47A1', '#071D45'] as const
