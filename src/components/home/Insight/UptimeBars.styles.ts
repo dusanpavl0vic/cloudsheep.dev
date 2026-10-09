@@ -1,9 +1,7 @@
-'use client'
+import { css, styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { EASE_OUT } from '@/constants/layout'
-import { BRAND_COLORS } from '@/constants/theme'
+import { EASE_OUT, colors, fonts } from '@/styles/tokens.yak'
+import { BRAND_COLORS } from '@/styles/tokens.yak'
 
 export const Root = styled.div`
   display: flex;
@@ -16,9 +14,9 @@ export const Legend = styled.div`
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 12px;
-  color: ${({ theme }) => theme.colors.faint};
+  color: ${colors.faint};
 `
 
 export const Bars = styled.div`
@@ -32,12 +30,16 @@ export const Bars = styled.div`
 export const Bar = styled.span<{ $height: number; $grown: boolean; $degraded: boolean; $index: number }>`
   flex: 1;
   border-radius: 2px;
-  height: ${({ $height, $grown }) => ($grown ? $height : 8)}%;
-  background: ${({ $degraded }) =>
-    $degraded ? BRAND_COLORS.sky : `linear-gradient(to top, ${BRAND_COLORS.deep}, ${BRAND_COLORS.blue})`};
-  transition: height 0.8s ${EASE_OUT} ${({ $index }) => $index * 9}ms;
+  height: ${({ $height, $grown }) => `${String(($grown ? $height : 8))}%`};
+  background: linear-gradient(to top, ${BRAND_COLORS.deep}, ${BRAND_COLORS.blue});
+  ${({ $degraded }) =>
+    $degraded &&
+    css`
+      background: ${BRAND_COLORS.sky};
+    `}
+  transition: height 0.8s ${EASE_OUT} ${({ $index }) => `${String($index * 9)}ms`};
 
   @media (scripting: none) {
-    height: ${({ $height }) => $height}%;
+    height: ${({ $height }) => `${String($height)}%`};
   }
 `

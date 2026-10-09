@@ -1,10 +1,8 @@
-'use client'
+import { keyframes, styled } from 'next-yak'
 
-import styled, { keyframes } from 'styled-components'
-
-import { EASE_OUT } from '@/constants/layout'
-import { BRAND_COLORS, BRAND_SHADOWS } from '@/constants/theme'
-import { glass } from '@/styles/mixins'
+import { glassStrong } from '@/styles/mixins'
+import { EASE_OUT, colors, fonts } from '@/styles/tokens.yak'
+import { BRAND_COLORS, BRAND_SHADOWS } from '@/styles/tokens.yak'
 
 
 const quoteIn = keyframes`
@@ -13,7 +11,7 @@ const quoteIn = keyframes`
 `
 
 export const Panel = styled.figure`
-  ${glass('strong')};
+  ${glassStrong};
   position: relative;
   overflow: hidden;
   display: flex;
@@ -22,7 +20,7 @@ export const Panel = styled.figure`
   padding: clamp(28px, 5vw, 64px);
   border-radius: 30px;
   box-shadow:
-    inset 0 1px 0 0 ${({ theme }) => theme.colors.spec},
+    inset 0 1px 0 0 ${colors.spec},
     ${BRAND_SHADOWS.testimonial};
 `
 
@@ -30,7 +28,7 @@ export const Mark = styled.span`
   position: absolute;
   top: -30px;
   right: 24px;
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 700;
   font-size: 260px;
   line-height: 1;
@@ -48,21 +46,21 @@ export const Row = styled.div`
 `
 
 export const Eyebrow = styled.span`
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 12px;
   letter-spacing: 0.16em;
-  color: ${({ theme }) => theme.colors.accent};
+  color: ${colors.accent};
 `
 
 /** `key` na citatu ga remontira pri promeni — animacija ulaska se ponavlja bez JS-a za animaciju. */
 export const Quote = styled.blockquote`
   min-height: 3.7em;
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 500;
   font-size: clamp(24px, 3.2vw, 40px);
   line-height: 1.22;
   letter-spacing: -0.02em;
-  color: ${({ theme }) => theme.colors.display};
+  color: ${colors.display};
   text-wrap: pretty;
   animation: ${quoteIn} 0.7s ${EASE_OUT};
 `
@@ -89,10 +87,10 @@ export const Who = styled.span`
 export const Name = styled.span`
   font-weight: 700;
   font-size: 17px;
-  color: ${({ theme }) => theme.colors.display};
+  color: ${colors.display};
 `
 
 export const Role = styled.span`
   font-size: 15px;
-  color: ${({ theme }) => theme.colors.faint};
+  color: ${colors.faint};
 `

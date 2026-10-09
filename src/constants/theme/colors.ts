@@ -1,7 +1,7 @@
 /**
  * Vrednosti boja za obe teme, tačno iz dizajna (`LIGHT` / `DARK`).
  *
- * Ključ je ime tokena; CSS promenljiva je `--c-<ključ>` (vidi `styles/GlobalStyles.ts`).
+ * Ključ je ime tokena; CSS promenljiva je `--c-<ključ>` (vidi `styles/global.ts`).
  * Komponente nikad ne čitaju ove vrednosti — čitaju `theme.colors.x`, koji je referenca na
  * promenljivu, pa promena teme ne rerenderuje React (ADR 0010).
  */

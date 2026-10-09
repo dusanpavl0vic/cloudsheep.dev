@@ -9,7 +9,7 @@ const reveal = { [EFFECT_ATTRS.reveal]: '' }
 const SectionHeader = ({ eyebrow, title, muted, lead, leadTone = 'body', titleId, align = 'left', as = 'h2', className }: SectionHeaderProps) => (
   <Root $align={align} className={className}>
     {eyebrow && <Eyebrow {...reveal}>{`[ ${eyebrow} ]`}</Eyebrow>}
-    <Title as={as} id={titleId} {...reveal}>
+    <Title component={as} id={titleId} {...reveal}>
       {title}
       {muted && (
         <>

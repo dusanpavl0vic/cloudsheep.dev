@@ -1,6 +1,6 @@
-'use client'
+import { css, styled } from 'next-yak'
 
-import styled, { css } from 'styled-components'
+import { colors, fonts } from '@/styles/tokens.yak'
 
 export type TagVariant = 'code' | 'soft' | 'outline'
 
@@ -13,36 +13,37 @@ export const Root = styled.span<{ $variant: TagVariant }>`
   align-items: center;
   gap: 6px;
   border-radius: 7px;
-  color: ${({ theme }) => theme.colors.ink};
+  color: ${colors.ink};
   line-height: 1.2;
   white-space: nowrap;
 
-  ${({ $variant, theme }) => {
-    switch ($variant) {
-      case 'code':
-        return css`
-          padding: 6px 10px;
-          background: ${theme.colors.muted};
-          font-family: ${theme.fonts.mono};
-          font-size: 12px;
-        `
-      case 'soft':
-        return css`
-          padding: 4px 9px 4px 6px;
-          background: ${theme.colors.muted};
-          font-size: 12px;
-        `
-      case 'outline':
-        return css`
-          gap: 7px;
-          padding: 6px 11px 6px 7px;
-          border-radius: 9px;
-          background: ${theme.colors.card};
-          border: 1px solid ${theme.colors.line};
-          font-size: 13px;
-        `
-    }
-  }}
+  ${({ $variant }) =>
+    $variant === 'code' &&
+    css`
+      padding: 6px 10px;
+      background: ${colors.muted};
+      font-family: ${fonts.mono};
+      font-size: 12px;
+    `}
+
+  ${({ $variant }) =>
+    $variant === 'soft' &&
+    css`
+      padding: 4px 9px 4px 6px;
+      background: ${colors.muted};
+      font-size: 12px;
+    `}
+
+  ${({ $variant }) =>
+    $variant === 'outline' &&
+    css`
+      gap: 7px;
+      padding: 6px 11px 6px 7px;
+      border-radius: 9px;
+      background: ${colors.card};
+      border: 1px solid ${colors.line};
+      font-size: 13px;
+    `}
 `
 
 export const Logo = styled.img`

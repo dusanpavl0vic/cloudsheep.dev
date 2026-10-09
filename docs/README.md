@@ -58,11 +58,12 @@ Odluka koja se ne može izvesti iz koda mora biti zapisana. Nova se pravi sa `/a
 | [0007](adr/0007-ui-flat-vs-folder.md) | `packages/ui`: flat `ui/`, folder drugde | superseded by 0011 |
 | [0008](adr/0008-theme-data-attribute.md) | Tema preko `data-theme`, ne `class` | accepted |
 | [0009](adr/0009-nextjs-fullstack.md) | Jedna Next.js aplikacija umesto dva SPA-a i Express-a | accepted |
-| [0010](adr/0010-styled-components.md) | styled-components umesto Tailwind-a | accepted |
+| [0010](adr/0010-styled-components.md) | styled-components umesto Tailwind-a | superseded (0015) |
 | [0011](adr/0011-layered-structure.md) | Struktura po slojevima (`REACT_FRONTEND_STRUCTURE.md`) | accepted |
 | [0012](adr/0012-locale-prefix.md) | Jezik u URL-u (`/`, `/sr`) preko next-intl | accepted |
 | [0013](adr/0013-email-verification.md) | Provera mejla: sintaksa + MX + disposable, bez SMTP probe | accepted |
 | [0014](adr/0014-js-budget-200kb.md) | JS budžet javnih ruta 200 KB gzip, produkcioni build kroz webpack | accepted |
+| [0015](adr/0015-next-yak.md) | next-yak umesto styled-components (CSS u build-u, bez runtime-a) | accepted |
 
 [`adr/template.md`](adr/template.md) — šablon: Context / Decision / Consequences / Alternatives.
 

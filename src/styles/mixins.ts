@@ -1,13 +1,11 @@
-'use client'
+import { css } from 'next-yak'
 
-import { css } from 'styled-components'
-
-import { BRAND_COLORS, GLOW, type TypographyVariant } from '@/constants/theme'
+import { BRAND_COLORS, GLOW, blur, colors, shadows, typography } from './tokens.yak'
 
 /** Vidljiv fokus samo sa tastature (docs/15-accessibility.md §2). */
 export const focusRing = css`
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.accent};
+    outline: 2px solid ${colors.accent};
     outline-offset: 2px;
   }
 `
@@ -36,46 +34,57 @@ export const resetButton = css`
   cursor: pointer;
 `
 
-export const lineClamp = (lines: number) => css`
+/** Tekst odsečen posle tri reda (sažetak na kartici). */
+export const lineClamp3 = css`
   display: -webkit-box;
-  -webkit-line-clamp: ${lines};
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 `
 
-/** Tipografska varijanta iz teme: porodica, veličina, težina, prored, razmak slova. */
-export const typography = (variant: TypographyVariant) => css`
-  ${({ theme }) => {
-    const v = theme.typography[variant]
-    return css`
-      font-family: ${theme.fonts[v.family]};
-      font-size: ${v.size};
-      font-weight: ${v.weight};
-      line-height: ${v.lineHeight};
-      letter-spacing: ${v.tracking};
-    `
-  }}
+/** Tipografske varijante iz teme (porodica, veličina, težina, prored, razmak slova). */
+export const typographyDisplay = css`
+  ${typography.display}
+`
+export const typographyH2 = css`
+  ${typography.h2}
+`
+export const typographyH4 = css`
+  ${typography.h4}
+`
+export const typographyLead = css`
+  ${typography.lead}
+`
+export const typographyBody = css`
+  ${typography.body}
+`
+export const typographyEyebrow = css`
+  ${typography.eyebrow}
 `
 
 /**
  * Staklena površina: providna podloga, zamućenje, ivica i spekular.
- * `strong` za header i modale (manje providno), `soft` za kartice nad aurorom.
+ * `Strong` za header i modale (manje providno), `Soft` za kartice nad aurorom.
  */
-export const glass = (strength: 'soft' | 'strong' = 'soft') => css`
-  background: ${({ theme }) => (strength === 'strong' ? theme.colors.glassStrong : theme.colors.glass)};
-  backdrop-filter: ${({ theme }) => theme.blur[strength]};
-  -webkit-backdrop-filter: ${({ theme }) => theme.blur[strength]};
-  border: 1px solid ${({ theme }) => theme.colors.edge};
-  box-shadow: ${({ theme }) => theme.shadows.glass};
+export const glassSoft = css`
+  background: ${colors.glass};
+  backdrop-filter: ${blur.soft};
+  -webkit-backdrop-filter: ${blur.soft};
+  border: 1px solid ${colors.edge};
+  box-shadow: ${shadows.glass};
 `
 
-/** Sjaj koji prati kursor — komponenta postavlja `--gx` / `--gy` (hook `useCursorGlow`). */
+export const glassStrong = css`
+  background: ${colors.glassStrong};
+  backdrop-filter: ${blur.strong};
+  -webkit-backdrop-filter: ${blur.strong};
+  border: 1px solid ${colors.edge};
+  box-shadow: ${shadows.glass};
+`
+
+/** Sjaj koji prati kursor — `PageEffects` postavlja `--gx` / `--gy`. */
 export const cursorGlow = css`
-  background-image: radial-gradient(
-    circle 220px at var(--gx, -400px) var(--gy, -400px),
-    ${GLOW.cursor},
-    transparent 70%
-  );
+  background-image: radial-gradient(circle 220px at var(--gx, -400px) var(--gy, -400px), ${GLOW.cursor}, transparent 70%);
 `
 
 /** Tekst sa gradijentom marke (`.dev` u logotipu, istaknute reči u naslovima). */

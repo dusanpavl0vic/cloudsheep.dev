@@ -1,8 +1,7 @@
-'use client'
-
-import styled, { css } from 'styled-components'
+import { css, styled } from 'next-yak'
 
 import { focusRing, resetButton } from '@/styles/mixins'
+import { buttonHeights, colors, radii } from '@/styles/tokens.yak'
 
 export const Root = styled.button<{ $selected: boolean; $hasHint: boolean }>`
   ${resetButton};
@@ -11,10 +10,10 @@ export const Root = styled.button<{ $selected: boolean; $hasHint: boolean }>`
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
-  min-height: ${({ theme }) => theme.buttonHeights.s}px;
+  min-height: ${buttonHeights.s}px;
   padding: ${({ $hasHint }) => ($hasHint ? '12px 16px' : '8px 14px')};
-  border-radius: ${({ theme }) => theme.radii.base}px;
-  border: 1px solid ${({ theme }) => theme.colors.line};
+  border-radius: ${radii.base}px;
+  border: 1px solid ${colors.line};
   font-size: 14.5px;
   font-weight: 500;
   text-align: left;
@@ -24,18 +23,18 @@ export const Root = styled.button<{ $selected: boolean; $hasHint: boolean }>`
     border-color 0.25s,
     transform 0.25s;
 
-  ${({ theme, $selected }) =>
+  ${({ $selected }) =>
     $selected
       ? css`
-          background: ${theme.colors.primary};
-          color: ${theme.colors.onPrimary};
-          border-color: ${theme.colors.primary};
+          background: ${colors.primary};
+          color: ${colors.onPrimary};
+          border-color: ${colors.primary};
         `
       : css`
-          background: ${theme.colors.card};
-          color: ${theme.colors.ink};
+          background: ${colors.card};
+          color: ${colors.ink};
           &:hover {
-            border-color: ${theme.colors.accent};
+            border-color: ${colors.accent};
             transform: translateY(-1px);
           }
         `}

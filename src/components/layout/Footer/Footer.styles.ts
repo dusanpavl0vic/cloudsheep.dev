@@ -1,14 +1,12 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { BRAND_COLORS, INVERSE } from '@/constants/theme'
 import { Link } from '@/i18n/navigation'
 import { focusRing } from '@/styles/mixins'
+import { BRAND_COLORS, INVERSE, fonts, zIndex } from '@/styles/tokens.yak'
 
 export const Root = styled.footer`
   position: relative;
-  z-index: ${({ theme }) => theme.zIndex.content};
+  z-index: ${zIndex.content};
   margin-top: 40px;
   overflow: hidden;
   background: ${INVERSE.bg};
@@ -41,7 +39,7 @@ export const Columns = styled.div`
   gap: 40px;
 `
 
-export const Column = styled.div`
+export const Column = styled.nav`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -49,7 +47,7 @@ export const Column = styled.div`
 `
 
 export const Heading = styled.span`
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 700;
   font-size: 16px;
   color: ${INVERSE.heading};
@@ -93,7 +91,7 @@ export const Social = styled.a`
   border-radius: 50%;
   border: 1px solid ${INVERSE.lineStrong};
   color: ${INVERSE.soft};
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 12px;
   font-weight: 600;
   transition: all 0.25s;
@@ -153,7 +151,7 @@ export const Word = styled.div`
   right: 0;
   top: 0;
   text-align: center;
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 700;
   font-size: clamp(70px, 15.6vw, 250px);
   line-height: 0.86;

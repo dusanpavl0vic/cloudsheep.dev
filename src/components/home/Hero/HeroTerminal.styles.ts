@@ -1,10 +1,7 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { EASE_OUT } from '@/constants/layout'
-import { BRAND_COLORS, BRAND_SHADOWS, INVERSE } from '@/constants/theme'
-import { blink, fadeUp } from '@/styles/keyframes'
+import { EASE_OUT, anim, fonts } from '@/styles/tokens.yak'
+import { BRAND_COLORS, BRAND_SHADOWS, INVERSE } from '@/styles/tokens.yak'
 
 export const Root = styled.p`
   display: inline-flex;
@@ -16,10 +13,10 @@ export const Root = styled.p`
   border-radius: 12px;
   background: ${INVERSE.surface};
   color: ${INVERSE.soft};
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: clamp(12px, 1.4vw, 14px);
   box-shadow: ${BRAND_SHADOWS.terminal};
-  animation: ${fadeUp} 0.9s ${EASE_OUT} 0.85s backwards;
+  animation: ${anim.fadeUp} 0.9s ${EASE_OUT} 0.85s backwards;
 `
 
 export const Prompt = styled.span`
@@ -38,5 +35,5 @@ export const Caret = styled.span`
   height: 1.1em;
   margin-left: -4px;
   background: ${BRAND_COLORS.sky};
-  animation: ${blink} 1s steps(1) infinite;
+  animation: ${anim.blink} 1s steps(1) infinite;
 `

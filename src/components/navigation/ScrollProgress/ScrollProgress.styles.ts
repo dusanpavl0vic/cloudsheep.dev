@@ -1,8 +1,6 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { BRAND_COLORS } from '@/constants/theme'
+import { BRAND_COLORS } from '@/styles/tokens.yak'
 
 export const Bar = styled.div`
   position: absolute;

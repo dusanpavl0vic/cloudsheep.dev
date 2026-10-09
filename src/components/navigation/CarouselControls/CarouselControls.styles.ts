@@ -1,8 +1,7 @@
-'use client'
-
-import styled from 'styled-components'
+import { css, styled } from 'next-yak'
 
 import { focusRing, resetButton } from '@/styles/mixins'
+import { colors } from '@/styles/tokens.yak'
 
 export const Root = styled.div`
   display: flex;
@@ -19,15 +18,15 @@ export const Arrow = styled.button`
   display: grid;
   place-items: center;
   border-radius: 50%;
-  border: 1px solid ${({ theme }) => theme.colors.line2};
-  background: ${({ theme }) => theme.colors.card};
-  color: ${({ theme }) => theme.colors.ink};
+  border: 1px solid ${colors.line2};
+  background: ${colors.card};
+  color: ${colors.ink};
   transition: all 0.25s;
 
   &:hover {
-    background: ${({ theme }) => theme.colors.primary};
-    border-color: ${({ theme }) => theme.colors.primary};
-    color: ${({ theme }) => theme.colors.onPrimary};
+    background: ${colors.primary};
+    border-color: ${colors.primary};
+    color: ${colors.onPrimary};
   }
 `
 
@@ -41,10 +40,15 @@ export const Dot = styled.button<{ $active: boolean }>`
   ${resetButton};
   ${focusRing};
   position: relative;
-  width: ${({ $active }) => ($active ? 26 : 8)}px;
+  width: ${({ $active }) => `${String(($active ? 26 : 8))}px`};
   height: 8px;
   border-radius: 4px;
-  background: ${({ $active, theme }) => ($active ? theme.colors.accent : theme.colors.line2)};
+  background: ${colors.line2};
+  ${({ $active }) =>
+    $active &&
+    css`
+      background: ${colors.accent};
+    `}
   transition: width 0.35s;
 
   &::after {

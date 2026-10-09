@@ -1,9 +1,8 @@
-'use client'
-
-import styled, { css } from 'styled-components'
+import { css, styled } from 'next-yak'
 
 import { Link } from '@/i18n/navigation'
-import { focusRing, typography } from '@/styles/mixins'
+import { focusRing, typographyH4 } from '@/styles/mixins'
+import { colors, radii, spacing } from '@/styles/tokens.yak'
 
 export const List = styled.ul`
   display: flex;
@@ -16,15 +15,20 @@ export const List = styled.ul`
 
 export const Item = styled(Link)<{ $active: boolean }>`
   ${focusRing};
-  ${typography('h4')};
+  ${typographyH4};
   display: block;
   padding: 12px 14px;
-  border-radius: ${({ theme }) => theme.radii.base}px;
-  color: ${({ theme, $active }) => ($active ? theme.colors.accent : theme.colors.display)};
-  ${({ theme, $active }) =>
+  border-radius: ${radii.base}px;
+  color: ${colors.display};
+  ${({ $active }) =>
     $active &&
     css`
-      background: ${theme.colors.muted};
+      color: ${colors.accent};
+    `}
+  ${({ $active }) =>
+    $active &&
+    css`
+      background: ${colors.muted};
     `}
 `
 
@@ -32,5 +36,5 @@ export const Footer = styled.div`
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[4]}px;
+  gap: ${spacing[4]}px;
 `

@@ -1,20 +1,18 @@
-'use client'
+import { css, styled } from 'next-yak'
 
-import styled, { css } from 'styled-components'
-
-import { CONTAINER_MAX_WIDTH } from '@/constants/layout'
 import { Link } from '@/i18n/navigation'
-import { focusRing, glass } from '@/styles/mixins'
+import { focusRing, glassStrong } from '@/styles/mixins'
+import { CONTAINER_MAX_WIDTH, colors, media, radii, zIndex } from '@/styles/tokens.yak'
 
 export const Root = styled.header`
   position: sticky;
   top: 0;
-  z-index: ${({ theme }) => theme.zIndex.header};
+  z-index: ${zIndex.header};
   padding: 12px clamp(12px, 3vw, 28px);
 `
 
 export const Bar = styled.div`
-  ${glass('strong')};
+  ${glassStrong};
   position: relative;
   overflow: hidden;
   max-width: ${CONTAINER_MAX_WIDTH}px;
@@ -23,13 +21,13 @@ export const Bar = styled.div`
   align-items: center;
   gap: 10px 18px;
   padding: 9px 10px 9px 14px;
-  border-radius: ${({ theme }) => theme.radii.lg}px;
+  border-radius: ${radii.lg}px;
 `
 
 export const HomeLink = styled(Link)`
   ${focusRing};
   display: flex;
-  border-radius: ${({ theme }) => theme.radii.sm}px;
+  border-radius: ${radii.sm}px;
   transition: opacity 0.25s;
 
   &:hover {
@@ -43,7 +41,7 @@ export const Nav = styled.nav`
   justify-content: center;
   gap: 2px;
 
-  ${({ theme }) => theme.media.desktop} {
+  ${media.desktop} {
     display: flex;
   }
 `
@@ -51,24 +49,24 @@ export const Nav = styled.nav`
 export const NavLink = styled(Link)<{ $active: boolean }>`
   ${focusRing};
   padding: 8px 12px;
-  border-radius: ${({ theme }) => theme.radii.base}px;
+  border-radius: ${radii.base}px;
   font-size: 14.5px;
   font-weight: 500;
   transition:
     background 0.25s,
     color 0.25s;
 
-  ${({ theme, $active }) =>
+  ${({ $active }) =>
     $active
       ? css`
-          background: ${theme.colors.muted};
-          color: ${theme.colors.accent};
+          background: ${colors.muted};
+          color: ${colors.accent};
         `
       : css`
-          color: ${theme.colors.ink};
+          color: ${colors.ink};
           &:hover {
-            background: ${theme.colors.muted};
-            color: ${theme.colors.accent};
+            background: ${colors.muted};
+            color: ${colors.accent};
           }
         `}
 `
@@ -79,7 +77,7 @@ export const Actions = styled.div`
   gap: 8px;
   margin-left: auto;
 
-  ${({ theme }) => theme.media.desktop} {
+  ${media.desktop} {
     margin-left: 0;
   }
 `
@@ -88,7 +86,7 @@ export const Actions = styled.div`
 export const OnTablet = styled.span`
   display: none;
 
-  ${({ theme }) => theme.media.tablet} {
+  ${media.tablet} {
     display: inline-flex;
   }
 `
@@ -97,7 +95,7 @@ export const OnTablet = styled.span`
 export const BelowDesktop = styled.span`
   display: inline-flex;
 
-  ${({ theme }) => theme.media.desktop} {
+  ${media.desktop} {
     display: none;
   }
 `

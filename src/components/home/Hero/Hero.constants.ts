@@ -38,6 +38,3 @@ export const TASKS = [
   { key: 'taskShip', width: '82%', tone: 'deep' },
   { key: 'taskReview', width: '46%', tone: 'blue' },
 ] as const
-
-/** Lighthouse prsten: poluprečnik i obim (za `stroke-dasharray`). */
-export const RING = { size: 54, radius: 22, stroke: 5, circumference: 2 * Math.PI * 22 } as const

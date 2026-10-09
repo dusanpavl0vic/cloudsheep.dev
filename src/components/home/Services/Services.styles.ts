@@ -1,8 +1,6 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { BRAND_COLORS, BRAND_SHADOWS } from '@/constants/theme'
+import { BRAND_COLORS, BRAND_SHADOWS, colors, fonts } from '@/styles/tokens.yak'
 
 export const Grid = styled.div`
   display: grid;
@@ -33,10 +31,10 @@ export const IconTile = styled.span`
 `
 
 export const Slug = styled.span`
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 12px;
   letter-spacing: 0.16em;
-  color: ${({ theme }) => theme.colors.faint};
+  color: ${colors.faint};
 `
 
 export const Title = styled.h3`
@@ -44,7 +42,7 @@ export const Title = styled.h3`
   font-weight: 600;
   font-size: 24px;
   letter-spacing: -0.02em;
-  color: ${({ theme }) => theme.colors.display};
+  color: ${colors.display};
 `
 
 export const Description = styled.p`
@@ -52,7 +50,7 @@ export const Description = styled.p`
   margin-top: 10px;
   font-size: 15.5px;
   line-height: 1.6;
-  color: ${({ theme }) => theme.colors.ink2};
+  color: ${colors.ink2};
 `
 
 export const Tags = styled.ul`

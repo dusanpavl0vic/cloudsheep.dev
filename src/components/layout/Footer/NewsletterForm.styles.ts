@@ -1,9 +1,7 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { BRAND_COLORS, INVERSE } from '@/constants/theme'
 import { focusRing, resetButton, visuallyHidden } from '@/styles/mixins'
+import { BRAND_COLORS, INVERSE, colors, fonts, radii } from '@/styles/tokens.yak'
 
 export const Root = styled.div`
   display: grid;
@@ -11,7 +9,7 @@ export const Root = styled.div`
   gap: 24px 40px;
   align-items: center;
   padding: 32px clamp(20px, 3vw, 36px);
-  border-radius: ${({ theme }) => theme.radii.lg}px;
+  border-radius: ${radii.lg}px;
   background: ${INVERSE.wash};
   border: 1px solid ${INVERSE.line};
 `
@@ -35,7 +33,7 @@ export const Badge = styled.span`
 
 export const Title = styled.span`
   display: block;
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 700;
   font-size: clamp(20px, 2vw, 24px);
   letter-spacing: -0.02em;
@@ -58,7 +56,7 @@ export const Field = styled.div`
   display: flex;
   gap: 6px;
   padding: 6px;
-  border-radius: ${({ theme }) => theme.radii.md}px;
+  border-radius: ${radii.md}px;
   background: ${BRAND_COLORS.white};
 `
 
@@ -70,7 +68,7 @@ export const Input = styled.input`
   background: transparent;
   padding: 10px 12px;
   font-size: 15px;
-  color: ${({ theme }) => theme.colors.display};
+  color: ${colors.display};
 
   &::placeholder {
     color: ${INVERSE.faint};
@@ -84,7 +82,7 @@ export const Submit = styled.button`
   align-items: center;
   gap: 6px;
   padding: 11px 18px;
-  border-radius: ${({ theme }) => theme.radii.sm}px;
+  border-radius: ${radii.sm}px;
   background: ${INVERSE.button};
   color: ${INVERSE.onButton};
   font-weight: 700;
@@ -99,7 +97,7 @@ export const Submit = styled.button`
 
 export const Done = styled.p`
   padding: 16px 18px;
-  border-radius: ${({ theme }) => theme.radii.md}px;
+  border-radius: ${radii.md}px;
   background: ${INVERSE.wash};
   color: ${INVERSE.soft};
   font-weight: 600;

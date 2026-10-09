@@ -1,7 +1,6 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
+import { zIndex } from '@/styles/tokens.yak'
 export const Shell = styled.div`
   position: relative;
   min-height: 100vh;
@@ -11,7 +10,7 @@ export const Shell = styled.div`
 
 export const Main = styled.main`
   position: relative;
-  z-index: ${({ theme }) => theme.zIndex.content};
+  z-index: ${zIndex.content};
   flex: 1;
 
   &:focus {

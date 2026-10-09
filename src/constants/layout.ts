@@ -30,3 +30,6 @@ export const ANIMATION_MS = {
 
 /** Zakrivljenje za sve „pristajuće" animacije iz dizajna. */
 export const EASE_OUT = 'cubic-bezier(.16, 1, .3, 1)'
+
+/** Opruga iz dizajna (prebačaj pa smirivanje) — prekidač teme. */
+export const EASE_SPRING = 'cubic-bezier(.34, 1.56, .64, 1)'

@@ -33,7 +33,8 @@ src/
 
   components/<kategorija>/<Komponenta>/
     Komponenta.tsx           default export
-    Komponenta.styles.ts     'use client' + styled-components
+    Komponenta.styles.ts     next-yak styled elementi (server i klijent, bez 'use client')
+    Komponenta.yak.ts        (opciono) vrednosti koje stil čita u build-u
     Komponenta.types.ts      <Komponenta>Props
     Komponenta.constants.ts  (opciono)
     index.ts                 export { default } + export type *
@@ -52,8 +53,8 @@ src/
   hooks/                     useStore.ts, useModal.ts, … generički; <domen>/, admin/<domen>/
   helpers/                   čiste funkcije, jedan fajl po temi
   providers/                 StoreProvider, I18nProvider, ThemeProvider, StyledRegistry, SessionProvider
-  styles/                    theme.ts, GlobalStyles.ts, mixins.ts, keyframes.ts
-  types/                     domenski modeli (oblici API odgovora) + styled.d.ts, use-intl.d.ts
+  styles/                    tokens.yak.ts, global.ts, animations.ts, mixins.ts
+  types/                     domenski modeli (oblici API odgovora) + use-intl.d.ts
   schemas/                   zod šeme — ISTA šema validira formu na klijentu i telo zahteva na serveru
   i18n/                      routing.ts, navigation.ts, request.ts (next-intl)
   server/                    SAMO server — vidi docs/17-backend.md

@@ -1,12 +1,10 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { BRAND_COLORS, BRAND_SHADOWS } from '@/constants/theme'
+import { BRAND_COLORS, BRAND_SHADOWS, fonts } from '@/styles/tokens.yak'
 
 export const Root = styled.span<{ $size: number }>`
-  width: ${({ $size }) => $size}px;
-  height: ${({ $size }) => $size}px;
+  width: ${({ $size }) => `${String($size)}px`};
+  height: ${({ $size }) => `${String($size)}px`};
   flex-shrink: 0;
   border-radius: 22%;
   background: ${BRAND_COLORS.white};
@@ -16,13 +14,13 @@ export const Root = styled.span<{ $size: number }>`
 `
 
 export const Mark = styled.img<{ $size: number }>`
-  width: ${({ $size }) => $size}px;
-  height: ${({ $size }) => $size}px;
+  width: ${({ $size }) => `${String($size)}px`};
+  height: ${({ $size }) => `${String($size)}px`};
   object-fit: contain;
 `
 
 export const Initials = styled.span`
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 12px;
   font-weight: 700;
   color: ${BRAND_COLORS.deep};

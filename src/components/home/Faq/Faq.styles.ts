@@ -1,12 +1,9 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { EASE_OUT, HEADER_HEIGHT } from '@/constants/layout'
-import { BRAND_COLORS, BRAND_SHADOWS } from '@/constants/theme'
 import { Link } from '@/i18n/navigation'
-import { hint } from '@/styles/keyframes'
-import { focusRing, glass } from '@/styles/mixins'
+import { focusRing, glassStrong } from '@/styles/mixins'
+import { EASE_OUT, HEADER_HEIGHT, anim, colors, fonts, media } from '@/styles/tokens.yak'
+import { BRAND_COLORS, BRAND_SHADOWS } from '@/styles/tokens.yak'
 
 export const Layout = styled.div`
   display: grid;
@@ -20,14 +17,14 @@ export const Aside = styled.div`
   flex-direction: column;
   gap: 16px;
 
-  ${({ theme }) => theme.media.desktop} {
+  ${media.desktop} {
     position: sticky;
-    top: ${HEADER_HEIGHT + 26}px;
+    top: calc(${HEADER_HEIGHT}px + 26px);
   }
 `
 
 export const Chat = styled.div`
-  ${glass('strong')};
+  ${glassStrong};
   margin-top: 18px;
   padding: 22px;
   border-radius: 24px;
@@ -35,7 +32,7 @@ export const Chat = styled.div`
   flex-direction: column;
   gap: 14px;
   box-shadow:
-    inset 0 1px 0 0 ${({ theme }) => theme.colors.spec},
+    inset 0 1px 0 0 ${colors.spec},
     ${BRAND_SHADOWS.panel};
 `
 
@@ -44,7 +41,7 @@ export const ChatHead = styled.div`
   align-items: center;
   gap: 10px;
   padding-bottom: 12px;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.line};
+  border-bottom: 1px solid ${colors.line};
 `
 
 export const ChatWho = styled.div`
@@ -54,10 +51,10 @@ export const ChatWho = styled.div`
 `
 
 export const ChatName = styled.span`
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 700;
   font-size: 15px;
-  color: ${({ theme }) => theme.colors.display};
+  color: ${colors.display};
 `
 
 export const ChatTld = styled.span`
@@ -66,7 +63,7 @@ export const ChatTld = styled.span`
 
 export const ChatStatus = styled.span`
   font-size: 12px;
-  color: ${({ theme }) => theme.colors.faint};
+  color: ${colors.faint};
 `
 
 export const Asked = styled.p`
@@ -74,8 +71,8 @@ export const Asked = styled.p`
   max-width: 85%;
   padding: 12px 16px;
   border-radius: 18px 18px 4px 18px;
-  background: ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.onPrimary};
+  background: ${colors.primary};
+  color: ${colors.onPrimary};
   font-size: 15px;
   line-height: 1.45;
 `
@@ -90,8 +87,8 @@ export const Answer = styled.p`
   max-width: 85%;
   padding: 12px 16px;
   border-radius: 18px 18px 18px 4px;
-  background: ${({ theme }) => theme.colors.muted};
-  color: ${({ theme }) => theme.colors.ink};
+  background: ${colors.muted};
+  color: ${colors.ink};
   font-size: 15px;
   line-height: 1.5;
 `
@@ -103,15 +100,15 @@ export const Typing = styled.span`
   align-self: flex-start;
   padding: 12px 14px;
   border-radius: 18px 18px 18px 4px;
-  background: ${({ theme }) => theme.colors.muted};
+  background: ${colors.muted};
 `
 
 export const Dot = styled.span<{ $index: number }>`
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: ${({ theme }) => theme.colors.accent};
-  animation: ${hint} 1s ease-in-out ${({ $index }) => $index * 0.15}s infinite;
+  background: ${colors.accent};
+  animation: ${anim.hint} 1s ease-in-out ${({ $index }) => `${String($index * 0.15)}s`} infinite;
 `
 
 export const Ask = styled(Link)`
@@ -123,23 +120,23 @@ export const Ask = styled(Link)`
   gap: 12px;
   padding: 14px 16px;
   border-radius: 14px;
-  border: 1px dashed ${({ theme }) => theme.colors.line2};
-  color: ${({ theme }) => theme.colors.ink};
+  border: 1px dashed ${colors.line2};
+  color: ${colors.ink};
   font-size: 15px;
   transition: all 0.25s;
 
   strong {
-    color: ${({ theme }) => theme.colors.display};
+    color: ${colors.display};
   }
 
   svg {
     flex-shrink: 0;
-    color: ${({ theme }) => theme.colors.accent};
+    color: ${colors.accent};
   }
 
   &:hover {
-    border-color: ${({ theme }) => theme.colors.accent};
-    background: ${({ theme }) => theme.colors.muted};
+    border-color: ${colors.accent};
+    background: ${colors.muted};
   }
 `
 
@@ -152,12 +149,12 @@ export const Items = styled.div`
 /** Nativni `<details>`: radi bez JS-a, Google vidi i zatvorene odgovore. */
 export const Item = styled.details`
   border-radius: 18px;
-  border: 1px solid ${({ theme }) => theme.colors.line};
+  border: 1px solid ${colors.line};
   background: transparent;
   transition: background 0.3s;
 
   &[open] {
-    background: ${({ theme }) => theme.colors.glassStrong};
+    background: ${colors.glassStrong};
   }
 
   @supports (interpolate-size: allow-keywords) {
@@ -186,7 +183,7 @@ export const Summary = styled.summary`
   border-radius: 18px;
   list-style: none;
   cursor: pointer;
-  color: ${({ theme }) => theme.colors.display};
+  color: ${colors.display};
 
   &::-webkit-details-marker {
     display: none;
@@ -194,14 +191,14 @@ export const Summary = styled.summary`
 `
 
 export const Number = styled.span`
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 12px;
-  color: ${({ theme }) => theme.colors.accent};
+  color: ${colors.accent};
 `
 
 export const Question = styled.span`
   flex: 1;
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 600;
   font-size: 18px;
 `
@@ -213,8 +210,8 @@ export const Toggle = styled.span`
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: ${({ theme }) => theme.colors.muted};
-  color: ${({ theme }) => theme.colors.accent};
+  background: ${colors.muted};
+  color: ${colors.accent};
   transition: rotate 0.4s ${EASE_OUT};
 
   details[open] & {
@@ -226,5 +223,5 @@ export const AnswerText = styled.p`
   padding: 0 22px 22px 58px;
   font-size: 16px;
   line-height: 1.65;
-  color: ${({ theme }) => theme.colors.ink2};
+  color: ${colors.ink2};
 `

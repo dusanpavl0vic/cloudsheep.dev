@@ -1,10 +1,8 @@
-'use client'
+import { css, styled } from 'next-yak'
 
-import styled, { css } from 'styled-components'
-
-import { EASE_OUT } from '@/constants/layout'
 import { Link } from '@/i18n/navigation'
 import { focusRing } from '@/styles/mixins'
+import { EASE_OUT, colors } from '@/styles/tokens.yak'
 
 export const Root = styled(Link)<{ $underline: boolean; $tone: 'accent' | 'muted' }>`
   ${focusRing};
@@ -14,14 +12,19 @@ export const Root = styled(Link)<{ $underline: boolean; $tone: 'accent' | 'muted
   align-self: flex-start;
   font-weight: 600;
   font-size: 16px;
-  color: ${({ $tone, theme }) => ($tone === 'accent' ? theme.colors.accent : theme.colors.faint)};
+  color: ${colors.faint};
+  ${({ $tone }) =>
+    $tone === 'accent' &&
+    css`
+      color: ${colors.accent};
+    `}
   transition: color 0.2s;
 
-  ${({ $underline, theme }) =>
+  ${({ $underline }) =>
     $underline &&
     css`
       padding: 6px 0;
-      border-bottom: 2px solid ${theme.colors.accent};
+      border-bottom: 2px solid ${colors.accent};
     `}
 
   svg {
@@ -29,7 +32,7 @@ export const Root = styled(Link)<{ $underline: boolean; $tone: 'accent' | 'muted
   }
 
   &:hover {
-    color: ${({ theme }) => theme.colors.accent};
+    color: ${colors.accent};
   }
 
   &:hover svg:last-child {

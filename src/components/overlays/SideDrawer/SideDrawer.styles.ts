@@ -1,8 +1,7 @@
-'use client'
+import { keyframes, styled } from 'next-yak'
 
-import styled, { keyframes } from 'styled-components'
-
-import { glass } from '@/styles/mixins'
+import { glassStrong } from '@/styles/mixins'
+import { radii, spacing } from '@/styles/tokens.yak'
 
 const slideIn = keyframes`
   from { transform: translateX(24px); opacity: 0; }
@@ -10,15 +9,15 @@ const slideIn = keyframes`
 `
 
 export const Panel = styled.div`
-  ${glass('strong')};
+  ${glassStrong};
   width: min(360px, 100%);
   height: 100%;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing[6]}px;
-  padding: ${({ theme }) => theme.spacing[5]}px;
-  border-radius: ${({ theme }) => theme.radii.lg}px 0 0 ${({ theme }) => theme.radii.lg}px;
+  gap: ${spacing[6]}px;
+  padding: ${spacing[5]}px;
+  border-radius: ${radii.lg}px 0 0 ${radii.lg}px;
   animation: ${slideIn} 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 `
 

@@ -72,7 +72,7 @@ const Footer = ({ links, projects, className }: FooterProps) => {
             </Socials>
           </Column>
 
-          <Column as="nav" aria-label={t('footer.columns.studio')}>
+          <Column aria-label={t('footer.columns.studio')}>
             <Heading>{t('footer.columns.studio')}</Heading>
             {studio.map((section) => (
               <ColumnLink key={section} href={homeSectionHref(section)}>
@@ -81,7 +81,7 @@ const Footer = ({ links, projects, className }: FooterProps) => {
             ))}
           </Column>
 
-          <Column as="nav" aria-label={t('footer.columns.work')}>
+          <Column aria-label={t('footer.columns.work')}>
             <Heading>{t('footer.columns.work')}</Heading>
             <ColumnLink href={ROUTES.PROJECTS}>{t('footer.allProjects')}</ColumnLink>
             {projects.map((project) => (
@@ -91,7 +91,7 @@ const Footer = ({ links, projects, className }: FooterProps) => {
             ))}
           </Column>
 
-          <Column as="nav" aria-label={t('footer.columns.resources')}>
+          <Column aria-label={t('footer.columns.resources')}>
             <Heading>{t('footer.columns.resources')}</Heading>
             {resources.map((item) => (
               <ColumnLink key={item.href} href={item.href}>

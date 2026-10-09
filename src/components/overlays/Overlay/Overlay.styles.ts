@@ -1,7 +1,6 @@
-'use client'
+import { css, keyframes, styled } from 'next-yak'
 
-import styled, { keyframes } from 'styled-components'
-
+import { colors, spacing, zIndex } from '@/styles/tokens.yak'
 const fadeIn = keyframes`
   from { opacity: 0; }
   to { opacity: 1; }
@@ -10,12 +9,18 @@ const fadeIn = keyframes`
 export const Backdrop = styled.div<{ $placement: 'center' | 'right' }>`
   position: fixed;
   inset: 0;
-  z-index: ${({ theme }) => theme.zIndex.overlay};
+  z-index: ${zIndex.overlay};
   display: flex;
-  align-items: ${({ $placement }) => ($placement === 'center' ? 'center' : 'stretch')};
-  justify-content: ${({ $placement }) => ($placement === 'center' ? 'center' : 'flex-end')};
-  padding: ${({ $placement, theme }) => ($placement === 'center' ? `${String(theme.spacing[4])}px` : '0')};
-  background: ${({ theme }) => theme.colors.veil};
+  align-items: stretch;
+  justify-content: flex-end;
+  ${({ $placement }) =>
+    $placement === 'center' &&
+    css`
+      align-items: center;
+      justify-content: center;
+      padding: ${spacing[4]}px;
+    `}
+  background: ${colors.veil};
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   animation: ${fadeIn} 0.2s ease-out;

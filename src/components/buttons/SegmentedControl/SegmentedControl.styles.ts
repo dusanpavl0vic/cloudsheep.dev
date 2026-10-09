@@ -1,40 +1,38 @@
-'use client'
+import { css, styled } from 'next-yak'
 
-import styled, { css } from 'styled-components'
-
-import { BRAND_SHADOWS } from '@/constants/theme'
 import { focusRing, resetButton } from '@/styles/mixins'
+import { BRAND_SHADOWS, colors, fonts, radii } from '@/styles/tokens.yak'
 
 export const Root = styled.div`
   display: inline-flex;
   padding: 3px;
-  border-radius: ${({ theme }) => theme.radii.base}px;
-  background: ${({ theme }) => theme.colors.muted};
+  border-radius: ${radii.base}px;
+  background: ${colors.muted};
 `
 
 export const Segment = styled.button<{ $active: boolean; $mono: boolean }>`
   ${resetButton};
   ${focusRing};
   padding: 5px 9px;
-  border-radius: ${({ theme }) => theme.radii.sm}px;
+  border-radius: ${radii.sm}px;
   font-size: ${({ $mono }) => ($mono ? '11.5px' : '13.5px')};
   font-weight: 600;
-  ${({ theme, $mono }) =>
+  ${({ $mono }) =>
     $mono &&
     css`
-      font-family: ${theme.fonts.mono};
+      font-family: ${fonts.mono};
     `}
   transition: all 0.25s;
 
-  ${({ theme, $active }) =>
+  ${({ $active }) =>
     $active
       ? css`
-          background: ${theme.colors.card};
-          color: ${theme.colors.ink};
+          background: ${colors.card};
+          color: ${colors.ink};
           box-shadow: ${BRAND_SHADOWS.langActive};
         `
       : css`
           background: transparent;
-          color: ${theme.colors.faint};
+          color: ${colors.faint};
         `}
 `

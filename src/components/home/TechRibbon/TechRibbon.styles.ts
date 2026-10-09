@@ -1,9 +1,6 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { BRAND_SHADOWS, INVERSE } from '@/constants/theme'
-import { marquee } from '@/styles/keyframes'
+import { BRAND_SHADOWS, INVERSE, anim, fonts } from '@/styles/tokens.yak'
 
 /** Kosa tamna traka koja nastavlja kosinu hero-a (dizajn: `rotate(-2deg)`, `margin: -58px -2%`). */
 export const Root = styled.section`
@@ -20,7 +17,7 @@ export const Root = styled.section`
 export const Track = styled.div`
   display: flex;
   width: max-content;
-  animation: ${marquee} 42s linear infinite;
+  animation: ${anim.marquee} 42s linear infinite;
 
   &:hover {
     animation-play-state: paused;
@@ -36,7 +33,7 @@ export const Item = styled.li`
   align-items: center;
   gap: 12px;
   padding: 0 26px;
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 600;
   font-size: 17px;
   color: ${INVERSE.soft};

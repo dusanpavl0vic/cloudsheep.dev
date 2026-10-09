@@ -1,15 +1,13 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { spin } from '@/styles/keyframes'
+import { anim } from '@/styles/tokens.yak'
 
 export const Root = styled.span<{ $size: number }>`
   display: inline-block;
-  width: ${({ $size }) => $size}px;
-  height: ${({ $size }) => $size}px;
+  width: ${({ $size }) => `${String($size)}px`};
+  height: ${({ $size }) => `${String($size)}px`};
   border-radius: 50%;
   border: 2px solid currentColor;
   border-right-color: transparent;
-  animation: ${spin} 0.7s linear infinite;
+  animation: ${anim.spin} 0.7s linear infinite;
 `

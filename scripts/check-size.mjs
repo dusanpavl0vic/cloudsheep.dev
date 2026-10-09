@@ -10,10 +10,10 @@
  *   pnpm build && pnpm size                          # podiže `next start` sama
  *   SIZE_BASE_URL=http://localhost:3000 pnpm size    # meri već pokrenut server
  */
+import { chromium } from '@playwright/test'
 import { spawn } from 'node:child_process'
 import { gzipSync } from 'node:zlib'
 
-import { chromium } from '@playwright/test'
 
 const BUDGET_KB = 200
 const PORT = 3311
@@ -101,7 +101,11 @@ try {
   failed = true
 } finally {
   await browser?.close()
-  if (server?.pid) process.kill(-server.pid, 'SIGTERM')
+  try {
+    if (server?.pid) process.kill(-server.pid, 'SIGTERM')
+  } catch {
+    // server se već ugasio (npr. nije mogao da se podigne bez build-a)
+  }
 }
 
 process.exit(failed ? 1 : 0)

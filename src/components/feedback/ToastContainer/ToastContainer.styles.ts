@@ -1,12 +1,11 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
+import { spacing, zIndex } from '@/styles/tokens.yak'
 export const Root = styled.div`
   position: fixed;
-  right: ${({ theme }) => theme.spacing[4]}px;
-  bottom: ${({ theme }) => theme.spacing[4]}px;
-  z-index: ${({ theme }) => theme.zIndex.toast};
+  right: ${spacing[4]}px;
+  bottom: ${spacing[4]}px;
+  z-index: ${zIndex.toast};
   display: grid;
-  gap: ${({ theme }) => theme.spacing[2]}px;
+  gap: ${spacing[2]}px;
 `

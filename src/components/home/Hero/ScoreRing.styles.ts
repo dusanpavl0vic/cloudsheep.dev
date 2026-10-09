@@ -1,15 +1,13 @@
-'use client'
+import { keyframes, styled } from 'next-yak'
 
-import styled, { keyframes } from 'styled-components'
+import { EASE_OUT, fonts } from '@/styles/tokens.yak'
+import { THOUGHT } from '@/styles/tokens.yak'
 
-import { EASE_OUT } from '@/constants/layout'
-import { THOUGHT } from '@/constants/theme'
-
-import { RING } from './Hero.constants'
+import { RING } from './ScoreRing.yak'
 
 
 const close = keyframes`
-  from { stroke-dashoffset: ${String(RING.circumference)}; }
+  from { stroke-dashoffset: ${RING.circumference}; }
   to { stroke-dashoffset: 0; }
 `
 
@@ -33,7 +31,7 @@ export const Value = styled.span`
   inset: 0;
   display: grid;
   place-items: center;
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 700;
   font-size: 17px;
   color: ${THOUGHT.ink};

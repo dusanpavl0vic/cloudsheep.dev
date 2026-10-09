@@ -14,8 +14,9 @@ const IS_DEV = process.env.NODE_ENV === 'development'
  *
  * - `script-src`: samo skripte sa nonce-om; `strict-dynamic` veruje onima koje one učitaju
  *   (Next chunk-ovi). `'unsafe-eval'` samo u razvoju — React ga koristi za stack trace.
- * - `style-src`: `'unsafe-inline'` OSTAJE — styled-components ubacuje `<style>` u runtime-u,
- *   a `style={{}}` atribute nonce ne pokriva. Nonce u `style-src` bi poništio `'unsafe-inline'`.
+ * - `style-src`: `'unsafe-inline'` OSTAJE zbog `style=""` atributa — next-yak dinamičke vrednosti
+ *   (`$size` → `--yak-var: 48px`) i React `style={{}}` idu kroz atribut, a nonce atribute ne
+ *   pokriva. Nonce u `style-src` bi poništio `'unsafe-inline'`.
  */
 const buildCsp = (nonce: string) =>
   [

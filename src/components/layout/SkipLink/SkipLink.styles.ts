@@ -1,16 +1,15 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
+import { colors, radii, zIndex } from '@/styles/tokens.yak'
 export const Root = styled.a`
   position: absolute;
   left: 16px;
   top: -60px;
-  z-index: ${({ theme }) => theme.zIndex.toast};
+  z-index: ${zIndex.toast};
   padding: 10px 16px;
-  border-radius: ${({ theme }) => theme.radii.base}px;
-  background: ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.onPrimary};
+  border-radius: ${radii.base}px;
+  background: ${colors.primary};
+  color: ${colors.onPrimary};
   font-weight: 600;
   transition: top 0.2s;
 

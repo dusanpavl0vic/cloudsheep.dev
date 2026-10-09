@@ -1,46 +1,66 @@
 # 08 — Stilovi i UI
 
-> Status: active | Last review: 2026-10-08
+> Status: active | Last review: 2026-10-09
 
-styled-components 6 (ADR 0010). Vizuelni jezik (staklo, aurora, animacije):
+next-yak 9 (ADR 0015): styled-components API, ali se CSS izvlači u build-u — bez runtime-a i
+bez računanja stilova pri hidrataciji. Vizuelni jezik (staklo, aurora, animacije):
 [`22-visual-language.md`](22-visual-language.md).
 
 ## 1. Fajlovi
 
-| Fajl                     | Sadrži                                                                                                                                    |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `constants/theme/*.ts`   | vrednosti tokena: `PALETTE` (svetla/tamna), `SPACING`, `RADII`, `SHADOWS`, `BLUR`, `TYPOGRAPHY`, `BREAKPOINTS`/`MEDIA`, veličine, fontovi |
-| `styles/theme.ts`        | tema sastavljena iz tokena (`theme.colors.ink`, `theme.media.desktop`…)                                                                   |
-| `styles/GlobalStyles.ts` | reset, `@font-face`, vrednosti CSS promenljivih za obe teme                                                                               |
-| `styles/mixins.ts`       | `focusRing`, `visuallyHidden`, `resetButton`, `lineClamp`, `typography(v)`, `glass(s)`, `gradientText`                                    |
-| `styles/keyframes.ts`    | animacije iz dizajna (`bob`, `drift`, `popIn`, `marquee`…)                                                                                |
-| `<Komponenta>.styles.ts` | styled elementi te komponente                                                                                                             |
+| Fajl                     | Sadrži                                                                                                                 |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| `constants/theme/*.ts`   | vrednosti tokena: `PALETTE` (svetla/tamna), `SPACING`, `RADII`, `SHADOWS`, `BLUR`, `TYPOGRAPHY`, `MEDIA`, fontovi      |
+| `styles/tokens.yak.ts`   | most do build-a: `colors`, `spacing`, `media`, `BRAND_COLORS`…, imena animacija (`anim`), pravila teme i `@font-face` |
+| `styles/global.ts`       | `globalStyle`: reset, `@font-face`, CSS promenljive za obe teme                                                         |
+| `styles/animations.ts`   | `globalStyle`: sve `@keyframes` (`cs-fade-up`, `cs-marquee`…)                                                          |
+| `styles/mixins.ts`       | statični `css` mixin-i: `focusRing`, `visuallyHidden`, `resetButton`, `glassSoft/Strong`, `typographyX`, `lineClamp3`  |
+| `<Komponenta>.styles.ts` | styled elementi te komponente                                                                                          |
+| `<Komponenta>.yak.ts`    | (opciono) vrednosti koje stil te komponente čita u build-u (`BUTTON_SIZES`, `RING`)                                     |
+
+`global.ts` i `animations.ts` uvozi `Document` (jednom za ceo sajt); u `package.json` su u
+`sideEffects`, inače bi ih tree-shaking izbacio.
 
 ## 2. Pravila
 
-- **Svaki `.styles.ts` počinje sa `'use client'`** — styled-components radi samo u klijentskom
-  modulu. Komponenta koja ih renderuje može da ostane serverska.
-- **`.styles.ts` izvozi samo styled komponente.** Serverska komponenta iz `'use client'` modula
-  dobija klijentsku referencu, ne vrednost — izvezen broj ili objekat bi na serveru bio
-  `undefined` (tiho: prazan `stroke`, `max-width: undefinedpx`). Vrednosti idu u `.constants.ts`.
-  Lint: `no-restricted-syntax` nad `*.styles.ts`.
-- **Boje samo iz teme** (`theme.colors.x`) ili iz konstanti tokena (`BRAND_COLORS`, `GLOW`).
-  Hex i `rgb()` u `.styles.ts` su lint greška (`@app/no-raw-colors`).
-- **Razmaci, radijusi, senke, prelomne tačke iz teme**: `${({ theme }) => theme.spacing[4]}px`,
-  `${({ theme }) => theme.media.desktop} { … }`. Vrednosti koje ima samo jedna komponenta idu u
-  njen `.constants.ts`.
-- **Transient props** za sve što ide samo u stil: `$variant`, `$active` — ne završavaju u DOM-u.
-- **Kratka imena** styled elemenata: `Root`, `Header`, `Item`, `Actions`.
+- **`.styles.ts` nema `'use client'`.** Styled element radi i u serverskoj komponenti — stil
+  serverske sekcije ne putuje kao JS.
+- **Vrednost u šablonu dolazi iz `.yak.ts`.** next-yak ne izvršava običan modul: `${colors.ink}`
+  iz `@/styles/tokens.yak` radi, `${BRAND.x}` iz `@/constants/brand` ne. Izraz (`${a + 26}`) i
+  poziv (`${glass('strong')}`) nisu dozvoljeni — `calc(${a}px + 26px)`, `${glassStrong}`.
+- **Funkcija u šablonu bira statičan `css` blok, ne čita token u runtime-u** (lint
+  `@app/no-runtime-tokens`). `${({ $on }) => ($on ? colors.accent : colors.ink)}` bi uvukao ceo
+  `constants/theme` u klijentski JS:
+
+  ```ts
+  color: ${colors.ink};
+  ${({ $on }) =>
+    $on &&
+    css`
+      color: ${colors.accent};
+    `}
+  ```
+
+- **Dinamička vrednost iz propa vraća jedinicu**: `` ${({ $size }) => `${String($size)}px`} `` —
+  next-yak je pretvara u CSS promenljivu na elementu; `${…}px` bi dao `var(--x)px`.
+- **Nema `as` prop-a.** Element koji se bira prop-om: `styled(Slot)` + `component="h1"`.
+- **Izbor iz objekta css blokova (`variants[$variant]`) ne radi** — eksplicitni uslovi po
+  vrednosti (vidi `Button.styles.ts`).
+- **Animacije su globalne**: `animation: ${anim.fadeUp} 0.9s …`. Nova animacija = ime u `anim`
+  + `@keyframes` u `styles/animations.ts`. LCP element se ne animira kroz `opacity` (koristi
+  `anim.slideUp`).
+- **`.styles.ts` izvozi samo styled komponente**; vrednosti koje čita i TSX idu u `.constants.ts`
+  ili `.yak.ts` (lint `no-restricted-syntax`).
+- **Boje samo iz tokena**; hex i `rgb()` u `.styles.ts` su lint greška (`@app/no-raw-colors`).
+- **Transient props** (`$variant`, `$active`) za sve što ide samo u stil.
 - **Komponenta prima `className`**, da bi mogla da se stilizuje spolja (`styled(Komponenta)`).
-- **Dinamička vrednost koja se često menja** (pozicija, procenat) ide kroz CSS promenljivu u
-  `style` (`style={{ '--progress': '42%' }}`), ne kroz interpolaciju propa — svaka nova vrednost
-  propa pravi novu CSS klasu.
-- **Mobile-first**: osnovni stil je za telefon, `theme.media.tablet/desktop/wide` dodaju.
+- **Mobile-first**: osnovni stil je za telefon, `${media.tablet}`/`desktop`/`wide` dodaju.
+- **CSS celog sajta je jedan fajl** (`next.config.ts`, webpack `cacheGroups.styles`).
 
 ## 3. Teme
 
-Tema je **objekat čije su vrednosti CSS promenljive**: `theme.colors.primary = 'var(--c-primary)'`.
-Stvarne vrednosti su u `GlobalStyles`:
+Token je CSS promenljiva: `colors.primary = 'var(--c-primary)'`. Vrednosti za obe teme su u
+`themeRules` (`tokens.yak.ts`), koje `global.ts` ubacuje kao cela pravila:
 
 ```css
 :root { --c-primary: #0D47A1; … }                 /* svetla */
@@ -64,9 +84,12 @@ za DM Sans i Space Grotesk (`Document`).
 
 ## Anti-patterns
 
-| ❌                                          | ✅                                          |
-| ------------------------------------------- | ------------------------------------------- |
-| `color: #0D47A1`                            | `color: ${({ theme }) => theme.colors.ink}` |
-| `@media (min-width: 1024px)`                | `${({ theme }) => theme.media.desktop}`     |
-| `<Box $x={mouseX}>` (nova klasa po pikselu) | `style={{ '--x': `${mouseX}px` }}`          |
-| `'use client'` na View-u zbog stila         | stil u `.styles.ts`, View ostaje serverski  |
+| ❌                                              | ✅                                                    |
+| ----------------------------------------------- | ----------------------------------------------------- |
+| `color: #0D47A1`                                | `color: ${colors.ink}`                                |
+| `@media (min-width: 1024px)`                    | `${media.desktop} { … }`                              |
+| `${({ $on }) => ($on ? colors.a : colors.b)}`   | podrazumevano + `${({ $on }) => $on && css\`…\`}`     |
+| `width: ${({ $w }) => $w}px`                    | `` width: ${({ $w }) => `${String($w)}px`} ``          |
+| `<Title as="h1">`                               | `styled(Slot)` + `<Title component="h1">`             |
+| `${variants[$variant]}`                         | uslov po varijanti                                    |
+| `'use client'` u `.styles.ts`                   | nema ga — stil radi na serveru                        |

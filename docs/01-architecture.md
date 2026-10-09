@@ -35,7 +35,7 @@ od koje zavisi i SEO i JS budžet.
 | `app/**/page.tsx`, `layout.tsx` | server | `server/services`, View komponente, `constants`, `i18n` |
 | `app/api/**/route.ts` | server | `server/**`, `constants`, `helpers`, `types` |
 | `server/**` | server | `constants`, `helpers`, `types` — **nikad React, store ni hookove** |
-| `*.styles.ts` | klijent (`'use client'` u prvom redu) | `styles/mixins`, `constants/theme`, `./X.constants` |
+| `*.styles.ts` | server i klijent (next-yak, bez `'use client'`) | `styles/tokens.yak`, `styles/mixins`, `./X.yak` |
 | `components/**/X.tsx` bez hookova | server | `useTranslations`, styled elementi, druge komponente |
 | `components/**/X.tsx` sa hookovima | klijent (`'use client'`) | `hooks`, `constants`, `helpers` |
 | `hooks/**`, `store/**`, `modals/**`, `providers/**` | klijent | `constants`, `helpers`, `types`, `store` |

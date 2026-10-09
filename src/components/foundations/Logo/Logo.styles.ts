@@ -1,10 +1,6 @@
-'use client'
+import { css, styled } from 'next-yak'
 
-import styled, { css } from 'styled-components'
-
-import { INVERSE } from '@/constants/theme'
-import { bob } from '@/styles/keyframes'
-import { gradientText } from '@/styles/mixins'
+import { BRAND_COLORS, INVERSE, anim, colors, fonts } from '@/styles/tokens.yak'
 
 import type { LogoTone } from './Logo.types'
 
@@ -19,16 +15,21 @@ export const Mark = styled.img<{ $animated: boolean }>`
   ${({ $animated }) =>
     $animated &&
     css`
-      animation: ${bob} 4s ease-in-out infinite;
+      animation: ${anim.bob} 4s ease-in-out infinite;
     `}
 `
 
 export const Word = styled.span<{ $tone: LogoTone }>`
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 700;
   font-size: 19px;
   letter-spacing: -0.03em;
-  color: ${({ theme, $tone }) => ($tone === 'inverse' ? INVERSE.heading : theme.colors.wordmark)};
+  color: ${colors.wordmark};
+  ${({ $tone }) =>
+    $tone === 'inverse' &&
+    css`
+      color: ${INVERSE.heading};
+    `}
 `
 
 export const Tld = styled.span<{ $tone: LogoTone }>`
@@ -37,5 +38,10 @@ export const Tld = styled.span<{ $tone: LogoTone }>`
       ? css`
           color: ${INVERSE.accent};
         `
-      : gradientText}
+      : css`
+          background: linear-gradient(90deg, ${BRAND_COLORS.blue}, ${BRAND_COLORS.sky});
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        `}
 `

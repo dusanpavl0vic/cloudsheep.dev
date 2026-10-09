@@ -1,35 +1,34 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { focusRing, resetButton, typography } from '@/styles/mixins'
+import { focusRing, resetButton, typographyBody, typographyH2 } from '@/styles/mixins'
+import { buttonHeights, colors, radii, spacing } from '@/styles/tokens.yak'
 
 export const Root = styled.section`
   min-height: 60vh;
   display: grid;
   place-content: center;
   justify-items: center;
-  gap: ${({ theme }) => theme.spacing[4]}px;
-  padding: ${({ theme }) => theme.spacing[20]}px ${({ theme }) => theme.spacing[5]}px;
+  gap: ${spacing[4]}px;
+  padding: ${spacing[20]}px ${spacing[5]}px;
   text-align: center;
 `
 
 export const Title = styled.h1`
-  ${typography('h2')};
+  ${typographyH2};
 `
 
 export const Body = styled.p`
-  ${typography('body')};
-  color: ${({ theme }) => theme.colors.ink2};
+  ${typographyBody};
+  color: ${colors.ink2};
 `
 
 export const Retry = styled.button`
   ${resetButton};
   ${focusRing};
-  height: ${({ theme }) => theme.buttonHeights.m}px;
-  padding: 0 ${({ theme }) => theme.spacing[5]}px;
-  border-radius: ${({ theme }) => theme.radii.base}px;
-  background: ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.onPrimary};
+  height: ${buttonHeights.m}px;
+  padding: 0 ${spacing[5]}px;
+  border-radius: ${radii.base}px;
+  background: ${colors.primary};
+  color: ${colors.onPrimary};
   font-weight: 600;
 `

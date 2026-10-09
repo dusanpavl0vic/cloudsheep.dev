@@ -1,13 +1,11 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { BRAND_SHADOWS, INVERSE } from '@/constants/theme'
+import { BRAND_SHADOWS, INVERSE, spacing } from '@/styles/tokens.yak'
 
 export const Wrap = styled.section`
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px ${({ theme }) => theme.spacing[5]}px 0;
+  padding: 40px ${spacing[5]}px 0;
 `
 
 export const Panel = styled.div`

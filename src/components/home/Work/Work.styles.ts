@@ -1,10 +1,8 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { EASE_OUT } from '@/constants/layout'
-import { BRAND_SHADOWS } from '@/constants/theme'
 import { Link } from '@/i18n/navigation'
+import { EASE_OUT, blur, colors, fonts, media } from '@/styles/tokens.yak'
+import { BRAND_SHADOWS } from '@/styles/tokens.yak'
 
 export const Head = styled.div`
   display: flex;
@@ -33,18 +31,18 @@ export const Media = styled.div<{ $flip: boolean }>`
   order: 0;
   padding: 12px;
   border-radius: 26px;
-  background: ${({ theme }) => theme.colors.glass};
-  border: 1px solid ${({ theme }) => theme.colors.edge};
-  backdrop-filter: ${({ theme }) => theme.blur.soft};
-  -webkit-backdrop-filter: ${({ theme }) => theme.blur.soft};
+  background: ${colors.glass};
+  border: 1px solid ${colors.edge};
+  backdrop-filter: ${blur.soft};
+  -webkit-backdrop-filter: ${blur.soft};
   box-shadow: ${BRAND_SHADOWS.featured};
   transition: transform 0.6s ${EASE_OUT};
 
-  ${({ theme }) => theme.media.desktop} {
+  ${media.desktop} {
     order: ${({ $flip }) => ($flip ? 2 : 0)};
   }
 
-  ${({ theme }) => theme.media.hover} {
+  ${media.hover} {
     &:hover {
       transform: translateY(-6px) rotate(-0.6deg);
     }
@@ -62,27 +60,27 @@ export const Meta = styled.p`
   display: flex;
   align-items: center;
   gap: 16px;
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 13px;
-  color: ${({ theme }) => theme.colors.faint};
+  color: ${colors.faint};
 `
 
 export const Index = styled.span`
-  color: ${({ theme }) => theme.colors.accent};
+  color: ${colors.accent};
   font-weight: 600;
 `
 
 export const Title = styled.h3`
   font-size: clamp(2rem, 3.4vw, 2.8rem);
   letter-spacing: -0.035em;
-  color: ${({ theme }) => theme.colors.display};
+  color: ${colors.display};
 `
 
 export const Summary = styled.p`
   max-width: 46ch;
   font-size: 17px;
   line-height: 1.6;
-  color: ${({ theme }) => theme.colors.ink2};
+  color: ${colors.ink2};
 `
 
 export const Metric = styled.p`
@@ -90,20 +88,20 @@ export const Metric = styled.p`
   align-items: baseline;
   gap: 10px;
   padding: 14px 0;
-  border-top: 1px solid ${({ theme }) => theme.colors.line};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.line};
+  border-top: 1px solid ${colors.line};
+  border-bottom: 1px solid ${colors.line};
 `
 
 export const MetricValue = styled.span`
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 700;
   font-size: 32px;
-  color: ${({ theme }) => theme.colors.accent};
+  color: ${colors.accent};
 `
 
 export const MetricLabel = styled.span`
   font-size: 14px;
-  color: ${({ theme }) => theme.colors.faint};
+  color: ${colors.faint};
 `
 
 export const Tags = styled.ul`

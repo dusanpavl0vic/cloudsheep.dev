@@ -1,10 +1,9 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
+import { colors } from '@/styles/tokens.yak'
 export const Bio = styled.p`
   max-width: 600px;
   font-size: 16px;
   line-height: 1.6;
-  color: ${({ theme }) => theme.colors.faint};
+  color: ${colors.faint};
 `

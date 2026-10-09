@@ -1,3 +1,6 @@
+import '@/styles/global'
+import '@/styles/animations'
+
 import { LOCALE_TAGS } from '@/constants/i18n'
 import { FONT_FACES } from '@/constants/theme'
 import AppProviders from '@/providers/AppProviders'

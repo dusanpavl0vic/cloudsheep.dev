@@ -12,7 +12,7 @@ su tačne (bez `^`) u `package.json`; `pnpm-workspace.yaml` postoji samo zbog `a
 | `next` / `@next/eslint-plugin-next`               | `16.3.8`                     | **ne 16.4.0** — vidi D                                           |
 | `react` / `react-dom`                             | `19.2.8`                     |                                                                  |
 | `babel-plugin-react-compiler`                     | `1.0.0`                      | exact pin (ADR 0001); Next ga koristi kroz `reactCompiler: true` |
-| `styled-components`                               | `6.5.3`                      | SWC transformacija (`compiler.styledComponents`)                 |
+| `next-yak`                                        | `9.10.2`                     | CSS u build-u (`withYak`, `transpilationMode: 'Css'`), ADR 0015 |
 | `next-intl`                                       | `4.14.9`                     | API `use-intl`                                                   |
 | `@reduxjs/toolkit` / `react-redux`                | `2.12.0` / `9.3.0`           |                                                                  |
 | `react-hook-form` / `@hookform/resolvers` / `zod` | `7.85.0` / `5.7.1` / `4.4.3` |                                                                  |

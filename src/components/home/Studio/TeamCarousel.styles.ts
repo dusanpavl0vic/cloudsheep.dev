@@ -1,9 +1,7 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { BRAND_COLORS, BRAND_SHADOWS } from '@/constants/theme'
 import { resetButton } from '@/styles/mixins'
+import { BRAND_COLORS, BRAND_SHADOWS, colors, fonts } from '@/styles/tokens.yak'
 
 export const Stage = styled.div`
   position: relative;
@@ -62,11 +60,11 @@ export const Avatar = styled.span`
   overflow: hidden;
   background: ${BRAND_COLORS.ice};
   color: ${BRAND_COLORS.deep};
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 700;
   font-size: 26px;
   box-shadow:
-    0 0 0 3px ${({ theme }) => theme.colors.card},
+    0 0 0 3px ${colors.card},
     0 0 0 5px ${BRAND_COLORS.sky},
     ${BRAND_SHADOWS.avatar};
 
@@ -78,15 +76,15 @@ export const Avatar = styled.span`
 `
 
 export const Name = styled.span`
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 600;
   font-size: 20px;
   letter-spacing: -0.02em;
-  color: ${({ theme }) => theme.colors.display};
+  color: ${colors.display};
 `
 
 export const Role = styled.span`
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 13px;
-  color: ${({ theme }) => theme.colors.ink2};
+  color: ${colors.ink2};
 `

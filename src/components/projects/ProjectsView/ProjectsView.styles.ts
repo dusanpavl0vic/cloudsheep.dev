@@ -1,7 +1,6 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
+import { colors } from '@/styles/tokens.yak'
 export const Grid = styled.ul`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
@@ -11,5 +10,5 @@ export const Grid = styled.ul`
 export const Empty = styled.p`
   padding: 48px 0;
   text-align: center;
-  color: ${({ theme }) => theme.colors.faint};
+  color: ${colors.faint};
 `

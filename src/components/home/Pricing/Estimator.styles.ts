@@ -1,13 +1,11 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { EASE_OUT } from '@/constants/layout'
-import { BRAND_SHADOWS, INVERSE } from '@/constants/theme'
-import { glass } from '@/styles/mixins'
+import { glassStrong } from '@/styles/mixins'
+import { EASE_OUT, colors, fonts } from '@/styles/tokens.yak'
+import { BRAND_SHADOWS, INVERSE } from '@/styles/tokens.yak'
 
 export const Panel = styled.div`
-  ${glass('strong')};
+  ${glassStrong};
   margin-top: 20px;
   padding: clamp(24px, 4vw, 48px);
   border-radius: 28px;
@@ -15,7 +13,7 @@ export const Panel = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
   gap: 40px;
   box-shadow:
-    inset 0 1px 0 0 ${({ theme }) => theme.colors.spec},
+    inset 0 1px 0 0 ${colors.spec},
     ${BRAND_SHADOWS.estimator};
 `
 
@@ -32,20 +30,20 @@ export const Heading = styled.div`
 `
 
 export const Eyebrow = styled.span`
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 12px;
   letter-spacing: 0.16em;
-  color: ${({ theme }) => theme.colors.accent};
+  color: ${colors.accent};
 `
 
 export const Title = styled.h3`
   font-size: clamp(1.8rem, 3vw, 2.6rem);
   letter-spacing: -0.035em;
-  color: ${({ theme }) => theme.colors.display};
+  color: ${colors.display};
 `
 
 export const Muted = styled.span`
-  color: ${({ theme }) => theme.colors.faint};
+  color: ${colors.faint};
 `
 
 export const Group = styled.fieldset`
@@ -60,7 +58,7 @@ export const Group = styled.fieldset`
 export const Legend = styled.legend`
   margin-bottom: 10px;
   font-size: 14px;
-  color: ${({ theme }) => theme.colors.faint};
+  color: ${colors.faint};
 `
 
 export const Options = styled.div`
@@ -82,7 +80,7 @@ export const Result = styled.div`
 `
 
 export const ResultLabel = styled.span`
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -90,7 +88,7 @@ export const ResultLabel = styled.span`
 `
 
 export const Range = styled.output`
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 700;
   font-size: clamp(3rem, 6vw, 4.6rem);
   line-height: 1;
@@ -159,7 +157,7 @@ export const Fact = styled.div`
   }
 
   dd {
-    font-family: ${({ theme }) => theme.fonts.heading};
+    font-family: ${fonts.heading};
     font-weight: 700;
     font-size: 20px;
   }

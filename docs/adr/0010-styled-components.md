@@ -1,6 +1,6 @@
 # ADR 0010 — styled-components umesto Tailwind-a
 
-> Status: accepted
+> Status: superseded by [ADR 0015](0015-next-yak.md)
 > Datum: 2026-10-08
 > Učesnici: Dušan Pavlović
 

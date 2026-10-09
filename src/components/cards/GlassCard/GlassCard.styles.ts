@@ -1,37 +1,36 @@
-'use client'
+import { css, styled } from 'next-yak'
 
-import styled, { css } from 'styled-components'
+import Slot from '@/components/foundations/Slot'
+import { EASE_OUT, blur, colors, fonts, media, radii } from '@/styles/tokens.yak'
+import { ACCENTS } from '@/styles/tokens.yak'
 
-import { EASE_OUT } from '@/constants/layout'
-import { ACCENTS } from '@/constants/theme'
-
-export const Root = styled.article<{ $interactive: boolean }>`
+export const Root = styled(Slot)<{ $interactive: boolean }>`
   position: relative;
   isolation: isolate;
   overflow: hidden;
   padding: 30px;
-  border-radius: ${({ theme }) => theme.radii.xl}px;
-  background: ${({ theme }) => theme.colors.glass};
-  backdrop-filter: ${({ theme }) => theme.blur.soft};
-  -webkit-backdrop-filter: ${({ theme }) => theme.blur.soft};
-  border: 1px solid ${({ theme }) => theme.colors.edge};
+  border-radius: ${radii.xl}px;
+  background: ${colors.glass};
+  backdrop-filter: ${blur.soft};
+  -webkit-backdrop-filter: ${blur.soft};
+  border: 1px solid ${colors.edge};
   box-shadow:
-    inset 0 1px 0 0 ${({ theme }) => theme.colors.spec},
+    inset 0 1px 0 0 ${colors.spec},
     ${ACCENTS.cardShadow};
   transition:
     border-color 0.5s,
     box-shadow 0.5s,
     translate 0.5s ${EASE_OUT};
 
-  ${({ $interactive, theme }) =>
+  ${({ $interactive }) =>
     $interactive &&
     css`
-      ${theme.media.hover} {
+      ${media.hover} {
         &:hover {
           border-color: ${ACCENTS.hoverEdge};
           translate: 0 -4px;
           box-shadow:
-            inset 0 1px 0 0 ${theme.colors.spec},
+            inset 0 1px 0 0 ${colors.spec},
             ${ACCENTS.cardShadowHover};
         }
       }
@@ -61,11 +60,11 @@ export const Number = styled.span`
   top: 14px;
   right: 22px;
   z-index: -1;
-  font-family: ${({ theme }) => theme.fonts.heading};
+  font-family: ${fonts.heading};
   font-weight: 700;
   font-size: 78px;
   line-height: 1;
-  color: ${({ theme }) => theme.colors.ink};
+  color: ${colors.ink};
   opacity: 0.06;
 `
 
@@ -75,7 +74,7 @@ export const Corner = styled.span<{ $side: 'left' | 'right' }>`
   ${({ $side }) => $side}: 16px;
   width: 12px;
   height: 12px;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.line2};
-  border-${({ $side }) => $side}: 1px solid ${({ theme }) => theme.colors.line2};
+  border-bottom: 1px solid ${colors.line2};
+  border-${({ $side }) => $side}: 1px solid ${colors.line2};
 `
 

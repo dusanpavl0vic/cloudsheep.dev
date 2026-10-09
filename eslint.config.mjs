@@ -163,6 +163,9 @@ export default tseslint.config(
       // dodao JS bez koristi. `<img>` uvek nosi width/height (CLS, docs/07 §7).
       '@next/next/no-img-element': 'off',
 
+      // `globalStyle\`…\`` (next-yak) je tagovan šablon bez dodele — namerno (ADR 0015).
+      '@typescript-eslint/no-unused-expressions': ['error', { allowTaggedTemplates: true }],
+
       // Performanse (docs/07)
       '@app/max-usestate': ['error', { max: 2 }],
       '@app/require-effect-comment': 'error',
@@ -325,18 +328,30 @@ export default tseslint.config(
   },
 
   // ── Stil: boje samo iz teme ──────────────────────────────────────────────────
-  // `.styles.ts` je 'use client' modul: serverska komponenta iz njega dobija klijentsku
-  // referencu, ne vrednost — izvezen objekat ili broj bi na serveru bio `undefined`.
+  // `.styles.ts` izvozi samo styled komponente: next-yak ne deli dinamičke vrednosti između
+  // fajlova (ADR 0015), a vrednosti koje čita i TSX žive u `.constants.ts` / `.yak.ts`.
   {
     files: ['src/**/*.styles.ts'],
     rules: {
       '@app/no-raw-colors': 'error',
+      '@app/no-runtime-tokens': 'error',
       'no-restricted-syntax': [
         'error',
         {
           selector: 'ExportNamedDeclaration > VariableDeclaration > VariableDeclarator[init.type!="TaggedTemplateExpression"]',
-          message: '`.styles.ts` izvozi samo styled komponente; vrednosti idu u `.constants.ts` (docs/08 §2).',
+          message: '`.styles.ts` izvozi samo styled komponente; vrednosti idu u `.constants.ts` ili `.yak.ts` (docs/08 §2).',
         },
+      ],
+    },
+  },
+
+  // `.yak.ts` izvršava next-yak kroz Node (Turbopack) — `@/` alias tamo ne postoji (ADR 0015).
+  {
+    files: ['src/**/*.yak.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [{ group: ['@/*'], message: '`.yak.ts` uvozi relativno — next-yak ga izvršava bez alias-a (docs/08 §2).' }] },
       ],
     },
   },

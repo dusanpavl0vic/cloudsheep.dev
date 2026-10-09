@@ -1,4 +1,4 @@
-/** Porodice fontova — imena iz `@font-face` u `styles/GlobalStyles.ts` (`constants/theme/fonts.ts`). */
+/** Porodice fontova — imena iz `@font-face` u `styles/global.ts` (`constants/theme/fonts.ts`). */
 export const FONT_FAMILY = {
   sans: "'DM Sans', system-ui, sans-serif",
   heading: "'Space Grotesk', 'DM Sans', sans-serif",

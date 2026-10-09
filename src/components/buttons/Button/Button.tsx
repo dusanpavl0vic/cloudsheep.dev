@@ -5,7 +5,7 @@ import Icon from '@/components/foundations/Icon'
 import { Link } from '@/i18n/navigation'
 
 import { EXTERNAL_HREF, NEW_TAB_HREF } from './Button.constants'
-import { Root } from './Button.styles'
+import { Root, RootLink } from './Button.styles'
 import type { ButtonProps } from './Button.types'
 
 /** Dugme sa varijantama i veličinama; uz `href` postaje link (šablon §3.5). */
@@ -36,19 +36,17 @@ const Button = ({
   if (href && EXTERNAL_HREF.test(href)) {
     const newTab = NEW_TAB_HREF.test(href)
     return (
-      <Root as="a" href={href} {...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})} {...style}>
+      <RootLink component="a" href={href} {...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})} {...style}>
         {content}
-      </Root>
+      </RootLink>
     )
   }
 
   if (href) {
-    // `as` sa proizvoljnom komponentom pravi uniju tipova koju TS ne može da izračuna (TS2590);
-    // link komponenta prima `href` i `className` kao `<a>`, pa je sužavanje na 'a' bezbedno.
     return (
-      <Root as={linkComponent as 'a'} href={href} {...style}>
+      <RootLink component={linkComponent} href={href} {...style}>
         {content}
-      </Root>
+      </RootLink>
     )
   }
 

@@ -32,8 +32,9 @@ Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-…' 'stri
 
 - **`script-src` je strog** — nonce, bez `'unsafe-inline'`. Next sam dodaje nonce svojim
   skriptama; JSON-LD ga dobija eksplicitno.
-- **`style-src` ima `'unsafe-inline'` namerno:** styled-components ubacuje `<style>` u runtime-u, a
-  `style={{}}` atribute nonce ne pokriva. Nonce u `style-src` bi poništio `'unsafe-inline'`.
+- **`style-src` ima `'unsafe-inline'` namerno:** next-yak dinamičke vrednosti (`$size` → CSS
+  promenljiva) i React `style={{}}` idu kroz `style=""` atribut, a nonce atribute ne pokriva.
+  Nonce u `style-src` bi poništio `'unsafe-inline'`.
 - **Cena:** nonce znači da je svaka stranica dinamička (SSR po zahtevu) — ADR 0009.
 
 `next.config.ts` dodaje `nosniff`, `Referrer-Policy`, `Permissions-Policy`, a `/admin` i `/api`

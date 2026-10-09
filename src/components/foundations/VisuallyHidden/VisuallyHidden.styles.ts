@@ -1,9 +1,8 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
+import Slot from '@/components/foundations/Slot'
 import { visuallyHidden } from '@/styles/mixins'
 
-export const Root = styled.span`
+export const Root = styled(Slot)`
   ${visuallyHidden};
 `

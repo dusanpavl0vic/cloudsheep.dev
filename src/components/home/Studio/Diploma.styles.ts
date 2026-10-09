@@ -1,10 +1,7 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { EASE_OUT } from '@/constants/layout'
-import { DIPLOMA } from '@/constants/theme'
-import { fadeUp } from '@/styles/keyframes'
+import { EASE_OUT, anim, colors, fonts } from '@/styles/tokens.yak'
+import { DIPLOMA } from '@/styles/tokens.yak'
 
 /** Diploma je papir: uvek svetla, i u tamnoj temi (dizajn). */
 export const Paper = styled.div`
@@ -19,7 +16,7 @@ export const Paper = styled.div`
   text-align: left;
   rotate: -0.6deg;
   box-shadow: ${DIPLOMA.shadow};
-  animation: ${fadeUp} 0.7s ${EASE_OUT} 0.1s backwards;
+  animation: ${anim.fadeUp} 0.7s ${EASE_OUT} 0.1s backwards;
 
   &::before {
     content: '';
@@ -42,7 +39,7 @@ export const Frame = styled.div`
 `
 
 export const University = styled.span`
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 10.5px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -70,7 +67,7 @@ export const Rule = styled.span`
 
 export const Place = styled.p`
   padding-right: 5.25rem;
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 11.5px;
   line-height: 1.6;
   color: ${DIPLOMA.soft};
@@ -96,8 +93,8 @@ export const Empty = styled.span`
   min-height: 15rem;
   padding: 0 24px;
   border-radius: 14px;
-  border: 1px dashed ${({ theme }) => theme.colors.line2};
-  font-family: ${({ theme }) => theme.fonts.mono};
+  border: 1px dashed ${colors.line2};
+  font-family: ${fonts.mono};
   font-size: 12.5px;
-  color: ${({ theme }) => theme.colors.faint};
+  color: ${colors.faint};
 `

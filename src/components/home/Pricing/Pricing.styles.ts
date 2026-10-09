@@ -1,9 +1,7 @@
-'use client'
+import { css, styled } from 'next-yak'
 
-import styled, { css } from 'styled-components'
-
-import { EASE_OUT } from '@/constants/layout'
-import { BRAND_COLORS, BRAND_SHADOWS, INVERSE } from '@/constants/theme'
+import { EASE_OUT, blur, colors, fonts, media, radii } from '@/styles/tokens.yak'
+import { BRAND_COLORS, BRAND_SHADOWS, INVERSE } from '@/styles/tokens.yak'
 
 export const Plans = styled.ul`
   display: grid;
@@ -24,7 +22,7 @@ export const Plan = styled.li<{ $featured: boolean }>`
   box-shadow: ${BRAND_SHADOWS.panel};
   transition: transform 0.4s ${EASE_OUT};
 
-  ${({ $featured, theme }) =>
+  ${({ $featured }) =>
     $featured
       ? css`
           translate: 0 -12px;
@@ -33,14 +31,14 @@ export const Plan = styled.li<{ $featured: boolean }>`
           border: 1px solid ${BRAND_COLORS.deep};
         `
       : css`
-          background: ${theme.colors.glassStrong};
-          color: ${theme.colors.ink};
-          border: 1px solid ${theme.colors.edge};
-          backdrop-filter: ${theme.blur.soft};
-          -webkit-backdrop-filter: ${theme.blur.soft};
+          background: ${colors.glassStrong};
+          color: ${colors.ink};
+          border: 1px solid ${colors.edge};
+          backdrop-filter: ${blur.soft};
+          -webkit-backdrop-filter: ${blur.soft};
         `}
 
-  ${({ theme }) => theme.media.hover} {
+  ${media.hover} {
     &:hover {
       transform: translateY(-6px);
     }
@@ -52,10 +50,10 @@ export const Badge = styled.span`
   top: -13px;
   left: 28px;
   padding: 5px 12px;
-  border-radius: ${({ theme }) => theme.radii.pill}px;
+  border-radius: ${radii.pill}px;
   background: linear-gradient(90deg, ${BRAND_COLORS.blue}, ${BRAND_COLORS.sky});
   color: ${BRAND_COLORS.night};
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -68,9 +66,14 @@ export const Name = styled.h3`
 `
 
 export const Price = styled.span<{ $featured: boolean }>`
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 13px;
-  color: ${({ $featured, theme }) => ($featured ? INVERSE.accent : theme.colors.faint)};
+  color: ${colors.faint};
+  ${({ $featured }) =>
+    $featured &&
+    css`
+      color: ${INVERSE.accent};
+    `}
 `
 
 export const Description = styled.p`

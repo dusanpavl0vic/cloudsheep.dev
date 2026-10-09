@@ -1,5 +1,6 @@
 import { maxUseState } from './max-usestate.js'
 import { noRawColors } from './no-raw-colors.js'
+import { noRuntimeTokens } from './no-runtime-tokens.js'
 import { requireEffectComment } from './require-effect-comment.js'
 
 /**
@@ -12,5 +13,6 @@ export const appPlugin = {
     'max-usestate': maxUseState,
     'require-effect-comment': requireEffectComment,
     'no-raw-colors': noRawColors,
+    'no-runtime-tokens': noRuntimeTokens,
   },
 }

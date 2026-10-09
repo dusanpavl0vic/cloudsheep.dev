@@ -1,10 +1,7 @@
-'use client'
+import { css, styled } from 'next-yak'
 
-import styled, { css } from 'styled-components'
-
-import { EASE_OUT } from '@/constants/layout'
-import { BRAND_COLORS, BRAND_SHADOWS, THOUGHT } from '@/constants/theme'
-import { drift, fill, popIn } from '@/styles/keyframes'
+import { EASE_OUT, anim, fonts, media, radii } from '@/styles/tokens.yak'
+import { BRAND_COLORS, BRAND_SHADOWS, THOUGHT } from '@/styles/tokens.yak'
 
 /** Oblaci se prikazuju tek od 1200 px — na užem ekranu bi prekrili naslov. */
 export const Layer = styled.div`
@@ -14,7 +11,7 @@ export const Layer = styled.div`
   display: none;
   pointer-events: none;
 
-  ${({ theme }) => theme.media.wide} {
+  ${media.wide} {
     display: block;
   }
 `
@@ -27,19 +24,24 @@ export const Anchor = styled.div`
 
 export const Float = styled.div<{ $rotate: string; $driftS: number; $offsetS: number }>`
   rotate: ${({ $rotate }) => $rotate};
-  animation: ${drift} ${({ $driftS }) => $driftS}s ease-in-out ${({ $offsetS }) => $offsetS}s infinite alternate;
+  animation: ${anim.drift} ${({ $driftS }) => `${String($driftS)}s`} ease-in-out ${({ $offsetS }) => `${String($offsetS)}s`} infinite alternate;
 `
 
 export const Card = styled.div<{ $note: boolean; $delay: number }>`
   position: relative;
   padding: 18px 20px;
-  border-radius: ${({ theme }) => theme.radii.lg}px;
-  background: ${({ $note }) => ($note ? THOUGHT.note : THOUGHT.card)};
+  border-radius: ${radii.lg}px;
+  background: ${THOUGHT.card};
+  ${({ $note }) =>
+    $note &&
+    css`
+      background: ${THOUGHT.note};
+    `}
   border: 1px solid ${THOUGHT.edge};
   box-shadow: ${BRAND_SHADOWS.thought};
   color: ${THOUGHT.ink};
   text-align: left;
-  animation: ${popIn} 0.6s cubic-bezier(0.2, 0.8, 0.3, 1) ${({ $delay }) => $delay}s backwards;
+  animation: ${anim.popIn} 0.6s cubic-bezier(0.2, 0.8, 0.3, 1) ${({ $delay }) => `${String($delay)}s`} backwards;
 `
 
 export const Note = styled.p`
@@ -50,7 +52,7 @@ export const Note = styled.p`
 
 export const Label = styled.p<{ $center?: boolean }>`
   margin-bottom: 10px;
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 10.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -88,8 +90,13 @@ export const Fill = styled.span<{ $width: string; $tone: 'deep' | 'blue' }>`
   height: 100%;
   width: ${({ $width }) => $width};
   border-radius: 3px;
-  background: ${({ $tone }) => ($tone === 'deep' ? BRAND_COLORS.deep : BRAND_COLORS.blue)};
-  animation: ${fill} 1.6s ${EASE_OUT} 1.6s backwards;
+  background: ${BRAND_COLORS.blue};
+  ${({ $tone }) =>
+    $tone === 'deep' &&
+    css`
+      background: ${BRAND_COLORS.deep};
+    `}
+  animation: ${anim.fill} 1.6s ${EASE_OUT} 1.6s backwards;
 `
 
 export const Status = styled.span`
@@ -99,7 +106,7 @@ export const Status = styled.span`
 
 export const Meta = styled.p`
   margin-top: 4px;
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 11px;
   color: ${THOUGHT.text};
 `

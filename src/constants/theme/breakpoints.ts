@@ -15,4 +15,6 @@ export const MEDIA = {
   belowDesktop: `@media (max-width: ${String(BREAKPOINTS.desktop - 1)}px)`,
   hover: '@media (hover: hover) and (pointer: fine)',
   reducedMotion: '@media (prefers-reduced-motion: reduce)',
+  /** Bez JS-a ili uz smanjeno kretanje — efekti vezani za skrol ustupaju mesto običnom rasporedu. */
+  staticFallback: '@media (scripting: none), (prefers-reduced-motion: reduce)',
 } as const

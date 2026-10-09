@@ -1,11 +1,10 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
+import { colors } from '@/styles/tokens.yak'
 export const Root = styled.span`
   font-variant-numeric: tabular-nums;
 `
 
 export const Suffix = styled.span`
-  color: ${({ theme }) => theme.colors.accent};
+  color: ${colors.accent};
 `

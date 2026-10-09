@@ -11,7 +11,7 @@ interface VisuallyHiddenProps {
 
 /** Tekst samo za čitač ekrana (oznaka dugmeta sa ikonicom, kontekst linka, skriven naslov). */
 const VisuallyHidden = ({ children, as = 'span', id }: VisuallyHiddenProps) => (
-  <Root as={as} id={id}>
+  <Root component={as} id={id}>
     {children}
   </Root>
 )

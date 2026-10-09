@@ -33,8 +33,9 @@ pnpm validate               # typecheck · lint · test · build · size — mor
 - **`src/server/**` se nikad ne uvozi iz klijentskog koda** (lint to sprečava).
 - **Svaka komponenta ima svoj folder**: `.tsx` · `.styles.ts` · `.types.ts` · `index.ts`.
   Komponenta je `default export`, sve ostalo `named`.
-- **Stil je u `.styles.ts` (styled-components), boje i razmaci samo iz teme** — nikad hex ni
-  px vrednost tokena direktno.
+- **Stil je u `.styles.ts` (next-yak, ADR 0015), vrednosti samo iz `styles/tokens.yak.ts`** —
+  nikad hex ni px vrednost tokena direktno. Funkcija u šablonu bira statičan `css` blok, ne čita
+  token u runtime-u (`@app/no-runtime-tokens`).
 - **Funkcije su arrow funkcije** — komponente, hookovi, helperi, selektori.
 - **Bez literal stringova u UI** — sve kroz `t()`, ključ u `en.ts` **i** `sr.ts`.
 - **`useEffect` samo za sinhronizaciju sa spoljnim sistemom**; obavezan `// effect:` komentar.

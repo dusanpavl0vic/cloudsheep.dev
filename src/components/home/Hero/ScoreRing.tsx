@@ -1,8 +1,8 @@
 import CountUp from '@/components/data-display/CountUp'
 import { BRAND_COLORS, THOUGHT } from '@/constants/theme'
 
-import { RING } from './Hero.constants'
 import { Arc, Ring, Root, Value } from './ScoreRing.styles'
+import { RING } from './ScoreRing.yak'
 
 const center = RING.size / 2
 

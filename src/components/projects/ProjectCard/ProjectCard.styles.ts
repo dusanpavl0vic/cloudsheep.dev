@@ -1,14 +1,12 @@
-'use client'
+import { styled } from 'next-yak'
 
-import styled from 'styled-components'
-
-import { EASE_OUT } from '@/constants/layout'
-import { BRAND_SHADOWS } from '@/constants/theme'
 import { Link } from '@/i18n/navigation'
-import { glass, lineClamp } from '@/styles/mixins'
+import { glassStrong, lineClamp3 } from '@/styles/mixins'
+import { EASE_OUT, colors, fonts, media } from '@/styles/tokens.yak'
+import { BRAND_SHADOWS } from '@/styles/tokens.yak'
 
 export const Root = styled.article`
-  ${glass('strong')};
+  ${glassStrong};
   position: relative;
   height: 100%;
   display: flex;
@@ -21,7 +19,7 @@ export const Root = styled.article`
     transform 0.5s ${EASE_OUT},
     box-shadow 0.5s;
 
-  ${({ theme }) => theme.media.hover} {
+  ${media.hover} {
     &:hover {
       transform: translateY(-6px);
       box-shadow: ${BRAND_SHADOWS.listCardHover};
@@ -29,7 +27,7 @@ export const Root = styled.article`
   }
 
   &:focus-within {
-    outline: 2px solid ${({ theme }) => theme.colors.accent};
+    outline: 2px solid ${colors.accent};
     outline-offset: 3px;
   }
 `
@@ -45,15 +43,15 @@ export const Meta = styled.p`
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  font-family: ${({ theme }) => theme.fonts.mono};
+  font-family: ${fonts.mono};
   font-size: 12px;
-  color: ${({ theme }) => theme.colors.faint};
+  color: ${colors.faint};
 `
 
 export const Title = styled.h2`
   font-size: 26px;
   letter-spacing: -0.025em;
-  color: ${({ theme }) => theme.colors.display};
+  color: ${colors.display};
 `
 
 /** Link u naslovu pokriva celu karticu (`::after`) — jedan tab stop, ceo pravougaonik klikabilan. */
@@ -69,10 +67,10 @@ export const TitleLink = styled(Link)`
 `
 
 export const Summary = styled.p`
-  ${lineClamp(3)};
+  ${lineClamp3};
   font-size: 15.5px;
   line-height: 1.55;
-  color: ${({ theme }) => theme.colors.ink2};
+  color: ${colors.ink2};
 `
 
 export const Tags = styled.ul`
