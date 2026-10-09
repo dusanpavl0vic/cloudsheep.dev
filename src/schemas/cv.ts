@@ -4,11 +4,11 @@ import { optionalText } from './common'
 
 const year = () =>
   z
-    .number()
-    .int()
-    .min(1950)
-    .max(new Date().getFullYear() + 1)
-const month = () => z.number().int().min(1).max(12)
+    .number({ error: 'validation.year' })
+    .int('validation.year')
+    .min(1950, 'validation.year')
+    .max(new Date().getFullYear() + 1, 'validation.year')
+const month = () => z.number({ error: 'validation.month' }).int('validation.month').min(1, 'validation.month').max(12, 'validation.month')
 const bullets = () => z.array(z.string().trim().min(1).max(300)).max(12).default([])
 
 export const cvExperienceSchema = z.object({
@@ -72,3 +72,21 @@ export const cvSchema = z.object({
 })
 
 export type CvInput = z.input<typeof cvSchema>
+
+/**
+ * Forma CV-a u admin-u: postignuća su tekst (jedno po redu), tehnologije tekst odvojen
+ * zarezom — `toCvInput` ih pretvara u nizove koje API prima.
+ */
+export const cvFormSchema = cvSchema.extend({
+  experiences: z
+    .array(
+      cvExperienceSchema.extend({
+        bulletsSr: z.string().max(4000),
+        bulletsEn: z.string().max(4000),
+        technologies: z.string().max(1000),
+      }),
+    )
+    .max(20),
+})
+
+export type CvForm = z.input<typeof cvFormSchema>

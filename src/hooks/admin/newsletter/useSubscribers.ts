@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl'
 
 import { formatDate } from '@/helpers/date'
+import { saveBlob } from '@/helpers/download'
 import { useDeleteSubscriberMutation, useExportSubscribersMutation, useGetSubscribersQuery } from '@/store/api/admin/newsletter'
 import type { AdminSubscriber } from '@/types/newsletter'
 
@@ -16,14 +17,6 @@ const stateOf = (subscriber: AdminSubscriber): SubscriberState => {
 }
 
 const CSV_FILENAME = 'newsletter.csv'
-
-/** Snima tekst kao fajl — link na API ne može da nosi `Authorization` zaglavlje. */
-const saveFile = (content: string, filename: string) => {
-  const url = URL.createObjectURL(new Blob([content], { type: 'text/csv;charset=utf-8' }))
-  const link = Object.assign(document.createElement('a'), { href: url, download: filename })
-  link.click()
-  URL.revokeObjectURL(url)
-}
 
 /** Pretplatnici newslettera: lista sa statusom potvrde, brisanje i CSV izvoz (samo potvrđeni). */
 export const useSubscribers = () => {
@@ -44,7 +37,7 @@ export const useSubscribers = () => {
     isExporting,
     exportCsv: async () => {
       const csv = await run(() => exportCsv(undefined).unwrap())
-      if (csv !== undefined) saveFile(csv, CSV_FILENAME)
+      if (csv !== undefined) saveBlob(csv, CSV_FILENAME)
     },
     remove: (subscriber: AdminSubscriber) =>
       remove(t('deleteConfirm', { email: subscriber.email }), () => deleteSubscriber(subscriber.id).unwrap()),
