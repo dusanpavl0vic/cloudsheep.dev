@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { daysBetween, isoWeekday, zonedTimeToUtc, formatDate } from './date'
+import { addDays, dayInZone, daysBetween, isoWeekday, zonedTimeToUtc, formatDate } from './date'
 
 const TZ = 'Europe/Belgrade'
 
@@ -43,5 +43,21 @@ describe('formatDate', () => {
 
   it('engleski (en-GB)', () => {
     expect(formatDate('2026-09-08T10:00:00Z', 'en', { dateStyle: 'long' })).toBe('8 September 2026')
+  })
+})
+
+describe('dayInZone', () => {
+  it('posle ponoći u Beogradu je već sledeći dan, iako je u UTC-u još prethodni', () => {
+    expect(dayInZone(new Date('2026-10-09T22:30:00Z'), TZ)).toBe('2026-10-10')
+  })
+})
+
+describe('addDays', () => {
+  it('prelazi preko kraja meseca i godine', () => {
+    expect(addDays('2026-12-30', 3)).toBe('2027-01-02')
+  })
+
+  it('ne pomera dan pri prelasku na zimsko vreme', () => {
+    expect(addDays('2026-10-24', 2)).toBe('2026-10-26')
   })
 })

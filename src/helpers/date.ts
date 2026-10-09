@@ -57,6 +57,14 @@ export const daysBetween = (from: string, to: string) => {
 }
 
 /** Isti dan za `months` meseci (procena: „najraniji početak" je za mesec dana). */
+/** Kalendarski dan (`YYYY-MM-DD`) u vremenskoj zoni — „danas u Beogradu", ne u UTC-u. */
+export const dayInZone = (instant: Date, timeZone: string) =>
+  new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(instant)
+
+/** `YYYY-MM-DD` + n dana (kalendarski, bez vremenske zone). */
+export const addDays = (day: string, days: number) =>
+  new Date(new Date(`${day}T12:00:00Z`).getTime() + days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+
 export const addMonths = (months: number, from: Date = new Date()) => {
   const date = new Date(from)
   date.setMonth(date.getMonth() + months)

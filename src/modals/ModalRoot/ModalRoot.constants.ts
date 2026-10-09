@@ -10,4 +10,5 @@ import type { OverlayModalProps } from '../shared/types'
  */
 export const OVERLAY_MODALS: Partial<Record<ModalName, ComponentType<OverlayModalProps>>> = {
   mobileNav: lazy(() => import('../MobileNav')),
+  confirmDialog: lazy(() => import('../ConfirmDialog')) as ComponentType<OverlayModalProps>,
 }

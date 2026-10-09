@@ -11,3 +11,6 @@ export const BOOKING_MIN_LEAD_HOURS = 12
 
 /** Generator u admin-u: najviše ovoliko termina u jednom potezu. */
 export const BOOKING_GENERATE_MAX = 200
+
+/** Ključevi prevoda dana; indeks + 1 je ISO dan (1 = ponedeljak), kao u generatoru termina. */
+export const WEEKDAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const
