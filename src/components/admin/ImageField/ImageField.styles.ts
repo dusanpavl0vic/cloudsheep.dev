@@ -1,6 +1,5 @@
 import { css, styled } from 'next-yak'
 
-import { visuallyHidden } from '@/styles/mixins'
 import { colors } from '@/styles/tokens.yak'
 
 export const Root = styled.div`
@@ -47,8 +46,4 @@ export const Preview = styled.div<{ $round: boolean }>`
         object-fit: cover;
       }
     `}
-`
-
-export const FileInput = styled.input`
-  ${visuallyHidden};
 `

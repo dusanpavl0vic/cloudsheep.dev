@@ -1,14 +1,14 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { useId } from 'react'
 
 import Button from '@/components/buttons/Button'
 import Icon from '@/components/foundations/Icon'
 import { useImageUpload } from '@/hooks/admin'
 import type { Asset } from '@/types/media'
 
-import { FileInput, Label, Preview, Root, Row } from './ImageField.styles'
+import UploadButton from '../UploadButton'
+import { Label, Preview, Root, Row } from './ImageField.styles'
 
 interface ImageFieldProps {
   label: string
@@ -22,34 +22,14 @@ interface ImageFieldProps {
 /** Slika u admin formi: pregled + otpremi/zameni/ukloni. Otpremanje odmah, čuvanje sa formom. */
 const ImageField = ({ label, url, onChange, round = false }: ImageFieldProps) => {
   const t = useTranslations('admin.common')
-  const inputId = useId()
   const { pick, isUploading } = useImageUpload(onChange)
 
   return (
-    <Root>
-      <Label id={`${inputId}-label`}>{label}</Label>
+    <Root role="group" aria-label={label}>
+      <Label>{label}</Label>
       <Row>
         <Preview $round={round}>{url ? <img src={url} alt="" /> : <Icon name="upload" size={20} />}</Preview>
-        <FileInput
-          id={inputId}
-          type="file"
-          accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
-          aria-labelledby={`${inputId}-label`}
-          onChange={(event) => {
-            void pick(event.currentTarget.files?.[0])
-            event.currentTarget.value = ''
-          }}
-        />
-        <Button
-          variant="secondary"
-          size="s"
-          loading={isUploading}
-          onClick={() => {
-            document.getElementById(inputId)?.click()
-          }}
-        >
-          {t(url ? 'replace' : 'upload')}
-        </Button>
+        <UploadButton label={t(url ? 'replace' : 'upload')} onPick={(file) => void pick(file)} isUploading={isUploading} />
         {url && (
           <Button
             variant="ghost"

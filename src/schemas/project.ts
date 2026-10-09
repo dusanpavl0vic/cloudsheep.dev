@@ -66,3 +66,23 @@ export const updateImageSchema = attachImageSchema.omit({ assetId: true }).parti
 export type ProjectInput = z.input<typeof projectSchema>
 export type AttachImageInput = z.input<typeof attachImageSchema>
 export type UpdateImageInput = z.input<typeof updateImageSchema>
+
+/**
+ * Forma projekta u admin-u: grafikon rasta je tekst odvojen zarezom; redosled se menja
+ * strelicama u spisku, ne formom (inače bi čuvanje vratilo 0).
+ */
+export const projectFormSchema = projectSchema.omit({ sortOrder: true }).extend({
+  growth: z.string().regex(/^\s*(\d+(\s*,\s*\d+)*)?\s*$/, 'validation.numbers'),
+})
+
+export type ProjectForm = z.input<typeof projectFormSchema>
+
+/** Forma → telo zahteva (grafikon postaje niz brojeva). */
+export const toProjectInput = ({ growth, ...rest }: z.output<typeof projectFormSchema>): Omit<ProjectInput, 'sortOrder'> => ({
+  ...rest,
+  growth: growth
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .map(Number),
+})
