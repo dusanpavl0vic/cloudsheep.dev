@@ -11,6 +11,12 @@ afterEach(() => {
 })
 
 describe('postJson', () => {
+  it('šalje na /api + endpoint (API_ENDPOINTS su relativni)', async () => {
+    respond(202, { ok: true })
+    await postJson('/newsletter', { email: 'a@b.rs' })
+    expect(vi.mocked(fetch).mock.calls[0]?.[0]).toBe('/api/newsletter')
+  })
+
   it('vraća telo odgovora', async () => {
     respond(202, { ok: true })
     await expect(postJson('/api/x', {})).resolves.toEqual({ ok: true })

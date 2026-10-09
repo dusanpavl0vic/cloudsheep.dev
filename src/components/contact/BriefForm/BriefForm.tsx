@@ -16,11 +16,11 @@ import { DetailsStep, ScopeStep, TypeStep } from './BriefSteps'
 const STEPS = [TypeStep, ScopeStep, DetailsStep] as const
 
 /** Kontakt: termini (levo) i upit u tri koraka (desno) dele jednu formu — `slotId` ide uz upit. */
-const BriefForm = ({ intro, defaults }: BriefFormProps) => {
+const BriefForm = ({ intro, slots: freeSlots, defaults }: BriefFormProps) => {
   const t = useTranslations('contact')
   const translate = useKeyTranslator()
   const brief = useBriefForm(defaults)
-  const slots = useFreeSlots()
+  const slots = useFreeSlots(freeSlots ?? [])
   const hydrated = useHydrated()
   const { errors } = brief
   const CurrentStep = STEPS[brief.step]
@@ -33,7 +33,7 @@ const BriefForm = ({ intro, defaults }: BriefFormProps) => {
         {!brief.isDone && (
           <BookingCard
             days={slots.days}
-            status={slots.isLoading ? 'loading' : slots.isError ? 'error' : 'ready'}
+            unavailable={freeSlots === null}
             selected={slotId}
             selectedLabel={slots.labelOf(slotId)}
             error={translate(errors.slotId?.message)}

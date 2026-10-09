@@ -4,11 +4,6 @@ import { withYak } from 'next-yak/withYak'
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
-/** Deo webpack konfiguracije koji menjamo (paket `webpack` nema tipove van Next-a). */
-interface WebpackConfig {
-  optimization?: { splitChunks?: false | { cacheGroups?: false | Record<string, unknown> } }
-}
-
 /** Zaglavlja koja važe za sve odgovore. CSP sa nonce-om postavlja `src/proxy.ts`. */
 const SECURITY_HEADERS = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -24,6 +19,9 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   productionBrowserSourceMaps: process.env.SOURCE_MAPS === '1',
   reactCompiler: true,
+  // CSS u `<style>` u HTML-u: next-yak pravi CSS po modulu, pa bi stranica blokirala render na
+  // 12–21 malih CSS zahteva. Ceo CSS je ~10 KB gzip, a stranice su ionako dinamičke (nonce).
+  experimental: { inlineCss: true },
   // `/contact/` → 308 → `/contact`. Jedna adresa po stranici (docs/05-routing.md §4).
   trailingSlash: false,
   // Bez optimizacije u runtime-u: sharp troši stotine MB po zahtevu, a server ima 4 GB.
@@ -33,19 +31,6 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ['pdfkit'],
   // Fontovi CV-a se čitaju sa diska u runtime-u, pa ih file tracing sam ne vidi.
   outputFileTracingIncludes: { '/api/admin/team/[id]/cv.pdf': ['./assets/fonts/**'] },
-  // next-yak pravi CSS po `.styles.ts` modulu — bez spajanja stranica blokira render na ~12 malih
-  // CSS zahteva (Lighthouse mobilni: −760 ms). Ceo sajt u JEDAN fajl: jedan zahtev, keširan za
-  // sve stranice (docs/07-performance.md §6).
-  webpack: (config: WebpackConfig, { isServer, dev }: { isServer: boolean; dev: boolean }) => {
-    const splitChunks = config.optimization?.splitChunks
-    if (!isServer && !dev && splitChunks && typeof splitChunks === 'object') {
-      splitChunks.cacheGroups = {
-        ...(typeof splitChunks.cacheGroups === 'object' ? splitChunks.cacheGroups : {}),
-        styles: { name: 'styles', type: 'css/mini-extract', chunks: 'all', enforce: true, priority: 100 },
-      }
-    }
-    return config
-  },
   redirects: () =>
     Promise.resolve([
       // Stranica „Uses" je postala sekcija „Stack" na početnoj.

@@ -1,6 +1,6 @@
 # ADR 0014 — JS budžet javnih ruta: 200 KB gzip, build kroz webpack
 
-> Status: accepted
+> Status: accepted (dopunjen 2026-10-09)
 > Datum: 2026-10-09
 > Učesnici: Dušan Pavlović
 
@@ -31,8 +31,8 @@ styled-components na javnim stranicama, što šablon (ADR 0011) propisuje.
 ## Decision
 
 **Granica je 200 KB gzip početnog JS-a po javnoj ruti; `pnpm size` je proverava u CI-u.**
-Produkcioni build ide kroz **webpack** (`next build --webpack`), jer daje 29 KB manji runtime
-od Turbopack-a za isti kod. Razvojni server ostaje na Turbopack-u (brzina).
+Prvobitno je produkcioni build išao kroz webpack (29 KB manji runtime uz styled-components) —
+posle ADR 0015 vraćen je na Turbopack (vidi Dopunu 2).
 
 Uz to: forma u podnožju (prisutna na svakoj stranici) ne uvozi RTK Query — šalje kroz
 `fetch` u domenskom hooku. RTK Query ostaje za admin i kontakt stranicu.
@@ -64,6 +64,20 @@ Uz to: forma u podnožju (prisutna na svakoj stranici) ne uvozi RTK Query — š
 
 Sa ispravnim merenjem granica od 200 KB nije dostižna samo lakim uštedama. Korisnik je
 izabrao da granica ostane, a da se runtime stilova ukloni prelaskom na next-yak (ADR 0015).
+
+## Dopuna 2 (isti dan, posle prelaska na next-yak)
+
+Bez styled-components-a webpack prednost nestaje — **Turbopack je manji na svim rutama**
+(početna 197 → 192 KB, `/projects` 200 → 183 KB, kontakt 229 → 215 KB). Webpack je uz to
+manifest klijentskih referenci vezivao deljene komponente (`Button`) za chunk početne, pa je
+svaka podstranica učitavala kod početne (+12,7 KB). Zato:
+
+- **build je ponovo `next build` (Turbopack)**; webpack `splitChunks` podešavanja su uklonjena;
+- **CSS je u HTML-u** (`experimental.inlineCss`): next-yak pravi CSS po modulu, a Turbopack ga
+  ne spaja — 12–21 blokirajuća CSS zahteva po stranici. Ceo CSS je ~10 KB gzip;
+- **javne stranice nemaju RTK Query**: kontakt šalje kroz `postJson`, a slobodne termine čita
+  stranica na serveru (dinamička je ionako; posle 409 `router.refresh()`). RTK Query ostaje
+  za admin (docs/11 §4).
 
 ## Revisit when
 

@@ -1,12 +1,16 @@
+import { API_BASE_URL } from '@/constants/api'
+
 /**
  * POST JSON bez RTK Query-ja — za forme koje su na svakoj stranici (newsletter u podnožju),
  * gde bi RTK Query koštao budžet (ADR 0014). Greška ima ISTI oblik kao RTK Query greška
  * (`{ status, data }` / `{ status: 'FETCH_ERROR' }`), pa je čita isti `parseApiError`.
+ *
+ * `endpoint` je iz `API_ENDPOINTS` — relativan na `API_BASE_URL`, kao kod RTK Query-ja.
  */
-export const postJson = async <T>(url: string, body: unknown): Promise<T> => {
+export const postJson = async <T>(endpoint: string, body: unknown): Promise<T> => {
   let response: Response
   try {
-    response = await fetch(url, {
+    response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),

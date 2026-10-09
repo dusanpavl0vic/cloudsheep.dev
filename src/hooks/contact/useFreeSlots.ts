@@ -3,22 +3,21 @@
 import { useLocale } from 'next-intl'
 
 import { groupSlotsByDay } from '@/helpers/booking'
-import { useGetFreeSlotsQuery } from '@/store/api/booking'
+import type { BookingSlot } from '@/types/booking'
 
 /** Koliko dana sa terminima se prikazuje (dizajn: pet kolona). */
 const VISIBLE_DAYS = 5
 
-/** Slobodni termini uvodnog poziva, po danima u vremenu studija. */
-export const useFreeSlots = () => {
+/**
+ * Slobodni termini po danima u vremenu studija. Spisak čita stranica na serveru (dinamička je
+ * ionako) — bez klijentskog fetch-a; posle zauzetog termina `router.refresh()` donosi nov spisak.
+ */
+export const useFreeSlots = (slots: readonly BookingSlot[]) => {
   const locale = useLocale()
-  const { data, isLoading, isError, refetch } = useGetFreeSlotsQuery(undefined)
-  const slots = data ?? []
+  const all = groupSlotsByDay(slots, locale, Number.MAX_SAFE_INTEGER)
 
   return {
-    days: groupSlotsByDay(slots, locale, VISIBLE_DAYS),
-    labelOf: (id: string | null) => (id ? groupSlotsByDay(slots, locale, Number.MAX_SAFE_INTEGER).flatMap((day) => day.slots).find((slot) => slot.id === id)?.label ?? null : null),
-    isLoading,
-    isError,
-    refetch,
+    days: all.slice(0, VISIBLE_DAYS),
+    labelOf: (id: string | null) => (id ? (all.flatMap((day) => day.slots).find((slot) => slot.id === id)?.label ?? null) : null),
   }
 }

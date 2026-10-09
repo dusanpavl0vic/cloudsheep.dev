@@ -145,7 +145,6 @@ const sr: Messages = {
       subtitle: '30 minuta · video poziv · centralnoevropsko vreme',
       none: 'Nema slobodnih termina u naredne dve nedelje — pošaljite upit i predložićemo termin.',
       optional: 'Nije obavezno — upit prolazi i bez poziva.',
-      loading: 'Učitavam slobodne termine…',
       unavailable: 'Termini trenutno nisu dostupni — pošalji upit, predložićemo vreme.',
       pick: 'Zakaži {time}',
       picked: 'Zakazano: {time}',

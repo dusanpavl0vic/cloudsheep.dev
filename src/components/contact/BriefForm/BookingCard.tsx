@@ -8,7 +8,8 @@ import { Card, CardTitle, Day, DayDate, DayName, Days, FieldError, LinkButton, M
 
 interface BookingCardProps {
   days: BookingDay[]
-  status: 'loading' | 'error' | 'ready'
+  /** Spisak termina nije mogao da se pročita — upit i dalje prolazi. */
+  unavailable: boolean
   selected: string | null
   selectedLabel: string | null
   error: string | null
@@ -16,7 +17,7 @@ interface BookingCardProps {
 }
 
 /** Termini uvodnog poziva (dizajn: dani u kolonama). Izbor je opcion — upit prolazi i bez njega. */
-const BookingCard = ({ days, status, selected, selectedLabel, error, onPick }: BookingCardProps) => {
+const BookingCard = ({ days, unavailable, selected, selectedLabel, error, onPick }: BookingCardProps) => {
   const t = useTranslations('contact.booking')
 
   return (
@@ -25,9 +26,8 @@ const BookingCard = ({ days, status, selected, selectedLabel, error, onPick }: B
         <CardTitle id="booking-title">{t('title')}</CardTitle>
         <Muted>{t('subtitle')}</Muted>
       </div>
-      {status === 'loading' && <Muted>{t('loading')}</Muted>}
-      {status === 'error' && <Muted>{t('unavailable')}</Muted>}
-      {status === 'ready' && days.length === 0 && <Muted>{t('none')}</Muted>}
+      {unavailable && <Muted>{t('unavailable')}</Muted>}
+      {!unavailable && days.length === 0 && <Muted>{t('none')}</Muted>}
       {days.length > 0 && (
         <Days>
           {days.map((day) => (

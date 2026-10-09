@@ -7,7 +7,8 @@ Dva puta, sa jasnom granicom (docs/01 §3):
 | Ko traži                                      | Kako                                        | Zašto                                             |
 | --------------------------------------------- | ------------------------------------------- | ------------------------------------------------- |
 | javna stranica (server komponenta)            | direktan poziv `server/services/<domen>.ts` | Google mora da dobije sadržaj u HTML-u            |
-| klijentska komponenta (admin, forme, termini) | RTK Query → `/api/**`                       | šablon §6.2; keš, stanja učitavanja, invalidacija |
+| admin (klijentske komponente)                 | RTK Query → `/api/**`                       | šablon §6.2; keš, stanja učitavanja, invalidacija |
+| javna forma (kontakt, newsletter)             | `postJson` → `/api/**`, podaci sa servera   | JS budžet (ADR 0014) — RTK Query nije na javnim stranicama |
 
 ## 1. Javne stranice
 

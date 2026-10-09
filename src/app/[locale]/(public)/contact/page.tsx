@@ -9,6 +9,8 @@ import { estimate } from '@/helpers/estimator'
 import { emailFrom } from '@/helpers/links'
 import { buildPageMetadata } from '@/helpers/seo'
 import { bindRequestLocale } from '@/i18n/locale'
+import { log } from '@/server/log'
+import { listFreeSlots } from '@/server/services/booking'
 import { getSiteProfile } from '@/server/services/profile'
 
 interface ContactPageProps {
@@ -26,7 +28,16 @@ export const generateMetadata = async ({ params }: ContactPageProps): Promise<Me
 const ContactPage = async ({ params, searchParams }: ContactPageProps) => {
   const { locale } = await params
   bindRequestLocale(locale)
-  const [prefill, site, t] = await Promise.all([searchParams.then(parseContactPrefill), getSiteProfile(locale), getTranslations({ locale })])
+  const [prefill, site, t, slots] = await Promise.all([
+    searchParams.then(parseContactPrefill),
+    getSiteProfile(locale),
+    getTranslations({ locale }),
+    // Termini su pomoć, ne uslov: pad baze ovde ne sme da sruši stranicu sa formom.
+    listFreeSlots().catch((error: unknown) => {
+      log.error('booking.slots', error)
+      return null
+    }),
+  ])
 
   // Početna poruka iz procene ili paketa (dizajn: „Web app · Web, iOS · … · 10–13 weeks").
   const fromEstimate = prefill.estimate
@@ -46,6 +57,7 @@ const ContactPage = async ({ params, searchParams }: ContactPageProps) => {
   return (
     <ContactView
       email={emailFrom(site.links)}
+      slots={slots}
       defaults={{
         projectType: prefill.projectType,
         budget: prefill.budget,

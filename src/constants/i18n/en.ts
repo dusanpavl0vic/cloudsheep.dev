@@ -144,7 +144,6 @@ const en = {
       subtitle: '30 minutes · video call · Central European Time',
       none: 'No open slots in the next two weeks — send the brief and we will propose a time.',
       optional: 'Optional — the brief goes through without a call too.',
-      loading: 'Loading open times…',
       unavailable: 'Open times could not be loaded — send the brief and we will propose a time.',
       pick: 'Book {time}',
       picked: 'Booked: {time}',

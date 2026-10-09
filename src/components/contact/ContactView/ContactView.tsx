@@ -8,6 +8,7 @@ import { Eyebrow, Intro, Lead, Muted, Reach, Root, Title } from './ContactView.s
 
 interface ContactViewProps {
   email: string | null
+  slots: BriefFormProps['slots']
   defaults: BriefFormProps['defaults']
 }
 
@@ -15,7 +16,7 @@ interface ContactViewProps {
 const BRIEF_NAMESPACES = ['contact', 'validation', 'email', 'errors'] as const
 
 /** `/contact` — uvod sa adresom i lokalnim vremenom, termini i upit u tri koraka. */
-const ContactView = ({ email, defaults }: ContactViewProps) => {
+const ContactView = ({ email, slots, defaults }: ContactViewProps) => {
   const t = useTranslations()
 
   const intro = (
@@ -35,7 +36,7 @@ const ContactView = ({ email, defaults }: ContactViewProps) => {
   return (
     <Root>
       <I18nProvider namespaces={[...BRIEF_NAMESPACES, 'footer']}>
-        <BriefForm intro={intro} defaults={defaults} />
+        <BriefForm intro={intro} slots={slots} defaults={defaults} />
       </I18nProvider>
     </Root>
   )
