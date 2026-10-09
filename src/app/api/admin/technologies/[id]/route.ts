@@ -1,13 +1,13 @@
 import { updateTechnologySchema } from '@/schemas/technology'
 import { handleAdmin } from '@/server/auth/session'
-import { json, noContent, readJson } from '@/server/http'
+import { json, noContent, readPatch } from '@/server/http'
 import { deleteTechnology, updateTechnology } from '@/server/services/technologies'
 
 export const PATCH = handleAdmin<{ id: string }>(async (request, { params }) =>
   json(
     await updateTechnology(
       (await params).id,
-      await readJson(request, updateTechnologySchema, 'technologies.errors.invalid'),
+      await readPatch(request, updateTechnologySchema, 'technologies.errors.invalid'),
     ),
   ),
 )

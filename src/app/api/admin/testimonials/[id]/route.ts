@@ -1,13 +1,13 @@
 import { updateTestimonialSchema } from '@/schemas/testimonial'
 import { handleAdmin } from '@/server/auth/session'
-import { json, noContent, readJson } from '@/server/http'
+import { json, noContent, readPatch } from '@/server/http'
 import { deleteTestimonial, updateTestimonial } from '@/server/services/testimonials'
 
 export const PATCH = handleAdmin<{ id: string }>(async (request, { params }) =>
   json(
     await updateTestimonial(
       (await params).id,
-      await readJson(request, updateTestimonialSchema, 'testimonials.errors.invalid'),
+      await readPatch(request, updateTestimonialSchema, 'testimonials.errors.invalid'),
     ),
   ),
 )

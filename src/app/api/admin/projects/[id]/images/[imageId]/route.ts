@@ -1,12 +1,12 @@
 import { updateImageSchema } from '@/schemas/project'
 import { handleAdmin } from '@/server/auth/session'
-import { noContent, readJson } from '@/server/http'
+import { noContent, readPatch } from '@/server/http'
 import { deleteProjectImage, updateProjectImage } from '@/server/services/projects'
 
 export const PATCH = handleAdmin<{ id: string; imageId: string }>(async (request, { params }) => {
   await updateProjectImage(
     (await params).imageId,
-    await readJson(request, updateImageSchema, 'projects.errors.invalid'),
+    await readPatch(request, updateImageSchema, 'projects.errors.invalid'),
   )
   return noContent()
 })

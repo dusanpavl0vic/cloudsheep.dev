@@ -1,7 +1,7 @@
 import { HTTP_STATUS } from '@/constants/http'
 import { updateNoteSchema } from '@/schemas/note'
 import { handleAdmin } from '@/server/auth/session'
-import { HttpError, json, noContent, readJson } from '@/server/http'
+import { HttpError, json, noContent, readPatch } from '@/server/http'
 import { deleteNote, getAdminNote, updateNote } from '@/server/services/notes'
 
 export const GET = handleAdmin<{ id: string }>(async (_request, { params }) => {
@@ -14,7 +14,7 @@ export const PATCH = handleAdmin<{ id: string }>(async (request, { params }) =>
   json(
     await updateNote(
       (await params).id,
-      await readJson(request, updateNoteSchema, 'notes.errors.invalid'),
+      await readPatch(request, updateNoteSchema, 'notes.errors.invalid'),
     ),
   ),
 )

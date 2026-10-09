@@ -3,7 +3,14 @@ import { NextRequest } from 'next/server'
 import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
 
-import { HttpError, readJson, toErrorResponse } from './http'
+import { HttpError, readJson, readPatch, toErrorResponse } from './http'
+
+const request = (raw: string) =>
+  new NextRequest('http://localhost/api/x', {
+    method: 'POST',
+    body: raw,
+    headers: { 'content-type': 'application/json' },
+  })
 
 const body = async (response: Response) => (await response.json()) as Record<string, unknown>
 
@@ -41,12 +48,6 @@ describe('toErrorResponse', () => {
 })
 
 describe('readJson', () => {
-  const request = (raw: string) =>
-    new NextRequest('http://localhost/api/x', {
-      method: 'POST',
-      body: raw,
-      headers: { 'content-type': 'application/json' },
-    })
 
   it('neispravno telo → 400 sa prvim krivim poljem', async () => {
     await expect(
@@ -61,6 +62,27 @@ describe('readJson', () => {
   it('JSON koji se ne parsira → 400', async () => {
     await expect(readJson(request('{nije json'), z.object({}))).rejects.toMatchObject({
       status: 400,
+    })
+  })
+})
+
+describe('readPatch', () => {
+  const schema = z
+    .object({ title: z.string(), company: z.string().default(''), tags: z.array(z.string()).default([]), isPublished: z.boolean() })
+    .partial()
+
+  it('vraća samo poslate ključeve — podrazumevane vrednosti ne brišu ostala polja', async () => {
+    expect(await readPatch(request('{"isPublished":true}'), schema)).toEqual({ isPublished: true })
+  })
+
+  it('poslata prazna vrednost ostaje (namerno brisanje polja)', async () => {
+    expect(await readPatch(request('{"company":""}'), schema)).toEqual({ company: '' })
+  })
+
+  it('i dalje validira poslata polja', async () => {
+    await expect(readPatch(request('{"title":1}'), schema, 'x.invalid')).rejects.toMatchObject({
+      status: 400,
+      messageKey: 'x.invalid',
     })
   })
 })

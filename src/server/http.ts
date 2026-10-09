@@ -102,30 +102,24 @@ export const noContent = () => new NextResponse(null, { status: HTTP_STATUS.NO_C
 /** Najveće JSON telo koje prihvatamo (forma upita je najveća, ispod 10 KB). */
 const MAX_JSON_BYTES = 100_000
 
-/**
- * Pročita JSON telo i proveri ga šemom. Neispravno telo je 400 sa ključem `invalidKey`;
- * prvo neispravno polje ide u `details.field`.
- */
-export const readJson = async <T>(
-  request: NextRequest,
-  schema: ZodType<T>,
-  invalidKey = 'errors.badRequest',
-) => {
+/** Sirovo JSON telo; preveliko → 413, neispravan JSON → 400 sa `invalidKey`. */
+const readBody = async (request: NextRequest, invalidKey: string): Promise<unknown> => {
   const length = Number(request.headers.get('content-length') ?? 0)
   if (length > MAX_JSON_BYTES)
     throw new HttpError(HTTP_STATUS.PAYLOAD_TOO_LARGE, 'errors.payloadTooLarge')
 
-  let body: unknown
   try {
     const text = await request.text()
     if (text.length > MAX_JSON_BYTES)
       throw new HttpError(HTTP_STATUS.PAYLOAD_TOO_LARGE, 'errors.payloadTooLarge')
-    body = text ? JSON.parse(text) : {}
+    return text ? JSON.parse(text) : {}
   } catch (error) {
     if (error instanceof HttpError) throw error
     throw new HttpError(HTTP_STATUS.BAD_REQUEST, invalidKey)
   }
+}
 
+const parseWith = <T>(schema: ZodType<T>, body: unknown, invalidKey: string) => {
   const parsed = schema.safeParse(body)
   if (!parsed.success) {
     const field = parsed.error.issues[0]?.path[0]
@@ -136,6 +130,32 @@ export const readJson = async <T>(
     )
   }
   return parsed.data
+}
+
+/**
+ * Pročita JSON telo i proveri ga šemom. Neispravno telo je 400 sa ključem `invalidKey`;
+ * prvo neispravno polje ide u `details.field`.
+ */
+export const readJson = async <T>(
+  request: NextRequest,
+  schema: ZodType<T>,
+  invalidKey = 'errors.badRequest',
+) => parseWith(schema, await readBody(request, invalidKey), invalidKey)
+
+/**
+ * Telo PATCH zahteva (delimična izmena): u rezultatu ostaju SAMO poslati ključevi. Zod 4
+ * primenjuje `.default()` i unutar `.partial()`, pa bi `{ isPublished: true }` vratio i
+ * `metrics: []`, `company: ''`, `avatarId: null`… i izmena jednog polja bi obrisala ostala.
+ */
+export const readPatch = async <T extends object>(
+  request: NextRequest,
+  schema: ZodType<T>,
+  invalidKey = 'errors.badRequest',
+): Promise<Partial<T>> => {
+  const body = await readBody(request, invalidKey)
+  const data = parseWith(schema, body, invalidKey)
+  const sent = typeof body === 'object' && body !== null ? Object.keys(body) : []
+  return Object.fromEntries(Object.entries(data).filter(([key]) => sent.includes(key))) as Partial<T>
 }
 
 /** Query parametri kroz šemu (`?status=unread`). */
