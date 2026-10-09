@@ -1,156 +1,64 @@
-# 18 — Dodavanje novog feature-a
+# 18 — Dodavanje novog domena (od baze do UI-ja)
 
-> Status: active | Last review: 2026-08-15
+> Status: active | Last review: 2026-10-10
 
-Automatski: **`/new-feature <app> <feature>`**. Ovaj dokument opisuje šta komanda generiše
-i po kom redosledu se popunjava.
+Automatski: **`/new-feature <domen>`**. Ovaj dokument opisuje redosled i ono što komanda ne
+može da pogodi. Primer koji prati ceo tok su **utisci klijenata** (`testimonial`).
 
 ## Pre nego što počneš
 
-Pitanja koja odlučuju gde kod ide:
-
 | Pitanje | Da → | Ne → |
 |---|---|---|
-| Ima li sopstveni domen i URL? | feature | komponenta u postojećem feature-u |
-| Koristi li ga druga app? | `packages/` | ostaje u app-i |
-| Može li se obrisati `rm -rf` bez lomljenja ostatka? | ✅ dobar feature | granica je propuštena |
+| Ima li sopstvene podatke u bazi? | novi domen (svi slojevi ispod) | komponenta u postojećem domenu |
+| Ima li javnu stranicu ili sekciju? | serverski servis + keš po tagu | samo admin |
+| Treba li ga uređivati? | admin stranica + RTKQ | nema RTKQ-a |
 
 `/explain-arch` odgovara na ovo za konkretan slučaj.
 
-## Skelet
+## Slojevi, redom
 
-```
-features/<name>/
-├── api/           <name>Api.ts          RTKQ injectEndpoints
-├── components/    <Component>/          folder + .variants.ts + index.ts
-├── modals/        <Modal>.tsx           lazy, upisan u registry
-├── hooks/         use<Name>.ts          ← javni API
-├── store/         <name>.slice.ts, <name>.selectors.ts
-├── schemas/       <name>.schema.ts      zod
-├── locales/       sr.json, en.json      namespace "<name>"
-├── types.ts
-├── __tests__/     integracija
-└── index.ts       public API
-```
+| # | Sloj | Putanja (primer) | Pravilo |
+|---|---|---|---|
+| 1 | Model + migracija | `prisma/schema.prisma`, `pnpm db:migrate --name testimonials` | samo dodavanje; unazad kompatibilno (`DEPLOYMENT.md` §5) |
+| 2 | Šema | `src/schemas/testimonial.ts` | zod, poruke su i18n ključevi; `update…Schema = schema.partial()` |
+| 3 | Tipovi | `src/types/testimonial.ts` | javni (`Testimonial`) i admin (`AdminTestimonial`) oblik |
+| 4 | Servis | `src/server/services/testimonials.ts` | `server-only`; serializer nabraja polja; `cached(…, [tag])` za čitanje, `invalidate(tag)` posle izmene |
+| 5 | API | `src/app/api/admin/testimonials/route.ts`, `[id]/route.ts`, `order/route.ts` | `handleAdmin`; POST `readJson`; **PATCH `readPatch`** |
+| 6 | Klijent (admin) | `src/store/api/admin/testimonials.ts` | `crudEndpoints(build, API_TAGS.X, { list, item, order })` |
+| 7 | Hookovi (admin) | `src/hooks/admin/testimonials/` | `useTestimonials` (spisak, akcije), `useTestimonialForm(id, onSaved)` |
+| 8 | Komponente | `src/components/admin/testimonials/`, `src/modals/TestimonialFormModal/` | glupe; `DataTable`, `FormDialog`, `RowActions`, `OrderButtons` |
+| 9 | Stranica | `src/app/admin/(app)/testimonials/page.tsx` + `ADMIN_NAV_ITEMS` | tanka |
+| 10 | Javni prikaz | `src/components/home/Testimonials/` | servis direktno u serverskoj komponenti, bez RTKQ-a |
+| 11 | i18n | `src/constants/i18n/en.ts` **i** `sr.ts` | `admin.testimonials.*`, `testimonials.errors.invalid` |
+| 12 | Testovi | `src/server/services/testimonials.db.test.ts`, `e2e/admin.spec.ts` | granični slučajevi nad bazom; kritičan tok u pregledaču |
 
-**Ne prave se prazni folderi.** Feature bez modala nema `modals/`.
+## Šta komanda ne može da pogodi
 
-## Redosled rada
-
-Ovaj redosled nije proizvoljan — svaki korak daje tip koji sledeći koristi.
-
-### 1. Tipovi i šeme
-
-```ts
-// types.ts
-export type Project = { id: string; name: string; isActive: boolean };
-
-// schemas/project.schema.ts
-export const projectSchema = z.object({ id: z.uuid(), name: z.string().min(1), isActive: z.boolean() });
-```
-
-### 2. API
-
-```ts
-export const projectsApi = baseApi.injectEndpoints({
-  endpoints: (build) => ({
-    getProjects: build.query<Project[], void>({
-      query: () => '/projects',
-      providesTags: [{ type: 'Project', id: 'LIST' }],
-    }),
-  }),
-});
-```
-
-Novi `tagType` se dodaje u `baseApi.tagTypes`. Detalji: [`11-data-fetching.md`](11-data-fetching.md).
-
-### 3. Slice (samo ako treba client state)
-
-Server state ide u RTKQ — slice je **samo** za ono što nije sa servera (izabrani red,
-otvoren panel). Ako feature nema takvo stanje, nema ni slice.
-
-```ts
-store.injectReducer('projects', projectsReducer);   // lazy, uz feature chunk
-```
-
-### 4. Hook — javni API
-
-```ts
-export function useProjects() {
-  const { data, isLoading, error } = useGetProjectsQuery();
-  return { projects: data ?? EMPTY_PROJECTS, isLoading, error };
-}
-```
-
-`EMPTY_PROJECTS` je modul-level konstanta — `?? []` pravi novi niz svaki render.
-
-### 5. Prevodi
-
-`locales/sr.json` i `locales/en.json`, namespace `<name>`, ključevi `<name>.section.element`.
-**Oba fajla, uvek.** Plural kroz ICU ([`09-i18n.md`](09-i18n.md)).
-
-### 6. Komponente
-
-Folder + `.variants.ts` + `index.ts`. Komponenta ne zna za Redux — samo za hook.
-
-### 7. Public API
-
-```ts
-// index.ts
-export { useProjects } from './hooks/useProjects';
-export { ProjectList } from './components/ProjectList';
-export type { Project } from './types';
-// ❌ nikad slice, selektore ni endpointe
-```
-
-### 8. Page i ruta
-
-```tsx
-// pages/ProjectsPage.tsx — samo kompozicija
-export function Component() {
-  return <ProjectList />;
-}
-```
-
-```ts
-{ path: ROUTES.PROJECTS, lazy: () => import('@/pages/ProjectsPage'), handle: { crumb: 'nav.projects' } }
-```
-
-### 9. Testovi
-
-Redom: zod šema → reducer → selektori → **hook (primarni fokus)** → komponenta →
-integracija sa MSW → e2e smoke. Vidi [`12-testing.md`](12-testing.md).
-
-## Registracija — lako se zaboravi
-
-- [ ] Reducer (`injectReducer`) ako ima slice
-- [ ] `tagTypes` u `baseApi` ako ima nove tagove
-- [ ] Namespace u i18n konfiguraciji, lazy uz rutu
-- [ ] Modali u `modalRegistry` **i** `ModalPropsMap`
-- [ ] Ruta u `router.tsx`
-- [ ] MSW handleri u test setup-u
+- **Šta sme da bude prazno.** `optionalText` (podrazumevano `''`) ili `requiredText`. Tako se
+  odlučuje da li forma traži polje.
+- **Šta je javno.** Javni servis filtrira (`isPublished`), a admin servis vraća sve. Novi zapis
+  koji ide na sajt podrazumevano je **nacrt**.
+- **Koji tag poništiti.** Izmena tehnologije menja i projekte. `invalidate` mora da pokrije
+  sve što prikazuje taj podatak.
+- **Redosled.** Ako postoji `sortOrder`, forma ga ne šalje (`schema.omit({ sortOrder: true })`),
+  jer se redosled menja strelicama u spisku.
 
 ## Anti-patterns
 
 | ❌ | ✅ |
 |---|---|
-| feature koji importuje drugi feature | kroz barrel, ili izdigni deljeno |
-| `export { projectsSlice }` iz `index.ts` | samo hookovi, tipovi, komponente |
-| prazan `modals/`, `schemas/` folder | ne pravi ga dok ne treba |
-| komponenta koja zove `useGetProjectsQuery` | kroz `useProjects()` |
-| prevodi dodati samo u `sr.json` | oba fajla |
-| ruta bez `lazy` | uvek lazy |
-| page sa logikom | logika u hook |
-| `?? []` u hooku | modul-level `EMPTY_*` konstanta |
+| `fetch('/api/…')` iz serverske komponente | direktan poziv servisa |
+| RTK Query na javnoj stranici | servis na serveru (JS budžet, ADR 0014) |
+| PATCH ruta sa `readJson(…, schema.partial())` | `readPatch` (inače defaults brišu polja) |
+| `res.json(prismaRow)` | serializer koji nabraja polja |
+| izmena bez `invalidate(tag)` | svaka mutacija poništava svoj tag |
+| prevod samo u `en.ts` | `en.ts` **i** `sr.ts` (typecheck hvata nedostajući `sr` ključ) |
 
 ## Checklist
 
-- [ ] Feature se može obrisati `rm -rf` bez lomljenja ostatka
-- [ ] `index.ts` eksportuje samo hookove, tipove i komponente
-- [ ] Ne importuje drugi feature direktno
-- [ ] Prevodi u `sr.json` i `en.json`, ključevi sa `<name>.` prefiksom
-- [ ] Ruta je lazy, reducer lazy registrovan
-- [ ] Hook testovi ≥ 90%
-- [ ] 0 `useEffect` (ili svaki sa `// effect:` i sa whitelist-e)
-- [ ] ≤ 2 `useState` po komponenti
+- [ ] Migracija samo dodaje; `pnpm db:migrate` folder commit-ovan
+- [ ] Šema, tipovi, servis, API, RTKQ, hookovi, komponente, stranica — tim redom
+- [ ] PATCH kroz `readPatch`; izmene poništavaju tag
+- [ ] Ključevi u `en.ts` i `sr.ts`; srpski plural ima `one`, `few`, `other`
+- [ ] `*.db.test.ts` za granične slučajeve, e2e za kritičan tok
 - [ ] `pnpm validate` prolazi

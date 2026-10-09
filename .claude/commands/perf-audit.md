@@ -5,11 +5,11 @@ arguments: app
 allowed-tools: Read, Grep, Glob, Bash(pnpm build:*), Bash(pnpm size:*), Bash(pnpm lh:*), Bash(pnpm preview:*), Bash(ls:*), Bash(du:*)
 ---
 
-Izmeri performanse `apps/$app`.
+Izmeri performanse javnih ruta (`/`, `/projects`, `/notes`, `/contact`).
 
 ## Prvo pročitaj
 
-`docs/07-performance.md`, posebno §6–8, i `apps/$app/CLAUDE.md` za baseline brojke.
+`docs/07-performance.md`, posebno §6–8, i ADR 0014 (budžet 200 KB, baseline brojke).
 
 ## Postupak
 
@@ -28,7 +28,7 @@ FCP od 13 s, što nema veze sa stvarnošću.
 1. **Budžeti** — da li prolaze: initial JS ≤ 150 KB gzip, CSS ≤ 20 KB, po ruti ≤ 60 KB
 2. **Sastav chunkova** — najveći dep, duplikati, šta je završilo u initial chunk-u a ne bi trebalo
 3. **Lighthouse** — LCP, CLS, INP, TBT protiv ciljeva iz `docs/07` §7
-4. **Poređenje sa baseline-om** iz `apps/$app/CLAUDE.md`
+4. **Poređenje sa baseline-om** iz ADR 0014 (`pnpm size` i `pnpm lh`)
 
 ## Izlaz — svaki predlog mora imati brojku
 

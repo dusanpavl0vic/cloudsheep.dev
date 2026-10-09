@@ -8,7 +8,9 @@ allowBuilds:
   '@prisma/client': true
   '@prisma/engines': true
   esbuild: true # bundler koji koriste tsx i vitest
-  msw: true # postinstall kopira mockServiceWorker.js (potreban samo za browser mod)
+  # Dolazi tranzitivno kroz @vitest/mocker; postinstall kopira mockServiceWorker.js za browser
+  # mod Vitest-a, koji ne koristimo.
+  msw: false
   prisma: true
   unrs-resolver: true # native resolver za eslint-import-resolver-typescript
   # sharp je opciona zavisnost Next-a; slike se ne optimizuju u runtime-u

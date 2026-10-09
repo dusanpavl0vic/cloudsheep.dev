@@ -73,7 +73,7 @@ senku dole, pa spoljnu senku.
 
 Radijus je velik: `rounded-2xl` za kartice, `rounded-3xl` za panele i okvire sekcija.
 
-**Ne piše se ručno.** Recept živi u `glassVariants` (`packages/ui/src/lib/surface.variants.ts`)
+**Ne piše se ručno.** Recept živi u mixin-ima `glassSoft` / `glassStrong` (`src/styles/mixins.ts`)
 i uzima se odatle — inače se četiri sastojka razidu po fajlovima i prva izmena zaboravi jedan.
 
 ### 3a. Staklo traži svetlo iza sebe

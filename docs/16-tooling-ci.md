@@ -65,8 +65,9 @@ Lokalna pravila su u `eslint-rules/` sa sopstvenim testovima (`RuleTester`), koj
 
 | Skripta                                     | Šta                                                                                 |
 | ------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `pnpm dev`                                  | `next dev` (treba Postgres — `docker compose -f infra/docker-compose.yml up -d db`) |
-| `pnpm build`                                | `prisma generate && next build` → `.next/standalone`                                |
+| `pnpm dev`                                  | `next dev` (Postgres: `docker compose -f infra/docker-compose.dev.yml up -d`)       |
+| `pnpm build`                                | `prisma generate && next build` → `.next/standalone` (bez baze — sitemap je dinamičan) |
+| `pnpm build:seed`                           | seed → `dist/seed.cjs` (esbuild) za image                                           |
 | `pnpm typecheck` / `lint` / `test` / `e2e`  |                                                                                     |
 | `pnpm size`                                 | JS budžet po javnoj ruti (`scripts/check-size.mjs`)                                 |
 | `pnpm lh`                                   | Lighthouse CI                                                                       |
@@ -80,12 +81,17 @@ Lokalna pravila su u `eslint-rules/` sa sopstvenim testovima (`RuleTester`), koj
 
 ## 5. CI i image
 
-GitHub Actions (`.github/workflows/ci.yml`):
+GitHub Actions (`.github/workflows/ci.yml`), na push i PR u `dev` i `prod`:
 
-1. **validate** — typecheck, lint, test (sa pokrivenošću), build, size; Postgres kao service
-   kontejner za `size`.
-2. **image** — Docker build (`infra/Dockerfile`); na push u `prod` image se objavljuje na
-   **GHCR** (`ghcr.io/<vlasnik>/cloudsheep:prod` i `:<sha>`).
+1. **validate** — servisi Postgres 17 i Mailpit (lažni SMTP). Koraci: `db:deploy` + `db:seed`,
+   typecheck, lint, test (unit + baza `appdb_test`), build, Playwright Chromium, `size`, e2e.
+   E2E ide nad produkcionim build-om sa pravom bazom i čita mejlove iz Mailpit-a (ceo double
+   opt-in tok). Izveštaj se čuva kao artifact kad padne.
+2. **image** — `Dockerfile` u korenu, `linux/amd64` (Hetzner CX). Na push se objavljuje na
+   **GHCR**: `ghcr.io/dusanpavl0vic/cloudsheep.dev:<grana>` i `:sha-<commit>`. Na PR-u se
+   samo gradi.
+3. **deploy** — samo za push u `prod`: Coolify webhook (secrets `COOLIFY_WEBHOOK`,
+   `COOLIFY_TOKEN`). Bez secret-a korak se preskače uz napomenu.
 
-**Server nikad ne gradi image** — ima 4 GB RAM-a, a `next build` troši 1,5–2,5 GB. Coolify povlači
-gotov image sa GHCR-a (`infra/COOLIFY.md`).
+**Server nikad ne gradi image**: ima 4 GB RAM-a, a `next build` troši 1,5–2,5 GB. Coolify
+povlači gotov image (ADR 0017, `infra/COOLIFY.md`).

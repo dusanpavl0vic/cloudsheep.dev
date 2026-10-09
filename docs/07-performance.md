@@ -5,7 +5,7 @@
 
 ## 1. React Compiler je uključen
 
-Compiler radi auto-memoizaciju za sve app-e i `packages/ui`.
+Compiler (`reactCompiler: true` u `next.config.ts`) radi auto-memoizaciju za ceo `src/`.
 `eslint-plugin-react-hooks` v7 nosi compiler pravila i **kršenje je error**, ne warning.
 
 Posledica koju treba razumeti: **ručni `useMemo`/`useCallback` je sada uglavnom redundantan**,
@@ -139,7 +139,7 @@ import _ from 'lodash';
 import * as Icons from 'lucide-react';
 
 // ✅ per-import
-import { debounce } from '@app/utils';
+import { formatDate } from '@/helpers/date';
 import { ChevronDown } from 'lucide-react';
 ```
 
@@ -177,13 +177,15 @@ LHCI assertions: ≥ 0.95 performance, 1.0 a11y/best-practices/seo.
 
 Provera: `/perf-audit`, `pnpm lh`.
 
-## 8. Referentne brojke `apps/web`
+## 8. Referentne brojke
 
-Baseline pre monorepo migracije (produkcijski build, throttled):
-**desktop 100 / mobile 92**, FCP 0.5 s, LCP 0.6 s, 337 KiB ukupno.
+JS po javnoj ruti (gzip, pravi Chromium, `pnpm size`, ADR 0014; budžet 200 KB):
+`/` 189,8 · `/projects` 180,4 · `/notes` 180,4 · `/contact` 198,0 KB. React 19 + Next 16
+runtime čini ~128 KB i ne smanjuje se.
 
-Sastav bundle-a: `react-dom` 37%, `react-router` 28%, `tailwind-merge` 7%,
-`i18next` 6%, `@reduxjs/toolkit` 5%.
+Lighthouse mobile (simulirano throttle-ovanje, localhost): početna 85, projekti 89, kontakt 87.
+Devtools throttle: 91 / 98. Simulirani LCP na localhost-u je pesimističan; konačni broj je sa
+produkcije (`pnpm lh` nad `https://cloudsheep.dev`).
 
 Svaka izmena koja obori ove brojke mora imati obrazloženje u PR-u.
 

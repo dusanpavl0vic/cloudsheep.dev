@@ -1,46 +1,45 @@
 ---
-description: Pravi page komponentu, lazy rutu, meta tagove, breadcrumb handle i e2e smoke test
-argument-hint: [app] [Name] [path]
-arguments: app Name path
-disable-model-invocation: true
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash(pnpm lint:*), Bash(pnpm test:*)
+description: Pravi rutu u App Router-u — tanak page.tsx, View komponentu, generateMetadata (canonical, noindex za /sr), i18n i e2e smoke test
+argument-hint: [public|admin] [Name] [path]
+arguments: area Name path
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(pnpm lint:*), Bash(pnpm typecheck:*), Bash(pnpm exec eslint:*)
 ---
 
-Napravi stranicu `$Name` na putanji `$path` u `apps/$app`.
+Napravi stranicu `$Name` na putanji `$path` ($area).
 
 ## Prvo pročitaj
 
-- `docs/05-routing.md` — lazy rute, guard, preload, meta
-- `docs/02-folder-structure.md` — zašto `pages/` nema logiku
+- `docs/05-routing.md` — `app/` struktura, `ROUTES` i builderi linkova
+- `docs/11-data-fetching.md` §1 — javne stranice čitaju podatke na serveru (servis, ne fetch)
+- `docs/09-i18n.md` — `[locale]`, `/sr` je `noindex` (ADR 0012)
 
-## Koraci
+## Javna stranica
 
-1. `apps/$app/src/pages/$Name.tsx` — eksportuje `Component` (lazy route modul)
-2. Dodaj putanju u `apps/$app/src/lib/routes.ts` kao konstantu — **nikad literal u linku**.
-   Ime konstante je `$Name` u SCREAMING_SNAKE (npr. `ProjectDetail` → `PROJECT_DETAIL`)
-3. Registruj rutu u `routes/router.tsx` — obrazac:
-   ```ts
-   {
-     path: ROUTES.PROJECT_DETAIL,
-     lazy: () => import('@/pages/ProjectDetail'),
-     handle: { crumb: 'nav.projectDetail' },
-   }
-   ```
-4. Meta tagovi kroz React 19 hoisting — `<title>` i `<meta name="description">` iz i18n ključeva
-5. i18n ključevi u `sr.json` i `en.json`
-6. E2E smoke test u `apps/$app/e2e/`
+```
+src/app/[locale]/(public)/<putanja>/page.tsx   tanak: params → servis → <${Name}View />
+src/components/<domen>/${Name}View/            prikaz (folder po komponenti)
+```
 
-## Pravila — najvažnije
+- Putanja u `constants/routes.ts` (`ROUTES` + builder ako ima parametar); linkovi samo kroz njih
+- `generateMetadata` kroz `buildPageMetadata` (`helpers/seo.ts`): canonical, robots
+  `noindex` za ne-podrazumevani jezik; JSON-LD kroz `<JsonLd>` ako ima smisla
+- Nepostojeći slug → `notFound()` (pravi 404)
+- Ako ide u indeks: dodaj u `app/sitemap.ts` (samo engleske adrese)
+- Podaci keširani po tagu (`server/cache.ts`), servis u `server/services/<domen>.ts`
+- Bez RTK Query-ja na javnim stranicama (JS budžet, ADR 0014)
 
-**Page je samo kompozicija.** Nema `useState`, nema `useSelector`, nema RTKQ hooka.
-Uvozi feature komponente i slaže ih. Ako ti treba logika — ide u feature hook.
+## Admin stranica
 
-Ruta je **uvek** lazy. Ako feature ima slice, reducer se registruje lazy uz nju.
+```
+src/app/admin/(app)/<putanja>/page.tsx         tanak: params/searchParams → <${Name}View />
+src/components/admin/<domen>/${Name}View/      prikaz; podaci kroz hooks/admin/<domen>
+```
+
+- Stavka menija u `ADMIN_NAV_ITEMS` (`constants/navigation.ts`) + `admin.nav.*` ključ
+- Filteri i paginacija u URL-u (`searchParams`), ne u stanju
 
 ## Acceptance
 
-- `pnpm lint && pnpm typecheck` prolazi
-- Ruta se učitava lazy — ne povećava initial chunk (`pnpm size --filter=$app` prolazi)
-- Stranica ima `<title>` i `<meta name="description">` kroz i18n
-- E2E smoke test prolazi
-- Page fajl nema nijedan React hook osim eventualnog `useTranslation`
+- `pnpm typecheck`, `pnpm exec eslint` prolaze; ključevi u `en.ts` i `sr.ts`
+- e2e smoke u `e2e/` (status 200, naslov; za javnu: canonical i robots)
+- Javna: `pnpm build && pnpm size` ispod budžeta

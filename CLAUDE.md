@@ -10,7 +10,7 @@ kontekstu; sve ostalo je u mapi ispod.
 ## Komande
 
 ```bash
-pnpm dev                    # dev server (treba Postgres: docker compose -f infra/docker-compose.yml up -d db)
+pnpm dev                    # dev server (Postgres: docker compose -f infra/docker-compose.dev.yml up -d)
 pnpm test                   # unit + integracija (Vitest)
 pnpm e2e                    # Playwright nad produkcijskim buildom
 pnpm lint                   # ESLint

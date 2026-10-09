@@ -34,6 +34,19 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ['pdfkit'],
   // Fontovi CV-a se čitaju sa diska u runtime-u, pa ih file tracing sam ne vidi.
   outputFileTracingIncludes: { '/api/admin/team/[id]/cv.pdf': ['./assets/fonts/**'] },
+  // Standalone bi inače poneo sharp (slike se ne optimizuju) i Prisma wasm/edge runtime-ove za
+  // svaku bazu (~40 MB) — koristi se samo native engine za Postgres (`library.js`).
+  outputFileTracingExcludes: {
+    '*': [
+      'node_modules/.pnpm/sharp@*/**',
+      'node_modules/.pnpm/@img+*/**',
+      'node_modules/.pnpm/@prisma+client@*/node_modules/@prisma/client/runtime/*wasm*',
+      'node_modules/.pnpm/@prisma+client@*/node_modules/@prisma/client/runtime/query_compiler_bg.*',
+      'node_modules/.pnpm/@prisma+client@*/node_modules/@prisma/client/runtime/query_engine_bg.*',
+      'node_modules/.pnpm/@prisma+client@*/node_modules/@prisma/client/runtime/edge*',
+      'node_modules/.pnpm/@prisma+client@*/node_modules/.prisma/client/*wasm*',
+    ],
+  },
   redirects: () =>
     Promise.resolve([
       // Stranica „Uses" je postala sekcija „Stack" na početnoj.

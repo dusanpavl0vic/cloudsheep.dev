@@ -61,6 +61,8 @@ export default tseslint.config(
   {
     ignores: [
       '.next/**',
+      'dist/**', // seed za image (pnpm build:seed)
+      '.lighthouseci/**',
       'node_modules/**',
       'coverage/**',
       'playwright-report/**',

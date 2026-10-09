@@ -41,6 +41,13 @@ const seedAdmin = async () => {
 }
 
 const main = async () => {
+  // Kontejner pokreće seed pri svakom startu sa `--if-empty`: puni SAMO praznu bazu (prvi
+  // deploy). Inače bi vratio projekte i tehnologije obrisane u admin-u (upsert ih pravi ponovo).
+  if (process.argv.includes('--if-empty') && (await prisma.user.count()) > 0) {
+    console.log('seed: baza već ima podatke — preskačem')
+    return
+  }
+
   await seedAdmin()
 
   // Redosled je bitan: projekti vezuju tehnologije po slugu.

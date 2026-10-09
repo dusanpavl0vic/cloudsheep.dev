@@ -21,7 +21,7 @@ Prijavi svaku povredu sa fajlom i pravilom.
 
 ### 2. Kontrast tokena — računaj, ne pretpostavljaj
 
-Pročitaj tokene iz `packages/config/tailwind-config/theme.css` i izračunaj kontrast
+Pročitaj tokene iz `src/constants/theme/colors.ts` (svetla i tamna paleta) i izračunaj kontrast
 za svaki par, **u obe teme**:
 
 | Par | Minimum |

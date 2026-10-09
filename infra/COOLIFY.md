@@ -1,288 +1,210 @@
-# Coolify — konfiguracija tri resursa
+# Coolify — jedan resurs iz gotovog image-a
 
-Preduslov: server i DNS su gotovi po [`SERVER-SETUP.md`](SERVER-SETUP.md), i sva četiri
-`dig` upita vraćaju IP servera.
+Preduslov: server i DNS su gotovi po [`SERVER-SETUP.md`](SERVER-SETUP.md), i svi `dig` upiti
+vraćaju IP servera. Odluka i obrazloženje su u ADR 0017.
 
-Struktura: jedan **Project** (`cloudsheep`), u njemu **jedna baza + tri aplikacije**.
+Struktura: jedan **Project** (`cloudsheep`) sa **bazom i jednom aplikacijom**. Aplikacija je
+sajt, admin i API zajedno (ADR 0009). Image gradi GitHub Actions i objavljuje ga na GHCR,
+a server ga samo povlači. **Na VPS-u se ništa ne gradi** (4 GB RAM-a, ADR 0014).
 
-Redosled je bitan: baza → `api` → `web` → `admin`. `api` bez baze ne prolazi
-readiness, a frontovi bez `api`-ja nemaju šta da zovu.
+```
+push u prod ─► CI: lint · test · build · e2e ─► ghcr.io/dusanpavl0vic/cloudsheep.dev:prod
+                                               └► Coolify webhook ─► pull + restart
+start kontejnera: prisma migrate deploy → seed (samo prazna baza) → node server.js
+```
 
 ---
 
-## 0. Dve stvari koje se najčešće promaše
+## 0. Pre prvog deploya — jednom
 
-**1. Build context je koren repoa, ne folder app-e.** Svi Dockerfile-ovi počinju sa
-`COPY pnpm-lock.yaml pnpm-workspace.yaml`, a ti fajlovi postoje samo na korenu.
-U Coolify-u to znači **Base Directory = `/`**, a putanja do Dockerfile-a je puna
-(`infra/docker/api.Dockerfile`).
-
-**2. `VITE_*` idu u „Build Variables", ne u „Environment Variables".** Vite ih ugrađuje
-u JS bundle u trenutku builda; runtime env varijabla u nginx kontejneru ne postoji jer
-se JS više ne prevodi. Ovo je najčešća greška pri prelasku sa hostovane platforme, i
-najgora — build
-prođe, deploy prođe, a app u pretraživaču pukne sa `undefined` umesto API adrese.
+1. **GHCR paket mora biti dostupan serveru.** Posle prvog push-a u `prod` (ili `dev`) paket
+   se pojavi na GitHub-u → profil → **Packages** → `cloudsheep.dev`. Novi paket je
+   podrazumevano privatan. Izaberi jedno:
+   - **Package settings → Change visibility → Public.** Preporučeno. Repo je javan, a u
+     image-u nema tajni (samo `NEXT_PUBLIC_*`, a te su ionako u JS-u stranice).
+   - ili Coolify → **Settings → Private Registries / Docker login** sa GitHub tokenom
+     (`read:packages`).
+2. **Port 8000 zatvori** (`SERVER-SETUP.md` §2). Coolify panel se otvara kroz SSH tunel, a
+   ne javno preko HTTP-a.
 
 ---
 
 ## 1. Baza
 
-**New Resource → PostgreSQL 17**
+**Postojeću bazu `cloudsheep-db` NE briši i ne pravi novu.** U njoj su projekti, poruke i
+admin nalog. Nove migracije samo dodaju kolone i tabele (proverena je istorija grana
+`prod`, `dev` i `feat/vps-migration`), pa ih `migrate deploy` primeni pri prvom startu.
 
-| Polje       | Vrednost        |
-| ----------- | --------------- |
-| Name        | `cloudsheep-db` |
-| Public port | **ne dodeljuj** |
-| Domain      | **ne dodeljuj** |
+Pre prvog deploya napravi backup: **cloudsheep-db → Backups → Backup Now**.
 
-Baza ostaje samo na internoj Docker mreži. Postgres izložen internetu je jedna slaba
-lozinka od potpunog gubitka podataka, a `api` mu pristupa preko imena kontejnera.
-
-Kad se digne, kopiraj **internal connection string** — izgleda kao
-`postgresql://postgres:<lozinka>@<ime-kontejnera>:5432/postgres`. To ide u `DATABASE_URL`.
-
-**Backups →** uključi dnevni. Ako imaš S3 negde, podesi i tamo — backup na istom disku
-ne pomaže kad disk otkaže.
+Ako baza ne postoji (potpuno nov server): **New Resource → PostgreSQL 17**, ime
+`cloudsheep-db`, **bez javnog porta i bez domena**. Uključi dnevni backup. Kopiraj
+**internal connection string** (`postgresql://postgres:<lozinka>@<kontejner>:5432/postgres`),
+jer on ide u `DATABASE_URL`.
 
 ---
 
-## 2. `api`
+## 2. Aplikacija
 
-**New Resource → Application → GitHub** (poveži GitHub App) → repo → branch **`prod`**.
+**New Resource → Docker Image** (ne „Application → GitHub": tu bi Coolify gradio na serveru).
 
-> Grana je `prod`, ne `main` — vidi `/DEPLOYMENT.md` §1. `main` je testna grana.
+| Polje | Vrednost |
+| --- | --- |
+| Image | `ghcr.io/dusanpavl0vic/cloudsheep.dev:prod` |
+| Ports Exposes | `3000` |
+| Health Check Path | `/api/health` |
+| Domains | `https://cloudsheep.dev,https://admin.cloudsheep.dev,https://api.cloudsheep.dev` |
+| www | uključi **redirect `www` → non-www** |
 
-### Build
+Sva tri domena idu na isti kontejner:
 
-| Polje               | Vrednost                      |
-| ------------------- | ----------------------------- |
-| Build Pack          | Dockerfile                    |
-| Base Directory      | `/`                           |
-| Dockerfile Location | `infra/docker/api.Dockerfile` |
-| Ports Exposes       | `3000`                        |
+- `admin.cloudsheep.dev` → `proxy.ts` preusmerava na `cloudsheep.dev/admin`.
+- `api.cloudsheep.dev` ostaje zbog **starih adresa slika u bazi**
+  (`https://api.cloudsheep.dev/uploads/…`). Ista ruta `/uploads/[...path]` ih servira.
+- Health check gleda `/api/health` (liveness), a ne `/api/health/ready`. Ovaj drugi zove
+  bazu, pa bi pad Postgres-a restartovao aplikaciju u petlji zbog tuđeg kvara.
 
-### Domain
+### Resource Limits
 
-| Polje             | Vrednost                     |
-| ----------------- | ---------------------------- |
-| Domains           | `https://api.cloudsheep.dev` |
-| Health Check Path | `/health`                    |
+| Polje | Vrednost |
+| --- | --- |
+| Memory | `768m` |
+| Memory Swap | `768m` |
 
-Health check gleda `/health` (liveness), **ne** `/health/ready`. Ovaj drugi zove bazu, pa
-bi pad Postgresa restartovao API u petlji zbog tuđeg kvara. `/health/ready` postoji za
-ručnu dijagnostiku.
+Image postavlja `NODE_OPTIONS=--max-old-space-size=384`. Heap ostaje ispod ograničenja, pa
+GC radi pre nego što kernel ubije proces. Izmereno je u §6.
 
 ### Environment Variables (runtime)
 
 ```
-NODE_ENV=production
-PORT=3000
 DATABASE_URL=<internal string iz koraka 1>
-CORS_ORIGINS=https://cloudsheep.dev,https://www.cloudsheep.dev,https://admin.cloudsheep.dev
-COOKIE_DOMAIN=.cloudsheep.dev
 JWT_SECRET=<openssl rand -base64 32>
-UPLOAD_DIR=/app/uploads
-PUBLIC_UPLOAD_BASE=https://api.cloudsheep.dev
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=465
 SMTP_USER=cloudsheep.dev016@gmail.com
-SMTP_PASS=<Google App Password, 16 znakova>
+SMTP_PASS=<Google App Password, 16 znakova, bez razmaka>
 CONTACT_TO=cloudsheep.dev016@gmail.com
 SEED_ADMIN_EMAIL=<tvoj mejl>
-SEED_ADMIN_PASSWORD=<lozinka, bar 12 znakova>
+SEED_ADMIN_PASSWORD=<bar 12 znakova>
 SEED_ADMIN_NAME=<ime>
 ```
 
-`SEED_ADMIN_*` postoje da bi nalog bio u bazi **odmah posle prvog deploya**, bez ručnog
-koraka. Ovde im je jedino mesto — u repou ne postoje ni u `.env.production.example` (tamo je samo
-prazan placeholder). Coolify ih čuva šifrovane; obeleži ih kao secret ako ti nudi.
+- **`NODE_ENV`, `PORT`, `UPLOAD_DIR`, `NODE_OPTIONS` ne postavljaj.** Image ih već ima.
+- `NEXT_PUBLIC_SITE_URL` je **build-time** (CI: `https://cloudsheep.dev`). U Coolify-ju ne
+  menja ništa, jer je već ugrađen u JS.
+- `PUBLIC_UPLOAD_BASE` ostaje prazan: nove slike dobijaju relativnu adresu (`/uploads/…`).
+- `SEED_ADMIN_*` koristi seed **samo kad je baza prazna** (`--if-empty`). Na postojećoj bazi
+  admin već postoji, pa se varijable ne koriste i mogu da se izostave.
+- `JWT_SECRET` mora imati bar 32 znaka, inače prvi zahtev pada sa spiskom problema u logu.
+  **Novi tajni ključ odjavljuje sve postojeće sesije.** To je očekivano posle prelaska.
 
-Kad nalog jednom postoji, ove tri varijable slobodno mogu i da se obrišu — seed će se
-od tada tiho preskakati.
+### SMTP (Gmail) — App Password
 
-`CORS_ORIGINS` je allowlist bez zvezdice, i **`www` varijanta mora biti unutra** ako
-`www` ne redirektuje pre nego što JS krene da zove API.
+`SMTP_PASS` je **App Password**, ne lozinka naloga:
 
-`COOKIE_DOMAIN` ima vodeću tačku — bez nje refresh cookie važi samo za `api.` poddomen
-i `admin.` ga nikad ne pošalje nazad, pa se sesija ne obnavlja.
+1. Google nalog `cloudsheep.dev016@gmail.com` → **Security** → uključi **2-Step Verification**.
+2. **Security → App passwords** → ime `cloudsheep.dev` → **Create** → kopiraj 16 znakova.
+3. Upiši u `SMTP_PASS` (bez razmaka) i pokreni Restart.
 
-`JWT_SECRET` mora imati bar 32 znaka; `apps/api/src/env.ts` to proverava pri startu i
-odbija da digne app ako je kraći.
+Bez SMTP-a **u produkciji upit ne prolazi** (503 `contact.errors.mailFailed`). Razlog je
+double opt-in (ADR 0016): bez mejla posetilac ne može da potvrdi adresu, pa se upit ni ne
+upisuje. Provera je u §5.
 
-### Pre-deployment command
-
-```
-./node_modules/.bin/prisma migrate deploy && node dist/seed.js
-```
-
-> Ovo **nije** `pnpm --filter api migrate:deploy`. U runtime image-u nema ni pnpm-a ni
-> workspace strukture — `pnpm deploy` je app spljoštio u `/app`. Prisma CLI je zato
-> namerno `dependency`, a ne `devDependency`.
-
-Migracije idu ovde, a ne u `CMD`: u `CMD`-u bi se izvršavale na svaki restart kontejnera
-i na svaku repliku paralelno.
-
-`node dist/seed.js` pravi prvi admin nalog. Bezbedno je držati ga u svakom deployu:
-`upsert` **ne menja postojeći nalog** (ni lozinku), a bez `SEED_ADMIN_*` varijabli se
-tiho preskače umesto da obori deploy.
-
-### SMTP za kontakt formu
-
-`SMTP_PASS` je **Google App Password**, ne lozinka naloga: Google nalog → Security →
-2-Step Verification → App passwords. Traži uključen 2FA.
-
-Bez ovih varijabli forma i dalje radi — poruka se upiše u bazu i vidi na `/messages`, samo
-mejl ne stiže. To je namerno: pad SMTP-a ne sme da izgubi poruku.
-
-> Gmail šalje samo sa **autentifikovane** adrese. `from` je zato uvek `SMTP_USER`, a
-> posetiočeva adresa ide u `replyTo` — pritisneš „Odgovori" i pišeš njemu.
+> Gmail šalje samo sa autentifikovane adrese. `from` je zato uvek `SMTP_USER`, a adresa
+> posetioca ide u `replyTo`. Kad klikneš „Odgovori", pišeš direktno njemu.
 
 ### Persistent Storage — obavezno
 
-`api` → **Storages** → Add → mount path `/app/uploads`.
+**Storages → Add → Volume**, mount path **`/app/uploads`**.
 
-Bez toga otpremljene slike nestaju pri **svakom** deployu: kontejner se zamenjuje, a sa
-njim i njegov fajl sistem. Greška se ne vidi odmah — slike rade dok se ne pusti sledeći
-deploy, pa deluje kao da je nešto drugo puklo.
+Bez toga otpremljene slike nestaju pri svakom deployu. **Postojeće slike** su u volumenu
+starog `api` resursa. Pre gašenja starog resursa ih prebaci (na serveru, kroz Coolify
+**Terminal** ili SSH):
 
-> **Ovo je stanje IZVAN Postgresa i izvan njegovog backupa.** Ili ga dodaj u rutinu
-> pravljenja rezervnih kopija, ili svesno prihvati da se slike mogu izgubiti.
-
-### Watch Paths
-
+```bash
+docker volume ls | grep -i upload          # ime starog volumena (api) i novog (app)
+docker run --rm -v <stari>:/from -v <novi>:/to alpine sh -c 'cp -a /from/. /to/ && ls /to | head'
 ```
-apps/api/**
-packages/**
-pnpm-lock.yaml
+
+Ovo je stanje **van Postgres-a i van njegovog backup-a**. Dodaj ga u rutinu pravljenja kopija.
+
+---
+
+## 3. Migracije i seed
+
+Pokreću se **pri svakom startu kontejnera** (`scripts/docker-start.sh`), pre servera:
+
+1. `prisma migrate deploy`: primenjuje samo nove migracije, pa je ponovno pokretanje bezopasno.
+2. `node dist/seed.cjs --if-empty`: radi samo nad praznom bazom (prvi deploy). Inače bi
+   vratio projekte i tehnologije obrisane u admin-u.
+
+Pre-deployment command **ne treba**. Jedna instanca, pa nema trke dve replike oko iste
+migracije. Ako migracija padne, kontejner se ne digne. Coolify zadrži stari kontejner, a
+uzrok je u logu deploya.
+
+Ručni seed (npr. prazna baza posle havarije), u Terminal-u kontejnera:
+
+```bash
+node dist/seed.cjs
 ```
 
 ---
 
-## 3. `web`
+## 4. Auto-deploy
 
-**New Resource → Application → GitHub** → repo → branch **`prod`**.
+GitHub → repo → **Settings → Secrets and variables → Actions**:
 
-| Polje               | Vrednost                      |
-| ------------------- | ----------------------------- |
-| Build Pack          | Dockerfile                    |
-| Base Directory      | `/`                           |
-| Dockerfile Location | `infra/docker/web.Dockerfile` |
-| Ports Exposes       | `80`                          |
-| Domains             | `https://cloudsheep.dev`      |
-| Health Check Path   | `/healthz`                    |
+| Secret | Odakle |
+| --- | --- |
+| `COOLIFY_WEBHOOK` | Coolify → aplikacija → **Webhooks** → Deploy Webhook URL |
+| `COOLIFY_TOKEN` | Coolify → **Keys & Tokens → API tokens** → novi token sa pravom „deploy" |
 
-Uključi **redirect `www` → non-www** (Coolify to nudi uz domen). Ako radije hoćeš da
-`www` bude ravnopravan, dodaj ga i u `Domains` — ali onda mora ostati i u `CORS_ORIGINS`.
-
-### Build Variables (NE Environment Variables)
-
-```
-VITE_API_URL=https://api.cloudsheep.dev
-VITE_APP_ENV=production
-```
-
-Bez sheme (`https://`) CSP `connect-src` dobija besmislenu vrednost — ista vrednost se
-`sed`-om upisuje u nginx config (`infra/nginx/security-headers.conf`).
-
-### Watch Paths
-
-```
-apps/web/**
-packages/**
-pnpm-lock.yaml
-```
+CI posle novog `:prod` image-a pozove webhook, a Coolify povuče image i restartuje
+aplikaciju. Bez ovih secret-a CI samo objavi image, a deploy pokrećeš ručno (**Redeploy**).
 
 ---
 
-## 4. `admin`
+## 5. Prvo puštanje — redosled i provere
 
-Isto kao `web`, tri razlike:
-
-| Polje               | Vrednost                                         |
-| ------------------- | ------------------------------------------------ |
-| Dockerfile Location | `infra/docker/admin.Dockerfile`                  |
-| Domains             | `https://admin.cloudsheep.dev`                   |
-| Watch Paths         | `apps/admin/**`, `packages/**`, `pnpm-lock.yaml` |
-
-Build Variables su iste (`VITE_API_URL`, `VITE_APP_ENV`).
-
-`admin` image sam sebi dodaje `X-Robots-Tag: noindex, nofollow` — interni panel nema šta
-da traži u pretrazi. `web` tu liniju namerno nema.
-
----
-
-## 5. Auto-deploy
-
-Za svaki od tri resursa uključi **webhook na push u `prod`**. Uz Watch Paths iz gornjih
-tabela, push u `apps/web` više ne rebuilduje `api`.
-
-Watch Paths namerno uključuju `packages/**` za sva tri: izmena deljenog paketa menja i
-frontove i (potencijalno) backend, pa se svi grade.
-
----
-
-## 6. Prvo puštanje — redosled i provere
-
-1. **Deploy `api`.** Kad završi:
+1. Backup baze (§1) → aplikacija (§2) → **Deploy**. U logu traži:
+   `… migrations have been successfully applied` i `seed: baza već ima podatke — preskačem`
+   (ili `seed: admin … spreman` na praznoj bazi).
+2. Provere:
 
    ```bash
-   curl -s https://api.cloudsheep.dev/health         # {"status":"ok"}
-   curl -s https://api.cloudsheep.dev/health/ready   # {"status":"ok","database":"up"}
+   curl -s https://cloudsheep.dev/api/health          # {"status":"ok"}
+   curl -s https://cloudsheep.dev/api/health/ready    # {"status":"ok","database":"up"}
+   curl -sI https://cloudsheep.dev/sr | grep -i x-robots     # noindex, follow
+   curl -sI https://cloudsheep.dev/admin | grep -i x-robots  # noindex, nofollow
+   curl -s https://cloudsheep.dev/sitemap.xml | head          # samo engleske adrese
+   curl -sI https://admin.cloudsheep.dev | grep -i location  # → https://cloudsheep.dev/admin
    ```
 
-   Ako `ready` vrati `503 database: down`, `DATABASE_URL` nije tačan ili migracija nije
-   prošla — pogledaj log pre-deployment koraka, ne aplikacije.
+3. Otvori `https://cloudsheep.dev/admin` i prijavi se postojećim nalogom.
+4. **Mejl:** pošalji upit sa svoje adrese na `/contact`. Treba da stigne mejl sa linkom, a
+   tek posle klika na **Confirm and send** upit se pojavljuje u **Poruke** i stiže na
+   `CONTACT_TO`.
+5. Izmeni nešto u admin-u (npr. objavi utisak). Promena se odmah vidi na sajtu, bez rebuild-a.
+6. Kad je sve zeleno, **ugasi stare resurse** `api`, `web` i `admin`, ali tek posle
+   prebacivanja slika (§2). Baza ostaje.
 
-2. **Admin nalog je već tu** — napravila ga je pre-deployment komanda, iz `SEED_ADMIN_*`
-   varijabli. Proveri u logu deploya: `seed: admin <mejl> spreman`.
+---
 
-   Ako umesto toga piše `preskačem`, varijable nisu postavljene — dodaj ih i pusti
-   Redeploy. Ako treba ručno:
+## 6. Memorija
 
-   ```bash
-   node dist/seed.js
-   ```
+Izmereno lokalno sa istim ograničenjem (`infra/docker-compose.yml`, `mem_limit: 768m`),
+obilaskom javnih i admin stranica. Brojke su u PR opisu i u `DEPLOYMENT.md` §4. Na serveru:
 
-   > `node dist/seed.js`, ne `prisma db seed` — ovaj drugi zove `tsx`, koji je
-   > devDependency i nije u runtime image-u. Seed je zato u `src/`, da se kompajlira.
-   >
-   > Seed **ne može da promeni postojeću lozinku** (`upsert` ne dira postojeći red). Za
-   > promenu ide `UPDATE` sa novim bcrypt hešom.
-
-3. **Deploy `web`**, pa `admin`.
-
-4. **Otvori `https://admin.cloudsheep.dev`** i prijavi se.
-
-5. **Hard refresh na dubokom linku** (`admin.cloudsheep.dev/projects/1`, `Cmd+Shift+R`).
-   404 ovde znači da SPA fallback ne radi — proveri da je `spa.conf` stvarno u
-   `/etc/nginx/conf.d/default.conf` u kontejneru.
-
-6. **DevTools → Network**, prijava:
-   - nema CORS greške → `CORS_ORIGINS` je tačan
-   - `Set-Cookie` ima `Domain=.cloudsheep.dev`, `Secure`, `HttpOnly`, `SameSite=Lax`
-   - nema CSP greške u konzoli → `VITE_API_URL` i `__API_ORIGIN__` se poklapaju
-
-7. **Napravi zapis u `admin`-u** → mora se pojaviti na `cloudsheep.dev`.
+```bash
+docker stats --no-stream $(docker ps -q --filter "name=cloudsheep")
+```
 
 ---
 
 ## 7. Rollback
 
-Coolify → resurs → **Deployments** → prethodni uspešan build → **Redeploy**.
+Coolify → aplikacija → **Deployments** → prethodni → **Redeploy**. Može i bez Coolify
+istorije: u polje Image upiši prethodni tag `ghcr.io/…:sha-<commit>`.
 
-Traje koliko i pokretanje kontejnera (image već postoji), dakle sekunde.
-
-**Migracije se ne vraćaju same.** Ako je pao deploy koji je već primenio migraciju,
-rollback koda vraća staru verziju uz novu šemu baze. Zato migracije treba da budu
-unazad kompatibilne — dodaj kolonu, nemoj je brisati u istom deployu u kom prestaješ
-da je koristiš.
-
----
-
-## 8. Poznata ograničenja
-
-- **Nema testne instance.** Jedan server, jedna produkcija. Testna bi tražila još tri
-  Coolify resursa i još tri poddomena (`test.`, `admin-test.`, `api-test.`).
-- **Sourcemape se serviraju javno** (`dist/assets/*.map`). Za `web` je to bezazleno, za
-  `admin` znači da je izvorni kod panela čitljiv svakome ko otvori DevTools. Ako smeta,
-  isključi `build.sourcemap` u `apps/admin/vite.config.ts`.
+**Migracije se ne vraćaju same.** Zato moraju biti unazad kompatibilne: dodaj kolonu, a
+nemoj je brisati u istom deployu u kom prestaješ da je koristiš.

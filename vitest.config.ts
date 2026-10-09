@@ -10,7 +10,7 @@ import { defineConfig } from 'vitest/config'
  * Komponente i hookovi traže `// @vitest-environment jsdom` u prvom redu fajla.
  */
 const TEST_DATABASE_URL =
-  process.env.TEST_DATABASE_URL ?? 'postgresql://app:app@localhost:5434/appdb_test'
+  process.env.TEST_DATABASE_URL ?? 'postgresql://app:app@localhost:5432/appdb_test'
 
 const alias = {
   '@': fileURLToPath(new URL('./src', import.meta.url)),

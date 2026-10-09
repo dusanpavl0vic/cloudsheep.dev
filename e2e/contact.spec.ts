@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test'
 
+import { confirmPathFrom, MAILPIT_URL, waitForMail } from './mailbox'
+
 /**
  * Upit u tri koraka (docs/17 §5, ADR 0013): prazan korak, adresa bez MX zapisa, greška u
  * kucanju sa predlogom, termin, slanje. Provera adrese ide na pravi DNS.
@@ -67,4 +69,37 @@ test('dugme za slanje je onemogućeno pre hidratacije (polja nikad u URL-u)', as
   await page.goto('/contact')
   await expect(page.locator('form[aria-label] button[type=submit]')).toBeDisabled()
   await context.close()
+})
+
+/**
+ * Ceo double opt-in (ADR 0016): upit → mejl sa linkom → stranica sa dugmetom (POST, jer
+ * skeneri prate GET linkove) → potvrđeno; tek tada studio dobija upit.
+ */
+test('double opt-in: link iz mejla potvrđuje upit i tek tada ga šalje studiju', async ({ page, request }) => {
+  test.skip(!MAILPIT_URL, 'MAILPIT_URL nije postavljen (lažni SMTP samo u CI-ju i docker compose-u)')
+  const email = `e2e.${String(Date.now())}@gmail.com`
+
+  const response = await request.post('/api/contact', {
+    data: {
+      projectType: 'webapp',
+      budget: '5to15k',
+      timeline: '1to3',
+      name: 'E2E Opt-in',
+      email,
+      message: 'We need a booking app for clinics, on iOS and the web.',
+      website: '',
+      locale: 'en',
+    },
+  })
+  expect(response.status()).toBe(202)
+
+  const mail = await waitForMail(email)
+  await page.goto(confirmPathFrom(mail.text))
+  await expect(page.getByRole('heading', { name: 'Confirm your brief' })).toBeVisible()
+  await page.getByRole('button', { name: 'Confirm and send' }).click()
+  await expect(page.getByRole('heading', { name: 'Brief sent' })).toBeVisible()
+
+  // Isti link drugi put više ne važi (token je potrošen).
+  await page.goto(confirmPathFrom(mail.text))
+  await expect(page.getByRole('button', { name: 'Confirm and send' })).toHaveCount(0)
 })

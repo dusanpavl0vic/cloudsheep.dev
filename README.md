@@ -1,124 +1,62 @@
 # CloudSheep
 
-pnpm monorepo iz koga se prave nezavisne React SPA aplikacije koje dele UI, state
-infrastrukturu, i18n, utils i tooling.
+Jedna Next.js aplikacija: javni sajt `cloudsheep.dev` (en, sr), admin panel na `/admin` i
+API na `/api` (ADR 0009). Baza je Postgres preko Prisma-e, a deploy je jedan Docker image
+iz CI-ja (ADR 0017).
 
 ## Quickstart
 
 ```bash
-corepack enable && corepack prepare pnpm@latest --activate
+corepack enable
 pnpm install
-pnpm dev --filter=web
+docker compose -f infra/docker-compose.dev.yml up -d   # Postgres: appdb + appdb_test na :5432
+cp .env.example .env                                     # popuni JWT_SECRET i SEED_ADMIN_*
+pnpm db:deploy && pnpm db:seed                           # šema + početni sadržaj i admin nalog
+pnpm dev                                                 # http://localhost:3000
 ```
 
-Otvori http://localhost:5173.
-
-Za `admin` i `api` treba i baza i `.env`:
-
-```bash
-docker run -d --name cs-pg -p 5432:5432 \
-  -e POSTGRES_USER=app -e POSTGRES_PASSWORD=app -e POSTGRES_DB=appdb postgres:17-alpine
-
-cp apps/api/.env.example apps/api/.env
-cp apps/admin/.env.example apps/admin/.env
-
-pnpm --filter api migrate:dev
-pnpm --filter api db:seed   # traži SEED_ADMIN_EMAIL i SEED_ADMIN_PASSWORD
-pnpm dev --filter=api       # :3000
-pnpm dev --filter=admin     # :5174
-```
-
-## Provera produkcionog builda lokalno
-
-Isti Docker image-i koji idu na server, na tvojoj mašini:
-
-```bash
-docker compose -f infra/docker-compose.yml up --build
-```
-
-|                                    |                |
-| ---------------------------------- | -------------- |
-| http://localhost:8080              | `web`          |
-| http://localhost:8081              | `admin`        |
-| http://localhost:3000/health       | `api` liveness |
-| http://localhost:3000/health/ready | `api` + baza   |
-
-Vredi pokrenuti pre svakog push-a u `prod`: CSP greške, polomljen SPA fallback i
-build-time env varijable koje fale **ne postoje** u `pnpm dev` režimu.
-
-## Aplikacije
-
-| App                        | Šta je                          | Deploy                                   |
-| -------------------------- | ------------------------------- | ---------------------------------------- |
-| [`apps/web`](apps/web)     | cloudsheep.dev — javni sajt     | Coolify `web` → `cloudsheep.dev`         |
-| [`apps/admin`](apps/admin) | interni panel iza autentikacije | Coolify `admin` → `admin.cloudsheep.dev` |
-| [`apps/api`](apps/api)     | Express + Prisma backend        | Coolify `api` → `api.cloudsheep.dev`     |
-
-## Paketi
-
-`@app/ui` · `@app/core` · `@app/i18n` · `@app/utils` · `@app/hooks` · `@app/testing`
-· `@app/eslint-config` · `@app/typescript-config` · `@app/tailwind-config` · `@app/vite-config`
+Admin je na http://localhost:3000/admin (nalog iz `SEED_ADMIN_EMAIL/PASSWORD`). Bez SMTP-a
+u `.env` dev server ne šalje mejl, nego link za potvrdu upita i newslettera ispiše u log.
 
 ## Komande
 
 ```bash
-pnpm dev              # sve app-e (--filter=web za jednu)
-pnpm test             # unit + integracija
-pnpm e2e              # Playwright
-pnpm lint             # ESLint
+pnpm dev              # dev server
+pnpm test             # Vitest: unit + baza (appdb_test)
+pnpm e2e              # Playwright nad produkcionim build-om
+pnpm lint             # ESLint (sa pravilima repoa iz eslint-rules/)
 pnpm typecheck        # tsc --noEmit
-pnpm build            # produkcijski build
-pnpm size             # bundle budžeti
+pnpm build            # produkcioni build (standalone)
+pnpm size             # JS budžet po javnoj ruti (200 KB gzip, ADR 0014)
 pnpm lh               # Lighthouse CI
-pnpm validate         # sve gore — mora proći pre PR-a
+pnpm validate         # typecheck · lint · test · build · size — mora proći pre PR-a
 ```
+
+## Provera produkcionog image-a lokalno
+
+```bash
+docker build -t cloudsheep:local .
+export JWT_SECRET=$(openssl rand -hex 24) SEED_ADMIN_PASSWORD=$(openssl rand -hex 12)
+docker compose -f infra/docker-compose.yml up          # app :3000, Mailpit :8025, mem_limit 768m
+```
+
+Detalji i e2e nad image-om su u [`DEPLOYMENT.md`](DEPLOYMENT.md) §4.
 
 ## Stek
 
-React 19.2 · TypeScript 6 · Vite 8 · React Compiler · React Router 8 · Redux Toolkit + RTK Query
-· Tailwind v4 · shadcn/ui + Radix + CVA · react-hook-form + zod · i18next + ICU (sr/en)
-· Vitest 4 + Testing Library + MSW · Playwright
+Next.js 16 (App Router, Turbopack, standalone) · React 19.2 + React Compiler · TypeScript 6
+· next-yak (CSS bez runtime-a) · next-intl · Redux Toolkit + RTK Query (admin) · react-hook-form
++ zod 4 · Prisma 6 + PostgreSQL 17 · nodemailer (Gmail SMTP) · Vitest 4 · Playwright
 
-Pinovane verzije: [`docs/16-tooling-ci.md`](docs/16-tooling-ci.md) §1.
+Pinovane verzije su u [`docs/16-tooling-ci.md`](docs/16-tooling-ci.md) §1.
 
 ## Dokumentacija
 
-**Počni od [`docs/README.md`](docs/README.md)** — tamo je redosled čitanja i mapa po zadatku.
-
-Najvažniji: [`docs/07-performance.md`](docs/07-performance.md) (pravila za `useEffect`,
-`useMemo`, `useState`, bundle) i [`docs/01-architecture.md`](docs/01-architecture.md)
-(gde kod treba da živi).
-
-Pravila za AI agente: [`CLAUDE.md`](CLAUDE.md).
-Arhitektonske odluke: [`docs/adr/`](docs/adr/).
+**Počni od [`docs/README.md`](docs/README.md).** Tamo su redosled čitanja i mapa po zadatku.
+Pravila za AI agente su u [`CLAUDE.md`](CLAUDE.md), a arhitektonske odluke u [`docs/adr/`](docs/adr/).
 
 ## Deploy
 
-Push u `prod` → Coolify webhook → Docker build → Traefik. Bez ručnog koraka.
-
-### Env varijable
-
-Najvažnija razlika, i najčešći uzrok „radi lokalno, ne radi na serveru":
-
-| Varijabla          | Kada se čita                             | Gde se postavlja u Coolify | Resurs         |
-| ------------------ | ---------------------------------------- | -------------------------- | -------------- |
-| `VITE_API_URL`     | **build-time** — ugrađuje se u JS bundle | **Build Variables**        | `web`, `admin` |
-| `VITE_APP_ENV`     | **build-time**                           | **Build Variables**        | `web`, `admin` |
-| `DATABASE_URL`     | runtime                                  | Environment Variables      | `api`          |
-| `JWT_SECRET`       | runtime                                  | Environment Variables      | `api`          |
-| `CORS_ORIGINS`     | runtime                                  | Environment Variables      | `api`          |
-| `COOKIE_DOMAIN`    | runtime                                  | Environment Variables      | `api`          |
-| `NODE_ENV`, `PORT` | runtime                                  | Environment Variables      | `api`          |
-
-`VITE_*` postavljena kao obična env varijabla **nema nikakvog efekta** — bundle je već
-napravljen. Pun spisak sa komentarima: [`.env.production.example`](.env.production.example).
-
-### Rollback
-
-Coolify → resurs → Deployments → prethodni uspešan build → **Redeploy**. Traje sekunde,
-image već postoji. Migracije se time **ne vraćaju** — vidi
-[`infra/COOLIFY.md`](infra/COOLIFY.md) §7.
-
-Grane, prvo puštanje i podešavanje servera:
-[`DEPLOYMENT.md`](DEPLOYMENT.md) · [`infra/SERVER-SETUP.md`](infra/SERVER-SETUP.md) ·
-[`infra/COOLIFY.md`](infra/COOLIFY.md).
+Push u `prod` → CI (provera, image na GHCR) → Coolify webhook → pull + restart. Na serveru se
+ništa ne gradi. Grane, env promenljive i rollback su u [`DEPLOYMENT.md`](DEPLOYMENT.md), server
+u [`infra/SERVER-SETUP.md`](infra/SERVER-SETUP.md), a Coolify u [`infra/COOLIFY.md`](infra/COOLIFY.md).

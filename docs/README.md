@@ -65,6 +65,7 @@ Odluka koja se ne može izvesti iz koda mora biti zapisana. Nova se pravi sa `/a
 | [0014](adr/0014-js-budget-200kb.md) | JS budžet javnih ruta 200 KB gzip, produkcioni build kroz webpack | accepted |
 | [0015](adr/0015-next-yak.md) | next-yak umesto styled-components (CSS u build-u, bez runtime-a) | accepted |
 | [0016](adr/0016-double-opt-in.md) | Potvrda adrese linkom za upit i newsletter | accepted |
+| [0017](adr/0017-image-from-ci.md) | Jedan image iz CI-ja (GHCR), migracije pri startu | accepted |
 
 [`adr/template.md`](adr/template.md) — šablon: Context / Decision / Consequences / Alternatives.
 
