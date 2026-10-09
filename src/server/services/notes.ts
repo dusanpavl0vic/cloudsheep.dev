@@ -7,12 +7,12 @@ import { CACHE_TAGS } from '@/constants/cache'
 import type { Locale } from '@/constants/i18n'
 import { WORDS_PER_MINUTE } from '@/constants/notes'
 import { pickLocalized } from '@/helpers/locale'
+import { countWords, renderMarkdown } from '@/helpers/markdown'
 import type { noteSchema, updateNoteSchema } from '@/schemas/note'
 import type { AdminNote, NoteDetail, NoteSummary } from '@/types/note'
 
 import { cached, invalidate } from '../cache'
 import { prisma } from '../db'
-import { countWords, renderMarkdown } from '../markdown'
 import { publicUrl } from '../uploads/storage'
 
 type NoteWithCover = Note & { cover: Asset | null }

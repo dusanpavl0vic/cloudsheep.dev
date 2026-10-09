@@ -1,12 +1,11 @@
-import 'server-only'
-
 import { Marked } from 'marked'
 
 const escapeHtml = (value: string) =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
 /**
- * Markdown beleške → HTML, na serveru (nula JS-a na klijentu za čitanje beleške).
+ * Markdown beleške → HTML. Na sajtu se renderuje na serveru (nula JS-a za čitanje beleške);
+ * admin ga koristi i u pregledaču, za pregled dok se piše (admin nema JS budžet).
  *
  * Sirov HTML iz izvora se EKRANIRA, ne propušta: belešku piše admin, ali HTML koji se
  * ubacuje u stranicu kroz `dangerouslySetInnerHTML` mora biti bezbedan bez obzira na to ko ga

@@ -13,5 +13,6 @@ export const OVERLAY_MODALS: Partial<Record<ModalName, ComponentType<OverlayModa
   confirmDialog: lazy(() => import('../ConfirmDialog')) as ComponentType<OverlayModalProps>,
   adminTechnologyForm: lazy(() => import('../TechnologyFormModal')) as ComponentType<OverlayModalProps>,
   adminTeamMemberForm: lazy(() => import('../TeamMemberFormModal')) as ComponentType<OverlayModalProps>,
+  adminSocialLinkForm: lazy(() => import('../SocialLinkFormModal')) as ComponentType<OverlayModalProps>,
   adminTestimonialForm: lazy(() => import('../TestimonialFormModal')) as ComponentType<OverlayModalProps>,
 }

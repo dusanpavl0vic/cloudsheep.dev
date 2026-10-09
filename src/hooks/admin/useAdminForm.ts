@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations } from 'next-intl'
-import { useForm, useFormState, type DefaultValues, type FieldValues, type Path } from 'react-hook-form'
+import { useForm, useFormState, type DefaultValues, type FieldErrors, type FieldValues, type Path } from 'react-hook-form'
 import type { z } from 'zod'
 
 import { parseApiError } from '@/helpers/apiError'
@@ -16,13 +16,15 @@ interface AdminFormOptions<In extends FieldValues, Out> {
   save: (values: Out) => Promise<unknown>
   /** Posle uspešnog čuvanja (zatvaranje dijaloga, povratak na listu). */
   onSaved?: () => void
+  /** Validacija pala — npr. prebaci na karticu sa poljem koje nije prikazano. */
+  onInvalid?: (errors: FieldErrors<In>) => void
 }
 
 /**
  * Admin forma: RHF + ista zod šema kao na serveru. Greška polja sa servera (validacija, zauzet
  * slug) ide na to polje; ostale greške u toast. Uspeh → „Sačuvano.".
  */
-export const useAdminForm = <In extends FieldValues, Out>({ schema, defaultValues, save, onSaved }: AdminFormOptions<In, Out>) => {
+export const useAdminForm = <In extends FieldValues, Out>({ schema, defaultValues, save, onSaved, onInvalid }: AdminFormOptions<In, Out>) => {
   const t = useTranslations('admin.common')
   const toast = useToast()
   const errorMessage = useApiErrorMessage()
@@ -41,7 +43,7 @@ export const useAdminForm = <In extends FieldValues, Out>({ schema, defaultValue
       if (error.field) form.setError(error.field as Path<In>, { type: 'server', message: error.messageKey }, { shouldFocus: true })
       toast.show(errorMessage(error) ?? t('loadFailed'), 'danger')
     }
-  })
+  }, onInvalid)
 
   return { form, errors, submit, isSubmitting, isDirty }
 }

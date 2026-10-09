@@ -1,5 +1,6 @@
 import { useLocale, useTranslations } from 'next-intl'
 
+import Prose from '@/components/data-display/Prose'
 import Cover from '@/components/media/Cover'
 import TextLink from '@/components/navigation/TextLink'
 import { ROUTES } from '@/constants/routes'
@@ -7,7 +8,7 @@ import { formatDate } from '@/helpers/date'
 import type { NoteDetail, NoteSummary } from '@/types/note'
 
 import NoteCard from '../NoteCard'
-import { Article, Column, Lead, Meta, More, MoreGrid, Prose, Tag, Title } from './NoteView.styles'
+import { Article, Column, Lead, Meta, More, MoreGrid, Tag, Title } from './NoteView.styles'
 
 interface NoteViewProps {
   note: NoteDetail
@@ -42,7 +43,7 @@ const NoteView = ({ note, others }: NoteViewProps) => {
       {note.cover && <Cover image={note.cover} fallbackAlt={t('coverAlt', { title: note.title })} ratio="16 / 8" radius={24} eager />}
       <Column>
         {/* Drugo od dva mesta sa sirovim HTML-om (docs/20 §1): markdown renderovan na serveru, ekraniran. */}
-        <Prose dangerouslySetInnerHTML={{ __html: note.html }} />
+        <Prose html={note.html} />
       </Column>
       {others.length > 0 && (
         <More aria-labelledby="more-notes">

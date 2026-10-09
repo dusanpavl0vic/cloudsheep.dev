@@ -23,3 +23,14 @@ export const noteSchema = z.object({
 export const updateNoteSchema = noteSchema.partial()
 
 export type NoteInput = z.input<typeof noteSchema>
+
+/** Forma beleške u admin-u: oznake su tekst odvojen zarezom. */
+export const noteFormSchema = noteSchema.extend({ tags: z.string().max(NOTE_LIMITS.tagsMax * (NOTE_LIMITS.tagMax + 2)) })
+
+export type NoteForm = z.input<typeof noteFormSchema>
+
+/** Forma → telo zahteva (oznake postaju niz, prazne i duplikati otpadaju). */
+export const toNoteInput = ({ tags, ...rest }: z.output<typeof noteFormSchema>): NoteInput => ({
+  ...rest,
+  tags: [...new Set(tags.split(',').map((tag) => tag.trim()).filter(Boolean))],
+})
