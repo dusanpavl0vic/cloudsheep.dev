@@ -11,7 +11,7 @@ import type { DocumentProps } from './Document.types'
  * `<html>` i `<body>` javnog sajta i admin-a: jezik, tema iz kolačića, provideri.
  * Fontovi prvog ekrana se preload-uju — LCP je naslov u hero-u (docs/07-performance.md §7).
  */
-const Document = ({ children, locale, theme }: DocumentProps) => (
+const Document = ({ children, locale, theme, namespaces }: DocumentProps) => (
   <html lang={LOCALE_TAGS[locale]} {...(theme ? { 'data-theme': theme } : {})}>
     <head>
       {FONT_FACES.filter((face) => face.preload).map((face) => (
@@ -26,7 +26,9 @@ const Document = ({ children, locale, theme }: DocumentProps) => (
       ))}
     </head>
     <body>
-      <AppProviders theme={theme}>{children}</AppProviders>
+      <AppProviders theme={theme} {...(namespaces ? { namespaces } : {})}>
+        {children}
+      </AppProviders>
     </body>
   </html>
 )

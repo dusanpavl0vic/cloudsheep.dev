@@ -61,7 +61,7 @@ store/slices/ui/
 | Slice                      | Stanje                                   | Trajnost                                                |
 | -------------------------- | ---------------------------------------- | ------------------------------------------------------- |
 | `ui`                       | stek modala, toast-ovi                   | —                                                       |
-| `preferences`              | `theme` (`null` = sistem), `adminLocale` | tema → kolačić `cs-theme`; jezik admin-a → localStorage |
+| `preferences`              | `theme` (`null` = sistem)                | tema → kolačić `cs-theme`; jezik admin-a je kolačić `cs-admin-locale` (server ga čita, nije u store-u) |
 | `auth` (lenjo, samo admin) | access token u memoriji, korisnik        | refresh token je httpOnly kolačić — nikad u JS-u        |
 
 ## 5. Listeners i persistence

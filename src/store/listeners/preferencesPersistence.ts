@@ -1,11 +1,7 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit'
 
-import {
-  applyThemeAttribute,
-  saveAdminLocale,
-  saveThemeCookie,
-} from '../persistence/preferencesStorage'
-import { setAdminLocale, setTheme } from '../slices/preferences/actions'
+import { applyThemeAttribute, saveThemeCookie } from '../persistence/preferencesStorage'
+import { setTheme } from '../slices/preferences/actions'
 
 export const preferencesPersistenceListener = createListenerMiddleware()
 
@@ -15,13 +11,5 @@ preferencesPersistenceListener.startListening({
   effect: ({ payload }) => {
     applyThemeAttribute(payload)
     saveThemeCookie(payload)
-  },
-})
-
-/** Jezik admin panela pamti se u ovom pregledaču. */
-preferencesPersistenceListener.startListening({
-  actionCreator: setAdminLocale,
-  effect: ({ payload }) => {
-    saveAdminLocale(payload)
   },
 })

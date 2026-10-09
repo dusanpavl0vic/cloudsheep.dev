@@ -1,5 +1,5 @@
-import { ADMIN_LOCALE_STORAGE_KEY, THEME_COOKIE, THEME_COOKIE_MAX_AGE_S } from '@/constants/cookies'
-import { isLocale, type Locale } from '@/constants/i18n'
+import { ADMIN_LOCALE_COOKIE, THEME_COOKIE, THEME_COOKIE_MAX_AGE_S } from '@/constants/cookies'
+import type { Locale } from '@/constants/i18n'
 import type { ThemeMode } from '@/constants/preferences'
 
 /**
@@ -25,19 +25,12 @@ export const applyThemeAttribute = (mode: ThemeMode) => {
   }
 }
 
-export const loadAdminLocale = (): Locale | null => {
+/** Jezik admin-a ide u kolačić; posle upisa `router.refresh()` renderuje admin na novom jeziku. */
+export const saveAdminLocaleCookie = (locale: Locale) => {
   try {
-    const value = window.localStorage.getItem(ADMIN_LOCALE_STORAGE_KEY)
-    return isLocale(value) ? value : null
+    const secure = window.location.protocol === 'https:' ? '; Secure' : ''
+    document.cookie = `${ADMIN_LOCALE_COOKIE}=${locale}; Path=/; Max-Age=${String(THEME_COOKIE_MAX_AGE_S)}; SameSite=Lax${secure}`
   } catch {
-    return null
-  }
-}
-
-export const saveAdminLocale = (locale: Locale) => {
-  try {
-    window.localStorage.setItem(ADMIN_LOCALE_STORAGE_KEY, locale)
-  } catch {
-    // jezik važi do osvežavanja
+    // jezik se ne pamti, ali promena i dalje važi do sledećeg učitavanja
   }
 }
