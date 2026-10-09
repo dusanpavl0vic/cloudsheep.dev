@@ -1,154 +1,109 @@
 # 10 — Forme i validacija
 
-> Status: active | Last review: 2026-08-15
+> Status: active | Last review: 2026-10-09
 
-`react-hook-form` 7 + `zod` 4 + `@hookform/resolvers`.
+`react-hook-form` 7 + `zod` 4 + `@hookform/resolvers`, uz React Compiler.
 
 ## Pravila
 
-1. **Nula `useState` u formama.** RHF drži sve — vrednosti, greške, `isSubmitting`, `isDirty`.
-2. **Zod šema je jedini izvor istine.** Tip se izvodi iz nje, ne piše ručno.
-3. **`mode: 'onTouched'`, `reValidateMode: 'onChange'`** — ne viči na korisnika dok kuca prvi put,
-   ali odmah potvrdi ispravku.
-4. **Poruke grešaka su i18n ključevi**, ne tekst.
-5. **`FormField` iz `@app/ui`** povezuje RHF ↔ shadcn ↔ a11y (`aria-invalid`, `aria-describedby`, `id`).
-6. **Server greške → `setError` na polje**, ne toast. Toast samo za 5xx.
-7. **Ista šema validira i API odgovor** gde ima smisla (`safeParse` u `transformResponse`).
+1. **Logika forme je u hook-u** (`useBriefForm`, `useLogin`, `useTechnologyForm`…).
+   Komponenta samo raspoređuje polja.
+2. **Zod šema je jedini izvor istine** i ista je na klijentu i na serveru (`src/schemas/`).
+   Tip se izvodi iz nje: `z.input` za formu, `z.output` za ono što server prima.
+3. **Poruke grešaka su i18n ključevi** (`validation.*`, `<domen>.errors.*`), a ne tekst.
+   Prevodi ih `useKeyTranslator`; nepoznat ključ pada na `errors.unexpected`.
+4. **Greške i `isSubmitting` čitaju se samo kroz `useFormState`**, nikad kroz `form.formState`.
+   React Compiler memoizuje proxy `formState`, pa se greške nikad ne bi prikazale (lint:
+   `no-restricted-properties`).
+5. **Praćenje vrednosti ide kroz `useWatch`, ne kroz `form.watch`**, iz istog razloga.
+6. **`mode: 'onTouched'`**: korisnik ne dobija grešku dok kuca prvi put, a ispravka se
+   potvrđuje odmah.
+7. **Greška polja sa servera ide na to polje** (`setError`). Ostale greške idu u toast.
+8. **Dugme za slanje je onemogućeno do hidratacije** (`useHydrated`). Inače bi pregledač poslao
+   formu kao GET, sa ličnim podacima u URL-u.
+9. **`noValidate` na `<form>`**: validira zod, ne pregledač.
 
 ## Šema
 
 ```ts
-// features/auth/schemas/login.schema.ts
-import { z } from 'zod';
+// schemas/technology.ts
+export const technologySchema = z.object({
+  slug: z.string().trim().min(1, 'validation.required').regex(/^[a-z0-9]+$/, 'validation.slug'),
+  label: requiredText(40),
+  group: z.enum(TECHNOLOGY_GROUPS).default('tooling'),
+  logoId: uuidOrNull,
+  sortOrder: z.number().int().min(0).default(0),
+})
 
-export const loginSchema = z.object({
-  email: z.email({ message: 'auth.errors.emailInvalid' }),
-  password: z.string().min(8, { message: 'auth.errors.passwordTooShort' }),
-  rememberMe: z.boolean().default(false),
-});
-
-export type LoginInput = z.infer<typeof loginSchema>;
+/** Forma ne šalje sortOrder: redosled se menja strelicama, a čuvanje bi ga vratilo na 0. */
+export const technologyFormSchema = technologySchema.omit({ sortOrder: true })
 ```
 
-> **zod 4:** `z.email()` je zamenio `z.string().email()`. Isto važi za `z.url()`, `z.uuid()`.
+Kada se oblik forme razlikuje od API-ja (tekst „jedno po redu" umesto niza, brojevi odvojeni
+zarezom), postoji `xFormSchema` sa pretvaranjem `toXInput` (npr. `cvFormSchema`, `noteFormSchema`,
+`projectFormSchema`, `slotGeneratorFormSchema`). Pretvaranje je testirano.
 
-## Forma
-
-```tsx
-// features/auth/components/LoginForm/LoginForm.tsx
-export function LoginForm() {
-  const { t } = useTranslation('auth');
-  const { login, isLoading } = useLogin();
-
-  const form = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
-    mode: 'onTouched',
-    reValidateMode: 'onChange',
-    defaultValues: { email: '', password: '', rememberMe: false },
-  });
-
-  const onSubmit = form.handleSubmit(async (values) => {
-    const result = await login(values);
-    if (result.error) {
-      form.setError('password', { message: 'auth.errors.invalidCredentials' });
-    }
-  });
-
-  return (
-    <form onSubmit={onSubmit} noValidate>
-      <FormField control={form.control} name="email" label={t('auth.login.email')} />
-      <FormField control={form.control} name="password" type="password" label={t('auth.login.password')} />
-      <Button type="submit" disabled={isLoading}>{t('auth.login.submit')}</Button>
-    </form>
-  );
-}
-```
-
-**Nula `useState`.** `isSubmitting`, `errors`, `isDirty` i `isValid` dolaze iz `form.formState`.
-
-## `FormField` — gde živi a11y
-
-```tsx
-// packages/ui/src/molecules/FormField/FormField.tsx
-export function FormField<T extends FieldValues>({ control, name, label, ...input }: FormFieldProps<T>) {
-  const { field, fieldState } = useController({ control, name });
-  const id = useId();
-  const errorId = `${id}-error`;
-
-  return (
-    <div>
-      <Label htmlFor={id}>{label}</Label>
-      <Input
-        id={id}
-        aria-invalid={fieldState.invalid}
-        aria-describedby={fieldState.error ? errorId : undefined}
-        {...field}
-        {...input}
-      />
-      {fieldState.error && (
-        <p id={errorId} role="alert" className="text-destructive text-sm">
-          {t(fieldState.error.message)}
-        </p>
-      )}
-    </div>
-  );
-}
-```
-
-Svaka forma dobija `id` linkovanje, `aria-invalid`, `aria-describedby` i `role="alert"`
-**bez razmišljanja** — zato se polja ne pišu ručno.
-
-## Server greške
+## Admin forma: `useAdminForm`
 
 ```ts
-const result = await createProject(values);
-
-if (result.error) {
-  const err = normalizeError(result.error);
-  if (err.status === 422 && err.details?.field) {
-    form.setError(err.details.field as Path<ProjectInput>, { message: err.messageKey });
-  } else if (err.status >= 500) {
-    toast.error(t(err.messageKey));      // samo 5xx ide u toast
-  }
-}
+const admin = useAdminForm({
+  schema: technologyFormSchema,
+  defaultValues: { slug: technology?.slug ?? '', … },
+  save: (values) => (technology ? update({ id, patch: values }).unwrap() : create(values).unwrap()),
+  onSaved: onClose,
+  onInvalid: (errors) => { /* npr. prebaci na karticu jezika sa greškom */ },
+})
+// → { form, errors, submit, isSubmitting, isDirty }
 ```
 
-Greška polja pripada polju — korisnik mora da vidi *gde* je problem, a toast nestane za 4 s.
+`useAdminForm` daje RHF sa zod resolver-om i greške kroz `useFormState`. Na uspeh pokazuje
+toast „Sačuvano." i resetuje `isDirty`. Na grešku sa `details.field` postavlja `setError` na
+to polje i fokusira ga. Forma se renderuje **tek kad podaci stignu** (`useXPage` → `<XForm
+key={id}>`), pa su podrazumevane vrednosti tačne i ne treba `useEffect(() => reset(data))`.
 
-## Validacija API odgovora istom šemom
+## Polja
+
+`TextField` (input, `multiline` → textarea, `options` → select) i `CheckboxField` povezuju
+oznaku, grešku i opis (`aria-invalid`, `aria-describedby`, `role="alert"`) i rade sa
+`register`. Slika ide kroz `ImageField`: otprema se odmah, a forma čuva samo `assetId`.
+
+### Brojevi i prazna polja
 
 ```ts
-transformResponse: (raw: unknown) => {
-  const parsed = projectSchema.safeParse(raw);
-  if (!parsed.success) {
-    logger.warn('project.schema.mismatch', parsed.error);
-    throw new AppError({ code: 'INVALID_RESPONSE', messageKey: 'errors.invalidResponse' });
-  }
-  return parsed.data;
-};
+// RHF i podrazumevanu vrednost (null) provlači kroz setValueAs — Number(null) je 0!
+const nullableNumber = (value: unknown) => (value === '' || value === null || value === undefined ? null : Number(value))
+register('endYear', { setValueAs: nullableNumber })
+register('projectId', { setValueAs: (v: string) => v || null })  // prazan <select> → null
 ```
+
+## Server
+
+- `readJson(request, schema, 'x.errors.invalid')` daje 400 sa `details.field` prvog
+  neispravnog polja.
+- **PATCH ide kroz `readPatch`**, nikad kroz `readJson` sa `.partial()` šemom. Zod 4
+  primenjuje `.default()` i unutar `.partial()`. `{ isPublished: true }` bi zato vratio i
+  `metrics: []`, `company: ''`… i izmena jednog polja bi obrisala ostala. `readPatch` posle
+  validacije zadržava samo poslate ključeve.
+- Jedinstven ključ u bazi (P2002) daje 409 `errors.conflict` sa poljem (npr. zauzet `slug`).
 
 ## Anti-patterns
 
 | ❌ | ✅ |
 |---|---|
-| `const [email, setEmail] = useState('')` | `useForm` + `FormField` |
-| `const [errors, setErrors] = useState({})` | `form.formState.errors` |
-| `const [isSubmitting, setIsSubmitting] = useState(false)` | `form.formState.isSubmitting` |
-| `type LoginInput = { email: string }` ručno | `z.infer<typeof loginSchema>` |
+| `form.formState.errors` | `useFormState({ control }).errors` |
+| `form.watch('x')` | `useWatch({ control, name: 'x' })` |
+| `useState` za vrednosti, greške, slanje | RHF |
+| ručno pisan tip forme | `z.input<typeof schema>` |
 | `.min(8, { message: 'Lozinka je prekratka' })` | i18n ključ |
-| `mode: 'onChange'` | `onTouched` — inače greška bljesne na prvi karakter |
-| `useEffect(() => reset(data), [data])` | `values` prop ili `key` na formi |
-| sve server greške u toast | `setError` na polje, toast samo za 5xx |
-| `<input onChange={...}>` ručno vezan | `FormField` |
+| `useEffect(() => reset(data), [data])` | forma se renderuje sa podacima, `key` po zapisu |
+| `readJson(request, schema.partial())` za PATCH | `readPatch` |
+| sve server greške u toast | `setError` na polje |
 
 ## Checklist
 
-- [ ] Nula `useState` u formi
-- [ ] Tip izveden iz zod šeme sa `z.infer`
-- [ ] Sve poruke grešaka su i18n ključevi, u `sr.json` i `en.json`
-- [ ] `mode: 'onTouched'`, `reValidateMode: 'onChange'`
-- [ ] Polja idu kroz `FormField` (a11y linkovanje)
-- [ ] `noValidate` na `<form>` — validaciju radi zod, ne browser
-- [ ] Server greška polja ide u `setError`, ne u toast
-- [ ] Test: prazna forma → greške; ispravan unos → submit; server 422 → greška na polju
+- [ ] Šema u `src/schemas/`, ista za klijent i server; poruke su i18n ključevi u `en.ts` **i** `sr.ts`
+- [ ] Logika u hook-u; greške kroz `useFormState`, vrednosti kroz `useWatch`
+- [ ] `noValidate`; dugme onemogućeno do hidratacije (javne forme)
+- [ ] Prazno brojčano ili izborno polje → `null` kroz `setValueAs`
+- [ ] PATCH ruta koristi `readPatch`
+- [ ] Test šeme ili pretvaranja forme (`*.test.ts` pored šeme ili helpera)

@@ -53,7 +53,7 @@ export const PATCH = handleAdmin<{ id: string }>(async (request, { params }) =>
   json(
     await updateNote(
       (await params).id,
-      await readJson(request, updateNoteSchema, 'notes.errors.invalid'),
+      await readPatch(request, updateNoteSchema, 'notes.errors.invalid'),
     ),
   ),
 )
@@ -64,19 +64,32 @@ export const PATCH = handleAdmin<{ id: string }>(async (request, { params }) =>
 | `handle(fn)`                                          | hvata svaku grešku → `{ messageKey, details? }`, nikad stack |
 | `handleAdmin(fn)`                                     | `handle` + provera admin uloge (401/403)                     |
 | `readJson(request, schema, key)`                      | limit veličine, JSON, zod; greška → 400 sa `details.field`   |
+| `readPatch(request, schema, key)`                     | isto, ali vraća SAMO poslate ključeve — obavezno za PATCH    |
 | `readQuery(request, schema)`                          | query kroz šemu                                              |
 | `HttpError(status, messageKey, details?)`             | namerna greška sa i18n ključem i poljem forme                |
 
 Statičan segment ima prednost nad dinamičkim: `/api/admin/projects/order` se ne čita kao `[id]`.
 
+**PATCH nikad kroz `readJson` sa `.partial()` šemom.** Zod 4 primenjuje `.default()` i unutar
+`.partial()`, pa bi `{ isPublished: true }` stigao i kao `metrics: []`, `company: ''`,
+`avatarId: null`… i izmena jednog polja bi obrisala ostala. `readPatch` to sprečava.
+
 ## 4. RTK Query (klijent)
 
-Tačno po šablonu §6.2: `baseApi` bez endpointa, domen ubacuje svoje (`store/api/<domen>/index.ts`),
-URL-ovi iz `API_ENDPOINTS`, tagovi iz `API_TAGS`, `transformResponse` raspakuje `{ items }`.
+Tačno po šablonu §6.2: `baseApi` nema endpointe, a svaki domen ubacuje svoje
+(`store/api/admin/<domen>.ts`). URL-ovi dolaze iz `API_ENDPOINTS`, tagovi iz `API_TAGS`.
+Admin spiskovi dele `crudEndpoints(build, tag, { list, item, order? })`: lista (`{ items }`),
+dodavanje, izmena (`PATCH`), brisanje i redosled. Svaka mutacija poništava tag liste.
 
 - `baseApi` se ubacuje **lenjo** (docs/04 §2) — samo stranice koje ga uvezu ga plaćaju.
-- Admin koristi `baseQueryWithReauth`: na 401 jednom zove `POST /api/auth/refresh`, ponavlja
-  zahtev; ako obnova ne uspe → `sessionExpired()`. Istovremeni 401-ovi čekaju istu obnovu (mutex).
+- **Javne stranice ne koriste RTKQ** (JS budžet, ADR 0014). Forme šalju kroz `postJson`
+  (`helpers/http.ts`), a termini stižu sa servera.
+- `baseQuery` nosi access token iz memorije (`auth` slice). Na 401 jednom zove
+  `POST /api/auth/refresh` i ponavlja zahtev. Ako obnova ne uspe, sledi `sessionEnded()` i
+  prijava. Istovremeni 401-ovi čekaju istu obnovu, a `/auth/*` se nikad ne obnavlja sam.
+- Fajl (CSV, PDF) se ne čuva u Redux-u. CSV ide kao tekst, a PDF kao object URL (string).
+  Blob nije serijalizabilan. Preuzimanje radi `helpers/download.ts`, jer link ne može da nosi
+  `Authorization`.
 - Komponenta nikad ne zove RTKQ hook direktno — uvek kroz domenski hook (`hooks/<domen>/`).
 - Greška iz API-ja se prevodi kroz `messageKey` (`helpers/apiError.ts` → `parseApiError`);
   `details.field` ide na polje forme (`setError`), ne u toast.
@@ -89,4 +102,6 @@ URL-ovi iz `API_ENDPOINTS`, tagovi iz `API_TAGS`, `transformResponse` raspakuje 
 | `useEffect(() => { fetch(…) })`                  | RTKQ hook u domenskom hooku            |
 | servis vraća `Date` iz keširane funkcije         | ISO string                             |
 | admin izmena bez `invalidate(tag)`               | svaka mutacija invalidira svoje tagove |
+| PATCH ruta sa `readJson(…, schema.partial())`    | `readPatch`                            |
+| `responseHandler: (r) => r.blob()` u RTKQ        | tekst ili object URL (serijalizabilno) |
 | `res.json(prismaRow)`                            | serializer koji nabraja polja          |

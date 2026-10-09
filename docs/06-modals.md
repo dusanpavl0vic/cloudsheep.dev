@@ -1,212 +1,93 @@
 # 06 — Modali i dijalozi
 
-> Status: active | Last review: 2026-08-15
-> Engine je sopstveni, Redux-driven — odluka i dokazi u
-> [`adr/0006-modal-engine.md`](adr/0006-modal-engine.md).
+> Status: active | Last review: 2026-10-09
+> Engine je sopstveni i radi preko Redux-a. Odluka je u [`adr/0006-modal-engine.md`](adr/0006-modal-engine.md);
+> oblik je prilagođen Next.js-u (ADR 0009).
 
-**Svi dijalozi se otvaraju preko Redux-a, ne preko lokalnog `isOpen` state-a.**
+**Svaki dijalog se otvara preko Redux-a (`ui.modals`), a ne preko lokalnog `isOpen` stanja.**
 
 ## Pravila
 
-1. **`useState(false)` za dijalog koji nosi domensku akciju je zabranjen.**
-   Dozvoljen je samo za prezentacione popovere, tooltipove i dropdown-ove.
-2. **Stack, ne jedan modal** — mora da radi confirm preko otvorene forme.
-3. **Rezultat se dobija kroz `await`**, ne kroz `useEffect` koji sluša state.
-4. **Modal komponenta je lazy** — nikad u initial bundle-u.
-5. **Radix `Dialog` je mehanika** — focus trap, `aria-modal`, ESC, scroll lock. Ne pisati ručno.
-6. **`ModalRoot` se renderuje jednom**, u `providers/`, ispod router-a.
+1. **`useState(false)` za dijalog sa domenskom akcijom je zabranjen.** Lokalno stanje je
+   dozvoljeno samo za čisto prezentacione stvari (tooltip, `<details>`).
+2. **Props-i modala su serijalizabilni** (`ModalProps`: string, broj, boolean, `null`, niz
+   stringova). Funkcija, Promise i Blob ne idu u Redux.
+3. **Modal komponenta je `lazy`**, pa nijedan modal nije u početnom JS-u javnih stranica.
+4. **`ModalRoot` se renderuje jednom**, u `RootLayout`-u. Promena rute zatvara sve modale.
+5. **Mehaniku daje `Overlay`**: fokus ostaje u dijalogu, `aria-modal`, Esc, zaključan skrol,
+   a klik na pozadinu zatvara dijalog. Ništa od toga se ne piše ručno.
+6. **Potvrda vraća rezultat kroz `await`** (`useConfirm`), a ne kroz `useEffect` koji sluša
+   stanje.
 
-## Dizajn
+## Delovi
 
 ```
-packages/core/src/modals/
-├── modal.slice.ts      # stack — samo serializable podaci
-├── modal.types.ts      # ModalId union, ModalPropsMap
-├── resolvers.ts        # Map<key, resolve> — funkcije žive VAN Redux-a
-├── useModal.ts         # javni hook API
-└── ModalRoot.tsx       # jedini renderer
+constants/modals.ts            MODALS (imena) + MODAL_KIND (popover | overlay)
+store/slices/ui                ui.modals — { name, props } po otvorenom modalu
+hooks/useModal.ts              open(props?) / close() / isOpen / props
+hooks/useConfirm.ts            Promise<boolean>; odgovori žive u Map-i VAN Redux-a
+modals/ModalRoot/              OVERLAY_MODALS (lazy registar) + renderer
+modals/<Ime>/                  sam modal; prima { props, onClose }
+components/overlays/Overlay    zajednička mehanika
 ```
 
-### `modal.types.ts`
+### Registar
 
 ```ts
-export interface ModalPropsMap {}                      // app proširuje kroz declare module
-export type ModalId = keyof ModalPropsMap;
-
-export type ModalEntry<K extends ModalId = ModalId> = {
-  key: string;
-  id: K;
-  props: ModalPropsMap[K];
-  meta?: { dismissible?: boolean; size?: 'sm' | 'md' | 'lg' | 'full' };
-};
-
-export type ModalState = { stack: ModalEntry[] };
-```
-
-### `modal.slice.ts`
-
-```ts
-const initialState: ModalState = { stack: [] };
-
-const modalSlice = createSlice({
-  name: 'modal',
-  initialState,
-  reducers: {
-    modalOpened: {
-      reducer(state, action: PayloadAction<ModalEntry>) {
-        state.stack.push(action.payload);
-      },
-      prepare(id: ModalId, props: unknown, meta?: ModalEntry['meta']) {
-        return { payload: { key: nanoid(), id, props, meta } as ModalEntry };
-      },
-    },
-    modalClosed(state, action: PayloadAction<string>) {
-      state.stack = state.stack.filter((m) => m.key !== action.payload);
-    },
-    allModalsClosed(state) {
-      state.stack = [];
-    },
-  },
-});
-```
-
-### `resolvers.ts` — zašto postoji
-
-Funkcije nisu serializable, pa `resolve` ne sme u Redux. Živi u `Map` van store-a;
-slice drži samo podatke.
-
-```ts
-const resolvers = new Map<string, (value: unknown) => void>();
-
-export const registerResolver = (key: string, resolve: (value: unknown) => void) =>
-  resolvers.set(key, resolve);
-
-export function settleResolver(key: string, value: unknown) {
-  resolvers.get(key)?.(value);
-  resolvers.delete(key);
+// modals/ModalRoot/ModalRoot.constants.ts
+export const OVERLAY_MODALS: Partial<Record<ModalName, ComponentType<OverlayModalProps>>> = {
+  mobileNav: lazy(() => import('../MobileNav')),
+  confirmDialog: lazy(() => import('../ConfirmDialog')) as ComponentType<OverlayModalProps>,
+  adminTechnologyForm: lazy(() => import('../TechnologyFormModal')) as ComponentType<OverlayModalProps>,
+  // …
 }
 ```
 
-### `useModal.ts` — javni API
+Novi modal se dodaje na tri mesta: ime u `MODALS`, vrsta u `MODAL_KIND` i red u
+`OVERLAY_MODALS`. TypeScript traži prva dva.
+
+## Dve vrste dijaloga
+
+### Potvrda: vraća odgovor
 
 ```ts
-export function useModal() {
-  const dispatch = useAppDispatch();
-  const stack = useAppSelector(selectModalStack);
-
-  const open = useCallback(
-    <K extends ModalId, R = unknown>(id: K, props: ModalPropsMap[K], meta?: ModalEntry['meta']) => {
-      const action = modalOpened(id, props, meta);
-      dispatch(action);
-      return new Promise<R | undefined>((resolve) => {
-        registerResolver(action.payload.key, resolve as (v: unknown) => void);
-      });
-    },
-    [dispatch],
-  );
-
-  const close = useCallback(
-    (key: string, result?: unknown) => {
-      settleResolver(key, result);
-      dispatch(modalClosed(key));
-    },
-    [dispatch],
-  );
-
-  const closeAll = useCallback(() => {
-    stack.forEach((m) => settleResolver(m.key, undefined));
-    dispatch(allModalsClosed());
-  }, [dispatch, stack]);
-
-  return { open, close, closeAll, isOpen: (id: ModalId) => stack.some((m) => m.id === id) };
-}
+const confirm = useConfirm()
+if (await confirm({ message: t('deleteConfirm', { name }), danger: true })) await deleteItem(id)
 ```
 
-### Registry (per-app, type-safe)
+`useConfirm` otvara `confirmDialog` sa `requestId`. Funkcija `resolve` čeka u Map-i u
+`hooks/useConfirm.ts`, ključena tim ID-jem, a `ConfirmDialog` je razrešava kroz `settleConfirm`.
+Zatvaranje bez izbora (Esc ili klik na pozadinu) znači „ne". Admin brisanje ide kroz
+`useAdminAction().remove(message, action)`, koji prvo pita, pa briše, pa pokazuje toast.
 
-```tsx
-// apps/admin/src/providers/modalRegistry.ts
-export const modalRegistry = {
-  'confirm-delete': lazy(() => import('@/features/projects/modals/ConfirmDelete')),
-  'auth.login':     lazy(() => import('@/features/auth/modals/LoginModal')),
-} satisfies Record<ModalId, LazyExoticComponent<ComponentType<never>>>;
+### Forma: čuva sama
 
-declare module '@app/core' {
-  interface ModalPropsMap {
-    'confirm-delete': { entityId: string; entityName: string };
-    'auth.login': { redirectTo?: string };
-  }
-}
-```
-
-Dodavanje modala = jedan red u registry + jedan red u `ModalPropsMap`. TypeScript odmah
-traži oba — nemoguće je registrovati modal bez tipa propsa.
-
-### `ModalRoot.tsx`
-
-```tsx
-export function ModalRoot({ registry }: { registry: Record<ModalId, LazyExoticComponent<never>> }) {
-  const stack = useAppSelector(selectModalStack);
-  const { close, closeAll } = useModal();
-  const { pathname } = useLocation();
-
-  // effect: router — modali se ne smeju preneti preko navigacije
-  useEffect(() => { closeAll(); }, [pathname]);
-
-  return stack.map((entry) => {
-    const Component = registry[entry.id];
-    return (
-      <Dialog key={entry.key} open onOpenChange={(o) => !o && close(entry.key)}>
-        <Suspense fallback={<ModalSkeleton size={entry.meta?.size} />}>
-          <Component {...entry.props} onClose={(r: unknown) => close(entry.key, r)} />
-        </Suspense>
-      </Dialog>
-    );
-  });
-}
-```
-
-Ovo je **jedini dokumentovan `useEffect`** u modal sistemu.
-
-## Upotreba
+Dijalog za dodavanje i izmenu (tehnologija, utisak, član tima, link) dobija samo `{ id? }`.
+Zapis čita iz RTKQ keša svog domenskog hook-a (`useTechnologyForm(id, onClose)`). Čuva kroz
+taj hook i na uspeh se zatvara. Modal ne zna za store: sva logika je u hook-u, a komponenta
+samo raspoređuje polja u `FormDialog`.
 
 ```ts
-const { open } = useModal();
-
-const confirmed = await open<'confirm-delete', boolean>('confirm-delete', {
-  entityId: project.id,
-  entityName: project.name,
-});
-
-if (confirmed) await deleteProject(project.id);
+const tech = useTechnologies()
+<Button onClick={() => tech.add()} />          // open()
+<RowActions onEdit={() => tech.edit(item)} />  // open({ id: item.id })
 ```
-
-Jedan `await` zamenjuje: `useState(false)` + `useState(pendingId)` + `useEffect` koji sluša
-rezultat + callback prop kroz tri nivoa.
-
-## Varijante
-
-Drawer, Sheet i AlertDialog su **isti sistem** sa drugom Radix primitivom u `ModalRoot`-u —
-ne paralelni engine. `meta.size` kontroliše širinu, `meta.dismissible: false` blokira ESC i
-klik van za destruktivne potvrde.
 
 ## Anti-patterns
 
 | ❌ | ✅ |
 |---|---|
-| `const [isOpen, setIsOpen] = useState(false)` za brisanje entiteta | `await open('confirm-delete', …)` |
-| `useEffect(() => { if (result) doThing() }, [result])` | `const result = await open(...)` |
-| `<ConfirmDialog>` importovan direktno u komponentu | registry + lazy |
-| modal koji sam zove `dispatch(deleteProject())` | modal vraća rezultat, pozivalac odlučuje |
-| ručni `onKeyDown` za ESC, ručni focus trap | Radix `Dialog` |
-| dva `ModalRoot`-a | tačno jedan, u `providers/` |
+| `const [isOpen, setIsOpen] = useState(false)` za brisanje | `await confirm(...)` / `useAdminAction().remove` |
+| `window.confirm(...)` | `useConfirm` (blokira pregledač i ne prati temu ni jezik) |
+| `useEffect(() => { if (result) … }, [result])` | `const ok = await confirm(...)` |
+| funkcija ili ceo zapis u props-ima modala | `{ id }` + čitanje iz RTKQ keša |
+| modal uvezen direktno u komponentu | `OVERLAY_MODALS` + `lazy` |
+| ručni Esc, fokus i zaključavanje skrola | `Overlay` |
 
 ## Checklist
 
-- [ ] Modal je u `features/<x>/modals/`, lazy, bez `default export`-a osim za `lazy()`
-- [ ] Upisan u `modalRegistry` **i** u `ModalPropsMap`
-- [ ] Ne dispatch-uje domensku akciju — vraća rezultat kroz `onClose`
-- [ ] i18n ključevi `<feature>.modals.<name>.*` u `sr.json` i `en.json`
-- [ ] Test: open → prikazan, confirm → promise resolve `true`, ESC → `undefined`
-- [ ] Destruktivna akcija ima `meta.dismissible: false`
+- [ ] Ime u `MODALS` i `MODAL_KIND`, `lazy` red u `OVERLAY_MODALS`
+- [ ] Props-i su serijalizabilni; zapis se čita iz keša po `id`
+- [ ] Logika (čuvanje, brisanje) je u domenskom hook-u, ne u modalu
+- [ ] Tekst kroz `t()`, ključevi u `en.ts` **i** `sr.ts`
 - [ ] Nema novog `useState(false)` za dijalog

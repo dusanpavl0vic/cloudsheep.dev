@@ -7,15 +7,17 @@ import { colors, fonts, media } from '@/styles/tokens.yak'
 export const Root = styled.div`
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 1fr;
+  /* minmax(0, …): meni koji klizi horizontalno ne sme da raširi kolonu (i stranicu) na telefonu. */
+  grid-template-columns: minmax(0, 1fr);
 
   ${media.desktop} {
-    grid-template-columns: 248px 1fr;
+    grid-template-columns: 248px minmax(0, 1fr);
   }
 `
 
 export const Sidebar = styled.aside`
   ${glassStrong};
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 18px;

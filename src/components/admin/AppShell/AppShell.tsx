@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 
 import Button from '@/components/buttons/Button'
+import IconButton from '@/components/buttons/IconButton'
 import SegmentedControl from '@/components/buttons/SegmentedControl'
 import ThemeToggle from '@/components/buttons/ThemeToggle'
 import Spinner from '@/components/feedback/Spinner'
@@ -55,7 +56,10 @@ const AppShell = ({ children }: { children: ReactNode }) => {
           <NextLink href={ROUTES.ADMIN} aria-label={t('nav.dashboard')}>
             <Logo size={26} />
           </NextLink>
-          <MobileBar>{controls}</MobileBar>
+          <MobileBar>
+            {controls}
+            <IconButton icon="logOut" label={t('shell.logout')} disabled={isLoggingOut} onClick={() => void logout()} />
+          </MobileBar>
         </Brand>
         <nav aria-label={t('shell.label')}>
           <NavList>

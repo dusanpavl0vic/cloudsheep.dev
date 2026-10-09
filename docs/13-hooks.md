@@ -1,6 +1,6 @@
 # 13 — Hookovi
 
-> Status: active | Last review: 2026-08-15
+> Status: active | Last review: 2026-10-09
 
 **Svaka funkcionalnost se izlaže kroz hook. Komponente su glupe.**
 
@@ -17,69 +17,72 @@ a komponenta ostaje zamenjiva.
    Nikad niz osim za `useState`-like API sa tačno dva člana.
 4. **Hook nikad ne vraća JSX.** Ako vraća — to je komponenta.
 5. **Hook koji radi više stvari se deli.** `useAuth` ≠ `useAuthAndProfileAndSettings`.
-6. **Hook koji ne koristi nijedan React hook nije hook** — to je obična funkcija, u `lib/`.
+6. **Hook koji ne koristi nijedan React hook nije hook** — to je obična funkcija, u `helpers/`.
+7. **React Compiler memoizuje sve** — `useMemo`/`useCallback` se ne pišu (osim slučajeva iz
+   `07-performance.md` §2). Posledica: RHF `formState` i `watch` se ne čitaju direktno, nego
+   kroz `useFormState`/`useWatch` (`10-forms-validation.md`).
 
 ## Gde koji hook živi
 
-| Tip hooka              | Lokacija                      | Primer                             |
-| ---------------------- | ----------------------------- | ---------------------------------- |
-| Domenski               | `features/<x>/hooks/`         | `useAuth`, `useProjectFilters`     |
-| App-specifičan deljeni | `apps/<x>/src/hooks/`         | `useRouteScroll`                   |
-| Generički React        | `@app/hooks`                  | `useDebounce`, `useMediaQuery`     |
-| Store-tipizirani       | `apps/<x>/src/store/hooks.ts` | `useAppDispatch`, `useAppSelector` |
-| UI (ne-domenski)       | `@app/ui`                     | `useDisclosure`                    |
+| Tip hooka           | Lokacija                     | Primer                                   |
+| ------------------- | ---------------------------- | ---------------------------------------- |
+| Domenski (javni)    | `src/hooks/<domen>/`         | `useBriefForm`, `useEstimator`           |
+| Domenski (admin)    | `src/hooks/admin/<domen>/`   | `useTechnologies`, `useNoteEditor`       |
+| Admin, zajednički   | `src/hooks/admin/`           | `useAdminForm`, `useAdminAction`         |
+| Generički React     | `src/hooks/`                 | `useMediaQuery`, `useInView`, `useModal` |
+| Store-tipizirani    | `src/hooks/useStore.ts`      | `useAppDispatch`, `useAppSelector`       |
 
-Pravilo za odluku: **zna li hook za domen?** Ako da → feature. Ako ne, ali zna za ovu app →
-`apps/<x>/src/hooks`. Ako ne zna ni za šta → `@app/hooks`.
+Pravilo za odluku: **zna li hook za domen?** Ako zna, ide u `hooks/<domen>/`. Ako ne zna
+ni za šta, ide u koren `hooks/`. Admin hook nikad ne uvoze javne stranice: admin RTKQ
+endpointi ne smeju u njihov JS.
 
 ## Primeri
 
 ```ts
-// ✅ features/auth/hooks/useAuth.ts
-export function useAuth() {
-  const user = useAppSelector(selectCurrentUser)
-  const { isLoading } = useGetMeQuery(undefined, { skip: user !== null })
+// ✅ hooks/admin/session/useAdminSession.ts — jedini sloj koji zna za store i RTKQ
+export const useAdminSession = () => {
+  const status = useAppSelector(selectSessionStatus)
+  const user = useAppSelector(selectSessionUser)
+  useRestoreSessionQuery(undefined, { skip: status !== 'unknown' })
 
-  return {
-    user,
-    isAuthenticated: user !== null,
-    isLoading,
-  }
+  return { status, user }
 }
 ```
 
 ```ts
-// ✅ features/auth/hooks/useLogin.ts — odvojen, jer radi drugu stvar
-export function useLogin() {
-  const dispatch = useAppDispatch()
-  const [loginMutation, { isLoading, error }] = useLoginMutation()
+// ✅ hooks/admin/technologies/useTechnologies.ts — spisak sa akcijama, bez JSX-a
+export const useTechnologies = () => {
+  const query = useGetTechnologiesQuery(undefined)
+  const [reorder] = useReorderTechnologiesMutation()
+  const [deleteTechnology] = useDeleteTechnologyMutation()
+  const { remove } = useAdminAction()
+  const form = useModal(MODALS.ADMIN_TECHNOLOGY_FORM)
+  const items = query.data ?? []
 
-  const login = useCallback(
-    async (input: LoginInput) => {
-      const result = await loginMutation(input)
-      if ('data' in result) dispatch(sessionEstablished(result.data))
-      return result
-    },
-    [dispatch, loginMutation],
-  )
-
-  return { login, isLoading, error }
+  return {
+    items,
+    isLoading: query.isLoading,
+    isError: query.isError,
+    order: useReorder(items, (ids) => reorder(ids).unwrap()),
+    add: () => form.open(),
+    edit: (technology: AdminTechnology) => form.open({ id: technology.id }),
+    remove: (technology: AdminTechnology) =>
+      remove(t('deleteConfirm', { name: technology.label }), () => deleteTechnology(technology.id).unwrap()),
+  }
 }
 ```
 
 ```tsx
 // ❌ komponenta zna za Redux i RTKQ
-function UserMenu() {
-  const user = useSelector((s: RootState) => s.auth.user);
-  const [logout] = useLogoutMutation();
-  const dispatch = useDispatch();
+const TechnologiesView = () => {
+  const { data } = useGetTechnologiesQuery(undefined)
+  const dispatch = useAppDispatch()
   …
 }
 
 // ✅ komponenta zna samo za hook
-function UserMenu() {
-  const { user } = useAuth();
-  const { logout, isLoading } = useLogout();
+const TechnologiesView = () => {
+  const tech = useTechnologies()
   …
 }
 ```
@@ -98,48 +101,55 @@ Izuzetak: hook sa tačno dva člana koji imitira `useState` (`const [value, setV
 
 ## Katalog
 
-### `@app/hooks` — generički
+### Generički (`src/hooks/`)
 
-| Hook              | Potpis                                | Namena                      |
-| ----------------- | ------------------------------------- | --------------------------- |
-| `useDebounce`     | `(value: T, delay: number) => T`      | odloženo praćenje vrednosti |
-| `useMediaQuery`   | `(query: string) => boolean`          | responsivni breakpoint      |
-| `useIntersection` | `(ref, options) => boolean`           | vidljivost u viewport-u     |
-| `useToggle`       | `(initial?) => [boolean, () => void]` | boolean prekidač            |
-| `usePrevious`     | `(value: T) => T \| undefined`        | prethodna vrednost          |
+| Hook | Namena |
+| --- | --- |
+| `useAppDispatch` / `useAppSelector` / `useAppStore` | tipizirani store (samo u hookovima) |
+| `useModal(name)` | `open(props?)` / `close()` / `isOpen` / `props` za modal iz `ui.modals` ([`06`](06-modals.md)) |
+| `useConfirm()` | `await confirm({ message, danger? })` → `boolean`, bez `window.confirm` |
+| `useToast()` / `useToastQueue()` / `useToastTimer(id)` | poruka u uglu; red za `ToastContainer`; samostalno gašenje |
+| `useKeyTranslator()` / `useApiErrorMessage()` | prevod i18n ključa iz zod-a ili sa servera; `ParsedApiError` → tekst |
+| `useHydrated()` | `true` posle hidratacije (dugme za slanje forme do tada onemogućeno) |
+| `useMediaQuery(query)` / `useReducedMotion()` | media query; `prefers-reduced-motion` |
+| `useInView(ref)` / `useScrollProgress()` / `useNow(ms)` | vidljivost; napredak skrola; sat koji kuca |
+| `useEscapeKey` / `useFocusTrap` / `useLockBodyScroll` | mehanika `Overlay`-a |
+| `useCarousel` / `useCountUp` / `useTyper` | karusel; brojanje do vrednosti; kucanje teksta |
 
-### `@app/ui` — UI, ne-domenski
+### Javni sajt (`src/hooks/<domen>/`)
 
-| Hook            | Namena                                                                                |
-| --------------- | ------------------------------------------------------------------------------------- |
-| `useDisclosure` | open/close/toggle za prezentacione elemente (**ne** za modale — [`06`](06-modals.md)) |
+| Hook | Namena |
+| --- | --- |
+| `contact/useBriefForm` | upit u 3 koraka (RHF, lenji zod resolver, termin, 409 → osveži termine) |
+| `contact/useEmailCheck` / `contact/useFreeSlots` | provera adrese pri napuštanju polja; termini grupisani po danu |
+| `newsletter/useNewsletterSignup` | prijava (double opt-in) |
+| `estimator/useEstimator` | procena cene i roka |
+| `navigation/useMainNav` / `useActiveSection` | meni; sekcija u kojoj je korisnik |
+| `preferences/useThemeToggle` / `useLocaleSwitch` | tema (kolačić); jezik (čuva putanju, upit i heš) |
+| `effects/useRevealOnScroll` / `usePointerEffects` / `useScrollEffects` | otkrivanje pri skrolu; sjaj za kursorom; efekti skrola |
 
-### `apps/web/src/hooks`
+### Admin (`src/hooks/admin/`)
 
-| Hook               | Namena                                                                        |
-| ------------------ | ----------------------------------------------------------------------------- |
-| `useRouteScroll`   | scroll na vrh pri promeni rute                                                |
-| `useTypewriter`    | animacija kucanja; poštuje `prefers-reduced-motion`                           |
-| `usePointerGlow`   | svetlo koje prati kursor po grupi panela; vraća ref za KONTEJNER, ne za panel |
-| `useDocumentHead`  | naslov, opis, `canonical` i `og:url` po ruti; studiju slučaja preskače        |
-| `useDocumentTitle` | naslov i opis za stranicu čiji sadržaj dolazi iz podataka (`ProjectPage`)     |
-
-### `features/auth/hooks`
-
-| Hook        | Vraća                                  |
-| ----------- | -------------------------------------- |
-| `useAuth`   | `{ user, isAuthenticated, isLoading }` |
-| `useLogin`  | `{ login, isLoading, error }`          |
-| `useLogout` | `{ logout, isLoading }`                |
-
-> Novi hook se dodaje sa `/new-hook <scope> <useName>` — komanda upisuje i red u ovu tabelu.
+| Hook | Namena |
+| --- | --- |
+| `session/useAdminSession` / `useRequireAdmin` | sesija (obnova iz httpOnly kolačića); bez nje → prijava |
+| `session/useLogin` / `useLogout` / `useAdminLocale` / `useAdminNav` | prijava; odjava; jezik admin-a (kolačić + `refresh`); meni |
+| `useAdminForm({ schema, defaultValues, save, onSaved?, onInvalid? })` | RHF + zod; greška polja sa servera na polje; toast ([`10`](10-forms-validation.md)) |
+| `useAdminAction()` | `run(action, 'saved' \| 'deleted')` sa toast-om; `remove(message, action)` = potvrda + brisanje |
+| `useReorder(items, reorder)` | `canMove(i, ±1)` / `move(i, ±1)` → ceo novi redosled |
+| `useImageUpload(onUploaded)` | `pick(file)` → otpremi → `Asset` |
+| `<domen>/use<Domen>s` | spisak: `{ items, isLoading, isError, order?, add, edit, remove, toggle… }` |
+| `<domen>/use<Domen>Form(id, onSaved)` | dijalog dodaj/izmeni (čita zapis iz RTKQ keša po `id`) |
+| `<domen>/use<Domen>Page(id)` + `use<Domen>Editor(record)` | stranica editora: prvo podaci, pa forma sa tačnim podrazumevanim vrednostima |
+| `dashboard/useDashboard` | brojke iz istih upita kao stranice (keš se deli) |
 
 ## Anti-patterns
 
 | ❌                                      | Zašto                   | ✅                     |
 | --------------------------------------- | ----------------------- | ---------------------- |
-| `useSelector` u komponenti              | komponenta zna za Redux | feature hook           |
+| `useAppSelector` u komponenti           | komponenta zna za Redux | domenski hook          |
 | `useGetProjectsQuery()` u komponenti    | isto, za server state   | `useProjects()`        |
+| `form.formState` / `form.watch` uz Compiler | memoizovan proxy — stara vrednost | `useFormState` / `useWatch` |
 | hook koji vraća `<Spinner />`           | to je komponenta        | vrati `isLoading`      |
 | `useEverything()` sa 12 povratnih polja | radi previše            | podeli po odgovornosti |
 | hook u `lib/` bez ijednog React hooka   | nije hook               | obična funkcija        |
@@ -149,10 +159,10 @@ Izuzetak: hook sa tačno dva člana koji imitira `useState` (`const [value, setV
 ## Checklist
 
 - [ ] Nova logika je u hooku, ne u komponenti
-- [ ] Hook je na pravom nivou (feature / app / paket)
+- [ ] Hook je na pravom nivou (generički / domenski / admin)
 - [ ] Vraća objekat sa stabilnim ključevima
 - [ ] Ne vraća JSX
 - [ ] Radi jednu stvar
-- [ ] Ima test (`renderHook`), pokrivenost ≥ 90% za feature hookove
+- [ ] Netrivijalna logika ima test (čista funkcija u `helpers/` ili `renderHook`)
 - [ ] Upisan u katalog iznad ako je deljiv
 - [ ] Nijedna komponenta ne uvozi `useAppSelector`/RTKQ hook direktno
