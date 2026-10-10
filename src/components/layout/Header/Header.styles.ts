@@ -13,6 +13,8 @@ export const Root = styled.header`
 
 export const Bar = styled.div`
   ${glassStrong};
+  /* Bez ivice: nad tamnim sekcijama (footer) 1px svetla ivica se vidi kao okvir. */
+  border: 0;
   position: relative;
   overflow: hidden;
   max-width: ${CONTAINER_MAX_WIDTH}px;

@@ -140,7 +140,7 @@ export const Mail = styled.a`
 export const WordWrap = styled.div`
   position: relative;
   overflow: hidden;
-  height: clamp(90px, 17vw, 250px);
+  height: min(15vw, 272px);
   margin-top: -6px;
 `
 
@@ -153,11 +153,18 @@ export const Word = styled.div`
   text-align: center;
   font-family: ${fonts.heading};
   font-weight: 700;
-  font-size: clamp(70px, 15.6vw, 250px);
+  /* „cloudsheep.dev" je ~6.8× širok koliko je visok font: 13.8vw ostavlja ~3 % sa strane. Veći
+     font prelazi širinu ekrana i poslednje slovo se seče (bilo: 15.6vw, min 70px). */
+  font-size: min(13.8vw, 250px);
   line-height: 0.86;
   letter-spacing: -0.065em;
   white-space: nowrap;
-  background: linear-gradient(180deg, ${INVERSE.button} 0%, ${BRAND_COLORS.deep} 70%, transparent 100%);
+  background: linear-gradient(
+    180deg,
+    ${INVERSE.button} 0%,
+    ${BRAND_COLORS.deep} 70%,
+    transparent 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

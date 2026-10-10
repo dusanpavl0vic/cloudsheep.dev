@@ -15,7 +15,15 @@ interface NotesPageProps {
 export const generateMetadata = async ({ params }: NotesPageProps): Promise<Metadata> => {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'meta.notes' })
-  return buildPageMetadata({ locale, path: ROUTES.NOTES, title: t('title'), description: t('description') })
+  // Dok nema nijedne beleške, stranica je samo „uskoro" — tanak sadržaj ne ide u indeks
+  const empty = (await listPublishedNotes(locale)).length === 0
+  return buildPageMetadata({
+    locale,
+    path: ROUTES.NOTES,
+    title: t('title'),
+    description: t('description'),
+    noindex: empty,
+  })
 }
 
 const NotesPage = async ({ params }: NotesPageProps) => {

@@ -21,7 +21,7 @@ const TechRibbon = ({ technologies }: TechRibbonProps) => {
     <List aria-hidden={hidden || undefined}>
       {technologies.map((tech) => (
         <Item key={tech.id}>
-          <TechTile label={tech.label} logoUrl={tech.logoUrl} size={40} />
+          <TechTile label={tech.label} logoUrl={tech.logoUrl} size={40} captioned />
           {tech.label}
         </Item>
       ))}

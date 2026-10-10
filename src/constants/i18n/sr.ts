@@ -63,7 +63,7 @@ const sr: Messages = {
         'Pokreni projekat sa produkt studijom iz Niša. Odgovor u roku od jednog radnog dana.',
     },
     notFound: { title: 'Stranica nije pronađena — CloudSheep' },
-    ogAlt: 'CloudSheep — ovca čije je telo oblak',
+    ogAlt: 'CloudSheep — ceo proizvod, gradi ga jedan: dizajn, web i mobilne aplikacije',
   },
   errors: {
     notFoundEyebrow: '404',
@@ -184,7 +184,8 @@ const sr: Messages = {
     errors: {
       invalid: 'Neka polja traže pažnju.',
       slotTaken: 'Taj termin je upravo zauzet. Izaberite drugi.',
-      mailFailed: 'Mejl za potvrdu nije poslat. Pokušaj ponovo za minut ili piši direktno na adresu sa ove stranice.',
+      mailFailed:
+        'Mejl za potvrdu nije poslat. Pokušaj ponovo za minut ili piši direktno na adresu sa ove stranice.',
     },
   },
   mail: {
@@ -195,7 +196,8 @@ const sr: Messages = {
       lead: 'potvrdi svoju adresu — upit stiže studiju čim to uradiš.',
       expiry: 'Link važi 24 sata. Ako si izabrao termin poziva, on se čuva do tada.',
       button: 'Potvrdi i pošalji upit',
-      ignore: 'Nisi popunjavao formu na cloudsheep.dev? Zanemari ovaj mejl — ništa neće biti poslato.',
+      ignore:
+        'Nisi popunjavao formu na cloudsheep.dev? Zanemari ovaj mejl — ništa neće biti poslato.',
       signoff: 'Pozdrav, CloudSheep',
     },
     confirmNewsletter: {
@@ -237,7 +239,8 @@ const sr: Messages = {
     languageNames: { en: 'English', sr: 'Srpski' },
   },
   footer: {
-    tagline: 'Produkt studio iz Niša. Dizajn, web i mobilne aplikacije od prve skice do lansiranja.',
+    tagline:
+      'Produkt studio iz Niša. Dizajn, web i mobilne aplikacije od prve skice do lansiranja.',
     columns: { studio: 'Studio', work: 'Radovi', resources: 'Resursi' },
     allProjects: 'Svi projekti',
     citiesTitle: 'Klijenti iz',
@@ -308,7 +311,8 @@ const sr: Messages = {
       eyebrow: 'studio',
       title: 'Jedan čovek,',
       muted: 'ceo proizvod.',
-      headline: 'Svaki projekat vodi senior inženjer-dizajner, uz mali tim proverenih specijalista.',
+      headline:
+        'Svaki projekat vodi senior inženjer-dizajner, uz mali tim proverenih specijalista.',
       noDiploma: 'Bez diplome',
       previous: 'Prethodni član tima',
       next: 'Sledeći član tima',
@@ -383,7 +387,8 @@ const sr: Messages = {
       eyebrow: 'Stack',
       title: 'Alati koje koristim,',
       muted: 'i oni koje ne.',
-      subtitle: 'Biram dosadan i proveren stack. Nova stvar ulazi tek kad reši problem koji stari nije mogao.',
+      subtitle:
+        'Biram dosadan i proveren stack. Nova stvar ulazi tek kad reši problem koji stari nije mogao.',
     },
     pricing: {
       eyebrow: 'Cene',
@@ -434,7 +439,12 @@ const sr: Messages = {
         features: '3. Funkcionalnosti',
         pace: '4. Tempo',
       },
-      types: { site: 'Sajt', webapp: 'Web aplikacija', mobile: 'Mobilna aplikacija', design: 'Samo dizajn' },
+      types: {
+        site: 'Sajt',
+        webapp: 'Web aplikacija',
+        mobile: 'Mobilna aplikacija',
+        design: 'Samo dizajn',
+      },
       platforms: { web: 'Web', ios: 'iOS', android: 'Android' },
       features: {
         auth: 'Korisnički nalozi',
@@ -550,18 +560,36 @@ const sr: Messages = {
       summary: '{name} · {type}',
       call: 'Uvodni poziv: {when}',
       button: 'Potvrdi i pošalji',
-      confirmed: { title: 'Upit je poslat', body: 'Hvala — odgovor stiže u roku od jednog radnog dana. Kopija je na putu ka tvom sandučetu.' },
-      expired: { title: 'Link je istekao', body: 'Linkovi važe 24 sata. Pošalji upit ponovo — traje minut.' },
-      invalid: { title: 'Link nije važeći', body: 'Možda je već iskorišćen ili nije kopiran ceo. Pošalji upit ponovo ako nije stigao.' },
+      confirmed: {
+        title: 'Upit je poslat',
+        body: 'Hvala — odgovor stiže u roku od jednog radnog dana. Kopija je na putu ka tvom sandučetu.',
+      },
+      expired: {
+        title: 'Link je istekao',
+        body: 'Linkovi važe 24 sata. Pošalji upit ponovo — traje minut.',
+      },
+      invalid: {
+        title: 'Link nije važeći',
+        body: 'Možda je već iskorišćen ili nije kopiran ceo. Pošalji upit ponovo ako nije stigao.',
+      },
       again: 'Nazad na upit',
     },
     newsletter: {
       title: 'Potvrdi prijavu',
       lead: 'Jedan klik i stiže ti jedna beleška mesečno iz studija.',
       button: 'Potvrdi prijavu',
-      confirmed: { title: 'Prijavljen si', body: 'Vidimo se u sledećoj belešci. Odjava je jednim klikom iz svakog mejla.' },
-      expired: { title: 'Link je istekao', body: 'Prijavi se ponovo iz podnožja bilo koje stranice.' },
-      invalid: { title: 'Link nije važeći', body: 'Možda je već iskorišćen. Prijavi se ponovo iz podnožja bilo koje stranice.' },
+      confirmed: {
+        title: 'Prijavljen si',
+        body: 'Vidimo se u sledećoj belešci. Odjava je jednim klikom iz svakog mejla.',
+      },
+      expired: {
+        title: 'Link je istekao',
+        body: 'Prijavi se ponovo iz podnožja bilo koje stranice.',
+      },
+      invalid: {
+        title: 'Link nije važeći',
+        body: 'Možda je već iskorišćen. Prijavi se ponovo iz podnožja bilo koje stranice.',
+      },
       again: 'Nazad na sajt',
     },
   },
@@ -634,9 +662,18 @@ const sr: Messages = {
         times: 'Satnice',
         timesHint: 'Odvojene zarezom, npr. 10:00, 14:30',
         submit: 'Dodaj termine',
-        created: '{count, plural, =0 {Nema novih termina — već postoje.} one {Dodat # termin.} few {Dodata # termina.} other {Dodato # termina.}}',
+        created:
+          '{count, plural, =0 {Nema novih termina — već postoje.} one {Dodat # termin.} few {Dodata # termina.} other {Dodato # termina.}}',
       },
-      weekdays: { mon: 'Pon', tue: 'Uto', wed: 'Sre', thu: 'Čet', fri: 'Pet', sat: 'Sub', sun: 'Ned' },
+      weekdays: {
+        mon: 'Pon',
+        tue: 'Uto',
+        wed: 'Sre',
+        thu: 'Čet',
+        fri: 'Pet',
+        sat: 'Sub',
+        sun: 'Ned',
+      },
     },
     newsletter: {
       lead: '{confirmed} potvrđeno · {pending} čeka potvrdu',
@@ -662,7 +699,13 @@ const sr: Messages = {
       slugHint: 'Mala slova i brojevi, npr. nextjs',
       group: 'Grupa',
       logo: 'Logotip',
-      groups: { frontend: 'Frontend', backend: 'Backend', mobile: 'Mobilno', tooling: 'Alati', design: 'Dizajn' },
+      groups: {
+        frontend: 'Frontend',
+        backend: 'Backend',
+        mobile: 'Mobilno',
+        tooling: 'Alati',
+        design: 'Dizajn',
+      },
       deleteConfirm: 'Obrisati {name}? Projekti koji je koriste gube oznaku.',
     },
     testimonials: {
