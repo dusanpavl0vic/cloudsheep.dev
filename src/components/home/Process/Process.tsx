@@ -7,14 +7,8 @@ import { PROCESS_TONES } from '@/constants/theme'
 
 import { PROCESS_STEPS } from './Process.constants'
 import {
-  BigNumber,
-  Card,
-  CardIndex,
-  CardText,
-  CardTitle,
   Deck,
   Intro,
-  Meta,
   Progress,
   ProgressFill,
   Root,
@@ -24,13 +18,14 @@ import {
   StepTitle,
   Sticky,
 } from './Process.styles'
+import ProcessCard from './ProcessCard'
 
 const tone = (index: number) => PROCESS_TONES[index % PROCESS_TONES.length] ?? PROCESS_TONES[0]
 const label = (index: number) => `/0${String(index + 1)}`
 
 /**
- * „Proces bez iznenađenja." — sekcija se zakači, a skrol smenjuje karte faza (`PageEffects`).
- * Bez JS-a i uz smanjeno kretanje: obična lista.
+ * „Proces bez iznenađenja." — na desktopu se sekcija zakači, a skrol smenjuje karte faza
+ * (`PageEffects`). Na telefonu su karte lista, na tabletu mreža 2×2; isto i bez JS-a.
  */
 const Process = () => {
   const t = useTranslations('home.process')
@@ -63,22 +58,14 @@ const Process = () => {
         </Intro>
         <Deck>
           {PROCESS_STEPS.map((key, index) => (
-            <Card
+            <ProcessCard
               key={key}
-              $tone={tone(index)}
-              $layer={index + 1}
-              {...{ [EFFECT_ATTRS.pinCard]: index }}
-            >
-              <BigNumber
-                $tone={tone(index)}
-                aria-hidden="true"
-                data-number={`0${String(index + 1)}`}
-              />
-              <CardIndex aria-hidden="true">{label(index)}</CardIndex>
-              <CardTitle>{t(`steps.${key}.title`)}</CardTitle>
-              <CardText>{t(`steps.${key}.desc`)}</CardText>
-              <Meta>{t(`steps.${key}.meta`)}</Meta>
-            </Card>
+              index={index}
+              tone={tone(index)}
+              title={t(`steps.${key}.title`)}
+              text={t(`steps.${key}.desc`)}
+              meta={t(`steps.${key}.meta`)}
+            />
           ))}
         </Deck>
       </Sticky>

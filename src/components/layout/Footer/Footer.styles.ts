@@ -2,7 +2,7 @@ import { styled } from 'next-yak'
 
 import { Link } from '@/i18n/navigation'
 import { focusRing } from '@/styles/mixins'
-import { BRAND_COLORS, INVERSE, fonts, zIndex } from '@/styles/tokens.yak'
+import { BRAND_COLORS, INVERSE, fonts, media, zIndex } from '@/styles/tokens.yak'
 
 export const Root = styled.footer`
   position: relative;
@@ -27,23 +27,41 @@ export const Inner = styled.div`
   position: relative;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 72px clamp(16px, 4vw, 40px) 0;
+  padding: clamp(56px, 8vw, 72px) clamp(16px, 4vw, 40px) 0;
   display: flex;
   flex-direction: column;
-  gap: 56px;
+  gap: clamp(44px, 6vw, 56px);
 `
 
+/** Telefon: marka preko cele širine, linkovi u 2 kolone · tablet: 3 kolone · desktop: 4 u redu. */
 export const Columns = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
-  gap: 40px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px 20px;
+
+  > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  ${media.tablet} {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 40px;
+  }
+
+  ${media.desktop} {
+    grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr));
+
+    > :first-child {
+      grid-column: auto;
+    }
+  }
 `
 
 export const Column = styled.nav`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 14px;
+  gap: 12px;
 `
 
 export const Heading = styled.span`
@@ -68,7 +86,7 @@ export const ColumnLink = styled(Link)`
 `
 
 export const Tagline = styled.p`
-  max-width: 280px;
+  max-width: 320px;
   font-size: 15px;
   line-height: 1.55;
   color: ${INVERSE.text};
@@ -115,13 +133,19 @@ export const Cities = styled.ul`
 
 export const Bottom = styled.div`
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px 24px;
+  flex-direction: column;
+  gap: 12px;
   padding: 22px 0;
   border-top: 1px solid ${INVERSE.line};
   font-size: 14px;
   color: ${INVERSE.faint};
+
+  ${media.tablet} {
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+  }
 `
 
 export const BottomGroup = styled.div`

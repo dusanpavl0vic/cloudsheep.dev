@@ -3,29 +3,63 @@ import { css, styled } from 'next-yak'
 import { EASE_OUT, blur, colors, fonts, media, radii } from '@/styles/tokens.yak'
 import { BRAND_COLORS, BRAND_SHADOWS, INVERSE } from '@/styles/tokens.yak'
 
+/**
+ * Telefon: paketi jedan ispod drugog · tablet: jedan ispod drugog, ali vodoravni (opis levo,
+ * stavke i dugme desno) — `auto-fit` je na tabletu davao 2 + 1 · desktop: tri kolone.
+ */
 export const Plans = styled.ul`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-  gap: 18px;
-  align-items: center;
-  margin-top: 44px;
+  gap: 24px;
+  margin-top: 36px;
+
+  ${media.desktop} {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    align-items: center;
+    margin-top: 44px;
+  }
 `
 
-/** Istaknut paket je tamna površina podignuta za 12 px (dizajn). */
+/** Istaknut paket je tamna površina, na desktopu podignuta za 12 px (dizajn). */
 export const Plan = styled.li<{ $featured: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: 32px 28px;
+  gap: 16px;
+  padding: 30px 22px 24px;
   border-radius: 24px;
   box-shadow: ${BRAND_SHADOWS.panel};
   transition: transform 0.4s ${EASE_OUT};
 
+  ${media.tabletOnly} {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-areas:
+      'name features'
+      'price features'
+      'desc features'
+      'desc cta';
+    gap: 10px 36px;
+    padding: 30px 28px 28px;
+
+    > :last-child {
+      grid-area: cta;
+      align-self: end;
+    }
+  }
+
+  ${media.desktop} {
+    gap: 18px;
+    padding: 32px 28px;
+  }
+
   ${({ $featured }) =>
     $featured
       ? css`
-          translate: 0 -12px;
+          ${media.desktop} {
+            translate: 0 -12px;
+          }
           background: ${INVERSE.surface};
           color: ${INVERSE.soft};
           border: 1px solid ${BRAND_COLORS.deep};
@@ -48,7 +82,7 @@ export const Plan = styled.li<{ $featured: boolean }>`
 export const Badge = styled.span`
   position: absolute;
   top: -13px;
-  left: 28px;
+  left: 22px;
   padding: 5px 12px;
   border-radius: ${radii.pill}px;
   background: linear-gradient(90deg, ${BRAND_COLORS.blue}, ${BRAND_COLORS.sky});
@@ -63,6 +97,10 @@ export const Name = styled.h3`
   font-size: 24px;
   letter-spacing: -0.02em;
   color: inherit;
+
+  ${media.tabletOnly} {
+    grid-area: name;
+  }
 `
 
 export const Price = styled.span<{ $featured: boolean }>`
@@ -74,24 +112,43 @@ export const Price = styled.span<{ $featured: boolean }>`
     css`
       color: ${INVERSE.accent};
     `}
+
+  ${media.tabletOnly} {
+    grid-area: price;
+  }
 `
 
 export const Description = styled.p`
   font-size: 15.5px;
   line-height: 1.55;
   opacity: 0.9;
+
+  ${media.tabletOnly} {
+    grid-area: desc;
+    margin-top: 6px;
+  }
 `
 
+/** Na tabletu kolone deli razmak, pa vodoravna linija između opisa i stavki nema mesta. */
 export const Rule = styled.span`
   height: 1px;
   background: currentColor;
   opacity: 0.12;
+
+  ${media.tabletOnly} {
+    display: none;
+  }
 `
 
 export const Features = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 11px;
+
+  ${media.tabletOnly} {
+    grid-area: features;
+    padding-bottom: 12px;
+  }
 `
 
 export const Feature = styled.li`

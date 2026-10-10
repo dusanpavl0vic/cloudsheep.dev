@@ -25,7 +25,8 @@ export const applyPin = (pin: HTMLElement) => {
     } else {
       const k = Math.min(delta, PIN.maxStack)
       card.style.transform = `translateY(${String(-k * PIN.stackShiftPx)}px) scale(${String(1 - k * PIN.stackScale)})`
-      card.style.opacity = String(Math.max(0, 1 - k * PIN.stackFade))
+      // Karta na vrhu špila (k < 1) ostaje puna: kroz providnu se čitao tekst karte ispod nje.
+      card.style.opacity = String(Math.max(0, 1 - Math.max(0, k - 1) * PIN.stackFade))
       card.style.filter = k > 0 ? `saturate(${String(1 - k * 0.3)})` : 'none'
     }
   })
@@ -41,4 +42,19 @@ export const applyPin = (pin: HTMLElement) => {
     if (index === active) step.setAttribute('aria-current', 'step')
     else step.removeAttribute('aria-current')
   })
+}
+
+/**
+ * Vraća karte, korake i traku u stanje iz CSS-a — kad kačenja više nema (ekran ispod desktopa,
+ * smanjeno kretanje). Inače bi karte ostale sakrivene stilom iz poslednjeg `applyPin`.
+ */
+export const resetPin = (pin: HTMLElement) => {
+  pin
+    .querySelectorAll<HTMLElement>(
+      `[${EFFECT_ATTRS.pinCard}], [${EFFECT_ATTRS.pinStep}], [${EFFECT_ATTRS.pinFill}]`,
+    )
+    .forEach((el) => {
+      Object.assign(el.style, { transform: '', opacity: '', filter: '', width: '' })
+      el.removeAttribute('aria-current')
+    })
 }

@@ -1,6 +1,6 @@
 import { styled } from 'next-yak'
 
-import { BRAND_SHADOWS, INVERSE, spacing } from '@/styles/tokens.yak'
+import { BRAND_SHADOWS, INVERSE, media, spacing } from '@/styles/tokens.yak'
 
 export const Wrap = styled.section`
   max-width: 1200px;
@@ -16,8 +16,8 @@ export const Panel = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 28px;
-  padding: clamp(40px, 7vw, 96px) clamp(24px, 5vw, 72px);
-  border-radius: 34px;
+  padding: clamp(40px, 7vw, 96px) clamp(18px, 5vw, 72px);
+  border-radius: clamp(26px, 4vw, 34px);
   background: ${INVERSE.surface};
   color: ${INVERSE.soft};
   text-align: center;
@@ -56,9 +56,23 @@ export const Accent = styled.span`
   color: ${INVERSE.accent};
 `
 
+/** Telefon: dugmad pune širine, adresa se prelama — u jednom redu je bila šira od trake. */
 export const Actions = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
+
+  ${media.phone} {
+    display: grid;
+    width: 100%;
+    max-width: 360px;
+
+    > a {
+      padding-inline: 16px;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      text-align: center;
+    }
+  }
 `

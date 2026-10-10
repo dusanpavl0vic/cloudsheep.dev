@@ -8,7 +8,7 @@ export const Root = styled(Slot)<{ $interactive: boolean }>`
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  padding: 30px;
+  padding: 24px 22px;
   border-radius: ${radii.xl}px;
   background: ${colors.glass};
   backdrop-filter: ${blur.soft};
@@ -21,6 +21,10 @@ export const Root = styled(Slot)<{ $interactive: boolean }>`
     border-color 0.5s,
     box-shadow 0.5s,
     translate 0.5s ${EASE_OUT};
+
+  ${media.tablet} {
+    padding: 30px;
+  }
 
   ${({ $interactive }) =>
     $interactive &&
@@ -43,7 +47,11 @@ export const Glow = styled.span`
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image: radial-gradient(circle 260px at var(--gx, -400px) var(--gy, -400px), ${ACCENTS.cardGlow} 0%, transparent 72%);
+  background-image: radial-gradient(
+    circle 260px at var(--gx, -400px) var(--gy, -400px),
+    ${ACCENTS.cardGlow} 0%,
+    transparent 72%
+  );
 `
 
 export const TopLine = styled.span`
@@ -62,10 +70,14 @@ export const Number = styled.span`
   z-index: -1;
   font-family: ${fonts.heading};
   font-weight: 700;
-  font-size: 78px;
+  font-size: 64px;
   line-height: 1;
   color: ${colors.ink};
   opacity: 0.06;
+
+  ${media.tablet} {
+    font-size: 78px;
+  }
 `
 
 export const Corner = styled.span<{ $side: 'left' | 'right' }>`
@@ -77,4 +89,3 @@ export const Corner = styled.span<{ $side: 'left' | 'right' }>`
   border-bottom: 1px solid ${colors.line2};
   border-${({ $side }) => $side}: 1px solid ${colors.line2};
 `
-

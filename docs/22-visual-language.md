@@ -1,6 +1,6 @@
 # 22 — Vizuelni jezik
 
-> Status: active | Last review: 2026-09-09
+> Status: active | Last review: 2026-10-10
 
 Ovaj dokument opisuje **vizuelni sloj** koji stoji preko tokena iz
 [`08-styling-ui.md`](08-styling-ui.md). Tokeni kažu _koje su boje_; ovde piše _kako se koriste_.
@@ -98,9 +98,13 @@ meka radijalna svetla u `--aurora-*` bojama.
 svaki kadar u kom se nešto pomeri. Zato:
 
 - **Poluprečnik prati veličinu površine.** 14px (`--glass-blur`) za kartice i panele,
-  22px (`--glass-blur-strong`) za slojeve iznad sadržaja (dijalog, mobilna navigacija,
-  header), **8px za kontrole** (`control` varijanta: dugme, pilula, polje). Poluprečnik
-  veći od pola visine elementa nije materijal nego zamućena fleka.
+  22px (`--glass-blur-strong`) za slojeve iznad sadržaja (dijalog, header), **8px za
+  kontrole** (`control` varijanta: dugme, pilula, polje). Poluprečnik veći od pola visine
+  elementa nije materijal nego zamućena fleka.
+- **Panel unutar zamućene pozadine je pun, ne staklo** (mobilni meni, 2026-10-10). Pozadina
+  overlay-a već ima `backdrop-filter`, pa zamućenje panela vidi samo veo: kroz panel se
+  čitao tekst hero-a ispod stavki menija. Isto važi za karte koje se slažu jedna preko druge
+  (zakačeni proces na desktopu) — kroz providnu kartu se čita tekst karte ispod nje.
 - **Kontrole SMEJU nositi staklo.** Prva verzija ovog dokumenta je to zabranjivala; zabrana
   je pala na merenju, ne na raspravi. Ali `default` dugme ostaje **puna plava** — plava je
   jedina boja akcije (§4), a staklo na primarnom dugmetu ga izjednačava sa sekundarnim.
@@ -287,6 +291,30 @@ Podloga sekcije sme da nosi **finu tačkastu teksturu** — ali samo statičnu.
 > perspektivna mreža koja klizi. Oba su animirala `background-position`, što znači ponovno
 > crtanje cele površine u svakom kadru — trza se na slabijem uređaju i vuče pogled sa naslova.
 > Ako pozadina mora da se kreće, to je `transform` ili `opacity`, i to na malom elementu.
+
+### 6b. Telefon i tablet nisu smanjen desktop
+
+Sekcija koja na desktopu radi kroz prostor (talas, špil, tri kolone) na uskom ekranu dobija
+**drugi raspored**, ne isti umanjen. Izmereno na 375 i 768 px pre izmene: horizontalni skrol
+od trake tehnologija, rupa od ~900 px u procesu, header koji se na 1024 px preklapa.
+
+| Sekcija      | Telefon                                                                 | Tablet (640–1023)                         | Desktop                       |
+| ------------ | ----------------------------------------------------------------------- | ----------------------------------------- | ----------------------------- |
+| Header       | logo · tema · meni                                                      | logo · tema · CTA · meni                  | pun meni tek od `wide` (1200) |
+| Mobilni meni | preko celog ekrana, puna podloga, numerisane stavke, jezik i tema u dnu | panel od 380 px                           | —                             |
+| Proces       | lista karata                                                            | mreža 2×2                                 | zakačen špil (`applyPin`)     |
+| Brojke       | 2×2                                                                     | 4 u redu                                  | 4 u redu                      |
+| Usluge       | jedna kolona                                                            | 2×2                                       | 2×2                           |
+| Stack        | pločice sa nazivom, centrirane                                          | isto                                      | talas nad mrežom              |
+| Cene         | jedna kolona                                                            | vodoravne kartice (opis · stavke + dugme) | tri kolone, srednja podignuta |
+| Radovi       | slika iznad, sažetak 4 reda                                             | slika i tekst u redu, sažetak 4 reda      | ceo sažetak                   |
+| Podnožje     | marka, pa linkovi u 2 kolone                                            | marka, pa 3 kolone                        | 4 kolone                      |
+
+- **Zakačena sekcija samo na desktopu.** Kačenje traži ekran viši od svih karata zajedno; na
+  telefonu su se karte preklapale i sekle. `useScrollEffects` poziva `applyPin` samo dok važi
+  `MEDIA_QUERY.desktop`, a `resetPin` briše upisane stilove pri prelasku ispod desktopa i u
+  cleanup-u (inače karte ostanu sakrivene posle gašenja efekata uz smanjeno kretanje).
+- **Karta na vrhu špila je puna** (`opacity: 1`); blede samo karte iza nje.
 
 ### 7. Strelica ispred linka u listi
 
