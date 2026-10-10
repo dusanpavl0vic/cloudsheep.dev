@@ -108,7 +108,7 @@ Izuzetak: hook sa tačno dva člana koji imitira `useState` (`const [value, setV
 | `useAppDispatch` / `useAppSelector` / `useAppStore` | tipizirani store (samo u hookovima) |
 | `useModal(name)` | `open(props?)` / `close()` / `isOpen` / `props` za modal iz `ui.modals` ([`06`](06-modals.md)) |
 | `useConfirm()` | `await confirm({ message, danger? })` → `boolean`, bez `window.confirm` |
-| `useToast()` / `useToastQueue()` / `useToastTimer(id)` | poruka u uglu; red za `ToastContainer`; samostalno gašenje |
+| `useToast()` / `useToastQueue()` / `useToastTimer(id)` | poruka u uglu (samo admin); red za `ToastContainer`; samostalno gašenje |
 | `useKeyTranslator()` / `useApiErrorMessage()` | prevod i18n ključa iz zod-a ili sa servera; `ParsedApiError` → tekst |
 | `useHydrated()` | `true` posle hidratacije (dugme za slanje forme do tada onemogućeno) |
 | `useMediaQuery(query)` / `useReducedMotion()` | media query; `prefers-reduced-motion` |
@@ -138,6 +138,7 @@ Izuzetak: hook sa tačno dva člana koji imitira `useState` (`const [value, setV
 | `useAdminAction()` | `run(action, 'saved' \| 'deleted')` sa toast-om; `remove(message, action)` = potvrda + brisanje |
 | `useReorder(items, reorder)` | `canMove(i, ±1)` / `move(i, ±1)` → ceo novi redosled |
 | `useImageUpload(onUploaded)` | `pick(file)` → otpremi → `Asset` |
+| `useFormList({ control, setValue, name })` | ponavljajuća grupa polja bez `useFieldArray`: `items`, `add(empty)`, `remove(i)` |
 | `<domen>/use<Domen>s` | spisak: `{ items, isLoading, isError, order?, add, edit, remove, toggle… }` |
 | `<domen>/use<Domen>Form(id, onSaved)` | dijalog dodaj/izmeni (čita zapis iz RTKQ keša po `id`) |
 | `<domen>/use<Domen>Page(id)` + `use<Domen>Editor(record)` | stranica editora: prvo podaci, pa forma sa tačnim podrazumevanim vrednostima |

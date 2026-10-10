@@ -145,6 +145,26 @@ import { ChevronDown } from 'lucide-react';
 
 Provera: `/bundle-check`, `pnpm size`.
 
+### 6a. Admin ne sme da puni JS javnih stranica
+
+Turbopack izbacuje nekorišćene izvoze po upotrebi u **celoj** aplikaciji, ne po ruti. Modul
+koji dele javni deo i admin (RTK, react-hook-form, `constants/*`, mapa ikonica) zato na javnoj
+stranici nosi i sve što od njega koristi admin, pa i kod iza `lazy()` reference. Merenje
+2026-10-10: `/contact` 198 → 203,4 KB, samo zbog admin faze.
+
+| ❌ | ✅ |
+|---|---|
+| admin modali u javnom registru (`lazy`) | `AdminModalRoot` u `app/admin/layout.tsx` |
+| toast poruke u zajedničkom `RootLayout` | `ToastContainer` samo u admin layout-u (javni sajt ih ne prikazuje) |
+| admin putanje i RTKQ tagovi u `constants/api.ts` | `constants/adminApi.ts`; admin meni u `constants/adminNavigation.ts` |
+| RHF `useFieldArray` u admin formama (+1,4 KB na `/contact`) | `useFormList` (`useWatch` + `setValue`) |
+| ikonica u zatvorenoj listi koju niko ne koristi | lista `constants/icons.ts` sadrži samo upotrebljene |
+| deo forme koji se vidi tek kasnije (korak 3, potvrda) | `next/dynamic` |
+
+RTK Query u admin-u i dalje zadržava `createAsyncThunk`/matchere i immer patch-eve u RTK
+modulu (~2,3 KB na svakoj javnoj ruti). Na zajedničkom modulu se to ne može odvojiti, pa je
+taj trošak uračunat u budžet. Provera posle svake admin izmene: `pnpm size` (CI).
+
 ## 7. Lighthouse
 
 | Metrika | Cilj | Mehanizam |
@@ -180,8 +200,9 @@ Provera: `/perf-audit`, `pnpm lh`.
 ## 8. Referentne brojke
 
 JS po javnoj ruti (gzip, pravi Chromium, `pnpm size`, ADR 0014; budžet 200 KB):
-`/` 189,8 · `/projects` 180,4 · `/notes` 180,4 · `/contact` 198,0 KB. React 19 + Next 16
-runtime čini ~128 KB i ne smanjuje se.
+`/` 189,8 · `/projects` 180,4 · `/notes` 180,4 · `/contact` 198,0 KB (pre admin-a). Posle admin
+faze i mera iz §6a `/contact` je oko 199 KB, najbliže budžetu. React 19 + Next 16 runtime
+čini ~128 KB i ne smanjuje se.
 
 Lighthouse mobile (simulirano throttle-ovanje, localhost): početna 85, projekti 89, kontakt 87.
 Devtools throttle: 91 / 98. Simulirani LCP na localhost-u je pesimističan; konačni broj je sa

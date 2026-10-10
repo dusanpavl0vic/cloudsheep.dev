@@ -1,18 +1,12 @@
-import { lazy, type ComponentType } from 'react'
+import { lazy } from 'react'
 
-import type { ModalName } from '@/constants/modals'
-
-import type { OverlayModalProps } from '../shared/types'
+import type { ModalRegistry } from '../ModalHost'
 
 /**
- * Registar overlay modala. Svaki je `lazy` — kod modala stiže tek pri prvom otvaranju,
- * pa nijedan nije u početnom JS-u (docs/06-modals.md §4).
+ * Registar modala javnog sajta. Svaki je `lazy` — kod modala stiže tek pri prvom otvaranju
+ * (docs/06-modals.md §4). Admin modali su u `AdminModalRoot`, ne ovde: i `lazy` referenca
+ * drži njihove zavisnosti u grafu, pa bi izvozi koje koriste ostali u JS-u javnih stranica.
  */
-export const OVERLAY_MODALS: Partial<Record<ModalName, ComponentType<OverlayModalProps>>> = {
+export const OVERLAY_MODALS: ModalRegistry = {
   mobileNav: lazy(() => import('../MobileNav')),
-  confirmDialog: lazy(() => import('../ConfirmDialog')) as ComponentType<OverlayModalProps>,
-  adminTechnologyForm: lazy(() => import('../TechnologyFormModal')) as ComponentType<OverlayModalProps>,
-  adminTeamMemberForm: lazy(() => import('../TeamMemberFormModal')) as ComponentType<OverlayModalProps>,
-  adminSocialLinkForm: lazy(() => import('../SocialLinkFormModal')) as ComponentType<OverlayModalProps>,
-  adminTestimonialForm: lazy(() => import('../TestimonialFormModal')) as ComponentType<OverlayModalProps>,
 }

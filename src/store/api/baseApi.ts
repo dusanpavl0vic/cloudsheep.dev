@@ -1,7 +1,7 @@
 import type { WithSlice } from '@reduxjs/toolkit'
 import { createApi } from '@reduxjs/toolkit/query/react'
 
-import { API_REDUCER_PATH, API_TAGS } from '@/constants/api'
+import { API_REDUCER_PATH, API_TAGS } from '@/constants/adminApi'
 
 import { dynamicMiddleware } from '../index'
 import { rootReducer } from '../rootReducer'

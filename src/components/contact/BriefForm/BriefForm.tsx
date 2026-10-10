@@ -1,5 +1,6 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 
 import Button from '@/components/buttons/Button'
@@ -8,10 +9,13 @@ import { useKeyTranslator } from '@/hooks/useApiErrorMessage'
 import { useHydrated } from '@/hooks/useHydrated'
 
 import BookingCard from './BookingCard'
-import BriefDone from './BriefDone'
 import { Aside, Bar, Bars, Brief, FieldError, Layout, LinkButton, Nav } from './BriefForm.styles'
 import type { BriefFormProps } from './BriefForm.types'
-import { DetailsStep, ScopeStep, TypeStep } from './BriefSteps'
+import { ScopeStep, TypeStep } from './BriefSteps'
+
+/** Treći korak i potvrda slanja stižu kad zatrebaju — nisu u početnom JS-u `/contact`. */
+const DetailsStep = dynamic(() => import('./DetailsStep'))
+const BriefDone = dynamic(() => import('./BriefDone'))
 
 const STEPS = [TypeStep, ScopeStep, DetailsStep] as const
 

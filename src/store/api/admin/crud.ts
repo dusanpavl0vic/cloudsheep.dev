@@ -1,6 +1,6 @@
 import type { EndpointBuilder } from '@reduxjs/toolkit/query/react'
 
-import { API_LIST_ID, type API_REDUCER_PATH, type ApiTag } from '@/constants/api'
+import { API_LIST_ID, type API_REDUCER_PATH, type ApiTag } from '@/constants/adminApi'
 
 import type { baseQuery } from '../baseQuery'
 

@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 
-import { ADMIN_NAV_ITEMS } from '@/constants/navigation'
+import { ADMIN_NAV_ITEMS } from '@/constants/adminNavigation'
 import { ROUTES } from '@/constants/routes'
 
 /** Stavke admin menija sa aktivnom: pregled samo na `/admin`, ostale i na podstranicama. */

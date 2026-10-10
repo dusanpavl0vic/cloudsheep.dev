@@ -1,4 +1,4 @@
-import { API_ENDPOINTS } from '@/constants/api'
+import { ADMIN_API_ENDPOINTS } from '@/constants/adminApi'
 import type { LoginInput } from '@/schemas/auth'
 import type { SessionResponse } from '@/types/auth'
 
@@ -8,7 +8,7 @@ import { baseApi } from '../baseApi'
 export const authApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     login: build.mutation<SessionResponse, LoginInput>({
-      query: (body) => ({ url: API_ENDPOINTS.AUTH_LOGIN, method: 'POST', body }),
+      query: (body) => ({ url: ADMIN_API_ENDPOINTS.AUTH_LOGIN, method: 'POST', body }),
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         try {
           dispatch(sessionStarted((await queryFulfilled).data))
@@ -19,7 +19,7 @@ export const authApi = baseApi.injectEndpoints({
     }),
     /** Obnova sesije posle učitavanja stranice — access token je bio samo u memoriji. */
     restoreSession: build.query<SessionResponse, undefined>({
-      query: () => ({ url: API_ENDPOINTS.AUTH_REFRESH, method: 'POST' }),
+      query: () => ({ url: ADMIN_API_ENDPOINTS.AUTH_REFRESH, method: 'POST' }),
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         try {
           dispatch(sessionStarted((await queryFulfilled).data))
@@ -29,7 +29,7 @@ export const authApi = baseApi.injectEndpoints({
       },
     }),
     logout: build.mutation<undefined, undefined>({
-      query: () => ({ url: API_ENDPOINTS.AUTH_LOGOUT, method: 'POST' }),
+      query: () => ({ url: ADMIN_API_ENDPOINTS.AUTH_LOGOUT, method: 'POST' }),
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         await queryFulfilled.catch(() => undefined)
         dispatch(sessionEnded())

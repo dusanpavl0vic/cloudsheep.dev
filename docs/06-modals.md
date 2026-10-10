@@ -13,7 +13,10 @@
 2. **Props-i modala su serijalizabilni** (`ModalProps`: string, broj, boolean, `null`, niz
    stringova). Funkcija, Promise i Blob ne idu u Redux.
 3. **Modal komponenta je `lazy`**, pa nijedan modal nije u početnom JS-u javnih stranica.
-4. **`ModalRoot` se renderuje jednom**, u `RootLayout`-u. Promena rute zatvara sve modale.
+4. **Dva registra.** `ModalRoot` (u `RootLayout`-u) ima samo javne modale (`mobileNav`), a
+   `AdminModalRoot` (u `app/admin/layout.tsx`) ima admin modale i potvrdu. Oba renderuju kroz
+   `ModalHost`. Admin modal u javnom registru bi i preko `lazy` uvukao admin izvoze u JS
+   javnih stranica (docs/07 §6a). Promena rute zatvara sve modale.
 5. **Mehaniku daje `Overlay`**: fokus ostaje u dijalogu, `aria-modal`, Esc, zaključan skrol,
    a klik na pozadinu zatvara dijalog. Ništa od toga se ne piše ručno.
 6. **Potvrda vraća rezultat kroz `await`** (`useConfirm`), a ne kroz `useEffect` koji sluša
@@ -26,7 +29,9 @@ constants/modals.ts            MODALS (imena) + MODAL_KIND (popover | overlay)
 store/slices/ui                ui.modals — { name, props } po otvorenom modalu
 hooks/useModal.ts              open(props?) / close() / isOpen / props
 hooks/useConfirm.ts            Promise<boolean>; odgovori žive u Map-i VAN Redux-a
-modals/ModalRoot/              OVERLAY_MODALS (lazy registar) + renderer
+modals/ModalHost/              renderer za dati registar (+ zatvaranje pri promeni rute)
+modals/ModalRoot/              OVERLAY_MODALS — javni registar (lazy)
+modals/AdminModalRoot/         ADMIN_OVERLAY_MODALS — admin registar (lazy)
 modals/<Ime>/                  sam modal; prima { props, onClose }
 components/overlays/Overlay    zajednička mehanika
 ```
@@ -34,17 +39,16 @@ components/overlays/Overlay    zajednička mehanika
 ### Registar
 
 ```ts
-// modals/ModalRoot/ModalRoot.constants.ts
-export const OVERLAY_MODALS: Partial<Record<ModalName, ComponentType<OverlayModalProps>>> = {
-  mobileNav: lazy(() => import('../MobileNav')),
+// modals/AdminModalRoot/AdminModalRoot.constants.ts
+export const ADMIN_OVERLAY_MODALS: ModalRegistry = {
   confirmDialog: lazy(() => import('../ConfirmDialog')) as ComponentType<OverlayModalProps>,
   adminTechnologyForm: lazy(() => import('../TechnologyFormModal')) as ComponentType<OverlayModalProps>,
   // …
 }
 ```
 
-Novi modal se dodaje na tri mesta: ime u `MODALS`, vrsta u `MODAL_KIND` i red u
-`OVERLAY_MODALS`. TypeScript traži prva dva.
+Novi modal se dodaje na tri mesta: ime u `MODALS`, vrsta u `MODAL_KIND` i red u registru
+svoje strane (`OVERLAY_MODALS` za javni, `ADMIN_OVERLAY_MODALS` za admin).
 
 ## Dve vrste dijaloga
 
@@ -81,12 +85,13 @@ const tech = useTechnologies()
 | `window.confirm(...)` | `useConfirm` (blokira pregledač i ne prati temu ni jezik) |
 | `useEffect(() => { if (result) … }, [result])` | `const ok = await confirm(...)` |
 | funkcija ili ceo zapis u props-ima modala | `{ id }` + čitanje iz RTKQ keša |
-| modal uvezen direktno u komponentu | `OVERLAY_MODALS` + `lazy` |
+| modal uvezen direktno u komponentu | registar + `lazy` |
+| admin modal u javnom registru | `ADMIN_OVERLAY_MODALS` (docs/07 §6a) |
 | ručni Esc, fokus i zaključavanje skrola | `Overlay` |
 
 ## Checklist
 
-- [ ] Ime u `MODALS` i `MODAL_KIND`, `lazy` red u `OVERLAY_MODALS`
+- [ ] Ime u `MODALS` i `MODAL_KIND`, `lazy` red u registru svoje strane (javni / admin)
 - [ ] Props-i su serijalizabilni; zapis se čita iz keša po `id`
 - [ ] Logika (čuvanje, brisanje) je u domenskom hook-u, ne u modalu
 - [ ] Tekst kroz `t()`, ključevi u `en.ts` **i** `sr.ts`

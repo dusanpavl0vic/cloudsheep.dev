@@ -1,15 +1,16 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useFieldArray, useWatch } from 'react-hook-form'
+import { useWatch } from 'react-hook-form'
 
 import { adminProjectHref } from '@/constants/routes'
-import { projectFormSchema, toProjectInput } from '@/schemas/project'
+import { projectFormSchema, toProjectInput, type ProjectForm } from '@/schemas/project'
 import { useCreateProjectMutation, useGetProjectsQuery, useUpdateProjectMutation } from '@/store/api/admin/projects'
 import { useGetTechnologiesQuery } from '@/store/api/admin/technologies'
 import type { AdminProject } from '@/types/project'
 
 import { useAdminForm } from '../useAdminForm'
+import { useFormList } from '../useFormList'
 
 const TEXT = ['titleSr', 'titleEn', 'catSr', 'catEn', 'descSr', 'descEn', 'captionSr', 'captionEn', 'roleSr', 'roleEn', 'timelineSr', 'timelineEn', 'client'] as const
 
@@ -60,8 +61,8 @@ export const useProjectEditor = (project: AdminProject | undefined) => {
     },
   })
   const { control } = admin.form
-  const metrics = useFieldArray({ control, name: 'metrics' })
-  const chapters = useFieldArray({ control, name: 'chapters' })
+  const metrics = useFormList<ProjectForm, unknown, NonNullable<ProjectForm['metrics']>[number]>({ control, setValue: admin.form.setValue, name: 'metrics' })
+  const chapters = useFormList<ProjectForm, unknown, NonNullable<ProjectForm['chapters']>[number]>({ control, setValue: admin.form.setValue, name: 'chapters' })
   // `useWatch`, ne `form.watch` — Compiler bi memoizovao rezultat.
   const selected = useWatch({ control, name: 'technologyIds' }) ?? []
 
@@ -69,16 +70,16 @@ export const useProjectEditor = (project: AdminProject | undefined) => {
     ...admin,
     isEdit: Boolean(project),
     metrics: {
-      items: metrics.fields,
+      items: metrics.items,
       add: () => {
-        metrics.append({ value: '', labelSr: '', labelEn: '' })
+        metrics.add({ value: '', labelSr: '', labelEn: '' })
       },
       remove: metrics.remove,
     },
     chapters: {
-      items: chapters.fields,
+      items: chapters.items,
       add: () => {
-        chapters.append({ titleSr: '', titleEn: '', bodySr: '', bodyEn: '' })
+        chapters.add({ titleSr: '', titleEn: '', bodySr: '', bodyEn: '' })
       },
       remove: chapters.remove,
     },

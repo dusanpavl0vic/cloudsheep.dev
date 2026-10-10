@@ -1,4 +1,4 @@
-import { API_ENDPOINTS } from '@/constants/api'
+import { ADMIN_API_ENDPOINTS } from '@/constants/adminApi'
 import type { Asset } from '@/types/media'
 
 import { baseApi } from '../baseApi'
@@ -10,7 +10,7 @@ export const uploadsApi = baseApi.injectEndpoints({
       query: (file) => {
         const body = new FormData()
         body.append('file', file)
-        return { url: API_ENDPOINTS.ADMIN_UPLOADS, method: 'POST', body }
+        return { url: ADMIN_API_ENDPOINTS.ADMIN_UPLOADS, method: 'POST', body }
       },
     }),
   }),

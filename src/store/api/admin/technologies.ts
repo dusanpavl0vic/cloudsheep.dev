@@ -1,4 +1,4 @@
-import { API_ENDPOINTS, API_TAGS } from '@/constants/api'
+import { ADMIN_API_ENDPOINTS, API_TAGS } from '@/constants/adminApi'
 import type { TechnologyInput } from '@/schemas/technology'
 import type { AdminTechnology } from '@/types/technology'
 
@@ -8,9 +8,9 @@ import { crudEndpoints } from './crud'
 export const technologiesApi = baseApi.injectEndpoints({
   endpoints: (build) => {
     const crud = crudEndpoints<AdminTechnology, TechnologyInput>(build, API_TAGS.TECHNOLOGY, {
-      list: API_ENDPOINTS.ADMIN_TECHNOLOGIES,
-      item: API_ENDPOINTS.ADMIN_TECHNOLOGY,
-      order: API_ENDPOINTS.ADMIN_TECHNOLOGIES_ORDER,
+      list: ADMIN_API_ENDPOINTS.ADMIN_TECHNOLOGIES,
+      item: ADMIN_API_ENDPOINTS.ADMIN_TECHNOLOGY,
+      order: ADMIN_API_ENDPOINTS.ADMIN_TECHNOLOGIES_ORDER,
     })
     return {
       getTechnologies: crud.list,

@@ -82,3 +82,51 @@ test('utisak: objava jednim klikom ne briše firmu i ulogu', async ({ page }) =>
   await page.getByRole('dialog').getByRole('button', { name: 'Delete' }).click()
   await expect(page.locator('tbody tr', { hasText: author })).toHaveCount(0)
 })
+
+/**
+ * Ponavljajuće grupe (rezultati projekta) idu bez RHF useFieldArray (ADR 0014): posle
+ * uklanjanja prve stavke, druga mora da ostane sa svojom vrednošću — i u polju i u bazi.
+ */
+test('projekat: dodaj dva rezultata, ukloni prvi, sačuvaj — ostaje drugi', async ({ page }) => {
+  await signIn(page)
+  const slug = `e2e-${String(Date.now())}`
+
+  await page.goto('/admin/projects/new')
+  for (const [label, value] of [
+    ['Title (English)', 'E2E project'],
+    ['Title (Serbian)', 'E2E projekat'],
+    ['Type (English)', 'Web app'],
+    ['Type (Serbian)', 'Veb aplikacija'],
+    ['Slug', slug],
+    ['Description (English)', 'Description'],
+    ['Description (Serbian)', 'Opis'],
+  ] as const) {
+    await page.getByLabel(label, { exact: true }).fill(value)
+  }
+
+  await page.getByRole('button', { name: 'Add result' }).click()
+  await page.getByRole('button', { name: 'Add result' }).click()
+  await page.locator('#pr-m-0-value').fill('+10%')
+  await page.locator('#pr-m-0-labelEn').fill('First')
+  await page.locator('#pr-m-0-labelSr').fill('Prvi')
+  await page.locator('#pr-m-1-value').fill('+20%')
+  await page.locator('#pr-m-1-labelEn').fill('Second')
+  await page.locator('#pr-m-1-labelSr').fill('Drugi')
+
+  await page.locator('fieldset', { has: page.locator('#pr-m-0-value') }).getByRole('button', { name: 'Remove' }).click()
+  await expect(page.locator('#pr-m-1-value')).toHaveCount(0)
+  await expect(page.locator('#pr-m-0-value')).toHaveValue('+20%')
+  await expect(page.locator('#pr-m-0-labelEn')).toHaveValue('Second')
+
+  await page.getByRole('button', { name: 'Save' }).click()
+  await expect(page).toHaveURL(/\/admin\/projects\/[0-9a-f-]{36}$/)
+  await page.reload()
+  await expect(page.locator('#pr-m-0-value')).toHaveValue('+20%')
+  await expect(page.locator('#pr-m-1-value')).toHaveCount(0)
+
+  await page.goto('/admin/projects')
+  const row = page.locator('tbody tr', { hasText: 'E2E project' })
+  await row.getByRole('button', { name: 'Delete: E2E project' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Delete' }).click()
+  await expect(page.locator('tbody tr', { hasText: 'E2E project' })).toHaveCount(0)
+})

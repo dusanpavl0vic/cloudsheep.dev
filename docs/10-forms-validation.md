@@ -67,6 +67,14 @@ key={id}>`), pa su podrazumevane vrednosti tačne i ne treba `useEffect(() => re
 oznaku, grešku i opis (`aria-invalid`, `aria-describedby`, `role="alert"`) i rade sa
 `register`. Slika ide kroz `ImageField`: otprema se odmah, a forma čuva samo `assetId`.
 
+### Ponavljajuće grupe
+
+Admin liste (pozicije u CV-u, rezultati i poglavlja projekta) idu kroz `useFormList`
+(`hooks/admin`), ne kroz RHF `useFieldArray`. RHF dele admin i forma upita, pa bi
+`useFieldArray` ostao u JS-u `/contact` (+1,4 KB, docs/07 §6a). Niz se čita kroz `useWatch`, a
+menja ceo kroz `setValue`, koji upisuje vrednosti i u registrovana polja. Ključ stavke je
+indeks. Test: `e2e/admin.spec.ts` („ukloni prvi — ostaje drugi").
+
 ### Brojevi i prazna polja
 
 ```ts
@@ -92,6 +100,7 @@ register('projectId', { setValueAs: (v: string) => v || null })  // prazan <sele
 |---|---|
 | `form.formState.errors` | `useFormState({ control }).errors` |
 | `form.watch('x')` | `useWatch({ control, name: 'x' })` |
+| `useFieldArray` u admin formi | `useFormList` (docs/07 §6a) |
 | `useState` za vrednosti, greške, slanje | RHF |
 | ručno pisan tip forme | `z.input<typeof schema>` |
 | `.min(8, { message: 'Lozinka je prekratka' })` | i18n ključ |

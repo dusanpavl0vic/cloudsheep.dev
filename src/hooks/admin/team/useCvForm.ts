@@ -1,7 +1,7 @@
 'use client'
 
 import { useLocale } from 'next-intl'
-import { useFieldArray, type ArrayPath, type FieldArray } from 'react-hook-form'
+import type { ArrayPath, FieldArray } from 'react-hook-form'
 
 import { cvToForm, toCvInput } from '@/helpers/cv'
 import { saveObjectUrl } from '@/helpers/download'
@@ -12,6 +12,7 @@ import type { AdminCv } from '@/types/cv'
 
 import { useAdminAction } from '../useAdminAction'
 import { useAdminForm } from '../useAdminForm'
+import { useFormList } from '../useFormList'
 
 /** Forma CV-a; renderuje se tek kad CV stigne, pa su podrazumevane vrednosti tačne. */
 export const useCvForm = (cv: AdminCv) => {
@@ -48,13 +49,13 @@ type CvList = Extract<ArrayPath<CvForm>, 'experiences' | 'siteProjects' | 'langu
 
 /** Ponavljajuća grupa CV-a (pozicije, projekti, jezici): stavke, dodaj praznu, ukloni. */
 export const useCvList = <N extends CvList>(api: CvFormApi, name: N, empty: FieldArray<CvForm, N>) => {
-  const { fields, append, remove } = useFieldArray({ control: api.form.control, name })
+  const list = useFormList<CvForm, unknown, FieldArray<CvForm, N>>({ control: api.form.control, setValue: api.form.setValue, name })
   return {
-    items: fields,
+    items: list.items,
     add: () => {
-      append(empty)
+      list.add(empty)
     },
-    remove,
+    remove: list.remove,
   }
 }
 

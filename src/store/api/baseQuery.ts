@@ -1,6 +1,7 @@
 import { fetchBaseQuery, type BaseQueryFn, type FetchArgs, type FetchBaseQueryError } from '@reduxjs/toolkit/query/react'
 
-import { API_BASE_URL, API_ENDPOINTS } from '@/constants/api'
+import { ADMIN_API_ENDPOINTS } from '@/constants/adminApi'
+import { API_BASE_URL } from '@/constants/api'
 import { HTTP_STATUS } from '@/constants/http'
 import type { SessionResponse } from '@/types/auth'
 
@@ -36,7 +37,7 @@ export const baseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryE
   if (result.error?.status !== HTTP_STATUS.UNAUTHORIZED || isAuthCall(args)) return result
 
   refreshing ??= (async () => {
-    const refreshed = await rawBaseQuery({ url: API_ENDPOINTS.AUTH_REFRESH, method: 'POST' }, api, extraOptions)
+    const refreshed = await rawBaseQuery({ url: ADMIN_API_ENDPOINTS.AUTH_REFRESH, method: 'POST' }, api, extraOptions)
     if (refreshed.data) {
       api.dispatch(sessionStarted(refreshed.data as SessionResponse))
       return true
