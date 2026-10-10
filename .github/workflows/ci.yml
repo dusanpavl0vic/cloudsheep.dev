@@ -97,9 +97,9 @@ jobs:
           path: playwright-report
           retention-days: 7
 
-  # Image se gradi OVDE, nikad na VPS-u (4 GB). Na push u dev/prod ide na GHCR sa tagom grane
-  # (`:dev`, `:prod`) i `sha-…`; Coolify povlači `:prod` (infra/COOLIFY.md). Na PR-u se samo
-  # proverava da se gradi.
+  # Image se gradi OVDE, nikad na VPS-u (4 GB), i pokreće (smoke test) pre objave. Na push u
+  # dev/prod ide na GHCR sa tagom grane (`:dev`, `:prod`) i `sha-…`; Coolify povlači `:prod`
+  # (infra/COOLIFY.md). Na PR-u se gradi i pokreće, ali ne objavljuje.
   image:
     runs-on: ubuntu-latest
     needs: validate
@@ -126,19 +126,61 @@ jobs:
             type=ref,event=branch
             type=sha,prefix=sha-
 
+      # 1) Build u lokalni Docker (amd64), da bi se image pokrenuo pre objave.
       - uses: docker/build-push-action@v6
         with:
           context: .
           # VPS je amd64.
           platforms: linux/amd64
-          push: ${{ github.event_name == 'push' }}
+          load: true
+          tags: cloudsheep:ci
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=https://cloudsheep.dev
+            NEXT_PUBLIC_APP_ENV=production
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # 2) Image se POKREĆE kao na serveru: prazna baza, mem 768m, start skripta
+      #    (migracije → seed → server). e2e ide kroz `next start`, ne kroz image — bez ovoga
+      #    pad seed-a ili migracije u kontejneru vidi se tek na produkciji.
+      - name: Smoke test image-a (migracije, seed, start, 768m)
+        run: |
+          docker network create smoke
+          docker run -d --name db --network smoke -e POSTGRES_USER=app -e POSTGRES_DB=appdb \
+            -e POSTGRES_HOST_AUTH_METHOD=trust postgres:17-alpine
+          until docker exec db pg_isready -U app -d appdb >/dev/null 2>&1; do sleep 1; done
+          docker run -d --name app --network smoke --memory=768m -p 3000:3000 \
+            -e DATABASE_URL=postgresql://app@db:5432/appdb \
+            -e JWT_SECRET="$(openssl rand -hex 24)" \
+            -e SEED_ADMIN_EMAIL=admin@ci.test -e SEED_ADMIN_PASSWORD="$(openssl rand -hex 12)" \
+            cloudsheep:ci
+          ok=""
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:3000/api/health/ready >/dev/null 2>&1; then ok=1; break; fi
+            sleep 2
+          done
+          docker logs app
+          [ -n "$ok" ] || { echo "::error::Kontejner nije spreman (vidi log iznad)"; exit 1; }
+          docker logs app 2>&1 | grep -q "seed: admin admin@ci.test spreman" || { echo "::error::Seed nije napravio admin nalog"; exit 1; }
+          for path in / /projects /notes /contact /sitemap.xml /robots.txt; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:3000$path")
+            echo "$path → $code"; [ "$code" = 200 ] || exit 1
+          done
+          docker stats --no-stream app
+
+      # 3) Objava na GHCR (samo push u dev/prod) — isti build iz keša.
+      - uses: docker/build-push-action@v6
+        if: github.event_name == 'push'
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             NEXT_PUBLIC_SITE_URL=https://cloudsheep.dev
             NEXT_PUBLIC_APP_ENV=production
           cache-from: type=gha
-          cache-to: type=gha,mode=max
 
   # Produkcija: posle novog `:prod` image-a Coolify ga povlači i restartuje (webhook resursa).
   # Secrets COOLIFY_WEBHOOK i COOLIFY_TOKEN postavlja vlasnik (infra/COOLIFY.md §5); bez njih

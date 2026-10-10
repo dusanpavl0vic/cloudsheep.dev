@@ -87,9 +87,12 @@ GitHub Actions (`.github/workflows/ci.yml`), na push i PR u `dev` i `prod`:
    typecheck, lint, test (unit + baza `appdb_test`), build, Playwright Chromium, `size`, e2e.
    E2E ide nad produkcionim build-om sa pravom bazom i čita mejlove iz Mailpit-a (ceo double
    opt-in tok). Izveštaj se čuva kao artifact kad padne.
-2. **image** — `Dockerfile` u korenu, `linux/amd64` (Hetzner CX). Na push se objavljuje na
-   **GHCR**: `ghcr.io/dusanpavl0vic/cloudsheep.dev:<grana>` i `:sha-<commit>`. Na PR-u se
-   samo gradi.
+2. **image** — `Dockerfile` u korenu, `linux/amd64` (Hetzner CX). Image se prvo **pokrene**
+   (smoke test): prazna baza, `--memory=768m`, start skripta (migracije → seed → server),
+   `/api/health/ready` i glavne stranice moraju vratiti 200. Tek onda se na push objavljuje
+   na **GHCR**: `ghcr.io/dusanpavl0vic/cloudsheep.dev:<grana>` i `:sha-<commit>`. e2e ide kroz
+   `next start`, pa grešku koja postoji samo u image-u (npr. seed van Next servera) hvata
+   samo ovaj korak.
 3. **deploy** — samo za push u `prod`: Coolify webhook (secrets `COOLIFY_WEBHOOK`,
    `COOLIFY_TOKEN`). Bez secret-a korak se preskače uz napomenu.
 
