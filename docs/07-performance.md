@@ -160,6 +160,7 @@ stranici nosi i sve što od njega koristi admin, pa i kod iza `lazy()` reference
 | RHF `useFieldArray` u admin formama (+1,4 KB na `/contact`) | `useFormList` (`useWatch` + `setValue`) |
 | ikonica u zatvorenoj listi koju niko ne koristi | lista `constants/icons.ts` sadrži samo upotrebljene |
 | deo forme koji se vidi tek kasnije (korak 3, potvrda) | `next/dynamic` |
+| `error.tsx` iznad layout-a koji jedini učitava next-yak runtime | granica u `(public)` — inače njen chunk nosi svoju kopiju runtime-a (+1,6 KB pri učitavanju) |
 
 RTK Query u admin-u i dalje zadržava `createAsyncThunk`/matchere i immer patch-eve u RTK
 modulu (~2,3 KB na svakoj javnoj ruti). Na zajedničkom modulu se to ne može odvojiti, pa je
