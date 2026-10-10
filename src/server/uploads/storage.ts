@@ -10,7 +10,7 @@ import { HTTP_STATUS } from '@/constants/http'
 import { UPLOADS_PATH } from '@/constants/uploads'
 
 import { env } from '../env'
-import { HttpError } from '../http'
+import { HttpError } from '../errors'
 
 /**
  * Dozvoljeni tipovi, prepoznati po MAGIČNIM BAJTOVIMA — ne po tipu koji pošalje klijent.
