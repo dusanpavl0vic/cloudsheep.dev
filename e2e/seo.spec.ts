@@ -102,9 +102,7 @@ test('prazne beleške: /notes je noindex i van sitemap-a; sa beleškom ulazi', a
   const hasNotes = slugsFrom(xml, 'notes').length > 0
   expect(xml.includes('/notes</loc>')).toBe(hasNotes)
   await page.goto('/notes')
-  const robots = page.locator('meta[name=robots]')
-  if (hasNotes) await expect(robots).not.toHaveAttribute('content', /noindex/)
-  else await expect(robots).toHaveAttribute('content', /noindex/)
+  await expect(page.locator('meta[name=robots][content*="noindex"]')).toHaveCount(hasNotes ? 0 : 1)
 })
 
 test('svaka stranica ima og:image i og:site_name (Next ne spaja openGraph sa layout-om)', async ({
