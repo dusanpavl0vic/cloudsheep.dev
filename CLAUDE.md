@@ -1,8 +1,8 @@
-# CloudSheep monorepo
+# CloudSheep
 
-pnpm monorepo iz koga se prave nezavisne React SPA aplikacije koje dele UI, state
-infrastrukturu, i18n, utils i tooling. Dve app-e: `web` (javni sajt) i `admin` (interni panel).
-Nije SSR framework.
+Jedna **Next.js** aplikacija (App Router) za `cloudsheep.dev`: javni sajt (`/`, `/sr/…`),
+admin panel (`/admin`) i API (`/api`) u istom procesu, nad PostgreSQL-om preko Prisme.
+Javne stranice se renderuju na serveru — Google dobija pun HTML.
 
 **Izvor istine su `docs/*.md`, ne ovaj fajl.** Ovde su samo pravila koja moraju biti u svakom
 kontekstu; sve ostalo je u mapi ispod.
@@ -10,83 +10,91 @@ kontekstu; sve ostalo je u mapi ispod.
 ## Komande
 
 ```bash
-pnpm dev --filter=web       # dev server jedne app-e
-pnpm test                   # unit + integracija
-pnpm e2e                    # Playwright
+pnpm dev                    # dev server (Postgres: docker compose -f infra/docker-compose.dev.yml up -d)
+pnpm test                   # unit + integracija (Vitest)
+pnpm e2e                    # Playwright nad produkcijskim buildom
 pnpm lint                   # ESLint
 pnpm typecheck              # tsc --noEmit
-pnpm build                  # produkcijski build
-pnpm size                   # bundle budžeti
+pnpm build                  # produkcijski build (standalone)
+pnpm size                   # JS budžet po javnoj ruti
 pnpm lh                     # Lighthouse CI
-pnpm validate               # sve gore — mora proći pre PR-a
+pnpm validate               # typecheck · lint · test · build · size — mora proći pre PR-a
 ```
 
 ## Zlatna pravila
 
-- **Logika ide u hookove, komponente su glupe.** Komponenta ne zove `useAppSelector`,
-  `useAppDispatch` ni RTKQ hook direktno.
+- **Sve konstante su u `src/constants`** — rute, API endpointi, tagovi, tokeni teme, modali,
+  limiti. U komponenti nema URL-a, putanje ni „magičnog" broja.
+- **Linkovi samo preko `ROUTES` i buildera** (`projectHref(slug)`), nikad `` `/projects/${slug}` ``.
+- **Logika ide u hookove, komponente su prezentacione.** Komponenta ne zove `useAppSelector`,
+  `useAppDispatch`, RTKQ hook, `useParams` ni `useSearchParams` direktno.
+- **Javne stranice čitaju podatke na serveru** (`src/server/services`); **na klijentu podaci
+  stižu samo kroz RTK Query.** Nikad kopirati RTKQ podatke u slice.
+- **`src/server/**` se nikad ne uvozi iz klijentskog koda** (lint to sprečava).
+- **Svaka komponenta ima svoj folder**: `.tsx` · `.styles.ts` · `.types.ts` · `index.ts`.
+  Komponenta je `default export`, sve ostalo `named`.
+- **Stil je u `.styles.ts` (next-yak, ADR 0015), vrednosti samo iz `styles/tokens.yak.ts`** —
+  nikad hex ni px vrednost tokena direktno. Funkcija u šablonu bira statičan `css` blok, ne čita
+  token u runtime-u (`@app/no-runtime-tokens`).
+- **Funkcije su arrow funkcije** — komponente, hookovi, helperi, selektori.
+- **Bez literal stringova u UI** — sve kroz `t()`, ključ u `en.ts` **i** `sr.ts`.
 - **`useEffect` samo za sinhronizaciju sa spoljnim sistemom**; obavezan `// effect:` komentar.
-  Nikad za fetch, derivirani state ni logiku handlera.
 - **Najviše 2 `useState` po komponenti.**
 - **`useMemo`/`useCallback` samo u 3 slučaja** iz `docs/07-performance.md` §2, sa `// memo:` komentarom.
-- **Modali isključivo preko `useModal`.** Nema `useState(false)` za dijalog sa domenskom akcijom.
-- **Bez literal stringova u UI** — sve kroz `t()`, ključ u `sr.json` **i** `en.json`.
-- **Feature ne importuje feature.**
-- **Import samo iz barrel-a** feature-a/paketa; barrel nikad unutar foldera.
-- **Server state je RTKQ, ne slice.** Nikad kopirati RTKQ podatke u Redux.
+- **Sve što se otvara ide kroz `useModal`** i `ui.modals` u Redux-u.
 - **URL je izvor istine za filtere i paginaciju**, ne Redux.
-- **Kod ide u `packages/` tek kad ga koristi druga app.**
-- **Novi dependency > 20 KB gzip → ADR.**
-- **Samo semantičke Tailwind klase** (`bg-primary`), nikad `bg-blue-500` ni `text-[#333]`.
-- **Stil u `.variants.ts` (cva)**, `.tsx` sadrži samo layout klase.
-- **Nema `default export`-a** osim lazy route modula.
+- **Novi dependency > 20 KB gzip → ADR.** Javni JS ≤ 200 KB gzip po ruti (ADR 0014).
 - **Fajl ≤ 200 linija, komponenta ≤ 150.**
 - **Nikad JWT u `localStorage`.**
 
 ## Mapa dokumentacije
 
-| Radiš… | Čitaj |
-|---|---|
-| bilo šta, prvi put | `docs/README.md` → `docs/01-architecture.md` |
-| performanse, hookove, bundle | **`docs/07-performance.md`** ← najvažniji |
-| gde kod treba da živi | `docs/01-architecture.md`, `docs/02-folder-structure.md` |
-| imenovanje | `docs/03-naming-conventions.md` |
-| state, slice, selektore | `docs/04-state-management.md` |
-| rute, guard, lazy | `docs/05-routing.md` |
-| dijalog | `docs/06-modals.md` |
-| stil, tokene, teme | `docs/08-styling-ui.md` |
-| prevode, plural | `docs/09-i18n.md` |
-| formu | `docs/10-forms-validation.md` |
-| API poziv | `docs/11-data-fetching.md` |
-| testove | `docs/12-testing.md` |
-| hook | `docs/13-hooks.md` |
-| helper funkciju | `docs/14-helpers-utils.md` |
-| pristupačnost | `docs/15-accessibility.md` |
-| lint, CI, verzije | `docs/16-tooling-ci.md` |
-| novu app | `docs/17-adding-new-app.md` |
-| novi feature | `docs/18-adding-new-feature.md` |
-| sigurnost | `docs/20-security.md` |
-| nepoznat pojam | `docs/21-glossary.md` |
+| Radiš…                       | Čitaj                                                    |
+| ---------------------------- | -------------------------------------------------------- |
+| bilo šta, prvi put           | `docs/README.md` → `docs/01-architecture.md`             |
+| performanse, hookove, bundle | **`docs/07-performance.md`** ← najvažniji                |
+| gde kod treba da živi        | `docs/01-architecture.md`, `docs/02-folder-structure.md` |
+| imenovanje                   | `docs/03-naming-conventions.md`                          |
+| state, slice, selektore      | `docs/04-state-management.md`                            |
+| rute, jezik u URL-u, SEO     | `docs/05-routing.md`                                     |
+| dijalog, dropdown, sheet     | `docs/06-modals.md`                                      |
+| stil, tokene, teme           | `docs/08-styling-ui.md`, `docs/22-visual-language.md`    |
+| prevode                      | `docs/09-i18n.md`                                        |
+| formu                        | `docs/10-forms-validation.md`                            |
+| podatke (server i klijent)   | `docs/11-data-fetching.md`                               |
+| testove                      | `docs/12-testing.md`                                     |
+| hook                         | `docs/13-hooks.md`                                       |
+| helper funkciju              | `docs/14-helpers-utils.md`                               |
+| pristupačnost                | `docs/15-accessibility.md`                               |
+| lint, CI, verzije            | `docs/16-tooling-ci.md`                                  |
+| API, auth, mejl, upload      | `docs/17-backend.md`                                     |
+| novu stranicu ili domen      | `docs/18-adding-new-feature.md`                          |
+| sigurnost                    | `docs/20-security.md`                                    |
+| nepoznat pojam               | `docs/21-glossary.md`                                    |
 
 Arhitektonske odluke i njihova obrazloženja: `docs/adr/`.
 
 ## Workflow
 
-1. **Pročitaj relevantan `docs/` fajl pre nego što napišeš kod.** Nije opciono — pravila
-   su konkretna i ne mogu se pogoditi.
-2. Za skafolding koristi slash komande (`/new-feature`, `/new-component`, `/new-hook`…) —
-   one generišu strukturu koja odmah prolazi lint i test.
-3. Posle izmena pokreni **`/review`** (proverava protiv `docs/19-code-review-checklist.md`).
-4. `pnpm validate` mora proći pre PR-a.
+1. **Pročitaj relevantan `docs/` fajl pre nego što napišeš kod.** Pravila su konkretna i ne
+   mogu se pogoditi.
+2. Posle izmena pokreni **`/review`** (proverava protiv `docs/19-code-review-checklist.md`).
+3. `pnpm validate` mora proći pre PR-a.
 
 ## Održavanje
 
 - **Ako se pravilo menja: prvo doc, pa kod.** Nikad obrnuto.
 - Novo pravilo mora dobiti lint rule (`docs/16-tooling-ci.md` §2) — pravilo koje se ne
-  proverava mašinski biće prekršeno. Najveći rizik ovog repoa nije stek nego drift.
+  proverava mašinski biće prekršeno.
 - Arhitektonska odluka koja se ne može izvesti iz koda ide u ADR (`/adr <naslov>`).
-- Novi deljeni hook ili util se upisuje u katalog (`docs/13`, `docs/14`).
+- Novi deljeni hook ili helper se upisuje u katalog (`docs/13`, `docs/14`).
 
-## Specifičnosti po workspace-u
+<!-- BEGIN:nextjs-agent-rules -->
 
-`apps/web/CLAUDE.md` · `apps/admin/CLAUDE.md` · `packages/ui/CLAUDE.md`
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

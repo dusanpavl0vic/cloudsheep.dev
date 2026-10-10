@@ -1,1 +1,0 @@
-export { InsightSection } from './InsightSection'

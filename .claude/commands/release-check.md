@@ -33,7 +33,7 @@ pnpm e2e
 
 ## Pragovi (`docs/16-tooling-ci.md` §3)
 
-Coverage: `packages/utils` 100% · `features/*/hooks` ≥ 90% · ukupno ≥ 80%
+Testovi: `pnpm test` (unit + baza) i `pnpm e2e` zeleni; nova logika ima test
 Bundle: initial JS ≤ 150 KB gzip · CSS ≤ 20 KB · po ruti ≤ 60 KB
 Lighthouse: ≥ 0.95 performance · 1.0 a11y/best-practices/SEO
 
@@ -41,7 +41,7 @@ Lighthouse: ≥ 0.95 performance · 1.0 a11y/best-practices/SEO
 
 - Nekomitovane izmene (`git status`)
 - Postoje li changeset-ovi za dirane pakete
-- Da li je `apps/web` Lighthouse pao ispod baseline-a (desktop 100 / mobile 92)
+- Da li je Lighthouse javnih ruta pao ispod baseline-a iz ADR 0014
 
 ## Zaključak — obavezan
 

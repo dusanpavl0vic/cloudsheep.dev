@@ -1,6 +1,6 @@
 # ADR 0004 — Feature folders umesto kanonskog FSD-a
 
-> Status: **accepted**
+> Status: superseded by [ADR-0011](0011-layered-structure.md)
 > Datum: 2026-08-15
 
 ## Context

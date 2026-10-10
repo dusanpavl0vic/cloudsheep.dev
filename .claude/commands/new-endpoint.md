@@ -1,41 +1,26 @@
 ---
-description: Dodaje RTK Query endpoint sa tagovima, tipovima, MSW handlerom i testom
-argument-hint: [feature] [name] [method]
-arguments: feature name method
-disable-model-invocation: true
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash(pnpm lint:*), Bash(pnpm test:*)
+description: Dodaje API rutu (route.ts nad servisom) i RTK Query endpoint za admin, sa tagovima i testom
+argument-hint: [domain] [name] [method]
+arguments: domain name method
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(pnpm lint:*), Bash(pnpm test:*), Bash(pnpm exec eslint:*), Bash(pnpm exec vitest:*)
 ---
 
-Dodaj endpoint `$name` (`$method`) u `features/$feature/api/<feature>Api.ts`.
+Dodaj endpoint `$name` (`$method`) za domen `$domain`.
 
 ## Prvo pročitaj
 
-- `docs/11-data-fetching.md` — baseQuery, tagovi, optimistic update
-- `docs/10-forms-validation.md` — validacija odgovora zod šemom
+`docs/11-data-fetching.md` §3–4.
 
-## Koraci
+## Server
 
-1. Dodaj kroz **`baseApi.injectEndpoints`** — nikad novi `createApi`
-2. Eksplicitni tipovi zahteva i odgovora, bez `any`
-3. **Tagovi:**
-   - query → `providesTags`, uključujući `{ type: 'X', id: 'LIST' }` za liste
-   - mutation → `invalidatesTags`
-   - novi `tagType` mora u `baseApi.tagTypes`
-4. **Ako `$method` nije GET i menja vidljivo stanje → obavezan optimistic update**
-   (`onQueryStarted` + `updateQueryData` + `patch.undo()` u `catch`). Ovo je INP metrika,
-   ne kozmetika.
-5. MSW handler **kolokovan uz feature**, ne u globalnom fajlu
-6. Test: loading → success → error putanja
+- `src/app/api/…/route.ts`: tanak — `handle`/`handleAdmin` → `readJson` (POST/PUT) ili
+  **`readPatch` (PATCH)** → servis → `json(...)` / `noContent()`
+- Greške kao `HttpError(status, '<domen>.errors.<ključ>', { field })`; ključ u `en.ts` i `sr.ts`
+- URL u `API_ENDPOINTS` (`constants/api.ts`)
+- Test servisa nad bazom (`*.db.test.ts`) ili čiste logike (`*.test.ts`)
 
-## Pravila
+## Klijent (samo admin — javne stranice ne koriste RTKQ)
 
-- Bez ručnog `refetch()` — invalidacija ide preko tagova
-- `transformResponse` za snake_case → camelCase se radi u `baseQuery`, na jednom mestu
-- Komponenta ne uvozi generisani hook — troši ga feature hook
-- Greške prolaze kroz `normalizeError`; UI prikazuje `t(messageKey)`, nikad sirovu serversku poruku
-
-## Acceptance
-
-- `pnpm lint && pnpm typecheck && pnpm test` prolazi
-- Mutacija koja menja vidljivo stanje ima optimistic update sa `undo` na grešku
-- MSW handler postoji i test pokriva sve tri putanje
+- `src/store/api/admin/$domain.ts`: `build.query` / `build.mutation`, `providesTags` /
+  `invalidatesTags` iz `API_TAGS`; fajl/Blob nikad u store (tekst ili object URL)
+- Poziv samo iz domenskog hooka (`src/hooks/admin/$domain/`)

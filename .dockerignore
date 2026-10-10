@@ -1,32 +1,29 @@
-# Sve što se gradi unutar image-a ili ne sme u njega.
-# Bez ovoga `COPY . .` uvlači node_modules sa host-a (pogrešna platforma za Alpine)
-# i pravi image od nekoliko stotina MB.
+# Build kontekst: samo ono što image gradi. node_modules sa host-a je pogrešna platforma
+# za Alpine i pravi image od nekoliko stotina MB.
 **/node_modules
-**/dist
-**/build
-**/.turbo
-**/coverage
-**/playwright-report
-**/test-results
-**/.git
-**/.env
-**/.env.*
-!**/.env.example
+.next
+dist
+coverage
+playwright-report
+test-results
+uploads
+.test-uploads
+*.tsbuildinfo
 **/*.log
 **/.DS_Store
+*.tmp.mjs
+*.tmp.cjs
 
-# Ne treba u build kontekstu — samo usporava `docker build` i menja keš bez razloga.
+.env
+.env.*
+!.env.example
+
 .git
 .github
-.changeset
 .husky
 .claude
+.swc
 docs
+e2e
 **/*.test.ts
 **/*.test.tsx
-
-# `e2e/` se NE izuzima, iako se u image-u ne izvršava.
-#
-# `apps/*/tsconfig.json` je solution config koji referencira `tsconfig.e2e.json`, a taj ima
-# `include: ["e2e"]`. Bez foldera `tsc -b` puca sa TS18003 („No inputs were found") i obara
-# ceo Docker build — greška koja se vidi tek na serveru, jer lokalni build folder ima.

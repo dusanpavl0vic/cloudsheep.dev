@@ -1,9 +1,13 @@
 node_modules
-dist
+.next
 coverage
-.turbo
 pnpm-lock.yaml
 playwright-report
 test-results
 .lighthouseci
+prisma/migrations
+public
 docs/adr/0000-initial-spec.md
+# Stari kod do brisanja u fazi F6
+apps
+packages

@@ -1,7 +1,7 @@
 # Server setup — Hetzner + Coolify
 
 Ovo se radi **jednom, ručno**, i traje oko 45 minuta od kojih je polovina čekanje DNS-a.
-Posle ovoga deploy je `git push`, a ovaj dokument više ne treba.
+Posle ovoga deploy je `git push` u `prod`, a ovaj dokument više ne treba.
 
 Redosled nije proizvoljan: **DNS mora da propagira pre nego što se u Coolify-u dodeli
 domen.** Let's Encrypt ima rate limit od 5 neuspelih pokušaja po nalogu na sat — ako
@@ -54,6 +54,32 @@ ssh -L 8000:localhost:8000 root@<IP>
 Coolify UI je jedina stvar na serveru koja može da izmeni sve — ne izlaže se internetu
 dok za to ne postoji razlog.
 
+### Port 8000 je trenutno otvoren — zatvori ga
+
+Provera spolja (2026-10-09): `http://<IP>:8000/login` vraća 200, panel je javan preko
+običnog HTTP-a (lozinka putuje nešifrovana). Docker objavljuje 8000 na `0.0.0.0` i zaobilazi
+`ufw`, pa ga zatvara samo **Hetzner Cloud Firewall**:
+
+1. Hetzner Cloud Console → **Firewalls** → firewall servera (ako ga nema: **Create Firewall**
+   sa pravilima iz tabele iznad, pa **Apply to** → `cloudsheep-prod`).
+2. Inbound pravila: **samo 22, 80 i 443**. Obriši pravilo za 8000 (ili „any port", ako postoji).
+3. Provera sa svog računara: `curl -m 5 -s -o /dev/null -w '%{http_code}' http://<IP>:8000/login`
+   mora da istekne (`000`), a `http://localhost:8000` kroz tunel i dalje radi.
+
+### Ne mogu da se prijavim u Coolify
+
+Coolify radi (`/api/health` vraća OK), pa je problem u nalogu ili tunelu, ne u serveru:
+
+- `http://localhost:8000` radi **samo dok je tunel otvoren** (`ssh -L 8000:localhost:8000 root@<IP>`
+  u drugom terminalu).
+- Zaboravljena lozinka — na serveru:
+
+  ```bash
+  docker exec -ti coolify sh -c "php artisan root:reset-password"
+  ```
+
+  Komanda pita novu lozinku za root nalog instance. Kucaš je ti, a ne skripta.
+
 ---
 
 ## 2. Osnovno obezbeđivanje
@@ -64,8 +90,8 @@ ssh root@<IP>
 apt update && apt upgrade -y
 apt install -y fail2ban
 
-# Swap 2 GB. 4 GB RAM-a i Docker build Vite bundle-a znaju da se sudare,
-# a OOM killer ubija build bez ijedne jasne poruke.
+# Swap 2 GB. Image se gradi u CI-ju, ne ovde (ADR 0017), ali Postgres + aplikacija +
+# Coolify na 4 GB i dalje traže rezervu za vršne trenutke.
 fallocate -l 2G /swapfile
 chmod 600 /swapfile
 mkswap /swapfile
@@ -102,30 +128,62 @@ ufw enable
 
 ---
 
-## 3. DNS na Namecheapu
+## 3. DNS na Cloudflare-u
 
-Domain List → `cloudsheep.dev` → Manage → **Advanced DNS**.
+Domen ostaje registrovan na **Namecheapu** — menjaju se samo nameserveri, tako da zapise drži
+Cloudflare. Registracija, obnova i vlasništvo se ne diraju.
 
-**Prvo obriši** ono što Namecheap ubaci sam:
+Zašto uopšte: Cloudflare menja zapise za sekunde umesto za pola sata, ima API ako ikad zatreba
+automatizacija, i besplatan je. Namecheapov DNS radi isto, samo sporije i bez ijedne od tih
+mogućnosti.
 
-- `URL Redirect Record` za `@` (parking stranica)
-- `CNAME` `www` → `parkingpage.namecheap.com`
+### 3.1 Dodaj domen u Cloudflare
 
-Ako ovo ostane, A rekord se ne primenjuje i domen i dalje vodi na parking.
+1. Napravi nalog na `dash.cloudflare.com` (Free plan)
+2. **Add a site** → `cloudsheep.dev` → **Free**
+3. Cloudflare skenira postojeće zapise i ponudi ih na uvoz
 
-**Pa dodaj:**
+> **Obriši sve što uveze skeniranje.** Namecheap drži parking zapise (`URL Redirect Record`
+> za `@` i `CNAME www → parkingpage.namecheap.com`); ako se prenesu, domen i dalje vodi na
+> parking iako je A zapis tačan.
 
-| Type | Host    | Value  | TTL       |
-| ---- | ------- | ------ | --------- |
-| A    | `@`     | `<IP>` | Automatic |
-| A    | `www`   | `<IP>` | Automatic |
-| A    | `admin` | `<IP>` | Automatic |
-| A    | `api`   | `<IP>` | Automatic |
+Na kraju Cloudflare daje **dva nameservera**, u obliku `ana.ns.cloudflare.com` i
+`bob.ns.cloudflare.com`. Zapiši ih.
 
-Hetzner daje i IPv6 `/64`; ako hoćeš i AAAA rekorde, koristi `<prefiks>::1` za ista četiri
-hosta. Nije obavezno — sve radi i samo preko IPv4.
+### 3.2 Prebaci nameservere na Namecheapu
 
-**Provera pre nego što kreneš dalje:**
+Domain List → `cloudsheep.dev` → **Manage** → sekcija **Nameservers** → **Custom DNS**, pa
+upiši ona dva iz prethodnog koraka i sačuvaj.
+
+Propagacija traje od nekoliko minuta do par sati. Cloudflare šalje mejl kad preuzme zonu;
+dotle se ne ide dalje, jer zapisi upisani u Cloudflare još ne važe.
+
+```bash
+dig +short NS cloudsheep.dev
+```
+
+Mora vratiti Cloudflare nameservere, ne `dns1.registrar-servers.com`.
+
+### 3.3 Zapisi
+
+Cloudflare → `cloudsheep.dev` → **DNS** → **Records**:
+
+| Type | Name    | Content | Proxy status | TTL  |
+| ---- | ------- | ------- | ------------ | ---- |
+| A    | `@`     | `<IP>`  | **DNS only** | Auto |
+| A    | `www`   | `<IP>`  | **DNS only** | Auto |
+| A    | `admin` | `<IP>`  | **DNS only** | Auto |
+| A    | `api`   | `<IP>`  | **DNS only** | Auto |
+
+> **Proxy mora biti isključen — sivi oblak, ne narandžasti.** Sa uključenim proxyjem saobraćaj
+> ide kroz Cloudflare, pa Traefik vidi Cloudflare umesto posetioca, a Let's Encrypt izdavanje
+> dobija još jedno mesto na kom može da pukne. Ovako se ponaša identično kao ranije: Cloudflare
+> je samo imenik.
+
+Hetzner daje i IPv6 `/64`; ako hoćeš AAAA zapise, koristi `<prefiks>::1` za ista četiri imena.
+Nije obavezno.
+
+### 3.4 Provera pre nego što kreneš dalje
 
 ```bash
 dig +short cloudsheep.dev
@@ -134,14 +192,25 @@ dig +short admin.cloudsheep.dev
 dig +short api.cloudsheep.dev
 ```
 
-Sva četiri moraju vratiti `<IP>`. Namecheap propagira 5–30 min.
+Sva četiri moraju vratiti `<IP>`. Ako vrate Cloudflare adrese (`104.x`, `172.67.x`), proxy je
+ostao uključen — vrati ga na „DNS only".
 
-> **`.dev` je na HSTS preload listi.** Pretraživač fizički odbija HTTP na `.dev` domenu.
-> Dok Coolify ne izda sertifikat, sajt neće raditi **uopšte** — ne „bez katanca", nego
-> nikako. To je očekivano. ACME HTTP-01 challenge svejedno prolazi, jer njega radi Traefik,
-> ne pretraživač.
+> **`.dev` je na HSTS preload listi.** Pretraživač fizički odbija HTTP na `.dev` domenu. Dok
+> Coolify ne izda sertifikat, sajt neće raditi **uopšte** — ne „bez katanca", nego nikako. To
+> je očekivano. ACME HTTP-01 challenge svejedno prolazi, jer njega radi Traefik, ne pretraživač.
 
----
+### 3.5 Ako ikad uključiš proxy
+
+Nije potrebno za rad, ali ako jednog dana zatreba CDN ili skrivanje IP adrese servera, dve
+stvari su **obavezne**, a ne opcione:
+
+1. **SSL/TLS mode → Full (strict).** Na „Flexible" Cloudflare zove origin preko HTTP-a, a
+   Traefik odgovara redirekcijom na HTTPS — beskonačna petlja.
+2. **Hetzner firewall ograniči na Cloudflare IP opsege** za portove 80 i 443. Bez toga origin
+   ostaje dostupan direktno preko IP-a, a `trust proxy` u `apps/api/src/app.ts` tada veruje
+   `X-Forwarded-For` zaglavlju koje svako može da pošalje — rate limit po IP-u postaje ukras.
+
+Sertifikat mora biti izdat **pre** uključivanja proxyja.
 
 ## 4. Coolify
 
@@ -170,7 +239,7 @@ Posle registracije:
 
 ## 5. Dalje
 
-Konfiguracija tri aplikacije i baze je u [`COOLIFY.md`](COOLIFY.md).
+Konfiguracija aplikacije i baze je u [`COOLIFY.md`](COOLIFY.md).
 
 ---
 

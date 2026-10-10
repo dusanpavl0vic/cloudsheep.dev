@@ -1,0 +1,566 @@
+// Auth je namerno mali: jedan admin nalog, samo prijava.
+// Nema registracije, nema reset lozinke, nema upravljanja korisnicima —
+// to je odluka, ne propust. Kad zatreba, model je već tu.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  member
+  viewer
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  /// bcrypt heš. Sirova lozinka ne postoji nigde osim u telu zahteva.
+  passwordHash String
+  role         Role     @default(admin)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessions RefreshToken[]
+}
+
+/// Refresh tokeni se čuvaju HEŠOVANI i rotiraju pri svakoj upotrebi.
+///
+/// Zašto u bazi, a ne samo potpisan JWT: bez zapisa se odjava ne može sprovesti —
+/// potpisan token ostaje važeći do isteka ma šta klijent uradio. Ovako `logout`
+/// briše red i token istog trena prestaje da radi.
+model RefreshToken {
+  id        String   @id @default(uuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+/// Raspored galerije na stranici projekta.
+enum GalleryLayout {
+  /// Mreža jednakih slika.
+  grid
+  /// Prva slika velika, ostale manje ispod nje.
+  feature
+  /// Bez medija — projekat se prikazuje kao šira tekstualna kartica.
+  none
+}
+
+/// Kategorija po kojoj se filtrira na `/projects`.
+///
+/// Vrednosti su namerno u camelCase-u: iste su i i18n ključevi (`projects.filters.fullStack`)
+/// i menjanje u snake_case bi tiho razbilo prevode na obe strane.
+enum ProjectCategory {
+  frontend
+  backend
+  fullStack
+  openSource
+}
+
+/// Portfolio projekat. Zamenjuje `PROJECTS` niz iz `apps/web/.../projects.constants.ts`
+/// i `projects.items.*` ključeve iz i18n fajlova — dakle i strukturu i tekst.
+///
+/// Tekst stoji u dve kolone po polju umesto u tabeli prevoda: jezika je tačno dva i nema
+/// trećeg na vidiku, pa bi tabela donela spajanje na svako čitanje i upsert po jeziku na
+/// svaki upis, a ne bi rešila nijedan postojeći problem (docs/adr).
+model Project {
+  id       String          @id @default(uuid())
+  slug     String          @unique
+  category ProjectCategory
+  year     Int
+
+  /// Redosled prikaza. Ranije je to bila pozicija u nizu; u bazi mora biti eksplicitna.
+  sortOrder Int @default(0)
+
+  /// Izdvojen na landing strani. Zamenjuje `PROJECTS.slice(0, 3)`.
+  isFeatured Boolean @default(false)
+
+  /// Skica. Javni API je ne vraća — vidi se samo u adminu.
+  isPublished Boolean @default(false)
+
+  titleSr   String
+  titleEn   String
+  /// Potpis ispod naslova („full-stack", „frontend · mobilne"). NIJE `category`:
+  /// kategorija filtrira, ovo se prikazuje, i danas se već razlikuju.
+  catSr     String
+  catEn     String
+  descSr    String @db.Text
+  descEn    String @db.Text
+  /// Opis slike projekta. Stoji ovde, a ne uz otpremljenu datoteku, jer opisuje projekat
+  /// u kontekstu — ista slika u drugom projektu tražila bi drugi opis. Koristi ga Faza 3.
+  captionSr String @default("")
+  captionEn String @default("")
+
+  /// Tehnologije su sada ZAPISI, ne slobodan tekst — vidi `Technology`.
+  technologies ProjectTechnology[]
+
+  /// Slike projekta, po redosledu.
+  images ProjectImage[]
+
+  /// Kako se galerija prikazuje na stranici projekta.
+  galleryLayout GalleryLayout @default(grid)
+
+  /// Ranije su oba dugmeta na stranici projekta vodila na `#top`. Ovo je popravka.
+  liveUrl String?
+  repoUrl String?
+
+  /// Studija slučaja (redizajn 2026-10): uloga studija, trajanje, klijent.
+  roleSr     String @default("")
+  roleEn     String @default("")
+  timelineSr String @default("")
+  timelineEn String @default("")
+  client     String @default("")
+
+  /// Merljivi rezultati: `[{ value: "40%", labelSr, labelEn }]`. Redosled je deo podatka.
+  metrics  Json  @default("[]")
+  /// Poglavlja priče: `[{ titleSr, titleEn, bodySr, bodyEn }]`.
+  chapters Json  @default("[]")
+  /// Aktivni korisnici po mesecu posle lansiranja — grafikon na studiji slučaja. Prazno = bez grafikona.
+  growth   Int[] @default([])
+
+  testimonials Testimonial[]
+
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  cvSiteProjects CvSiteProject[]
+
+  /// Javna lista uvek filtrira po `isPublished` i sortira po `sortOrder`.
+  @@index([isPublished, sortOrder])
+}
+
+/// Otpremljena datoteka: slika projekta ili logotip tehnologije.
+///
+/// `width` i `height` su OBAVEZNI, ne opcioni: bez njih `<img>` nema eksplicitne dimenzije
+/// i stranica poskakuje dok se slika učitava (CLS, docs/07 §7). Čitaju se iz zaglavlja
+/// fajla pri otpremanju, pa ih nije moguće zaboraviti.
+model Asset {
+  id String @id @default(uuid())
+
+  /// Ime na disku, BEZ putanje i bez originalnog imena. Generisano je: klijentsko ime
+  /// nikad ne sme da učestvuje u putanji na disku.
+  storageKey String @unique
+  mimeType   String
+  sizeBytes  Int
+  width      Int
+  height     Int
+
+  /// Originalno ime, sanitizovano. SAMO za prikaz u adminu, nikad za pristup fajlu.
+  label String
+
+  createdAt DateTime @default(now())
+
+  projectImages      ProjectImage[]
+  technologies       Technology[]
+  memberAvatars      TeamMember[]   @relation("MemberAvatar")
+  memberSeals        TeamMember[]   @relation("MemberSeal")
+  noteCovers         Note[]         @relation("NoteCover")
+  testimonialAvatars Testimonial[]  @relation("TestimonialAvatar")
+}
+
+/// Slika u galeriji projekta. Zaseban model, a ne niz na projektu, zbog redosleda i
+/// opisa po slici — i zato što se ista datoteka može upotrebiti na dva mesta.
+model ProjectImage {
+  id        String  @id @default(uuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assetId   String
+  asset     Asset   @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  /// Opis slike. Obavezan sadržajno (docs/15), prazan string je dozvoljen samo za
+  /// čisto dekorativne slike.
+  altSr String @default("")
+  altEn String @default("")
+
+  /// Ekran za pregled po uređaju na studiji slučaja; `null` = obična slika galerije.
+  device DeviceKind?
+
+  sortOrder Int @default(0)
+
+  @@index([projectId, sortOrder])
+}
+
+enum DeviceKind {
+  phone
+  browser
+}
+
+/// Tehnologija kao ZAPIS, ne kao slobodan tekst.
+///
+/// Ranije je `Project.tech` bio `String[]`, a logotipi su stajali kao SVG fajlovi u
+/// `apps/web/public/tech/` uz skriptu koja je proveravala da se te dve liste poklapaju.
+/// Time se nova tehnologija nije mogla dodati bez izmene koda.
+model Technology {
+  id    String @id @default(uuid())
+  /// Normalizovan ključ (`react`, `nodejs`) — jedinstven, koristi se za poređenje.
+  slug  String @unique
+  /// Ono što se prikazuje: `React`, `Node.js`.
+  label String
+
+  /// Grupa za razvrstavanje na sajtu. Slobodan tekst da dodavanje grupe ne traži migraciju.
+  group String @default("tooling")
+
+  /// Logotip. `null` je dozvoljen — tehnologija bez logotipa se prikazuje samo kao naziv,
+  /// isto kao i do sada kod tagova bez SVG-a.
+  logoId String?
+  logo   Asset?  @relation(fields: [logoId], references: [id], onDelete: SetNull)
+
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  projects ProjectTechnology[]
+}
+
+/// Veza projekat ↔ tehnologija, sa redosledom prikaza po projektu.
+model ProjectTechnology {
+  projectId    String
+  project      Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  technologyId String
+  technology   Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+  sortOrder    Int        @default(0)
+
+  @@id([projectId, technologyId])
+  @@index([projectId, sortOrder])
+}
+
+/// Podaci o vlasniku sajta. **Singleton** — uvek tačno jedan red.
+///
+/// Tabela, a ne env varijable: menja se iz admin panela, a env promena traži redeploy.
+/// `id` je konstanta upravo zato da drugi red ne može ni da nastane.
+model Profile {
+  id String @id @default("singleton")
+
+  fullName    String
+  /// Grad i vremenska zona, kako se prikazuje u podnožju.
+  location    String  @default("")
+  /// Prima li nove poslove — prikazuje se kao oznaka u sekciji „Studio".
+  isAvailable Boolean @default(true)
+
+  headlineSr String @default("")
+  headlineEn String @default("")
+  bioSr      String @default("") @db.Text
+  bioEn      String @default("") @db.Text
+
+  /// Obrazovanje: univerzitet, zvanje, smer, fakultet, grad — po jeziku gde ima smisla.
+  universitySr String @default("")
+  universityEn String @default("")
+  degreeSr     String @default("")
+  degreeEn     String @default("")
+
+  updatedAt DateTime @updatedAt
+}
+
+/// Kontakt link. Mejl je poseban red kao i svaki drugi — tako se redosled i vidljivost
+/// podešavaju na jednom mestu.
+model SocialLink {
+  id String @id @default(uuid())
+
+  /// `github` | `linkedin` | `instagram` | `x` | `email` | `other`.
+  /// Slobodan tekst da nova mreža ne traži migraciju; frontend bira ikonicu po njemu.
+  platform String
+  /// Za `email` ovde stoji `mailto:` adresa — link je link, bez posebnog slučaja.
+  url      String
+  label    String
+
+  sortOrder Int     @default(0)
+  isVisible Boolean @default(true)
+
+  @@index([isVisible, sortOrder])
+}
+
+/// Član tima. Zamenjuje JEDNU hardkodovanu diplomu u sekciji „Studio" na sajtu, gde su
+/// podaci do sada stajali kao pet i18n ključeva bez pojma osobe.
+model TeamMember {
+  id       String @id @default(uuid())
+  fullName String
+
+  roleSr String @default("")
+  roleEn String @default("")
+
+  /// Avatar. `null` je dozvoljen — kartica tada prikazuje inicijale.
+  avatarId String?
+  avatar   Asset?  @relation("MemberAvatar", fields: [avatarId], references: [id], onDelete: SetNull)
+
+  /// Čekboks iz admina. `false` znači da se KARTICA DIPLOME ne renderuje — član i dalje
+  /// stoji u timu, sa slikom i ulogom.
+  hasDiploma Boolean @default(false)
+
+  /// Podaci sa diplome, po osobi. Prazni dok `hasDiploma` ne bude `true`.
+  universitySr String @default("")
+  universityEn String @default("")
+  degreeSr     String @default("")
+  degreeEn     String @default("")
+  programmeSr  String @default("")
+  programmeEn  String @default("")
+  facultySr    String @default("")
+  facultyEn    String @default("")
+  city         String @default("")
+
+  /// Pečat/grb fakulteta — otpremljena slika, ne datoteka u repou.
+  sealId String?
+  seal   Asset?  @relation("MemberSeal", fields: [sealId], references: [id], onDelete: SetNull)
+
+  // ── Podaci koji postoje SAMO zbog CV-a ────────────────────────────────────────
+  //
+  // Kontakt je po ČOVEKU, ne po sajtu. `Profile` i `SocialLink` nose kontakt studija i
+  // ostaju netaknuti — čim u timu bude drugi čovek, njegov CV ne sme da nosi tuđi mejl.
+
+  email       String @default("")
+  phone       String @default("")
+  githubUrl   String @default("")
+  linkedinUrl String @default("")
+  websiteUrl  String @default("")
+
+  /// Mesto uz kontakt („Niš, Srbija" / „Niš, Serbia"). Odvojeno od `city`, koje je grad
+  /// FAKULTETA na diplomi — to su dva različita podatka koja se slučajno poklapaju.
+  locationSr String @default("")
+  locationEn String @default("")
+
+  /// Dve-tri rečenice na vrhu CV-a. Prvo što pročita čovek koji gleda četrdeset CV-jeva.
+  summarySr String @default("") @db.Text
+  summaryEn String @default("") @db.Text
+
+  /// Status studija: „Student završne godine" / „Final-year student".
+  educationStatusSr String @default("")
+  educationStatusEn String @default("")
+
+  /// Prosek kao TEKST, ne broj. U CV-u se piše sa skalom („8.57/10.0"); `Decimal` bi tražio
+  /// još jednu kolonu za skalu i formatiranje po jeziku, a ništa se po njemu ne sortira.
+  gpa String @default("")
+
+  educationStartYear Int?
+  educationEndYear   Int?
+
+  cvExperiences  CvExperience[]
+  cvLanguages    CvLanguage[]
+  cvSiteProjects CvSiteProject[]
+
+  sortOrder Int     @default(0)
+  isVisible Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isVisible, sortOrder])
+}
+
+/// Poruka sa kontakt forme.
+///
+/// Poruka se PRVO upiše, pa se onda šalje mejl. Gmail SMTP će pasti pre ili kasnije —
+/// tada poruka i dalje postoji u adminu, umesto da nestane bez traga. Obrnut redosled
+/// znači da izgubljena poruka ne ostavlja nikakav zapis.
+model ContactMessage {
+  id      String @id @default(uuid())
+  name    String
+  email   String
+  subject String @default("")
+  message String @db.Text
+
+  /// Dijagnostika, ne sadržaj. Pomaže da se razlikuje spam od pravog posetioca.
+  ip        String?
+  userAgent String?
+
+  /// Upit iz koraka forme (redizajn 2026-10). Prazno za poruke iz stare forme.
+  projectType String       @default("")
+  budget      String       @default("")
+  timeline    String       @default("")
+  /// Procena iz kalkulatora na početnoj, ako je upit poslat iz nje.
+  estimate    Json?
+  locale      String       @default("en")
+  bookingSlot BookingSlot?
+
+  isRead Boolean @default(false)
+
+  /// Potvrda adrese linkom (ADR 0016): `null` — upit nije potvrđen i studio ga ne vidi.
+  confirmedAt      DateTime?
+  /// SHA-256 tokena iz linka; sam token se nigde ne čuva.
+  confirmTokenHash String?   @unique
+
+  /// Kad je `null`, mejl NIJE poslat — poruka je i dalje sačuvana.
+  emailSentAt DateTime?
+  /// Poruka greške SMTP-a, za dijagnostiku u adminu.
+  emailError  String?
+
+  createdAt DateTime @default(now())
+
+  @@index([isRead, createdAt])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════════
+// CV — podaci koji postoje samo za generisanje PDF-a, po članu tima
+//
+// Nisu vezani za `Project` sa sajta, i to je odluka: CV nosi fakultetske i lične radove
+// kojih na sajtu nema i nikad neće biti („TimberGame", „Triggle"), a sajt nosi studije
+// slučaja koje se pišu za klijente. Deljeni model bi jednu od te dve svrhe kvario.
+//
+// `technologies` je `String[]`, dakle slobodan tekst. `Project.tech` je nekad bio isto to
+// pa je prešao u `Technology` tabelu — ali ZBOG LOGOTIPA, koji se bez tabele nisu mogli
+// dodati bez izmene koda. CV je čist tekst u PDF-u i logotipe nema, pa taj razlog ovde ne
+// važi; obavezan unos u katalog sajta bi samo smetao.
+// ═══════════════════════════════════════════════════════════════════════════════════
+
+/// Projekat SA SAJTA uvršten u CV.
+///
+/// Veza postoji da se isti rad ne bi opisivao dvaput. Studija slučaja na sajtu i stavka u
+/// CV-u nose iste podatke — naziv, opis, tehnologije, adrese — pa se u CV povlače odatle,
+/// a menjaju na jednom mestu.
+///
+/// Ovo je JEDINI izvor projekata u CV-u. Postojala je i tabela slobodnih CV projekata, pa je
+/// uklonjena prazna: dva mesta na kojima se opisuje isti rad znače dva opisa koja se raziđu.
+/// Rad koji treba u CV, a nije za javni prikaz, ide na sajt kao `isPublished: false`.
+model CvSiteProject {
+  id        String     @id @default(uuid())
+  memberId  String
+  member    TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  /// Napomena specifična za CV („moja uloga: backend"). Prazna se ne prikazuje.
+  noteSr String @default("")
+  noteEn String @default("")
+
+  sortOrder Int @default(0)
+
+  /// Isti projekat se ne može uvrstiti dvaput u isti CV.
+  @@unique([memberId, projectId])
+  @@index([memberId, sortOrder])
+}
+
+/// Radno mesto. Otvoren kraj (`endYear = null`) znači „i dalje traje".
+model CvExperience {
+  id       String     @id @default(uuid())
+  memberId String
+  member   TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  company    String
+  positionSr String @default("")
+  positionEn String @default("")
+  locationSr String @default("")
+  locationEn String @default("")
+
+  /// Mesec je opcion: kad se ne zna, u CV-u stoji samo godina.
+  startYear  Int
+  startMonth Int?
+  endYear    Int?
+  endMonth   Int?
+
+  summarySr String @default("") @db.Text
+  summaryEn String @default("") @db.Text
+
+  bulletsSr    String[]
+  bulletsEn    String[]
+  technologies String[]
+
+  sortOrder Int @default(0)
+
+  @@index([memberId, sortOrder])
+}
+
+/// Jezik. Nivo je slobodan tekst jer nije uvek CEFR — „B2" i „maternji" stoje jedno uz drugo.
+model CvLanguage {
+  id       String     @id @default(uuid())
+  memberId String
+  member   TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  nameSr  String
+  nameEn  String
+  levelSr String @default("")
+  levelEn String @default("")
+
+  sortOrder Int @default(0)
+
+  @@index([memberId, sortOrder])
+}
+
+/// Beleška (blog). Telo je markdown; renderuje se na serveru, bez JS-a na klijentu.
+model Note {
+  id   String @id @default(uuid())
+  slug String @unique
+
+  titleSr   String
+  titleEn   String
+  excerptSr String   @default("")
+  excerptEn String   @default("")
+  bodySr    String   @db.Text
+  bodyEn    String   @db.Text
+  tags      String[] @default([])
+
+  coverId String?
+  cover   Asset?  @relation("NoteCover", fields: [coverId], references: [id], onDelete: SetNull)
+
+  /// Skica se ne vidi javno. `publishedAt` se postavlja pri prvom objavljivanju i ne menja se.
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isPublished, publishedAt])
+}
+
+/// Utisak klijenta za sekciju „Clients" na početnoj.
+model Testimonial {
+  id String @id @default(uuid())
+
+  quoteSr      String @db.Text
+  quoteEn      String @db.Text
+  authorName   String
+  authorRoleSr String @default("")
+  authorRoleEn String @default("")
+  company      String @default("")
+
+  avatarId String?
+  avatar   Asset?  @relation("TestimonialAvatar", fields: [avatarId], references: [id], onDelete: SetNull)
+
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  sortOrder   Int     @default(0)
+  isPublished Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isPublished, sortOrder])
+}
+
+/// Prijava na newsletter. Adresa je proverena (MX + disposable) pre upisa — ADR 0013.
+model NewsletterSubscriber {
+  id     String @id @default(uuid())
+  email  String @unique
+  locale String @default("en")
+
+  /// Odjava jednim klikom — link u svakom mejlu nosi ovaj token, ne adresu.
+  unsubscribeToken String    @unique @default(uuid())
+  unsubscribedAt   DateTime?
+
+  /// Potvrda adrese linkom (ADR 0016): prijava je aktivna tek kad je `confirmedAt` postavljen.
+  confirmedAt      DateTime?
+  confirmTokenHash String?   @unique
+
+  createdAt DateTime @default(now())
+}
+
+/// Termin za uvodni poziv. Slobodan dok ga upit ne zauzme; zauzimanje je atomično
+/// (`updateMany where contactMessageId: null`), pa dva upita ne mogu dobiti isti termin.
+model BookingSlot {
+  id          String   @id @default(uuid())
+  startsAt    DateTime @unique
+  durationMin Int      @default(30)
+
+  contactMessageId String?         @unique
+  contactMessage   ContactMessage? @relation(fields: [contactMessageId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([startsAt])
+}

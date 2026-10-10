@@ -1,47 +1,35 @@
 ---
-description: Pravi hook na pravom nivou (feature/app/paket), sa testom i unosom u katalog docs/13
+description: Pravi hook na pravom nivou (generički / domenski / admin), sa testom logike i unosom u katalog docs/13
 argument-hint: [scope] [useName]
 arguments: scope useName
-disable-model-invocation: true
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash(pnpm lint:*), Bash(pnpm test:*)
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(pnpm lint:*), Bash(pnpm test:*), Bash(pnpm exec eslint:*), Bash(pnpm exec vitest:*)
 ---
 
-Napravi hook `$useName` u scope-u `$scope`.
+Napravi `$useName` u opsegu `$scope`.
 
 ## Prvo pročitaj
 
-- `docs/13-hooks.md` — hook-first pravilo i katalog
-- `docs/07-performance.md` §2–4 — `useMemo`/`useEffect`/`useState` ograničenja
+`docs/13-hooks.md` (nivoi, oblik povratne vrednosti, katalog) i `docs/07-performance.md` §2–3.
 
-## Odredi nivo — pitanje je "zna li hook za domen?"
+## Gde
 
-| Odgovor | Lokacija |
-|---|---|
-| zna za domen | `apps/<x>/src/features/<f>/hooks/` |
-| ne zna za domen, ali zna za ovu app | `apps/<x>/src/hooks/` |
-| ne zna ni za šta | `packages/hooks/` |
-| UI, ne-domenski | `packages/ui` |
-
-Ako `$scope` protivreči ovom testu, reci to i predloži pravi nivo.
+| scope | Putanja |
+| --- | --- |
+| generički (ne zna za domen) | `src/hooks/$useName.ts` |
+| javni domen | `src/hooks/<domen>/$useName.ts` (+ `index.ts`) |
+| admin | `src/hooks/admin/<domen>/$useName.ts` (+ `index.ts`) |
 
 ## Pravila
 
-- Vraća **objekat sa stabilnim ključevima** (`{ data, isLoading, error, ...actions }`),
-  ne niz — osim ako imitira `useState` sa tačno dva člana
-- **Nikad ne vraća JSX**
-- Radi **jednu** stvar; ako radi više — podeli na dva hooka
-- Ako ne koristi nijedan React hook, to nije hook nego obična funkcija u `lib/`
-- Svaki `useEffect` mora imati `// effect:` komentar i biti sa whitelist-e
-- Svaki `useMemo` mora imati `// memo:` komentar i jedan od 3 dozvoljena razloga
-
-## Koraci
-
-1. Napravi hook fajl
-2. Napravi kolokovan test (`renderHook`) — feature hookovi traže ≥ 90% pokrivenosti
-3. **Upiši red u katalog u `docs/13-hooks.md`** ako je hook deljiv
+- `'use client'`, `export const $useName = (...) => { … return { … } }` — objekat, ne niz, ne JSX
+- Jedini sloj koji sme `useAppSelector` / `useAppDispatch` / RTKQ hook
+- Admin akcije kroz `useAdminAction` (toast), forme kroz `useAdminForm`, potvrde kroz `useConfirm`
+- RHF: `useFormState` / `useWatch`, nikad `form.formState` / `form.watch` (React Compiler)
+- `useEffect` samo za spoljni sistem, sa `// effect:` komentarom; bez `useMemo/useCallback`
+- Netrivijalna logika ide u čistu funkciju u `src/helpers/` sa testom; hook je tanak
 
 ## Acceptance
 
-- `pnpm lint && pnpm test` prolazi
-- Hook je u katalogu `docs/13-hooks.md`
-- Nijedna komponenta ne mora da zna za Redux zbog njega
+- `pnpm exec eslint` i `pnpm typecheck` prolaze
+- Test pored helpera (ili `renderHook` uz `// @vitest-environment jsdom`)
+- Upisan u katalog u `docs/13-hooks.md` ako je deljiv

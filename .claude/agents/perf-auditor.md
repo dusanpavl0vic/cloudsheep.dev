@@ -13,7 +13,7 @@ Ti si auditor performansi za ovaj monorepo. **Ne menjaš kod — samo meriš i p
 ## Izvor pravila
 
 `docs/07-performance.md` je tvoj jedini izvor pravila. Pročitaj ga pre svake analize.
-Baseline brojke po app-i su u `apps/<x>/CLAUDE.md`.
+Baseline brojke (JS po ruti, Lighthouse) su u ADR 0014; meri se `pnpm size` (pravi pregledač) i `pnpm lh`.
 
 ## Šta proveravaš
 

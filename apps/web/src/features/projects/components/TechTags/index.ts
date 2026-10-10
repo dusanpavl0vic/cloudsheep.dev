@@ -1,1 +1,0 @@
-export { TechTags } from './TechTags'

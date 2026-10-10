@@ -1,254 +1,100 @@
 # 16 — Tooling i CI
 
-> Status: active | Last review: 2026-08-15
-> Sekcija 1 je rezultat F0 — verifikovana `registry.npmjs.org` upitom 2026-08-15.
+> Status: active | Last review: 2026-10-08
 
-## 1. Pinovane verzije
+## 1. Verzije
 
-Toolchain: **Node v24.19.0**, **pnpm 11.22.0** (kroz `corepack`).
+Toolchain: **Node 24**, **pnpm 11.22.0** (kroz `corepack`). Jedna aplikacija u korenu — verzije
+su tačne (bez `^`) u `package.json`; `pnpm-workspace.yaml` postoji samo zbog `allowBuilds`.
 
-SPEC (`docs/adr/0000-initial-spec.md` §2) je pisan za TS 5.7 / Vite 6 / ESLint 9 / Router 7 /
-Vitest 3. Ekosistem je u međuvremenu otišao nekoliko major verzija dalje. Pravilo iz F0 je
-"uzmi noviju i zabeleži" — **osim u dva slučaja gde novije lomi lanac alata**; oba su obrazložena
-u §1.5 i nisu stvar ukusa nego peer-dependency ograničenja.
+| Paket                                             | Verzija                      | Napomena                                                         |
+| ------------------------------------------------- | ---------------------------- | ---------------------------------------------------------------- |
+| `next` / `@next/eslint-plugin-next`               | `16.3.8`                     | **ne 16.4.0** — vidi D                                           |
+| `react` / `react-dom`                             | `19.2.8`                     |                                                                  |
+| `babel-plugin-react-compiler`                     | `1.0.0`                      | exact pin (ADR 0001); Next ga koristi kroz `reactCompiler: true` |
+| `next-yak`                                        | `9.10.2`                     | CSS u build-u (`withYak`, `transpilationMode: 'Css'`), ADR 0015 |
+| `next-intl`                                       | `4.14.9`                     | API `use-intl`                                                   |
+| `@reduxjs/toolkit` / `react-redux`                | `2.12.0` / `9.3.0`           |                                                                  |
+| `react-hook-form` / `@hookform/resolvers` / `zod` | `7.85.0` / `5.7.1` / `4.4.3` |                                                                  |
+| `prisma` / `@prisma/client`                       | `6.19.3`                     | **ne 7** — vidi C                                                |
+| `typescript`                                      | `6.0.3`                      | **ne 7** — vidi A                                                |
+| `eslint`                                          | `9.39.5`                     | **ne 10** — vidi B                                               |
+| `vitest`                                          | `4.1.10`                     |                                                                  |
+| `@playwright/test`                                | `1.62.1`                     |                                                                  |
 
-### 1.1 Jezgro
+### Odstupanja od „najnovije" — sa razlogom
 
-| Paket                               | Pin                  | SPEC      | Napomena                                            |
-| ----------------------------------- | -------------------- | --------- | --------------------------------------------------- |
-| `typescript`                        | `6.0.3`              | 5.7+      | **namerno ne 7.0.2** — vidi §1.5 A                  |
-| `turbo`                             | `2.10.10`            | —         |                                                     |
-| `vite`                              | `8.2.1`              | 6+        | Vite 8 = rolldown bundler                           |
-| `@vitejs/plugin-react`              | `6.0.5`              | —         | peer traži `vite ^8`                                |
-| `@rolldown/plugin-babel`            | `0.2.3`              | —         | **novo** — peer plugin-react-a, nosi Babel u Vite 8 |
-| `@babel/core`                       | `8.0.1`              | —         | **novo** — peer `@rolldown/plugin-babel`-a          |
-| `rolldown`                          | `1.2.4`              | —         | **novo** — peer `@rolldown/plugin-babel`-a          |
-| `babel-plugin-react-compiler`       | `1.0.0`              | 1.x exact | **exact pin, bez `^`** (SPEC §2)                    |
-| `react` / `react-dom`               | `19.2.8`             | 19.2.x    | ✓                                                   |
-| `@types/react` / `@types/react-dom` | `19.2.18` / `19.2.4` |           |                                                     |
-| `@types/node`                       | `26.2.0`             |           |                                                     |
+**A. TypeScript 6, ne 7.** `typescript-eslint@8.67` ima peer `>=4.8.4 <6.1.0`; TS 7 bi isključio
+type-aware lint, koji je glavni mehanizam za „bez `any`, bez `!`". _Revidirati kad typescript-eslint
+podrži TS 7._ TS 6 je zastareo `baseUrl` — `paths` radi bez njega.
 
-> SPEC §2 kaže "Babel, ne SWC — Babel je potreban za React Compiler". Namera je očuvana:
-> u Vite 8 Babel ulazi kroz `@rolldown/plugin-babel` umesto kroz stari `@vitejs/plugin-react`
-> Babel mod. React Compiler radi isto.
+**B. ESLint 9, ne 10.** `eslint-plugin-import` i `eslint-plugin-jsx-a11y` još nemaju podršku za
+ESLint 10, a a11y je error nivo. _Revidirati kad jsx-a11y podrži 10._
 
-### 1.2 Aplikativni sloj
+**C. Prisma 6, ne 7.** Sedmica izbacuje `url` iz `datasource` bloka i traži `prisma.config.ts` uz
+driver adapter — to je druga postavka, ne nadogradnja. Šestica je podržana i poklapa se sa
+`prisma migrate deploy` tokom pre deploy-a.
 
-| Paket                               | Pin               | SPEC | Napomena                                                     |
-| ----------------------------------- | ----------------- | ---- | ------------------------------------------------------------ |
-| `react-router`                      | `8.3.0`           | v7   | **major napred** — vidi §1.6                                 |
-| `@reduxjs/toolkit`                  | `2.12.0`          | 2.x  | ✓                                                            |
-| `react-redux`                       | `9.3.0`           |      |                                                              |
-| `tailwindcss` / `@tailwindcss/vite` | `4.3.3`           | v4   | peer podržava `vite ^8` ✓                                    |
-| `class-variance-authority`          | `0.7.1`           |      | nepromenjeno                                                 |
-| `clsx` / `tailwind-merge`           | `2.1.1` / `3.6.0` |      |                                                              |
-| `lucide-react`                      | `1.31.0`          |      | **major** — projekat je na `0.511.0`; per-icon import ostaje |
-| `react-hook-form`                   | `7.85.0`          | 7.x  | ✓                                                            |
-| `zod`                               | `4.4.3`           |      | **major** — projekat je na `3.25`; vidi §1.6                 |
-| `@hookform/resolvers`               | `5.9.0`           |      | peer: `zod ^3.25 \|\| ^4` ✓                                  |
-| `i18next`                           | `26.3.6`          |      |                                                              |
-| `react-i18next`                     | `17.0.11`         |      | peer traži `i18next >= 26.2.0`                               |
-| `i18next-icu`                       | `2.4.4`           |      |                                                              |
-| `intl-messageformat`                | `11.2.13`         | —    | **novo** — peer `i18next-icu`-a, mora eksplicitno            |
-| `i18next-browser-languagedetector`  | `8.2.1`           |      |                                                              |
-| `sonner`                            | `2.0.8`           |      |                                                              |
-| `date-fns`                          | `4.4.0`           |      |                                                              |
-| `@tanstack/react-virtual`           | `3.14.9`          |      | obavezno za liste > 100 stavki                               |
-| `@radix-ui/react-dialog`            | `1.1.23`          |      | mehanika modala                                              |
-| `@radix-ui/react-slot`              | `1.3.3`           |      |                                                              |
-| `react-error-boundary`              | `6.1.3`           |      |                                                              |
-| `web-vitals`                        | `6.1.1`           |      |                                                              |
-
-### 1.3 Testiranje
-
-| Paket                                           | Pin                 | SPEC         | Napomena                          |
-| ----------------------------------------------- | ------------------- | ------------ | --------------------------------- |
-| `vitest` / `@vitest/coverage-v8` / `@vitest/ui` | `4.1.10`            | Vitest 3     | peer: `vite ^6 \|\| ^7 \|\| ^8` ✓ |
-| `jsdom`                                         | `30.0.1`            |              |                                   |
-| `@testing-library/react`                        | `16.3.2`            |              | peer: `react ^18 \|\| ^19` ✓      |
-| `@testing-library/user-event`                   | `14.6.4`            |              |                                   |
-| `@testing-library/jest-dom`                     | `7.0.1`             |              | zahteva node >= 22 ✓              |
-| `@testing-library/dom`                          | `10.4.1`            |              | peer obe TL biblioteke            |
-| `msw`                                           | `2.15.0`            | MSW 2        | ✓                                 |
-| `@playwright/test`                              | `1.62.1`            |              |                                   |
-| `@axe-core/playwright`                          | `4.13.0`            |              | e2e a11y                          |
-| `jest-axe` + `axe-core`                         | `11.0.0` + `4.13.0` | `vitest-axe` | **zamena** — vidi §1.5 C          |
-
-### 1.4 Lint, format, release
-
-| Paket                                      | Pin                | SPEC                | Napomena                            |
-| ------------------------------------------ | ------------------ | ------------------- | ----------------------------------- |
-| `eslint` / `@eslint/js`                    | `9.39.5`           | ESLint 9            | **namerno ne 10.8.1** — vidi §1.5 B |
-| `typescript-eslint`                        | `8.67.0`           | strict-type-checked | peer: `ts >=4.8.4 <6.1.0`           |
-| `eslint-plugin-react-hooks`                | `7.1.1`            | v6                  | v7 nosi compiler pravila            |
-| `eslint-plugin-import`                     | `2.32.0`           |                     | `no-restricted-paths` zone          |
-| `eslint-plugin-jsx-a11y`                   | `6.10.2`           |                     |                                     |
-| `eslint-plugin-i18next`                    | `6.1.5`            |                     | `no-literal-string`                 |
-| `eslint-plugin-react-refresh`              | `0.5.4`            |                     |                                     |
-| `globals`                                  | `17.11.0`          |                     |                                     |
-| `prettier` / `prettier-plugin-tailwindcss` | `3.9.6` / `0.8.1`  |                     |                                     |
-| `husky` / `lint-staged`                    | `9.1.7` / `17.3.0` |                     |                                     |
-| `@commitlint/cli` + `config-conventional`  | `21.2.2`           |                     |                                     |
-| `@changesets/cli`                          | `3.0.0`            |                     |                                     |
-| `size-limit` + `@size-limit/preset-app`    | `13.0.3`           |                     | zahteva node ^22.18 \|\| ^24 ✓      |
-| `rollup-plugin-visualizer`                 | `7.1.1`            |                     | ⚠ rizik uz rolldown — vidi §1.6     |
-| `@lhci/cli`                                | `0.15.1`           |                     |                                     |
-| `i18next-parser`                           | `9.4.0`            |                     |                                     |
-
-### 1.5 Odstupanja od "uzmi najnovije" — sa razlogom
-
-**A. TypeScript `6.0.3`, ne `7.0.2`.**
-`typescript-eslint@8.67.0` deklariše peer `typescript: ">=4.8.4 <6.1.0"`. TS 7 bi ga izbacio iz igre,
-a s njim i `strict-type-checked` — koji je po SPEC §19 **glavni mehanizam** za "bez `any`, bez `!`".
-Trampa "novi compiler za gubitak type-aware lintinga" je loša. `6.0.3` je najviše što peer dozvoljava.
-`react-i18next@17` prihvata `^5 || ^6 || ^7`, pa ne smeta.
-_Revidirati kad `typescript-eslint` objavi podršku za TS 7._
-
-**B. ESLint `9.39.5`, ne `10.8.1`.**
-Dva plugina koja SPEC eksplicitno zahteva još ne podržavaju ESLint 10:
-
-| Plugin                          | peer `eslint` | ESLint 10? |
-| ------------------------------- | ------------- | ---------- |
-| `eslint-plugin-import@2.32.0`   | `^2 … ^9`     | ✗          |
-| `eslint-plugin-jsx-a11y@6.10.2` | `^3 … ^9`     | ✗          |
-
-Postoji `eslint-plugin-import-x@4.17.1` (održavani fork, podržava ESLint 10) i njime bi se rešio prvi
-red — ali `jsx-a11y` nema ekvivalent, a on je po SPEC §17 **error nivo**. Uz pnpm strict peer resolution
-to znači ili `overrides` laž ili pad instalacije. ESLint 9 je linija na kojoj **ceo** set radi bez laganja:
-`typescript-eslint@8.67` (`^8.57 || ^9 || ^10`), `react-hooks@7.1.1` (`… || ^9 || ^10`), `import`, `jsx-a11y`.
-SPEC ionako kaže "ESLint 9 flat config". _Revidirati kad `jsx-a11y` objavi podršku za 10._
-
-**C. `jest-axe@11` umesto `vitest-axe`.**
-`vitest-axe@0.1.0` je poslednji put objavljen **2022-10-21** — pre Vitest 1.0, a mi smo na 4.1.10.
-Peer mu je `vitest >=0.16.0`, što formalno prolazi, ali paket četiri godine nije diran.
-`jest-axe@11.0.0` nema peer ograničenja i radi u Vitest-u kroz `expect.extend(toHaveNoViolations)`.
-Namera SPEC §17 ("axe assertions u unit testovima") je očuvana; menja se samo alat.
-
-### 1.6 Rizici koje nosi skok verzija
-
-| #   | Rizik                                                                | Kada se vidi | Plan                                                                                                                                |
-| --- | -------------------------------------------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **React Router 7 → 8** je major; SPEC je pisan za v7                 | F5           | Router fajl je jedan (`src/app/router.tsx`), površina mala. Ako API pukne — pin na poslednji v7 i ADR.                              |
-| 2   | **zod 3 → 4**: `z.string().email()` je u v4 zamenjen sa `z.email()`  | F5           | Jedini potrošač je `ContactForm.tsx` (8 linija šeme). Trivijalna migracija.                                                         |
-| 3   | **`rollup-plugin-visualizer` uz rolldown** — Vite 8 nije više rollup | F6           | Ako ne radi, zameniti `rolldown` ugrađenim izveštajem ili `vite-bundle-visualizer`. Ne blokira `size-limit`, koji je pravi CI gate. |
-| 4   | **lucide-react 0.511 → 1.31** major                                  | F4           | Per-icon import je stabilan API; očekivano bezbolno.                                                                                |
-| 5   | **`eslint-plugin-react-hooks` 5 → 7** prijaviće lavinu               | F3           | Namerno rano — dok koda ima malo.                                                                                                   |
-| 6   | **i18next 25 → 26 + ICU**                                            | F4           | ICU je nov sloj (srpski plural `one/few/other`), ne migracija postojećeg.                                                           |
-
-### 1.7 Kako se verzije reprodukuju
-
-```bash
-node scripts/check-versions.mjs     # ispisuje latest sa registry-ja i diff prema pinovima
-pnpm outdated -r                    # isto, kroz pnpm, po workspace-u
-```
-
-Pinovi žive u `pnpm-workspace.yaml` pod `catalog:` — jedna verzija za ceo monorepo,
-paketi je referišu sa `"react": "catalog:"`. Promena verzije = izmena na jednom mestu.
-
----
+**D. Next 16.3.8, ne 16.4.0.** 16.4.0 je objavljen dva dana pre prelaska; pravilo repoa je da
+verzija prođe karantin. 16.3.8 je poslednji patch stabilne grane.
 
 ## 2. Enforcement — pravilo bez lint rule je želja
 
-**Najveći rizik ovog repoa nije stek nego drift.** Dokumentacija koja se ne proverava mašinski
-je dokumentacija koja se ignoriše. Zato svako pravilo iz `docs/` ima svoj mehanizam:
+| Pravilo                                       | Provera                                                    |
+| --------------------------------------------- | ---------------------------------------------------------- |
+| arrow funkcije (šablon §1.7)                  | `func-style: expression`, `prefer-arrow-callback`          |
+| default export samo komponente / Next fajlovi | `import/no-default-export` + izuzeci po putanji            |
+| komponenta ne čita store, rutu ni query       | `no-restricted-imports` u `src/components/**/*.tsx`        |
+| `src/server` samo iz `app/` i `server/`       | `no-restricted-imports` za klijentske foldere              |
+| javni linkovi kroz `@/i18n/navigation`        | `no-restricted-syntax` (zabranjen `next/link` van admin-a) |
+| granice slojeva (docs/01 §4)                  | `import/no-restricted-paths`                               |
+| bez literal stringova u UI                    | `i18next/no-literal-string`                                |
+| boje samo iz teme                             | `@app/no-raw-colors` (`eslint-rules/`)                     |
+| ≤ 2 `useState` po komponenti                  | `@app/max-usestate`                                        |
+| `// effect:` komentar                         | `@app/require-effect-comment`                              |
+| React Compiler, hookovi                       | `eslint-plugin-react-hooks` 7 (error)                      |
+| a11y                                          | `eslint-plugin-jsx-a11y` (error)                           |
+| bez `any`, bez `!`                            | `typescript-eslint` strict-type-checked                    |
+| tokeni ne u localStorage                      | `no-restricted-properties`                                 |
+| `sr.ts` ima sve ključeve iz `en.ts`           | TypeScript (`Messages` tip)                                |
 
-| Pravilo                       | Doc                              | Mehanizam                                 |
-| ----------------------------- | -------------------------------- | ----------------------------------------- |
-| Granice slojeva               | [`01`](01-architecture.md)       | `import/no-restricted-paths`              |
-| Import samo iz barrel-a       | [`01`](01-architecture.md)       | `import/no-internal-modules`              |
-| Hook pravila + React Compiler | [`07`](07-performance.md)        | `eslint-plugin-react-hooks` v7            |
-| Bez literal stringova u UI    | [`09`](09-i18n.md)               | `eslint-plugin-i18next/no-literal-string` |
-| A11y                          | [`15`](15-accessibility.md)      | `eslint-plugin-jsx-a11y` (error)          |
-| Bez `any`, bez `!`            | [`03`](03-naming-conventions.md) | `typescript-eslint` strict-type-checked   |
-| Max 2 `useState`              | [`07`](07-performance.md) §4     | **custom rule** `max-usestate`            |
-| `// effect:` komentar         | [`07`](07-performance.md) §3     | **custom rule** `require-effect-comment`  |
-| Bundle budžet                 | [`07`](07-performance.md) §6     | `size-limit` u CI                         |
-| Lighthouse                    | [`07`](07-performance.md) §7     | `@lhci/cli` assertions                    |
-| Coverage pragovi              | [`12`](12-testing.md)            | Vitest thresholds                         |
-| i18n rupe                     | [`09`](09-i18n.md)               | `i18next-parser` + diff check             |
-| Commit format                 | —                                | `commitlint`                              |
+Lokalna pravila su u `eslint-rules/` sa sopstvenim testovima (`RuleTester`), koji se izvršavaju u
+`pnpm test`.
 
-### Custom pravila
+## 3. Skripte
 
-Žive u `packages/config/eslint-config/rules/`. SPEC ih eksplicitno traži jer standardni
-plugini ne pokrivaju ova dva zahteva.
+| Skripta                                     | Šta                                                                                 |
+| ------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `pnpm dev`                                  | `next dev` (Postgres: `docker compose -f infra/docker-compose.dev.yml up -d`)       |
+| `pnpm build`                                | `prisma generate && next build` → `.next/standalone` (bez baze — sitemap je dinamičan) |
+| `pnpm build:seed`                           | seed → `dist/seed.cjs` (esbuild) za image                                           |
+| `pnpm typecheck` / `lint` / `test` / `e2e`  |                                                                                     |
+| `pnpm size`                                 | JS budžet po javnoj ruti (`scripts/check-size.mjs`)                                 |
+| `pnpm lh`                                   | Lighthouse CI                                                                       |
+| `pnpm db:migrate` / `db:deploy` / `db:seed` | Prisma                                                                              |
+| `pnpm validate`                             | typecheck · lint · test · build · size                                              |
 
-```js
-// max-usestate — prijavljuje 3+ useState poziva u jednoj komponenti
-'@app/max-usestate': ['error', { max: 2 }]
+## 4. Git hookovi
 
-// require-effect-comment — traži komentar koji počinje sa "effect:" iznad useEffect-a
-'@app/require-effect-comment': 'error'
-```
+`pre-commit`: lint-staged (ESLint --fix + Prettier na staged fajlovima) · `commit-msg`: commitlint
+(conventional) · `pre-push`: `pnpm typecheck`.
 
-Oba imaju sopstvene testove (`RuleTester`) — lint pravilo bez testa je isto što i kod bez testa.
+## 5. CI i image
 
-### Zone granica
+GitHub Actions (`.github/workflows/ci.yml`), na push i PR u `dev` i `prod`:
 
-```js
-'import/no-restricted-paths': ['error', { zones: [
-  { target: './src/features/*', from: './src/features/*', except: ['./index.ts'] },
-  { target: './src/components', from: './src/features' },
-  { target: './src/lib',        from: ['./src/features', './src/pages'] },
-]}]
-```
+1. **validate** — servisi Postgres 17 i Mailpit (lažni SMTP). Koraci: `db:deploy` + `db:seed`,
+   typecheck, lint, test (unit + baza `appdb_test`), build, Playwright Chromium, `size`, e2e.
+   E2E ide nad produkcionim build-om sa pravom bazom i čita mejlove iz Mailpit-a (ceo double
+   opt-in tok). Izveštaj se čuva kao artifact kad padne.
+2. **image** — `Dockerfile` u korenu, `linux/amd64` (Hetzner CX). Image se prvo **pokrene**
+   (smoke test): prazna baza, `--memory=768m`, start skripta (migracije → seed → server),
+   `/api/health/ready` i glavne stranice moraju vratiti 200. Tek onda se na push objavljuje
+   na **GHCR**: `ghcr.io/dusanpavl0vic/cloudsheep.dev:<grana>` i `:sha-<commit>`. e2e ide kroz
+   `next start`, pa grešku koja postoji samo u image-u (npr. seed van Next servera) hvata
+   samo ovaj korak.
+3. **deploy** — samo za push u `prod`: Coolify webhook (secrets `COOLIFY_WEBHOOK`,
+   `COOLIFY_TOKEN`). Bez secret-a korak se preskače uz napomenu.
 
-Da ovo stvarno radi dokazuje se testom u F7: namerno kršenje granice **obara build**.
-
----
-
-## 3. CI (GitHub Actions)
-
-```
-install (pnpm cache)
-  → typecheck → lint → test (+coverage) → build
-  → size-limit → lighthouse-ci → e2e (playwright)
-  → changesets release
-```
-
-Turborepo gradi **samo promenjeno**:
-
-```bash
-turbo run build --filter=[origin/dev]
-```
-
-| Gate                                   | Prag          | Gde je definisan    |
-| -------------------------------------- | ------------- | ------------------- |
-| Coverage `packages/utils`              | 100%          | `vitest.config.ts`  |
-| Coverage `features/*/hooks`            | ≥ 90%         | isto                |
-| Coverage ukupno                        | ≥ 80%         | isto                |
-| Initial JS                             | ≤ 150 KB gzip | `.size-limit.json`  |
-| CSS                                    | ≤ 20 KB gzip  | isto                |
-| Po ruti                                | ≤ 60 KB gzip  | isto                |
-| Lighthouse performance                 | ≥ 0.95        | `lighthouserc.json` |
-| Lighthouse a11y / best-practices / SEO | 1.0           | isto                |
-| axe violations                         | 0             | Vitest + Playwright |
-
-## 4. Env
-
-`packages/utils/src/env` sa zod šemom — **build pada ako fali obavezna varijabla**.
-
-```ts
-export const env = envSchema.parse(import.meta.env)
-```
-
-**Nikad `import.meta.env.X` direktno.** `VITE_` prefiks znači da je vrednost **javno vidljiva**
-u bundle-u — nikad tajne. Vidi [`20-security.md`](20-security.md).
-
-## 5. Git hooks
-
-| Hook         | Radi                                                          |
-| ------------ | ------------------------------------------------------------- |
-| `pre-commit` | `lint-staged` — ESLint `--fix` + Prettier na staged fajlovima |
-| `commit-msg` | `commitlint` — conventional commits                           |
-| `pre-push`   | `pnpm typecheck`                                              |
-
-Changesets za verzionisanje paketa: `/changeset` pravi changeset iz git diff-a.
-
-## Checklist
-
-- [ ] Novo pravilo u `docs/` ima svoj red u tabeli §2
-- [ ] Novo lint pravilo ima `RuleTester` test
-- [ ] Nova verzija paketa je u `catalog:`, ne u pojedinačnom `package.json`
-- [ ] Novi CI gate ima prag zapisan ovde
-- [ ] `pnpm validate` prolazi lokalno pre push-a
+**Server nikad ne gradi image**: ima 4 GB RAM-a, a `next build` troši 1,5–2,5 GB. Coolify
+povlači gotov image (ADR 0017, `infra/COOLIFY.md`).

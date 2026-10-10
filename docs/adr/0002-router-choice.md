@@ -1,6 +1,6 @@
 # ADR 0002 — React Router umesto TanStack Router-a
 
-> Status: **accepted**
+> Status: superseded by [ADR-0009](0009-nextjs-fullstack.md)
 > Datum: 2026-08-15
 
 ## Context

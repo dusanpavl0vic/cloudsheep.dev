@@ -16,7 +16,7 @@ Napiši testove za `$target`.
 
 | Šta je | Nivo | Prag |
 |---|---|---|
-| čista funkcija u `packages/utils` | unit | **100%** |
+| čista funkcija u `src/helpers` / šema u `src/schemas` | unit | pun |
 | reducer / selektor / zod šema | unit | pun |
 | feature hook | `renderHook` | **90%** — primarni fokus |
 | komponenta | RTL + `user-event` | 80% |
@@ -28,7 +28,7 @@ Napiši testove za `$target`.
 - **Nikad ne testiraj implementaciju.** Bez `container.querySelector`, bez provere CSS klase
 - Query prioritet: `getByRole` > `getByLabelText` > `getByText` > `getByTestId`
 - `user-event`, **ne** `fireEvent`
-- `renderWithProviders` iz `@app/testing`, nikad ručno sklapanje providera
+- servis koji piše u bazu: `*.db.test.ts` nad `appdb_test`, bez mock-a Prisma-e
 - Test data kroz **factory** (`makeUser({ role: 'admin' })`), nikad JSON blob
 - i18n u `cimode` — proveravaj **ključ**, ne prevod
 - MSW na mrežnom nivou, nikad mock celog RTKQ modula

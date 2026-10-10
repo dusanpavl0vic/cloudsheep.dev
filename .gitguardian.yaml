@@ -14,6 +14,8 @@ secret:
     # `JWT_SECRET` potpisuje tokene koji ne napuštaju `localhost`, a ceo stack nestaje sa
     # `docker compose down`. Prave vrednosti žive isključivo u Coolify UI-ju (infra/COOLIFY.md).
     - 'infra/docker-compose.yml'
+    # Postgres za lokalni razvoj (`app:app`), postoji samo na mašini programera.
+    - 'infra/docker-compose.dev.yml'
 
   # Prazna lista je namerna — nema pojedinačnih izuzetaka. Nova prijava se rešava
   # rotacijom tajne, ne dopisivanjem u ovaj fajl.

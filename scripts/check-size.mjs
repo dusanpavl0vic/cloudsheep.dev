@@ -1,81 +1,111 @@
-#!/usr/bin/env node
 /**
- * Bundle budžeti (`apps/web/CLAUDE.md`).
+ * JS budžet javnih ruta (docs/07-performance.md §6, ADR 0014): zbir gzip veličina SVIH
+ * skripti koje pregledač preuzme pri prvom otvaranju stranice mora biti ≤ 200 KB.
  *
- * Postoji zato što je `pnpm size` do sada bio **prazan hod**: root skripta je zvala
- * `turbo run size`, nijedan workspace nije definisao `size`, pa je turbo pokretao samo
- * `build` iz `dependsOn` i javljao uspeh. `pnpm validate` ga zove kao poslednji korak —
- * dakle validacija je prolazila proveru budžeta a da ništa nije izmerila.
+ * Meri se u PRAVOM pregledaču (Playwright/Chromium), jer App Router deo chunk-ova učitava iz
+ * runtime-a, ne kroz `<script>` u HTML-u — brojanje tagova ih ne vidi. Prefetch susednih ruta
+ * (`?_rsc=`, posle hidratacije) se blokira: to nije početni JS. `noModule` polyfill-e moderan
+ * pregledač ni ne preuzima.
  *
- * **Šta je „initial" čita se iz `dist/index.html`, ne iz imena fajlova.** Ranije merenje
- * je nagađalo po prefiksima (`index`, `react-vendor`, `redux-vendor`, `rolldown-runtime`,
- * `src`) i time je propuštalo sve što Vite doda kao `modulepreload` — `schemas`, `routes`,
- * `navigation`, `Logo`, `createLucideIcon`. Browser povuče svaki od njih pre prvog kadra,
- * pa svi ulaze u budžet.
- *
- * Ostali `.js` u `dist/assets` su lazy rute i mere se pojedinačno.
+ *   pnpm build && pnpm size                          # podiže `next start` sama
+ *   SIZE_BASE_URL=http://localhost:3000 pnpm size    # meri već pokrenut server
  */
-import { readFileSync, readdirSync, statSync } from 'node:fs'
-import path from 'node:path'
+import { chromium } from '@playwright/test'
+import { spawn } from 'node:child_process'
 import { gzipSync } from 'node:zlib'
 
-const KB = 1024
 
-/** Budžeti iz `apps/web/CLAUDE.md`. Menjaju se tamo pa ovde — nikad samo ovde. */
-const APPS = [{ name: 'web', dist: 'apps/web/dist', initialJs: 158, css: 20, route: 60 }]
+const BUDGET_KB = 200
+const PORT = 3311
+const ROUTES = ['/', '/sr', '/projects', '/notes', '/contact', '/sr/contact']
+const VERBOSE = process.argv.includes('--verbose')
 
-const gzipOf = (file) => gzipSync(readFileSync(file)).length
-const kb = (bytes) => bytes / KB
-const fmt = (bytes) => `${kb(bytes).toFixed(1)} KB`
+const external = process.env.SIZE_BASE_URL
+const base = external ?? `http://localhost:${PORT}`
 
-/** Fajlovi koje `index.html` povuče pre prvog kadra: entry script + svaki modulepreload. */
-function initialFrom(html) {
-  const names = new Set()
-  for (const m of html.matchAll(/(?:src|href)="\/assets\/([^"]+)"/g)) names.add(m[1])
-  return names
+const isUp = async () => {
+  try {
+    return (await fetch(`${base}/api/health`)).ok
+  } catch {
+    return false
+  }
 }
 
-let failed = false
-
-for (const app of APPS) {
-  const assets = path.join(app.dist, 'assets')
-  if (!statSync(assets, { throwIfNoEntry: false })) {
-    console.error(`❌ ${app.name}: nema ${assets} — pokreni build pre provere`)
-    failed = true
-    continue
-  }
-
-  const preloaded = initialFrom(readFileSync(path.join(app.dist, 'index.html'), 'utf8'))
-  const files = readdirSync(assets).filter((f) => !f.endsWith('.map'))
-
-  let initialJs = 0
-  let css = 0
-  const routes = []
-
-  for (const file of files) {
-    const size = gzipOf(path.join(assets, file))
-    if (file.endsWith('.css')) css += size
-    else if (preloaded.has(file)) initialJs += size
-    else routes.push({ file, size })
-  }
-
-  const check = (label, bytes, budget) => {
-    const over = kb(bytes) > budget
-    if (over) failed = true
-    console.log(`  ${over ? '❌' : '✅'} ${label.padEnd(26)} ${fmt(bytes).padStart(9)} / ${budget} KB`)
-  }
-
-  console.log(`\n${app.name} — ${preloaded.size} fajla u početnom učitavanju\n`)
-  check('initial JS', initialJs, app.initialJs)
-  check('CSS', css, app.css)
-
-  const worst = routes.sort((a, b) => b.size - a.size)[0]
-  if (worst) check(`najveća ruta (${worst.file.split('-')[0]})`, worst.size, app.route)
-}
-
-if (failed) {
-  console.error('\n❌ budžet probijen — vidi `apps/web/CLAUDE.md`')
+// Zaostali server sa istog porta bi merio STARI build — bolje odbiti nego tiho lagati.
+if (!external && (await isUp())) {
+  console.error(`Port ${PORT} je zauzet (stari server?). Ugasi ga ili zadaj SIZE_BASE_URL.`)
   process.exit(1)
 }
 
-console.log('\n✅ svi bundle budžeti prolaze')
+// `next` direktno (bez pnpm-a) i u sopstvenoj grupi procesa — gasi se cela grupa.
+const server = external
+  ? null
+  : spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '-p', String(PORT)], {
+      stdio: 'ignore',
+      // `.env` za lokalni razvoj može da nosi NODE_ENV=development — produkcioni server ga ne sme naslediti.
+      env: { ...process.env, NODE_ENV: 'production' },
+      detached: true,
+    })
+
+const waitForServer = async () => {
+  for (let attempt = 0; attempt < 120; attempt++) {
+    if (await isUp()) return
+    await new Promise((resolve) => setTimeout(resolve, 500))
+  }
+  throw new Error(`Server na ${base} se nije podigao za 60 s.`)
+}
+
+const measure = async (browser, route) => {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
+  await page.route(/[?&]_rsc=/, (request) => request.abort())
+  const scripts = new Map()
+  page.on('response', async (response) => {
+    if (response.request().resourceType() !== 'script') return
+    try {
+      scripts.set(response.url(), gzipSync(await response.body()).length / 1024)
+    } catch {
+      // odgovor bez tela (preusmerenje) — nije skripta
+    }
+  })
+  const response = await page.goto(new URL(route, base).href, { waitUntil: 'load' })
+  await page.waitForTimeout(500)
+  await page.close()
+  return { status: response?.status() ?? 0, scripts }
+}
+
+let failed = false
+let browser
+try {
+  await waitForServer()
+  browser = await chromium.launch()
+  console.log(`JS budžet: ${BUDGET_KB} KB gzip po ruti\n`)
+  for (const route of ROUTES) {
+    const { status, scripts } = await measure(browser, route)
+    if (status !== 200) {
+      console.log(`✗ ${route.padEnd(16)} HTTP ${status}`)
+      failed = true
+      continue
+    }
+    const total = [...scripts.values()].reduce((sum, kb) => sum + kb, 0)
+    const ok = total <= BUDGET_KB
+    if (!ok) failed = true
+    console.log(`${ok ? '✓' : '✗'} ${route.padEnd(16)} ${total.toFixed(1).padStart(7)} KB  (${scripts.size} skripti)`)
+    if (VERBOSE) {
+      for (const [url, kb] of [...scripts].sort((a, b) => b[1] - a[1])) {
+        console.log(`      ${kb.toFixed(1).padStart(6)} KB  ${decodeURIComponent(url.split('/_next/static/chunks/')[1] ?? url)}`)
+      }
+    }
+  }
+} catch (error) {
+  console.error(error instanceof Error ? error.message : error)
+  failed = true
+} finally {
+  await browser?.close()
+  try {
+    if (server?.pid) process.kill(-server.pid, 'SIGTERM')
+  } catch {
+    // server se već ugasio (npr. nije mogao da se podigne bez build-a)
+  }
+}
+
+process.exit(failed ? 1 : 0)

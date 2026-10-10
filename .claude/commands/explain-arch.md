@@ -18,12 +18,12 @@ izmišljaš novi.
 1. **Da li je ovo feature?** Ima li sopstveni domen i URL? Može li se obrisati `rm -rf`
    bez lomljenja ostatka? Ako ne — to je komponenta ili hook u postojećem feature-u.
 2. **Koliko potrošača ima?** Jedan feature → ostaje u njemu. Dva feature-a iste app-e →
-   `apps/<x>/src/components|hooks|lib`. Dve app-e → `packages/`.
-   **Kod ide u `packages/` tek kad ga koristi druga app** — prerano izdizanje je najčešća
+   `src/components/<domen>` ili `src/hooks/<domen>`; generičko → design system ili koren `src/hooks`.
+   **Apstrakcija tek kad postoji drugi potrošač** — prerano izdizanje je najčešća
    greška u monorepoima.
 3. **Koja je vrsta stanja?** Server → RTKQ. Globalni client → slice. Lokalni → `useState`.
    URL → `useSearchParams`.
-4. **Zna li za domen?** Određuje nivo hooka i sme li u `packages/ui`.
+4. **Zna li za domen?** Određuje nivo hooka i sme li u design sistem.
 5. **Koja postojeća pravila se primenjuju?** Navedi konkretne sekcije iz `docs/`.
 
 ## Izlaz

@@ -1,54 +1,52 @@
 ---
-description: Pravi komponentu u packages/ui sa cva varijantama, tipovima, testom i axe testom
-argument-hint: [atom|molecule|organism] [Name]
-arguments: layer Name
+description: Pravi komponentu (folder po komponenti, next-yak stilovi, tipovi, barrel) u design sistemu ili domenu
+argument-hint: [category] [Name]
+arguments: category Name
 disable-model-invocation: true
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash(pnpm lint:*), Bash(pnpm test:*)
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(pnpm lint:*), Bash(pnpm typecheck:*), Bash(pnpm exec eslint:*)
 ---
 
-Napravi `$Name` kao **$layer** u `packages/ui`.
+Napravi komponentu `$Name` u `src/components/$category/`.
 
 ## Prvo pročitaj
 
-- `packages/ui/CLAUDE.md` — pravila paketa
-- `docs/08-styling-ui.md` — CVA, tokeni, `tone` varijanta
+- `docs/02-folder-structure.md` — kategorije i šta gde ide
+- `docs/08-styling-ui.md` — next-yak, `.styles.ts` / `.yak.ts`, tokeni, statični `css` blokovi
 - `docs/15-accessibility.md` — šta je obavezno
-- `docs/adr/0007-ui-flat-vs-folder.md` — zašto folder a ne flat
 
 ## Provera pre pisanja
 
-**Da li komponenta pripada `packages/ui`?** Test: može li se koristiti u projektu koji nema
-Redux i nema i18n? Ako ne — pripada feature-u, ne dizajn sistemu. Reci to i stani.
-
-**Da li je sloj tačan?** Koliko drugih komponenti sadrži: 0 → atom, 2–3 → molecule, više → organism.
+- **Design system ili domen?** Kategorije `foundations, buttons, inputs, data-display,
+  feedback, navigation, overlays, media, sections, cards, layout, seo` ne znaju za domen ni
+  store: tekst i podaci stižu kroz props. Domenske kategorije su `home`, `projects`, `notes`,
+  `contact`, `admin/<domen>`. Ako komponenta treba podatke, oni stižu iz domenskog hooka.
+- Postoji li već slična komponenta? (`ls src/components/*`)
 
 ## Struktura
 
 ```
-packages/ui/src/<sloj>s/$Name/          ← atoms/ | molecules/ | organisms/
-├── $Name.tsx              struktura — bez Tailwind class stringova
-├── $Name.variants.ts      cva — sav vizuelni stil
-├── $Name.test.tsx         ponašanje + (za organism) axe
-└── index.ts               barrel
+src/components/$category/$Name/
+├── $Name.tsx            struktura; logika samo kroz hook (komponenta je „glupa")
+├── $Name.styles.ts      next-yak styled komponente — izvozi SAMO styled komponente
+├── $Name.types.ts       props (ako ih ima više od par)
+├── $Name.yak.ts         opciono: statične vrednosti za interpolaciju (relativni `.ts` importi)
+└── index.ts             export { default } from './$Name'
 ```
-
-Ime cva eksporta je `$Name` u camelCase + `Variants` — npr. `SearchInput` → `searchInputVariants`.
 
 ## Pravila
 
-- Sav vizuelni stil u `.variants.ts` — **i kad komponenta nema varijante** (tada je fajl samo
-  `cva('...klase...')`)
-- U `.tsx` ostaju samo layout klase (`flex`, `gap`) i `cn(<naziv>Variants(...), className)`
-- Prima i prosleđuje `className` — inače se ne može prilagoditi iz app-e
-- Samo semantički tokeni (`bg-primary`), nikad `bg-blue-500` ni `text-[#333]`
-- Logička svojstva: `ps-4` ne `pl-4`, `ms-auto` ne `ml-auto`
-- Ako može da stoji na tamnoj traci — dodaj `tone: 'default' | 'inverse'` varijantu
-- Nema `default export`-a
-- Izvezi `VariantProps` tip
+- `default export` komponente, arrow funkcija, `'use client'` samo kad treba (hook/handler)
+- Bez `'use client'` u `.styles.ts`; varijante kao eksplicitni `css` blokovi po uslovu, nikad
+  lookup u objekat css blokova ni čitanje tokena u runtime-u (`@app/no-runtime-tokens`)
+- Dinamička vrednost u CSS-u nosi jedinicu: `` `${String(v)}px` ``
+- Tekst isključivo kroz `t()` (ključ u `en.ts` **i** `sr.ts`), nikad literal u JSX-u
+- Najviše 2 `useState`; `useEffect` samo uz `// effect:` komentar; bez `useMemo/useCallback`
+  (React Compiler) osim slučajeva iz `docs/07` §2
+- Fajl ≤ 200 linija, komponenta ≤ 150
+- `className` prop ako se komponenta stilizuje spolja
 
 ## Acceptance
 
-- `pnpm lint --filter=@app/ui` i `pnpm test --filter=@app/ui` prolaze
-- Organism ima `jest-axe` test bez povreda
-- Komponenta ne uvozi `@app/core`, store ni i18n
-- Kontrast proveren u obe teme
+- `pnpm exec eslint src/components/$category/$Name` i `pnpm typecheck` prolaze
+- Radi u svetloj i tamnoj temi (tokeni iz `styles/tokens.yak.ts`), fokus vidljiv (`focusRing`)
+- Na javnoj stranici: `pnpm size` i dalje ispod 200 KB po ruti
