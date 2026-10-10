@@ -8,16 +8,14 @@ Pojmovi kako se koriste **u ovom repou**. Isti termin drugde može značiti neš
 
 | Pojam | Značenje ovde |
 |---|---|
-| **app** | nezavisna aplikacija u `apps/*` sa sopstvenim build-om i deploy-em |
-| **paket** | deljena biblioteka u `packages/*`, ime `@app/<x>` |
-| **feature** | domenski modul u `apps/<x>/src/features/<ime>/`; briše se `rm -rf` bez posledica |
-| **page** | route-level komponenta u `pages/` — **samo kompozicija**, bez logike |
-| **barrel** | `index.ts` koji re-eksportuje; dozvoljen **samo** na granici feature-a/paketa |
-| **public API feature-a** | ono što `index.ts` eksportuje: hookovi, tipovi, komponente — nikad slice |
-| **primitiv** | shadcn komponenta u `packages/ui/src/ui/`, flat fajl, `kebab-case` |
-| **atom / molecule / organism** | slojevi dizajn sistema u `packages/ui`, folder + cva |
-| **granica sloja** | pravilo ko koga sme da uvozi, enforce-ovano `no-restricted-paths` |
-| **catalog** | pnpm mehanizam za jednu verziju paketa kroz ceo monorepo (`"react": "catalog:"`) |
+| **aplikacija** | jedna Next.js app u korenu repoa: sajt, `/admin` i `/api` (ADR 0009) |
+| **domen** | celina podataka i UI-ja (projekti, beleške, utisci…): šema, servis, API, hookovi, komponente |
+| **page** | `app/**/page.tsx` — **tanak**: parametri → servis/hook → `<XView />` |
+| **View** | komponenta stranice (`ProjectsView`, `TechnologiesView`) — kompozicija, bez logike |
+| **design system** | kategorije u `src/components/` koje ne znaju za domen (`foundations`, `buttons`, `inputs`…) |
+| **barrel** | `index.ts` foldera komponente ili hookova; nikad zbirni `components/index.ts` |
+| **servis** | `src/server/services/<domen>.ts` — jedini sloj koji zove Prisma-u |
+| **granica sloja** | pravilo ko koga sme da uvozi, enforce-ovano `import/no-restricted-paths` |
 
 ## State
 
@@ -38,8 +36,8 @@ Pojmovi kako se koriste **u ovom repou**. Isti termin drugde može značiti neš
 
 | Pojam | Značenje ovde |
 |---|---|
-| **`baseApi`** | jedini `createApi` u repou, u `@app/core` |
-| **`injectEndpoints`** | način na koji feature dodaje endpointe u `baseApi` |
+| **`baseApi`** | jedini `createApi` u repou (`src/store/api/baseApi.ts`), ubacuje se lenjo — samo admin |
+| **`injectEndpoints`** | način na koji domen dodaje endpointe u `baseApi` (`crudEndpoints` za spiskove) |
 | **tag** | RTKQ oznaka za cache invalidaciju (`providesTags`/`invalidatesTags`) |
 | **optimistic update** | UI se menja pre odgovora servera; `onQueryStarted` + `updateQueryData` |
 | **refresh mutex** | brava koja sprečava paralelne refresh pozive pri više 401 odgovora |
@@ -61,10 +59,9 @@ Pojmovi kako se koriste **u ovom repou**. Isti termin drugde može značiti neš
 
 | Pojam | Značenje ovde |
 |---|---|
-| **namespace** | grupa prevoda, jedna po feature-u (`auth`, `landing`) + globalni `common`/`errors` |
+| **namespace** | grupa ključeva u `constants/i18n/{en,sr}.ts` (`home`, `admin`, `errors`…); klijent dobija samo potrebne |
 | **ICU** | format za plural/rod; srpski ima `one`/`few`/`other` |
-| **`cimode`** | test režim gde `t('a.b')` vraća `'a.b'` — testira se ključ, ne prevod |
-| **formatter** | `Intl.*` omotač u `@app/i18n` za brojeve, datume, valute |
+| **`formatDate`** | `helpers/date.ts` — datum na jeziku stranice (`sr-Latn-RS`, zona studija) |
 
 ## Kvalitet
 

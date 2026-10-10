@@ -34,5 +34,5 @@ kriterijumom po kom će se odlučiti.
 
 ## Kada ADR uopšte treba
 
-Kad se odluka **ne može izvesti iz koda**. „Koristimo Tailwind" se vidi iz `package.json`;
-„zašto Tailwind a ne Panda, i pod kojim uslovima bismo se predomislili" se ne vidi nigde.
+Kad se odluka **ne može izvesti iz koda**. „Koristimo next-yak" se vidi iz `package.json`;
+„zašto next-yak a ne styled-components, i pod kojim uslovima bismo se predomislili" se ne vidi nigde.

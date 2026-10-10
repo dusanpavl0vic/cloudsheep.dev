@@ -1,156 +1,83 @@
-# 05 — Rutiranje
+# 05 — Rutiranje, jezik u URL-u i SEO
 
-> Status: active | Last review: 2026-08-15
+> Status: active | Last review: 2026-10-08
 
-React Router 8, `createBrowserRouter` sa objektnim rutama. Obrazloženje izbora:
-[`adr/0002-router-choice.md`](adr/0002-router-choice.md).
+## 1. Rute su fajlovi, linkovi su konstante
 
-## Pravila
-
-1. **Svaka ruta je lazy.** Bez izuzetka — čak i mala ruta nosi svoj feature sa sobom.
-2. **Guard je wrapper komponenta**, ne `useEffect` + `navigate`.
-3. **URL query params su izvor istine** za filtere, paginaciju i tabove — **ne Redux**.
-4. **`errorElement` na root nivou** + po ruti gde greška ima drugačije značenje.
-5. **Breadcrumbs iz `handle: { crumb }`** na route objektu, ne iz zasebne mape.
-6. **Preload na hover** — link poziva `route.lazy()` na `onMouseEnter`.
-7. **Meta tagovi po ruti** kroz React 19 hoisting (`<title>`, `<meta>` u komponenti).
-
-## Primeri
-
-### `router.tsx`
+Next rutira po `src/app/`. `page.tsx` je tanak: pročita podatke, napravi metapodatke, renderuje
+jedan View.
 
 ```tsx
-// apps/web/src/routes/router.tsx
-import { createBrowserRouter } from 'react-router';
-import { ROUTES } from '@/lib/routes';
-
-export const router = createBrowserRouter([
-  {
-    path: ROUTES.HOME,
-    element: <MainLayout />,
-    errorElement: <RootErrorPage />,
-    children: [
-      { index: true, lazy: () => import('@/pages/LandingPage') },
-      {
-        path: ROUTES.PROJECTS,
-        lazy: () => import('@/pages/ProjectsPage'),
-        handle: { crumb: 'nav.projects' },
-      },
-      {
-        path: ROUTES.PROJECT_DETAIL,
-        lazy: () => import('@/pages/ProjectPage'),
-        handle: { crumb: 'nav.projectDetail' },
-      },
-      { path: '*', lazy: () => import('@/pages/NotFoundPage') },
-    ],
-  },
-]);
-```
-
-Lazy modul eksportuje `Component` (i opciono `loader`) — jedini mesto gde je
-`default export` dozvoljen po [`03-naming-conventions.md`](03-naming-conventions.md):
-
-```tsx
-// apps/web/src/pages/ProjectsPage.tsx
-export function Component() {
-  return <ProjectsView />;
-}
-Component.displayName = 'ProjectsPage';
-```
-
-### Guard
-
-```tsx
-// apps/admin/src/routes/RequireAuth.tsx
-import { Navigate, Outlet, useLocation } from 'react-router';
-import { useAuth } from '@/features/auth';
-
-export function RequireAuth() {
-  const { isAuthenticated, isLoading } = useAuth();
-  const location = useLocation();
-
-  if (isLoading) return <FullPageSpinner />;
-  if (!isAuthenticated) {
-    return <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />;
-  }
-  return <Outlet />;
+// app/[locale]/(public)/projects/[slug]/page.tsx
+const ProjectPage = async ({ params }: ProjectPageProps) => {
+  const { locale, slug } = await params
+  bindRequestLocale(locale)
+  const project = await getPublishedProject(slug)
+  if (!project) notFound()
+  return <ProjectView project={project} />
 }
 ```
 
-**Zašto ne `useEffect` + `navigate`:** effect se izvršava *posle* rendera, pa zaštićeni sadržaj
-bljesne pre redirekcije. `<Navigate>` se dešava tokom rendera — nema bljeska, nema effect-a.
+Linkovi se nikad ne pišu ručno — samo `ROUTES` i builderi iz `constants/routes.ts`:
 
-### URL kao izvor istine za filtere
+| Šta             | Kako                                                                    |
+| --------------- | ----------------------------------------------------------------------- |
+| statičan link   | `<Link href={ROUTES.CONTACT}>`                                          |
+| sa parametrom   | `<Link href={projectHref(slug)}>`                                       |
+| sa query-jem    | `<Link href={projectsHref('mobile')}>`, `contactHref({ type, budget })` |
+| sekcija početne | `homeSectionHref(HOME_SECTIONS.PRICING)` → `/#pricing`                  |
+| programski      | `useRouter()` iz `@/i18n/navigation`, **u hooku**                       |
 
-```ts
-// features/projects/hooks/useProjectFilters.ts
-export function useProjectFilters() {
-  const [searchParams, setSearchParams] = useSearchParams();
+## 2. Jezik u URL-u (ADR 0012)
 
-  const tag = searchParams.get('tag') ?? ALL_TAGS;
-  const page = Number(searchParams.get('page') ?? 1);
+- Engleski: `/`, `/projects`… Srpski: `/sr`, `/sr/projects`… (`localePrefix: 'as-needed'`).
+- **Javni sajt uvozi `Link`, `useRouter`, `redirect` iz `@/i18n/navigation`**, nikad iz
+  `next/link` — oni dodaju prefiks. Lint to proverava (`no-restricted-syntax`).
+- Jezik se ne pogađa po pregledaču (`localeDetection: false`).
+- Admin nema prefiks; njegove putanje počinju sa `/admin` i smeju da koriste `next/link`.
 
-  const setTag = (next: string) => {
-    setSearchParams((prev) => {
-      const p = new URLSearchParams(prev);
-      next === ALL_TAGS ? p.delete('tag') : p.set('tag', next);
-      p.delete('page'); // promena filtera resetuje paginaciju
-      return p;
-    });
-  };
+## 3. Grupe ruta i layout-i
 
-  return { tag, page, setTag };
-}
-```
+| Segment                   | Layout                                                | Pristup                                 |
+| ------------------------- | ----------------------------------------------------- | --------------------------------------- |
+| `app/[locale]/layout.tsx` | `Document` + `RootLayout` (ModalRoot, ToastContainer) | svi                                     |
+| `app/[locale]/(public)/`  | `PublicLayout` (header, footer, aurora)               | svi                                     |
+| `app/admin/(guest)/`      | `AuthLayout`                                          | samo gosti → ulogovani na `/admin`      |
+| `app/admin/(app)/`        | `AppShell` + `useRequireAuth`                         | samo ulogovani → gost na `/admin/login` |
 
-Korist: URL je deljiv, refresh čuva stanje, back dugme radi očekivano — sve besplatno.
+## 4. Statusni kodovi (indeksiranje)
 
-### Preload na hover
+| Situacija                             | Odgovor                                                 |
+| ------------------------------------- | ------------------------------------------------------- |
+| nepoznata putanja pod jezikom         | `[locale]/[...rest]/page.tsx` → `notFound()` → **404**  |
+| nepostojeći slug projekta/beleške     | `notFound()` u `page.tsx` → **404**                     |
+| `/contact/` (kosa crta na kraju)      | **308** → `/contact` (`trailingSlash: false`)           |
+| `/uses` (stara stranica)              | **308** → `/#stack`                                     |
+| `admin.cloudsheep.dev/*`              | **301** → `/admin/*` (proxy)                            |
+| greška pri renderu (baza ne odgovara) | `error.tsx` — poruka bez detalja, **nikad stack trace** |
 
-```tsx
-// apps/web/src/components/PrefetchLink/PrefetchLink.tsx
-export function PrefetchLink({ to, prefetch, ...props }: PrefetchLinkProps) {
-  return <Link to={to} onMouseEnter={() => void prefetch?.()} {...props} />;
-}
-```
+## 5. Metapodaci
 
-Chunk se skida dok korisnik pomera miš ka linku — klik zatiče modul već u kešu.
+Svaki `page.tsx` izvozi `generateMetadata` sa:
 
-### Meta po ruti (React 19 hoisting)
+- `title`, `description` iz `meta.<stranica>`;
+- `alternates.canonical` — sopstvena adresa na tom jeziku;
+- `alternates.languages` — `en`, `sr`, `x-default` (→ engleski);
+- `openGraph.url`, `openGraph.locale`.
 
-```tsx
-export function Component() {
-  const { t } = useTranslation('projects');
-  return (
-    <>
-      <title>{t('projects.meta.title')}</title>
-      <meta name="description" content={t('projects.meta.description')} />
-      <ProjectsView />
-    </>
-  );
-}
-```
+Helper `buildPageMetadata()` (`helpers/seo.ts`) pravi sve to iz putanje i jezika — ručno sastavljen
+`canonical` je zabranjen. `sitemap.ts` čita bazu i daje obe jezičke verzije svake stranice sa
+`alternates`; `robots.ts` zabranjuje `/admin` i `/api`.
 
-React 19 sam podiže ove tagove u `<head>` — nema `react-helmet`.
+## 6. Proxy (`src/proxy.ts`)
 
-## Anti-patterns
-
-| ❌ | Zašto | ✅ |
-|---|---|---|
-| `useEffect(() => { if (!user) navigate('/login') })` | zaštićeni sadržaj bljesne | `<Navigate>` u guard komponenti |
-| `element: <Dashboard />` bez lazy | ceo feature u initial bundle-u | `lazy: () => import(...)` |
-| filteri u Redux slice-u | URL nije deljiv, back ne radi | `useSearchParams` |
-| hardkodovan string `'/projects'` u linku | promena rute lomi tiho | `ROUTES.PROJECTS` |
-| breadcrumb mapa u zasebnom fajlu | dva izvora istine za istu rutu | `handle: { crumb }` |
-| `window.location.href = ...` | pun reload, gubi SPA state | `navigate()` |
+Redom: stari poddomeni (`admin.`, `api.`) → nonce + CSP → next-intl (javni sajt) ili direktno
+(admin). Matcher preskače `/api`, `/uploads`, `/_next` i fajlove sa ekstenzijom. Prefetch se
+**ne** preskače — next-intl mu prepisuje putanju.
 
 ## Checklist
 
-- [ ] Nova ruta je `lazy`
-- [ ] Putanja je konstanta u `lib/routes.ts`, ne literal
-- [ ] Zaštićena ruta ide kroz `<RequireAuth>`, bez `useEffect`-a
-- [ ] Filteri/paginacija čitaju i pišu u `useSearchParams`
-- [ ] Ruta ima `handle.crumb` ako se pojavljuje u breadcrumbs-u
-- [ ] Ruta ima `<title>` i `<meta name="description">` kroz i18n ključeve
-- [ ] Lazy reducer feature-a je registrovan (`injectReducer`)
-- [ ] E2E smoke test za novu rutu
+- [ ] nova stranica: putanja u `ROUTES`, builder ako ima parametar
+- [ ] `generateMetadata` kroz `buildPageMetadata()`
+- [ ] nepostojeći resurs → `notFound()`, ne prazna stranica sa 200
+- [ ] stranica je u `sitemap.ts`

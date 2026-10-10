@@ -1,7 +1,7 @@
 # Server setup — Hetzner + Coolify
 
 Ovo se radi **jednom, ručno**, i traje oko 45 minuta od kojih je polovina čekanje DNS-a.
-Posle ovoga deploy je `git push`, a ovaj dokument više ne treba.
+Posle ovoga deploy je `git push` u `prod`, a ovaj dokument više ne treba.
 
 Redosled nije proizvoljan: **DNS mora da propagira pre nego što se u Coolify-u dodeli
 domen.** Let's Encrypt ima rate limit od 5 neuspelih pokušaja po nalogu na sat — ako
@@ -54,6 +54,32 @@ ssh -L 8000:localhost:8000 root@<IP>
 Coolify UI je jedina stvar na serveru koja može da izmeni sve — ne izlaže se internetu
 dok za to ne postoji razlog.
 
+### Port 8000 je trenutno otvoren — zatvori ga
+
+Provera spolja (2026-10-09): `http://<IP>:8000/login` vraća 200, panel je javan preko
+običnog HTTP-a (lozinka putuje nešifrovana). Docker objavljuje 8000 na `0.0.0.0` i zaobilazi
+`ufw`, pa ga zatvara samo **Hetzner Cloud Firewall**:
+
+1. Hetzner Cloud Console → **Firewalls** → firewall servera (ako ga nema: **Create Firewall**
+   sa pravilima iz tabele iznad, pa **Apply to** → `cloudsheep-prod`).
+2. Inbound pravila: **samo 22, 80 i 443**. Obriši pravilo za 8000 (ili „any port", ako postoji).
+3. Provera sa svog računara: `curl -m 5 -s -o /dev/null -w '%{http_code}' http://<IP>:8000/login`
+   mora da istekne (`000`), a `http://localhost:8000` kroz tunel i dalje radi.
+
+### Ne mogu da se prijavim u Coolify
+
+Coolify radi (`/api/health` vraća OK), pa je problem u nalogu ili tunelu, ne u serveru:
+
+- `http://localhost:8000` radi **samo dok je tunel otvoren** (`ssh -L 8000:localhost:8000 root@<IP>`
+  u drugom terminalu).
+- Zaboravljena lozinka — na serveru:
+
+  ```bash
+  docker exec -ti coolify sh -c "php artisan root:reset-password"
+  ```
+
+  Komanda pita novu lozinku za root nalog instance. Kucaš je ti, a ne skripta.
+
 ---
 
 ## 2. Osnovno obezbeđivanje
@@ -64,8 +90,8 @@ ssh root@<IP>
 apt update && apt upgrade -y
 apt install -y fail2ban
 
-# Swap 2 GB. 4 GB RAM-a i Docker build Vite bundle-a znaju da se sudare,
-# a OOM killer ubija build bez ijedne jasne poruke.
+# Swap 2 GB. Image se gradi u CI-ju, ne ovde (ADR 0017), ali Postgres + aplikacija +
+# Coolify na 4 GB i dalje traže rezervu za vršne trenutke.
 fallocate -l 2G /swapfile
 chmod 600 /swapfile
 mkswap /swapfile
@@ -213,7 +239,7 @@ Posle registracije:
 
 ## 5. Dalje
 
-Konfiguracija tri aplikacije i baze je u [`COOLIFY.md`](COOLIFY.md).
+Konfiguracija aplikacije i baze je u [`COOLIFY.md`](COOLIFY.md).
 
 ---
 

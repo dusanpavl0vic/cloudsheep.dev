@@ -1,1 +1,0 @@
-export { TechnologyForm } from './TechnologyForm'

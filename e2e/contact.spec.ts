@@ -1,0 +1,105 @@
+import { expect, test } from '@playwright/test'
+
+import { confirmPathFrom, MAILPIT_URL, waitForMail } from './mailbox'
+
+/**
+ * Upit u tri koraka (docs/17 §5, ADR 0013): prazan korak, adresa bez MX zapisa, greška u
+ * kucanju sa predlogom, termin, slanje. Provera adrese ide na pravi DNS.
+ */
+test('upit: provera koraka, adrese i termina, pa slanje', async ({ page }) => {
+  await page.goto('/contact')
+  const brief = page.locator('form[aria-label]')
+  const submit = brief.locator('button[type=submit]')
+  await expect(submit).toBeEnabled()
+
+  await submit.click()
+  await expect(brief.getByText('Pick an option to continue.')).toBeVisible()
+
+  await brief.getByRole('radio', { name: /Web app/ }).click()
+  await submit.click()
+  await brief.getByRole('radio', { name: '€5–15k' }).click()
+  await brief.getByRole('radio', { name: '1–3 months' }).click()
+  await submit.click()
+
+  await page.getByLabel('Your name').fill('E2E Klijent')
+  const email = page.locator('#brief-email')
+  const message = page.getByLabel('A few sentences about the project')
+
+  await email.fill('ana@nepostoji-domen-e2e-404.dev')
+  await message.click()
+  await expect(page.locator('#brief-email-error')).toHaveText('This domain does not receive email. Check the address.')
+
+  await email.fill('ana@gmial.com')
+  await message.click()
+  await expect(page.locator('#brief-email-error')).toContainText('Did you mean ana@gmail.com?')
+  await page.getByRole('button', { name: 'Use ana@gmail.com' }).click()
+  await expect(email).toHaveValue('ana@gmail.com')
+  await expect(page.locator('#brief-email-error')).toHaveCount(0)
+
+  await message.fill('We need a booking app for clinics, on iOS and the web.')
+  const slot = page.locator('[aria-labelledby="booking-title"] button[aria-pressed]').first()
+  if ((await slot.count()) > 0) {
+    await slot.click()
+    await expect(page.getByText(/^Booked: /)).toBeVisible()
+  }
+
+  const sent = page.waitForResponse((r) => r.url().endsWith('/api/contact') && r.request().method() === 'POST')
+  await submit.click()
+  expect((await sent).status()).toBe(202)
+  // Upit čeka potvrdu adrese (ADR 0016) — posetilac je upućen na sanduče.
+  await expect(page.getByRole('heading', { name: 'Almost there, E2E Klijent.' })).toBeFocused()
+  await expect(page.getByText(/We sent a confirmation link to ana@gmail\.com/)).toBeVisible()
+})
+
+test('stranica potvrde: nevažeći link daje jasnu poruku i nije za indeks', async ({ page }) => {
+  await page.goto('/contact/confirm?token=nevazeci-e2e')
+  await expect(page.getByRole('heading', { name: 'This link is not valid' })).toBeVisible()
+  await expect(page.locator('meta[name=robots]')).toHaveAttribute('content', /noindex/)
+  await expect(page.getByRole('button', { name: 'Confirm and send' })).toHaveCount(0)
+})
+
+test('upit iz procene popunjava tip i poruku', async ({ page }) => {
+  await page.goto('/contact?type=mobile&platforms=web,ios&features=auth&pace=standard')
+  await expect(page.getByRole('radio', { name: /Mobile app/ })).toHaveAttribute('aria-checked', 'true')
+})
+
+test('dugme za slanje je onemogućeno pre hidratacije (polja nikad u URL-u)', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false })
+  const page = await context.newPage()
+  await page.goto('/contact')
+  await expect(page.locator('form[aria-label] button[type=submit]')).toBeDisabled()
+  await context.close()
+})
+
+/**
+ * Ceo double opt-in (ADR 0016): upit → mejl sa linkom → stranica sa dugmetom (POST, jer
+ * skeneri prate GET linkove) → potvrđeno; tek tada studio dobija upit.
+ */
+test('double opt-in: link iz mejla potvrđuje upit i tek tada ga šalje studiju', async ({ page, request }) => {
+  test.skip(!MAILPIT_URL, 'MAILPIT_URL nije postavljen (lažni SMTP samo u CI-ju i docker compose-u)')
+  const email = `e2e.${String(Date.now())}@gmail.com`
+
+  const response = await request.post('/api/contact', {
+    data: {
+      projectType: 'webapp',
+      budget: '5to15k',
+      timeline: '1to3',
+      name: 'E2E Opt-in',
+      email,
+      message: 'We need a booking app for clinics, on iOS and the web.',
+      website: '',
+      locale: 'en',
+    },
+  })
+  expect(response.status()).toBe(202)
+
+  const mail = await waitForMail(email)
+  await page.goto(confirmPathFrom(mail.text))
+  await expect(page.getByRole('heading', { name: 'Confirm your brief' })).toBeVisible()
+  await page.getByRole('button', { name: 'Confirm and send' }).click()
+  await expect(page.getByRole('heading', { name: 'Brief sent' })).toBeVisible()
+
+  // Isti link drugi put više ne važi (token je potrošen).
+  await page.goto(confirmPathFrom(mail.text))
+  await expect(page.getByRole('button', { name: 'Confirm and send' })).toHaveCount(0)
+})

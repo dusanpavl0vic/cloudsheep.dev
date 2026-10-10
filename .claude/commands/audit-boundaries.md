@@ -1,10 +1,10 @@
 ---
 description: Proverava granice slojeva i cross-feature importe iz docs/01, uključujući one koje lint propušta
-argument-hint: [opciono: app]
+argument-hint: [opciono: putanja]
 allowed-tools: Read, Grep, Glob, Bash(pnpm lint:*)
 ---
 
-Proveri poštovanje granica zavisnosti (`$ARGUMENTS` ako je dat, inače sve app-e i pakete).
+Proveri poštovanje granica zavisnosti (`$ARGUMENTS` ako je dat, inače ceo `src/`).
 
 ## Prvo pročitaj
 
@@ -13,31 +13,33 @@ Proveri poštovanje granica zavisnosti (`$ARGUMENTS` ako je dat, inače sve app-
 ## Hijerarhija — import sme samo naniže
 
 ```
-providers / routes / store   →  sve
-pages                        →  features, components, hooks, lib, packages
-features                     →  components, hooks, lib, packages
-                                ❌ feature NE SME importovati drugi feature
-components / hooks / lib     →  packages
-packages/ui                  →  packages/utils, packages/hooks   ❌ ne core/store
-packages/core                →  packages/utils
-packages/utils               →  ništa
+app/ (rute)                 →  components, hooks, server (samo serverske komponente), constants
+components/<domen>          →  components/<design system>, hooks, helpers, constants, types
+components/<design system>  →  helpers, constants, styles   ❌ ne domen, ne store, ne useStore
+modals                      →  components, hooks
+hooks                       →  store, helpers, schemas, constants   ❌ ne components, ne modals
+store                       →  helpers, constants, types           ❌ ne hooks, ne components
+helpers / schemas           →  constants, types                    ❌ ne store, hooks, components, server
+constants                   →  tipovi i druge konstante
+server                      →  helpers, schemas, constants, types  ❌ ne React, ne store
+client kod                  ❌ nikad `@/server/**`; admin RTKQ nikad na javnim stranicama
 ```
 
 ## Postupak
 
 1. Pokreni `pnpm lint` — `import/no-restricted-paths` hvata većinu
 2. **Zatim traži ono što lint propušta:**
-   - import iz feature barrel-a koji vuče slice/selektor kroz re-export
-   - `packages/ui` komponenta koja uvozi i18n ključ ili čita store
+   - komponenta design sistema koja dobija domenski tip kroz `import type`
+   - javna stranica čiji klijentski kod uvozi `store/api/admin/*` (proveri `pnpm size`)
+   - `'use client'` fajl koji uvozi nešto što vuče `@/server/**` ili `@prisma/client`
    - dinamički `import()` koji zaobilazi statičku proveru
-   - tip importovan iz dubine drugog feature-a (`import type` prolazi neke provere)
-   - paket u `packages/` koji ima **samo jednog** potrošača (prerano izdignut)
+   - `.styles.ts` koji izvozi vrednosti (lint) ili čita tokene u runtime-u
 
 ## Izlaz
 
 | Fajl | Uvozi | Prekršaj | Ozbiljnost | Fix |
 |---|---|---|---|---|
-| `features/a/hooks/x.ts` | `@/features/b/store/b.slice` | feature → feature, kroz dubinu | 🔴 | preko store-a ili izdigni |
+| `components/buttons/X.tsx` | `@/store/slices/ui` | design system → store | 🔴 | podatak kroz props iz domenskog hooka |
 
 Na kraju: da li `pnpm lint` hvata svaki nalaz. Ako ne — **to je rupa u lint konfiguraciji**
 i vredi je prijaviti, jer pravilo koje se ne proverava mašinski biće prekršeno.

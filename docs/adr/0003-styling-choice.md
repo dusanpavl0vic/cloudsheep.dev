@@ -1,6 +1,6 @@
 # ADR 0003 — Tailwind CSS v4
 
-> Status: **accepted**
+> Status: superseded by [ADR-0010](0010-styled-components.md)
 > Datum: 2026-08-15
 
 ## Context

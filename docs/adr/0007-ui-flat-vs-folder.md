@@ -1,6 +1,6 @@
 # ADR 0007 — `packages/ui`: flat `ui/`, folder svuda drugde
 
-> Status: **accepted**
+> Status: superseded by [ADR-0011](0011-layered-structure.md)
 > Datum: 2026-08-15
 
 ## Context

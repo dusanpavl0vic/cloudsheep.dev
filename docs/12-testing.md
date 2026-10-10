@@ -1,213 +1,69 @@
 # 12 — Testiranje
 
-> Status: active | Last review: 2026-08-15
+> Status: active | Last review: 2026-10-09
 
-Vitest 4 + Testing Library + `user-event` + MSW 2 + Playwright.
+Alati su Vitest 4 (projekti `unit` i `db`) i Playwright (e2e nad produkcionim build-om).
 
 ## Piramida
 
-| Nivo        | Alat                    | Coverage                   | Šta se testira                                |
-| ----------- | ----------------------- | -------------------------- | --------------------------------------------- |
-| Unit        | Vitest                  | **100%** `packages/utils`  | čiste funkcije, reduceri, selektori, zod šeme |
-| Hook        | `renderHook`            | **90%** `features/*/hooks` | **primarni fokus** — logika živi u hookovima  |
-| Komponenta  | RTL + `user-event`      | 80%                        | ponašanje, ne implementacija                  |
-| Integracija | RTL + MSW + pravi store | ključni flow-ovi           | feature end-to-end u JSDOM-u                  |
-| E2E         | Playwright              | kritični putevi            | login, CRUD, i18n switch, modal flow          |
+| Nivo | Gde | Komanda | Šta se testira |
+| --- | --- | --- | --- |
+| Unit | `src/**/*.test.ts` | `pnpm test` (projekat `unit`) | helperi, zod šeme i pretvaranja forme, store, serverski kod bez baze (`server/http`, mail šabloni, CV raspored), ESLint pravila |
+| Hook / komponenta | `// @vitest-environment jsdom` u prvom redu | isto | hook sa netrivijalnim efektom (`useRevealOnScroll`, `useCarousel`) |
+| Baza | `src/**/*.db.test.ts` | projekat `db` | servisi nad **pravim** Postgres-om (`appdb_test`), sekvencijalno |
+| E2E | `e2e/*.spec.ts` | `pnpm build && pnpm e2e` | tok u pravom pregledaču: forme, SEO, admin |
 
-Ukupni prag: **80%**. Pragovi su u `vitest.config.ts` i **obaraju CI**.
-
-Težište je na **hook nivou** — to je posledica hook-first pravila. Ako je logika u hookovima,
-tu je i najveći povraćaj po testu.
+**Vitest je `.test.` u `src/`, a Playwright je `.spec.` u `e2e/`.** Vitest-ov podrazumevani
+obrazac bi pokupio i Playwright fajlove.
 
 ## Pravila
 
-1. **Nikad ne testiraj implementaciju.** Bez `container.querySelector`, bez provere imena
-   CSS klase, bez `.state()`.
-2. **Prioritet query-ja:** `getByRole` > `getByLabelText` > `getByText` > `getByTestId`.
-   `data-testid` je poslednje utočište, ne prvo.
-3. **`renderWithProviders`** iz `@app/testing` — nikad ručno sklapanje providera.
-4. **MSW handleri kolokovani uz feature**, ne u globalnom fajlu koji naraste na 800 linija.
-5. **Test data kroz factory funkcije**, ne JSON blobove.
-6. **`user-event`, ne `fireEvent`** — `fireEvent` preskače ono što browser stvarno radi.
-7. **Svaki bug fix počinje failing testom.**
-8. **i18n u `cimode`** — testira se ključ, ne prevod.
+1. **Logika koja se testira je čista funkcija** (`helpers/`, `schemas/`). Hook je tanak, pa
+   je i test hook-a redak. Vidi `13-hooks.md`.
+2. **Baza se ne mock-uje.** Atomično zauzimanje termina, jedinstvenost adrese i double
+   opt-in potvrda dokazuju se samo nad pravim Postgres-om (projekat `db`).
+3. **Ispravka greške počinje testom koji pada.** Primeri: `readPatch` u `server/http.test.ts`,
+   zatim `useRevealOnScroll` pod Strict Mode i `postJson` sa `API_BASE_URL`.
+4. **Upiti po ulozi i oznaci:** `getByRole` > `getByLabel` > `getByText`. `data-testid` je
+   poslednja opcija.
+5. **E2E ne zavisi od tajni u repou.** Admin nalog dolazi iz `SEED_ADMIN_EMAIL/PASSWORD`.
+   Bez njih se `e2e/admin.spec.ts` preskače.
+6. **Test ne ostavlja podatke.** E2E pravi zapise sa jedinstvenim imenom (`Date.now()`) i
+   briše ih.
 
-## `renderWithProviders`
+## E2E
 
-```ts
-// packages/testing/src/renderWithProviders.tsx
-export function renderWithProviders(
-  ui: ReactElement,
-  { preloadedState, store = createTestStore(preloadedState), route = '/', ...options }: Options = {},
-) {
-  function Wrapper({ children }: PropsWithChildren) {
-    return (
-      <Provider store={store}>
-        <I18nextProvider i18n={testI18n}>
-          <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
-        </I18nextProvider>
-      </Provider>
-    );
-  }
-  return { store, user: userEvent.setup(), ...render(ui, { wrapper: Wrapper, ...options }) };
-}
+`playwright.config.ts` podiže `next start` na portu 3400 (NODE_ENV=production) i čeka
+`/api/health`. Lokalno se može ciljati već pokrenut server:
+
+```bash
+E2E_BASE_URL=http://localhost:3200 pnpm e2e
 ```
 
-Vraća i `store` (za proveru dispatch-ovanih akcija) i `user` (već setup-ovan).
+| Spec | Pokriva |
+| --- | --- |
+| `seo.spec.ts` | 200/404, canonical, `/sr` noindex, sitemap samo na engleskom, `X-Robots-Tag` na `/admin` i `/api` |
+| `contact.spec.ts` | upit: domen bez MX-a se odbija na polju; ispravan upit čeka potvrdu linkom |
+| `newsletter.spec.ts` | prijava u podnožju: loš domen se odbija, ispravna adresa prolazi |
+| `admin.spec.ts` | prijava i istek sesije; CRUD kroz dijalog; objava jednim klikom ne briše ostala polja |
 
-## Primeri po nivou
-
-### Unit — čista funkcija
-
-```ts
-describe('slugify', () => {
-  it.each([
-    ['Zdravo Svete', 'zdravo-svete'],
-    ['Čačak i Šabac', 'cacak-i-sabac'],
-    ['  trim  ', 'trim'],
-  ])('%s → %s', (input, expected) => {
-    expect(slugify(input)).toBe(expected)
-  })
-})
-```
-
-### Reducer
-
-```ts
-it('briše sesiju na loggedOut', () => {
-  const state = authReducer({ user: makeUser(), accessToken: 'x' }, loggedOut())
-  expect(state).toEqual({ user: null, accessToken: null })
-})
-```
-
-### Hook — primarni fokus
-
-```ts
-it('vraća isAuthenticated true kad postoji korisnik', () => {
-  const { result } = renderHook(() => useAuth(), {
-    wrapper: createWrapper({ preloadedState: { auth: { user: makeUser(), accessToken: 't' } } }),
-  })
-  expect(result.current.isAuthenticated).toBe(true)
-})
-```
-
-### Komponenta — ponašanje
-
-```ts
-it('prikazuje grešku kad je lozinka prekratka', async () => {
-  const { user } = renderWithProviders(<LoginForm />);
-
-  await user.type(screen.getByLabelText('auth.login.email'), 'a@b.rs');
-  await user.type(screen.getByLabelText('auth.login.password'), 'kratka');
-  await user.click(screen.getByRole('button', { name: 'auth.login.submit' }));
-
-  expect(await screen.findByRole('alert')).toHaveTextContent('auth.errors.passwordTooShort');
-});
-```
-
-### Integracija — MSW + pravi store
-
-```ts
-it('login puni sesiju i vodi na dashboard', async () => {
-  server.use(http.post('/auth/login', () => HttpResponse.json({ user: makeUser(), accessToken: 't' })));
-
-  const { user, store } = renderWithProviders(<App />, { route: '/login' });
-  await user.type(screen.getByLabelText('auth.login.email'), 'a@b.rs');
-  await user.type(screen.getByLabelText('auth.login.password'), 'lozinka123');
-  await user.click(screen.getByRole('button', { name: 'auth.login.submit' }));
-
-  expect(await screen.findByRole('heading', { name: 'dashboard.title' })).toBeVisible();
-  expect(selectIsAuthenticated(store.getState())).toBe(true);
-});
-```
-
-### A11y
-
-```ts
-it('nema axe povreda', async () => {
-  const { container } = renderWithProviders(<DataTable rows={makeRows(5)} />);
-  expect(await axe(container)).toHaveNoViolations();
-});
-```
-
-`jest-axe` (ne `vitest-axe` — vidi [`16-tooling-ci.md`](16-tooling-ci.md) §1.5 C).
-**Obavezno u svakom organism testu.**
-
-### E2E
-
-Živi u `apps/web/e2e/`, vozi ga `pnpm e2e` (turbo, `dependsOn: ["build"]`).
-
-**Šta pripada ovde, a šta ne.** Sve što jsdom može ostaje u Vitest-u — brže je i preciznije.
-E2E nosi samo ono što traži pravi pretraživač:
-
-| Ide u E2E                                  | Zašto ne može u jsdom                                                                                                     |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| mobilni panel (`<dialog>` + `showModal()`) | jsdom nema top-layer; u unit testu su `showModal` i `close` **stubovani**, pa zamku fokusa i `Esc` tamo niko ne proverava |
-| `color-contrast` kroz axe                  | traži stvarno izračunate boje i raspored                                                                                  |
-| `<html lang>` na dokumentu                 | unit test vidi i18next instancu, ne atribut koji čita screen reader                                                       |
-| serviranje `/robots.txt`, `/sitemap.xml`   | rewrite pravila postoje tek nad pravim serverom                                                                           |
-
-**Dve zamke koje su nas već koštale:**
-
-1. **Axe mora meriti mirno stanje.** `.reveal` animira `opacity`, pa axe uhvati element usred
-   prelaza i prijavi lažan `color-contrast`. Izgledalo je kao tri prave WCAG greške;
-   sa `page.emulateMedia({ reducedMotion: 'reduce' })` — nula. WCAG ionako ne meri prelazna
-   stanja, a usput se proverava i verzija stranice za korisnike sa smanjenim kretanjem.
-2. **Vitest i Playwright se moraju razdvojiti izričito.** Vitest-ov podrazumevani obrazac
-   hvata i `*.spec.ts`, pa je pokupio Playwright fajlove i pao na njihovom importu. Otud
-   `include: ['src/**/*.test.{ts,tsx}']` u `vitest.config.ts`: **Vitest je `.test.` u `src/`,
-   Playwright je `.spec.` u `e2e/`.**
-
-```ts
-test('korisnik se prijavljuje i odjavljuje', async ({ page }) => {
-  await page.goto('/login')
-  await page.getByLabel('E-pošta').fill('a@b.rs')
-  await page.getByLabel('Lozinka').fill('lozinka123')
-  await page.getByRole('button', { name: 'Prijavi se' }).click()
-  await expect(page.getByRole('heading', { name: 'Kontrolna tabla' })).toBeVisible()
-
-  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
-})
-```
-
-## Factories
-
-```ts
-// packages/testing/src/factories/user.ts
-export const makeUser = (overrides: Partial<AuthUser> = {}): AuthUser => ({
-  id: 'usr_1',
-  email: 'test@cloudsheep.dev',
-  name: 'Test Korisnik',
-  role: 'member',
-  ...overrides,
-})
-```
-
-`makeUser({ role: 'admin' })` čita se u jednom redu; JSON blob od 40 linija ne čita se nikako.
+E2E nosi samo ono što zahteva pravi pregledač i server: rutiranje, kolačiće, zaglavlja,
+hidrataciju forme i dijaloge sa fokusom. Sve ostalo ostaje u Vitest-u, jer je tamo brže i
+preciznije.
 
 ## Anti-patterns
 
-| ❌                                           | ✅                              |
-| -------------------------------------------- | ------------------------------- |
-| `container.querySelector('.btn-primary')`    | `getByRole('button', { name })` |
-| `fireEvent.change(input, …)`                 | `await user.type(input, …)`     |
-| `data-testid` kao prvi izbor                 | `getByRole`/`getByLabelText`    |
-| test koji proverava da je `useState` pozvan  | testiraj šta korisnik vidi      |
-| `await new Promise(r => setTimeout(r, 500))` | `findBy*` / `waitFor`           |
-| mock celog RTKQ modula                       | MSW na mrežnom nivou            |
-| JSON fixture od 40 linija                    | factory sa `overrides`          |
-| test koji proverava tekst prevoda            | `cimode`, proveri ključ         |
-| snapshot cele stranice                       | ciljane provere ponašanja       |
+| ❌ | ✅ |
+|---|---|
+| mock Prisma klijenta | `*.db.test.ts` nad `appdb_test` |
+| `container.querySelector('.Button_root…')` | `getByRole('button', { name })` |
+| `fireEvent` | `user-event` (ili Playwright) |
+| e2e koji zavisi od seed podataka po imenu | test sam pravi i briše svoj zapis |
+| `waitForTimeout` u e2e | `expect(...).toBeVisible()` (sam čeka) |
 
 ## Checklist
 
-- [ ] Nova čista funkcija ima test — `packages/utils` ostaje na 100%
-- [ ] Novi feature hook ima test (≥ 90% za `features/*/hooks`)
-- [ ] Reducer i selektori pokriveni
-- [ ] Komponenta testirana kroz `getByRole`, bez `querySelector`-a
-- [ ] Organism ima axe test
-- [ ] MSW handler kolokovan uz feature
-- [ ] Test data kroz factory
-- [ ] Kritičan flow ima e2e
-- [ ] Bug fix ima test koji je pao pre popravke
-- [ ] `pnpm test` prolazi sa pragovima
+- [ ] Nova čista funkcija ili šema ima test pored sebe
+- [ ] Servis koji piše u bazu ima `*.db.test.ts` za granične slučajeve
+- [ ] Ispravka greške ima test koji je pre ispravke padao
+- [ ] Novi kritični tok (forma, admin akcija) ima e2e

@@ -1,1 +1,0 @@
-export { TechGrid } from './TechGrid'

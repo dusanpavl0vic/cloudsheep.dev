@@ -17,7 +17,7 @@ Ti pišeš testove za ovaj monorepo. **Menjaš isključivo test fajlove.**
 
 | Nivo | Alat | Prag |
 |---|---|---|
-| čista funkcija (`packages/utils`) | Vitest | **100%** |
+| čista funkcija (`src/helpers`) | Vitest | pun |
 | reducer / selektor / zod šema | Vitest | pun |
 | **feature hook** | `renderHook` | **90%** — primarni fokus |
 | komponenta | RTL + `user-event` | 80% |
@@ -33,13 +33,13 @@ Težište je na **hook nivou** — logika živi u hookovima, pa je tu najveći p
 - Query prioritet: `getByRole` > `getByLabelText` > `getByText` > `getByTestId`.
   `data-testid` je poslednje utočište
 - `user-event`, **ne** `fireEvent`
-- `renderWithProviders` iz `@app/testing` — nikad ručno sklapanje providera
+- servis nad bazom: `*.db.test.ts` (projekat `db`, `appdb_test`) — bez mock-a Prisma-e
 - Test data kroz **factory** (`makeUser({ role: 'admin' })`), nikad JSON blob od 40 linija
 - i18n u `cimode` — proveravaj **ključ**, ne prevod, inače test pada kad copywriter
   promeni tekst
 - MSW na mrežnom nivou; nikad mock celog RTKQ modula
 - Bez `setTimeout` — `findBy*` ili `waitFor`
-- Organism dobija i `jest-axe` test (`jest-axe`, ne `vitest-axe` — vidi `docs/16` §1.5 C)
+- Kritičan tok u pregledaču (forma, admin akcija) ide u `e2e/*.spec.ts` (Playwright)
 
 ## Postupak
 

@@ -14,10 +14,11 @@
 
 ## Arhitektura ([`01`](01-architecture.md), [`02`](02-folder-structure.md))
 
-- [ ] 🔴 Feature ne importuje drugi feature (osim kroz barrel)
-- [ ] 🔴 `index.ts` feature-a ne eksportuje slice, selektore ni endpointe
-- [ ] 🔴 `packages/ui` ne uvozi `core`/store/i18n ključeve
-- [ ] 🟡 Kod nije izdignut u `packages/` bez drugog potrošača
+- [ ] 🔴 Komponenta ne zove `useAppSelector`/`useAppDispatch`/RTKQ hook — samo domenski hook
+- [ ] 🔴 Design system (`components/{foundations,buttons,inputs,…}`) ne zna za domen ni store
+- [ ] 🔴 Klijentski kod ne uvozi `@/server/**`; javna ruta ne uvozi `store/api/admin/*`
+- [ ] 🔴 PATCH ruta koristi `readPatch` (ne `readJson` sa `.partial()` šemom)
+- [ ] 🟡 Apstrakcija tek kad postoji drugi potrošač
 - [ ] 🟡 Novi fajl je na najnižem nivou koji ga može držati
 - [ ] 🟡 Nema `utils.ts`/`helpers.ts`/`misc.ts`
 - [ ] 🔵 Feature se može obrisati `rm -rf` bez lomljenja ostatka
@@ -59,17 +60,17 @@
 ## i18n ([`09`](09-i18n.md))
 
 - [ ] 🔴 Nijedan literal string u UI-ju
-- [ ] 🔴 Ključ postoji u `sr.json` **i** `en.json`
-- [ ] 🟡 Ključ ima `feature.` prefiks
+- [ ] 🔴 Ključ postoji u `en.ts` **i** `sr.ts`
+- [ ] 🟡 Ključ ima prefiks domena (`admin.<domen>.`, `<domen>.errors.`)
 - [ ] 🟡 Plural koristi ICU sa `one`/`few`/`other` za srpski
-- [ ] 🟡 Brojevi/datumi/valute idu kroz formattere
-- [ ] 🔵 Namespace se učitava lazy uz feature
+- [ ] 🟡 Datumi kroz `formatDate` (latinica, zona studija), ne `useFormatter`
+- [ ] 🔵 Klijent dobija samo potrebne namespace-ove (`SHELL_NAMESPACES` / `ADMIN_NAMESPACES`)
 
 ## Stil ([`08`](08-styling-ui.md))
 
-- [ ] 🔴 Nijedna hex/RGB vrednost ni sirova Tailwind boja
-- [ ] 🟡 Stil je u `.variants.ts`, `.tsx` ima samo layout klase
-- [ ] 🟡 Varijante su CVA, ne uslovni `clsx`
+- [ ] 🔴 Nijedna hex/RGB vrednost — samo tokeni (`styles/tokens.yak.ts`)
+- [ ] 🟡 Stil je u `.styles.ts` (next-yak); `.styles.ts` izvozi samo styled komponente
+- [ ] 🟡 Varijante su eksplicitni `css` blokovi po uslovu, bez čitanja tokena u runtime-u
 - [ ] 🟡 Logička svojstva (`ps`/`pe`/`ms`/`me`)
 - [ ] 🔵 Komponenta na tamnoj traci ima `tone: 'inverse'`
 

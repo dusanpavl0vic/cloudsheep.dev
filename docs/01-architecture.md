@@ -1,135 +1,99 @@
 # 01 — Arhitektura
 
-> Status: active | Last review: 2026-08-15
+> Status: active | Last review: 2026-10-08
 
-Aplikacija se seče **po domenu**, ne po tipu fajla. Nema foldera `containers/`, `views/`,
-`helpers/` u koje se sleže sve što ne zna gde bi.
+Organizacija sledi `REACT_FRONTEND_STRUCTURE.md` (ADR [0011](adr/0011-layered-structure.md)),
+prilagođenu Next.js-u (ADR [0009](adr/0009-nextjs-fullstack.md)). Ovaj dokument kaže **koja
+pravila važe i gde se odstupa od šablona** — i zašto.
 
-## Pravila
+## 1. Osnovna pravila
 
-### 1. Feature folder sadrži sve što taj domen treba
+1. **Sve konstante idu u `src/constants`.** Rute, API endpointi, RTK Query tagovi, tokeni teme,
+   nazivi modala, ključevi kolačića, limiti. U komponentama nema URL-ova, putanja ni „magičnih"
+   brojeva.
+2. **Linkovi idu samo preko `ROUTES` i buildera** (`projectHref(slug)`). Navigacija ide kroz
+   `Link`/`useRouter` iz `@/i18n/navigation`, koji sami dodaju jezički prefiks.
+3. **Svaki tekst ide kroz i18n** (`t('...')`). U JSX-u nema običnih stringova.
+4. **Komponente su prezentacione, logika je u hookovima** (`src/hooks`): API pozivi, `dispatch`,
+   izvedeni podaci, parametri rute, efekti.
+5. **Podaci:** javne stranice ih čitaju **na serveru** (`src/server/services`); na klijentu
+   stižu **samo kroz RTK Query** (`src/store/api`). Globalni klijentski state je u slice-ovima,
+   lokalni u `useState`.
+6. **Svaka komponenta ima svoj folder** (`.tsx`, `.styles.ts`, `.types.ts`, opciono
+   `.constants.ts`, `index.ts`).
+7. **Funkcije su arrow funkcije:** `const name = () => {}` — komponente, hookovi, helperi,
+   selektori, servisi.
+8. **TypeScript strict, alias `@/` → `src/`, paket menadžer pnpm.**
 
-```
-features/auth/
-├── api/          authApi.ts          — RTKQ injectEndpoints
-├── components/   LoginForm.tsx
-├── modals/       LoginModal.tsx
-├── hooks/        useAuth.ts          ← javni API feature-a
-├── store/        auth.slice.ts, auth.selectors.ts
-├── schemas/      login.schema.ts     — zod
-├── locales/      sr.json, en.json    — namespace "auth"
-├── types.ts
-├── __tests__/
-└── index.ts      — public API
-```
+## 2. Server i klijent
 
-**Test:** feature se briše `rm -rf` i ništa osim njegovih ruta ne pukne. Ako pukne —
-granica je propuštena.
+Next.js deli kod na serverske i klijentske module. Ovo je jedina stvar koju šablon nema, a
+od koje zavisi i SEO i JS budžet.
 
-### 2. Import sme samo naniže
-
-```
-providers / routes / store   →  sve
-pages                        →  features, components, hooks, lib, packages
-features                     →  components, hooks, lib, packages
-                                ❌ feature NE SME importovati drugi feature
-components / hooks / lib     →  packages
-packages/ui                  →  packages/utils, packages/hooks   ❌ ne core/store
-packages/core                →  packages/utils
-packages/utils               →  ništa (zero-dep)
-```
-
-### 3. Feature ne importuje feature
-
-Ako feature A treba nešto iz B, postoje tri legitimna izlaza — i nijedan nije direktan import:
-
-| Situacija | Rešenje |
-|---|---|
-| deljena **komponenta** | izdigni u `apps/<x>/src/components/` |
-| deljena **logika** | izdigni u `apps/<x>/src/hooks/` ili `lib/` |
-| treba **podatak** iz drugog domena | čitaj iz store-a, ili RTKQ endpoint sa `providesTags` |
-
-### 4. Public API feature-a je uzak
-
-`index.ts` eksportuje **samo** hookove, tipove i komponente. Slice, selektori i API endpointi
-ostaju unutra — oni su implementacija.
-
-```ts
-// features/auth/index.ts
-export { useAuth, useLogin, useLogout } from './hooks';
-export { LoginForm } from './components/LoginForm';
-export type { AuthUser } from './types';
-// ❌ export { authSlice }        — NIKAD
-// ❌ export { selectCurrentUser } — NIKAD
-```
-
-Razlog: čim slice iscuri napolje, neko će ga dispatch-ovati iz druge app-e ili feature-a i
-granica prestaje da postoji. Selektor koji stvarno treba drugima → izdigni ga u `hooks/`.
-
-### 5. Prag za izdizanje u `packages/`
-
-Kod ide u `packages/` **tek kad ga koristi druga aplikacija**. Do tada živi u
-`apps/<x>/lib` ili `apps/<x>/components`.
-
-Prerano izdizanje je najčešća greška u monorepoima: dobiješ paket sa jednim potrošačem,
-verzionisanjem, build korakom i PR-om preko dva foldera — a nemaš nijednu korist.
-
-### 6. Enforcement
-
-Granice nisu stvar dobre volje. `eslint-plugin-import` sa `no-restricted-paths`:
-
-```js
-'import/no-restricted-paths': ['error', { zones: [
-  { target: './src/features/*', from: './src/features/*', except: ['./index.ts'] },
-  { target: './src/components', from: './src/features' },
-  { target: './src/lib',        from: ['./src/features', './src/pages'] },
-]}]
-```
-
-Namerno kršenje granice **obara build**. To je dokazano testom u F7 — vidi
-[`19-code-review-checklist.md`](19-code-review-checklist.md).
-
-## Primeri
-
-**✅ Dva feature-a kojima treba isti `UserAvatar`**
-
-```
-apps/web/src/components/UserAvatar/    ← izdignuto, oba ga importuju
-features/profile/  → import { UserAvatar } from '@/components/UserAvatar'
-features/comments/ → import { UserAvatar } from '@/components/UserAvatar'
-```
-
-**✅ `comments` feature-u treba ime ulogovanog korisnika**
-
-```ts
-// features/comments/hooks/useCommentForm.ts
-const { user } = useAuth();   // iz javnog API-ja auth feature-a — ovo je dozvoljeno
-```
-
-Import `@/features/auth` (barrel) je dozvoljen; `@/features/auth/store/auth.slice` nije.
-
-## Anti-patterns
-
-| ❌ | Zašto je problem | ✅ |
+| Modul | Gde se izvršava | Sme da uvozi |
 |---|---|---|
-| `import { authSlice } from '@/features/auth/store/auth.slice'` | zaobilazi javni API; lint pada | koristi `useAuth()` iz barrel-a |
-| `features/x/components/` puna komponenti koje koriste svi | to više nije feature nego kanta | izdigni u `src/components/` |
-| paket u `packages/` sa jednim potrošačem | monorepo overhead bez koristi | vrati u `apps/<x>/lib` |
-| `utils.ts` u feature-u | ime bez značenja, raste zauvek | imenuj po poslu: `formatInvoice.ts` |
-| feature koji importuje `pages/` | obrnut smer zavisnosti | page komponuje feature, ne obrnuto |
+| `app/**/page.tsx`, `layout.tsx` | server | `server/services`, View komponente, `constants`, `i18n` |
+| `app/api/**/route.ts` | server | `server/**`, `constants`, `helpers`, `types` |
+| `server/**` | server | `constants`, `helpers`, `types` — **nikad React, store ni hookove** |
+| `*.styles.ts` | server i klijent (next-yak, bez `'use client'`) | `styles/tokens.yak`, `styles/mixins`, `./X.yak` |
+| `components/**/X.tsx` bez hookova | server | `useTranslations`, styled elementi, druge komponente |
+| `components/**/X.tsx` sa hookovima | klijent (`'use client'`) | `hooks`, `constants`, `helpers` |
+| `hooks/**`, `store/**`, `modals/**`, `providers/**` | klijent | `constants`, `helpers`, `types`, `store` |
 
-## Kada ovo prestane da važi
+**Pravila:**
 
-Feature folders skalira do određene tačke. **Preko ~20 feature-a i 5+ developera** kanonski
-FSD (`entities` sloj, `steiger` linter) postaje razumniji izbor — migracija je izvodljiva
-upravo zato što su granice već enforce-ovane lintom, pa se radi mehanički.
+- `'use client'` se stavlja na **najniži** modul kome treba — ne na View. View koji ima formu
+  ostaje serverski i renderuje klijentsku `ContactBrief` komponentu.
+- Tekst se prevodi **na serveru** gde god može (`useTranslations` radi i u serverskoj
+  komponenti), pa se kao string prosleđuje styled elementu. Prevodi tako ne putuju u JS.
+- `src/server/**` u klijentskom modulu je lint greška (`no-restricted-imports`). Tajne
+  (`DATABASE_URL`, `JWT_SECRET`, SMTP) žive samo tamo.
+- Props koji prelaze server → klijent granicu moraju biti serijalizabilni (bez funkcija,
+  `Date` kao ISO string).
 
-Obrazloženje zašto nismo krenuli od FSD-a: [`adr/0004-feature-folders-vs-fsd.md`](adr/0004-feature-folders-vs-fsd.md).
+## 3. Odstupanja od šablona
 
-## Checklist
+| Šablon kaže | Ovde | Zašto |
+|---|---|---|
+| `router/AppRouter` + `ROUTE_TREE` | `src/app/` fajlovi; `page.tsx` je tanak i renderuje `<XView>` | Next rutira po fajlovima; `ROUTES` i builderi ostaju jedini izvor linkova |
+| podaci samo kroz RTK Query | javne stranice čitaju `server/services` na serveru | Google mora da dobije sadržaj u HTML-u |
+| jezik u `preferences` slice-u + localStorage | jezik iz URL-a (`/`, `/sr`) za javni sajt; admin ga čuva u slice-u | indeksiranje obe jezičke verzije (ADR [0012](adr/0012-locale-prefix.md)) |
+| tema u localStorage | tema u kolačiću `cs-theme` | server odmah renderuje tačnu temu, bez treptaja i bez inline skripte (CSP) |
+| `<title>` u View-u | `generateMetadata` u `page.tsx` (`buildPageMetadata`) | canonical, robots i OG oznake idu zajedno; `/sr` je noindex (ADR 0012) |
+| `import.meta.env` u `constants/env.ts` | `process.env.NEXT_PUBLIC_*` u `constants/env.ts`; serverske promenljive u `server/env.ts` (zod) | Next ugrađuje samo `NEXT_PUBLIC_*` u klijentski kod |
+| — | `src/server/` | backend je deo iste aplikacije (ADR [0009](adr/0009-nextjs-fullstack.md)) |
+| — | admin domeni su u `components/admin/<domen>/`, `hooks/admin/<domen>/` | admin i javni sajt imaju isti domen (`projects`) sa potpuno drugačijim View-ovima |
 
-- [ ] Novi kod je u feature-u, ne u `components/`/`lib/` "za svaki slučaj"
-- [ ] Feature ne importuje drugi feature (osim kroz barrel, i to samo hookove/tipove/komponente)
-- [ ] `index.ts` feature-a ne eksportuje slice, selektore ni endpointe
-- [ ] Ništa nije izdignuto u `packages/` dok nema **drugog** potrošača
-- [ ] `pnpm lint` prolazi — `no-restricted-paths` je error, ne warning
+## 4. Pravila zavisnosti
+
+```
+app ──► components (View) ──► hooks ──► store ──► constants, helpers, types
+ │            │                                         ▲
+ └──► server/services ──────────────────────────────────┘
+```
+
+- **Design system** (`foundations`, `buttons`, `inputs`, `data-display`, `feedback`,
+  `navigation`, `overlays`, `media`, `sections`, `cards`, `layout`) ne zna za domen: ne uvozi
+  `components/<domen>`, `hooks/<domen>` ni `store`. Tekst prima kao prop ili `children`.
+- **Domenska komponenta** (`components/<domen>/`) sme da uvozi design system i hookove svog
+  domena; ne uvozi drugi domen — deljeno se izdiže u design system ili `helpers`.
+- **`hooks/`** ne uvozi `components/`. **`store/`** ne uvozi `hooks/` ni `components/`.
+- **`helpers/`** su čiste funkcije: bez React-a, store-a i `server/`.
+- **`constants/`** uvozi samo `types` i druge konstante.
+
+Ova pravila proverava `import/no-restricted-paths` (`docs/16-tooling-ci.md` §2).
+
+## 5. Gde šta ide — brza tabela
+
+| Imaš… | Ide u… |
+|---|---|
+| putanju, endpoint, tag, limit, ključ kolačića | `constants/<tema>.ts` |
+| tekst | `constants/i18n/en.ts` + `sr.ts` |
+| boju, razmak, radijus, senku | `constants/theme/*` → tema |
+| izgled komponente | `<Komponenta>.styles.ts` |
+| logiku stranice (podaci, parametri, akcije) | `hooks/<domen>/use<Šta>.ts` |
+| poziv API-ja sa klijenta | `store/api/<domen>/index.ts` |
+| čitanje iz baze | `server/services/<domen>.ts` |
+| HTTP ulaz | `app/api/**/route.ts` (tanak: parsiraj → servis → odgovor) |
+| čistu transformaciju | `helpers/<tema>.ts` |
+| oblik podatka iz API-ja | `types/<domen>.ts` |

@@ -9,13 +9,12 @@
 | Folder | `kebab-case` | `user-profile/` |
 | Folder komponente | `PascalCase` | `ProjectCard/` |
 | React komponenta (fajl + export) | `PascalCase` | `UserCard.tsx` |
-| shadcn primitiv u `packages/ui/src/ui/` | `kebab-case`, flat | `alert-dialog.tsx` |
 | Hook | `camelCase` sa `use` prefiksom | `useUserProfile.ts` |
-| Slice | `<domain>.slice.ts` | `auth.slice.ts` |
+| Slice | folder `store/slices/<domen>/` (`reducer/`, `actions/`, `selectors/`, `types/`) | `store/slices/auth/` |
 | Selektori | `<domain>.selectors.ts`, export `select*` | `selectCurrentUser` |
 | RTKQ API | `<domain>Api.ts` | `authApi.ts` |
 | Zod šema | `<name>.schema.ts`, export `*Schema` | `loginSchema` |
-| Varijante | `<Ime>.variants.ts`, export `*Variants` | `buttonVariants` |
+| Stilovi | `<Ime>.styles.ts` (next-yak), export samo styled komponente | `Button.styles.ts` → `Root` |
 | Konstante komponente | `<Ime>.constants.ts` | `HeroSection.constants.ts` |
 | Tipovi | `types.ts`, **bez `I` prefiksa** | `type User = {}` |
 | Test | kolokovan `*.test.ts(x)` | `useAuth.test.ts` |
@@ -76,21 +75,18 @@ export default function DashboardPage() { … }
 ## Primeri
 
 ```
-features/auth/
-├── api/authApi.ts                    export const authApi
-├── hooks/useAuth.ts                  export function useAuth()
-├── hooks/useAuth.test.ts
-├── store/auth.slice.ts               export const authReducer, loggedOut
-├── store/auth.selectors.ts           export const selectCurrentUser
-├── schemas/login.schema.ts           export const loginSchema
-├── components/LoginForm/
-│   ├── LoginForm.tsx                 export function LoginForm()
-│   ├── LoginForm.variants.ts         export const loginFormVariants
-│   ├── LoginForm.test.tsx
-│   └── index.ts                      export { LoginForm } from './LoginForm'
-├── locales/sr.json                   namespace "auth"
-├── types.ts                          export type AuthUser
-└── index.ts                          javni API
+src/components/admin/AppShell/
+├── AppShell.tsx                      const AppShell = () => …; export default AppShell
+├── AppShell.styles.ts                export const Root = styled.div`…`  (samo styled)
+└── index.ts                          export { default } from './AppShell'
+src/hooks/admin/session/
+├── useAdminSession.ts                export const useAdminSession = () => …
+└── index.ts                          export * from './useAdminSession'
+src/store/slices/auth/                reducer/ · actions/ · selectors/ (selectSessionStatus) · types/
+src/store/api/admin/auth.ts           export const authApi; export const { useLoginMutation } = authApi
+src/schemas/auth.ts                   export const loginSchema; export type LoginInput
+src/server/services/auth.ts           export const login = async (…) => …
+src/types/auth.ts                     export interface SessionUser
 ```
 
 ## Anti-patterns

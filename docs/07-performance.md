@@ -5,7 +5,7 @@
 
 ## 1. React Compiler je uključen
 
-Compiler radi auto-memoizaciju za sve app-e i `packages/ui`.
+Compiler (`reactCompiler: true` u `next.config.ts`) radi auto-memoizaciju za ceo `src/`.
 `eslint-plugin-react-hooks` v7 nosi compiler pravila i **kršenje je error**, ne warning.
 
 Posledica koju treba razumeti: **ručni `useMemo`/`useCallback` je sada uglavnom redundantan**,
@@ -113,12 +113,24 @@ Provera: `/audit-state`.
 
 ## 6. Bundle
 
-- Route-level splitting **obavezan**; feature-level za teške feature-e.
-- Manual chunks: `react-vendor`, `redux-vendor`, `ui-vendor`. Ne granularnije — previše
-  malih chunkova je sporije od par većih.
-- **Budžeti (CI fail):** initial JS gzip ≤ **150 KB**, CSS gzip ≤ **20 KB**, po ruti ≤ **60 KB**.
+- **Budžet (CI fail): ≤ 200 KB gzip početnog JS-a po javnoj ruti** (ADR 0014). React 19 + Next
+  16 runtime je 128 KB od toga — za sajt ostaje ~70 KB. Meri `pnpm size`
+  (`scripts/check-size.mjs`) **u pravom pregledaču** (Playwright): App Router deo chunk-ova
+  učitava iz runtime-a, pa brojanje `<script>` tagova u HTML-u potceni rutu i za 40 KB.
+  Prefetch susednih ruta se ne broji; `noModule` polyfill-e moderan pregledač ne preuzima.
+- **Build je Turbopack** (`next build`), a **CSS je u HTML-u** (`experimental.inlineCss`) —
+  bez blokirajućih CSS zahteva (ADR 0014, dopuna 2).
+- **Javne stranice nemaju RTK Query** — forme šalju kroz `postJson` (`helpers/http`), podatke
+  čita stranica na serveru. RTK Query je za admin.
+- Početna je u sopstvenoj grupi `(public)/(home)/`, `(cta)/` sadrži samo podstranice sa CTA
+  trakom.
+- **Validacija forme učitava zod lenjo** (asinhroni RHF resolver sa `import()`): ~40 KB stiže
+  tek pri prvoj proveri, ne sa stranicom.
+- Klijentski kod se deli po ruti sam (App Router). Teške stvari samo u klijentskom ostrvu i
+  kroz `import()`: grafikoni, editor, PDF, mape, date picker.
+- **Šta je na svakoj stranici, mora biti lako:** header, footer i forma u podnožju ne uvoze
+  RTK Query ni zod šeme koje vuku pola biblioteke.
 - **Zabranjeno:** `moment`, ceo `lodash`, cele icon biblioteke (`import * as Icons`).
-- `import()` za: chart, rich text editor, PDF, mape, date picker.
 - **Novi dependency > 20 KB gzip → ADR.**
 
 ```ts
@@ -127,11 +139,32 @@ import _ from 'lodash';
 import * as Icons from 'lucide-react';
 
 // ✅ per-import
-import { debounce } from '@app/utils';
+import { formatDate } from '@/helpers/date';
 import { ChevronDown } from 'lucide-react';
 ```
 
 Provera: `/bundle-check`, `pnpm size`.
+
+### 6a. Admin ne sme da puni JS javnih stranica
+
+Turbopack izbacuje nekorišćene izvoze po upotrebi u **celoj** aplikaciji, ne po ruti. Modul
+koji dele javni deo i admin (RTK, react-hook-form, `constants/*`, mapa ikonica) zato na javnoj
+stranici nosi i sve što od njega koristi admin, pa i kod iza `lazy()` reference. Merenje
+2026-10-10: `/contact` 198 → 203,4 KB, samo zbog admin faze.
+
+| ❌ | ✅ |
+|---|---|
+| admin modali u javnom registru (`lazy`) | `AdminModalRoot` u `app/admin/layout.tsx` |
+| toast poruke u zajedničkom `RootLayout` | `ToastContainer` samo u admin layout-u (javni sajt ih ne prikazuje) |
+| admin putanje i RTKQ tagovi u `constants/api.ts` | `constants/adminApi.ts`; admin meni u `constants/adminNavigation.ts` |
+| RHF `useFieldArray` u admin formama (+1,4 KB na `/contact`) | `useFormList` (`useWatch` + `setValue`) |
+| ikonica u zatvorenoj listi koju niko ne koristi | lista `constants/icons.ts` sadrži samo upotrebljene |
+| deo forme koji se vidi tek kasnije (korak 3, potvrda) | `next/dynamic` |
+| `error.tsx` iznad layout-a koji jedini učitava next-yak runtime | granica u `(public)` — inače njen chunk nosi svoju kopiju runtime-a (+1,6 KB pri učitavanju) |
+
+RTK Query u admin-u i dalje zadržava `createAsyncThunk`/matchere i immer patch-eve u RTK
+modulu (~2,3 KB na svakoj javnoj ruti). Na zajedničkom modulu se to ne može odvojiti, pa je
+taj trošak uračunat u budžet. Provera posle svake admin izmene: `pnpm size` (CI).
 
 ## 7. Lighthouse
 
@@ -165,13 +198,16 @@ LHCI assertions: ≥ 0.95 performance, 1.0 a11y/best-practices/seo.
 
 Provera: `/perf-audit`, `pnpm lh`.
 
-## 8. Referentne brojke `apps/web`
+## 8. Referentne brojke
 
-Baseline pre monorepo migracije (produkcijski build, throttled):
-**desktop 100 / mobile 92**, FCP 0.5 s, LCP 0.6 s, 337 KiB ukupno.
+JS po javnoj ruti (gzip, pravi Chromium, `pnpm size`, ADR 0014; budžet 200 KB):
+`/` 189,8 · `/projects` 180,4 · `/notes` 180,4 · `/contact` 198,0 KB (pre admin-a). Posle admin
+faze i mera iz §6a `/contact` je oko 199 KB, najbliže budžetu. React 19 + Next 16 runtime
+čini ~128 KB i ne smanjuje se.
 
-Sastav bundle-a: `react-dom` 37%, `react-router` 28%, `tailwind-merge` 7%,
-`i18next` 6%, `@reduxjs/toolkit` 5%.
+Lighthouse mobile (simulirano throttle-ovanje, localhost): početna 85, projekti 89, kontakt 87.
+Devtools throttle: 91 / 98. Simulirani LCP na localhost-u je pesimističan; konačni broj je sa
+produkcije (`pnpm lh` nad `https://cloudsheep.dev`).
 
 Svaka izmena koja obori ove brojke mora imati obrazloženje u PR-u.
 

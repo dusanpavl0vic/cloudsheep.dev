@@ -1,161 +1,107 @@
-# 11 — Dohvatanje podataka
+# 11 — Podaci: server i klijent
 
-> Status: active | Last review: 2026-08-15
+> Status: active | Last review: 2026-10-08
 
-**Sav HTTP ide kroz RTK Query. `useEffect` + `fetch` ne postoji u ovom repou. Ikad.**
+Dva puta, sa jasnom granicom (docs/01 §3):
 
-## Pravila
+| Ko traži                                      | Kako                                        | Zašto                                             |
+| --------------------------------------------- | ------------------------------------------- | ------------------------------------------------- |
+| javna stranica (server komponenta)            | direktan poziv `server/services/<domen>.ts` | Google mora da dobije sadržaj u HTML-u            |
+| admin (klijentske komponente)                 | RTK Query → `/api/**`                       | šablon §6.2; keš, stanja učitavanja, invalidacija |
+| javna forma (kontakt, newsletter)             | `postJson` → `/api/**`, podaci sa servera   | JS budžet (ADR 0014) — RTK Query nije na javnim stranicama |
 
-1. **Jedan `baseApi`** u `@app/core`; feature-i rade `injectEndpoints()`. Nikad drugi `createApi`.
-2. **Invalidacija preko `providesTags`/`invalidatesTags`.** Ručni `refetch()` samo kad ga
-   korisnik eksplicitno traži (dugme "Osveži").
-3. **`transformResponse` za snake_case → camelCase** — na jednom mestu, u `baseQuery`.
-4. **Optimistic update obavezan** za toggle/like/delete — to je INP metrika.
-5. **Polling samo eksplicitno**, per-endpoint, nikad globalno.
-6. **Komponenta ne zove RTKQ hook direktno** — kroz feature hook ([`13-hooks.md`](13-hooks.md)).
+## 1. Javne stranice
 
-## `baseQuery`
-
-```ts
-// packages/core/src/api/baseQuery.ts
-const rawBaseQuery = fetchBaseQuery({
-  baseUrl: env.VITE_API_URL,
-  prepareHeaders: (headers, { getState }) => {
-    const token = selectAccessToken(getState() as RootState);
-    if (token) headers.set('authorization', `Bearer ${token}`);
-    return headers;
-  },
-});
-
-const mutex = new Mutex();
-
-export const baseQueryWithReauth: BaseQueryFn = async (args, api, extra) => {
-  await mutex.waitForUnlock();
-  let result = await rawBaseQuery(args, api, extra);
-
-  if (result.error?.status === 401) {
-    if (!mutex.isLocked()) {
-      const release = await mutex.acquire();
-      try {
-        const refresh = await rawBaseQuery({ url: '/auth/refresh', method: 'POST' }, api, extra);
-        if (refresh.data) {
-          api.dispatch(sessionRefreshed(refresh.data));
-          result = await rawBaseQuery(args, api, extra);   // ponovi originalni zahtev
-        } else {
-          api.dispatch(loggedOut());
-        }
-      } finally {
-        release();
-      }
-    } else {
-      await mutex.waitForUnlock();
-      result = await rawBaseQuery(args, api, extra);
-    }
-  }
-
-  if (result.error) result.error = normalizeError(result.error);
-  return result;
-};
+```tsx
+// app/[locale]/(public)/projects/page.tsx
+const ProjectsPage = async ({ params }: Props) => {
+  const { locale } = await params
+  const projects = await listPublishedProjects(locale)
+  return <ProjectsView projects={projects} />
+}
 ```
 
-**Mutex je bitan:** bez njega pet paralelnih 401 odgovora pokreće pet refresh poziva, od kojih
-četiri invalidiraju token koji je peti upravo dobio.
+- Servis vraća podatke **već na jeziku stranice** (`title: string`, ne `{ sr, en }`) — klijent ne
+  nosi drugi jezik.
+- Nepostojeći resurs je `null` → `page.tsx` zove `notFound()` (pravi 404).
+- Greška baze se ne hvata u `page.tsx` — propada do `error.tsx`, koji ne prikazuje detalje.
 
-## `baseApi`
+## 2. Keš podataka
 
-```ts
-// packages/core/src/api/baseApi.ts
-export const baseApi = createApi({
-  reducerPath: 'api',
-  baseQuery: baseQueryWithReauth,
-  tagTypes: ['Project', 'User', 'Session'],
-  endpoints: () => ({}),
-});
-```
-
-## Endpoint feature-a
+Stranice su dinamičke (CSP nonce), pa javni servisi keširaju rezultat kroz `cached()`
+(`server/cache.ts`, `unstable_cache`) sa tagom iz `CACHE_TAGS`:
 
 ```ts
-// features/projects/api/projectsApi.ts
-export const projectsApi = baseApi.injectEndpoints({
-  endpoints: (build) => ({
-    getProjects: build.query<Project[], ProjectFilters>({
-      query: (filters) => ({ url: '/projects', params: filters }),
-      providesTags: (result) =>
-        result
-          ? [...result.map(({ id }) => ({ type: 'Project' as const, id })), { type: 'Project', id: 'LIST' }]
-          : [{ type: 'Project', id: 'LIST' }],
-    }),
-
-    toggleFavorite: build.mutation<void, string>({
-      query: (id) => ({ url: `/projects/${id}/favorite`, method: 'POST' }),
-      // optimistic — korisnik ne čeka mrežu da vidi promenu (INP)
-      async onQueryStarted(id, { dispatch, queryFulfilled, getState }) {
-        const patches = projectsApi.util.selectInvalidatedBy(getState(), [{ type: 'Project' }]);
-        const patch = dispatch(
-          projectsApi.util.updateQueryData('getProjects', undefined, (draft) => {
-            const p = draft.find((x) => x.id === id);
-            if (p) p.isFavorite = !p.isFavorite;
-          }),
-        );
-        try { await queryFulfilled; } catch { patch.undo(); }
-      },
-    }),
-  }),
-});
-
-export const { useGetProjectsQuery, useToggleFavoriteMutation } = projectsApi;
+export const listPublishedProjects = cached(
+  async (locale: Locale) => (await findPublished()).map((p) => summary(p, locale)),
+  'projects',
+  [CACHE_TAGS.PROJECTS],
+)
 ```
 
-Hookovi se eksportuju iz `api/`, ali ih **troši samo feature hook** — ne komponenta.
+- **Svaka admin izmena** zove `invalidate(tag)` (`revalidateTag(tag, { expire: 0 })`) — sledeći
+  zahtev dobija sveže podatke. Nov projekat je vidljiv i indeksabilan **bez rebuild-a**.
+- Rezultat se čuva kao JSON: servis vraća samo serijalizabilne podatke (datum kao ISO string).
+- Ne kešira se ono što se menja sa svakim posetiocem: slobodni termini (`listFreeSlots`).
 
-## `selectFromResult` — transformacija bez rerendera
+## 3. API rute
+
+`app/api/**/route.ts` je tanak: parsiraj → servis → odgovor.
 
 ```ts
-const { activeCount } = useGetProjectsQuery(filters, {
-  selectFromResult: ({ data }) => ({ activeCount: data?.filter((p) => p.isActive).length ?? 0 }),
-});
+export const PATCH = handleAdmin<{ id: string }>(async (request, { params }) =>
+  json(
+    await updateNote(
+      (await params).id,
+      await readPatch(request, updateNoteSchema, 'notes.errors.invalid'),
+    ),
+  ),
+)
 ```
 
-Komponenta se rerenderuje samo kad se `activeCount` promeni, ne na svaku promenu liste.
+| Pomoćnik (`server/http.ts`, `server/auth/session.ts`) | Šta radi                                                     |
+| ----------------------------------------------------- | ------------------------------------------------------------ |
+| `handle(fn)`                                          | hvata svaku grešku → `{ messageKey, details? }`, nikad stack |
+| `handleAdmin(fn)`                                     | `handle` + provera admin uloge (401/403)                     |
+| `readJson(request, schema, key)`                      | limit veličine, JSON, zod; greška → 400 sa `details.field`   |
+| `readPatch(request, schema, key)`                     | isto, ali vraća SAMO poslate ključeve — obavezno za PATCH    |
+| `readQuery(request, schema)`                          | query kroz šemu                                              |
+| `HttpError(status, messageKey, details?)`             | namerna greška sa i18n ključem i poljem forme                |
 
-## Prefetch na hover
+Statičan segment ima prednost nad dinamičkim: `/api/admin/projects/order` se ne čita kao `[id]`.
 
-```ts
-const prefetch = usePrefetch('getProject');
-<Link onMouseEnter={() => prefetch(project.id)} to={…} />
-```
+**PATCH nikad kroz `readJson` sa `.partial()` šemom.** Zod 4 primenjuje `.default()` i unutar
+`.partial()`, pa bi `{ isPublished: true }` stigao i kao `metrics: []`, `company: ''`,
+`avatarId: null`… i izmena jednog polja bi obrisala ostala. `readPatch` to sprečava.
 
-## Normalizovana greška
+## 4. RTK Query (klijent)
 
-```ts
-export type AppError = { code: string; messageKey: string; status: number; details?: unknown };
-```
+Tačno po šablonu §6.2: `baseApi` nema endpointe, a svaki domen ubacuje svoje
+(`store/api/admin/<domen>.ts`). URL-ovi dolaze iz `API_ENDPOINTS`, tagovi iz `API_TAGS`.
+Admin spiskovi dele `crudEndpoints(build, tag, { list, item, order? })`: lista (`{ items }`),
+dodavanje, izmena (`PATCH`), brisanje i redosled. Svaka mutacija poništava tag liste.
 
-UI prikazuje `t(error.messageKey)` — nikad sirovu poruku sa servera, koja nije prevedena i
-može da procuri interne detalje.
+- `baseApi` se ubacuje **lenjo** (docs/04 §2) — samo stranice koje ga uvezu ga plaćaju.
+- **Javne stranice ne koriste RTKQ** (JS budžet, ADR 0014). Forme šalju kroz `postJson`
+  (`helpers/http.ts`), a termini stižu sa servera.
+- `baseQuery` nosi access token iz memorije (`auth` slice). Na 401 jednom zove
+  `POST /api/auth/refresh` i ponavlja zahtev. Ako obnova ne uspe, sledi `sessionEnded()` i
+  prijava. Istovremeni 401-ovi čekaju istu obnovu, a `/auth/*` se nikad ne obnavlja sam.
+- Fajl (CSV, PDF) se ne čuva u Redux-u. CSV ide kao tekst, a PDF kao object URL (string).
+  Blob nije serijalizabilan. Preuzimanje radi `helpers/download.ts`, jer link ne može da nosi
+  `Authorization`.
+- Komponenta nikad ne zove RTKQ hook direktno — uvek kroz domenski hook (`hooks/<domen>/`).
+- Greška iz API-ja se prevodi kroz `messageKey` (`helpers/apiError.ts` → `parseApiError`);
+  `details.field` ide na polje forme (`setError`), ne u toast.
 
 ## Anti-patterns
 
-| ❌ | ✅ |
-|---|---|
-| `useEffect(() => { fetch(...).then(setData) }, [])` | `useGetXQuery()` |
-| drugi `createApi` u feature-u | `baseApi.injectEndpoints` |
-| `refetch()` posle svake mutacije | `invalidatesTags` |
-| kopiranje `data` u slice | čitaj iz hooka |
-| `pollingInterval` globalno | per-endpoint, samo gde treba |
-| delete bez optimistic update-a | `onQueryStarted` + `updateQueryData` |
-| `data.user_name` po komponentama | `transformResponse` na jednom mestu |
-| prikaz `error.data.message` sa servera | `t(error.messageKey)` |
-| refresh bez mutexa | mutex — inače paralelni 401 ruše sesiju |
-
-## Checklist
-
-- [ ] Endpoint je dodat kroz `injectEndpoints`, ne novi `createApi`
-- [ ] `providesTags`/`invalidatesTags` postavljeni (uključujući `LIST` tag)
-- [ ] Mutacija koja menja vidljivo stanje ima optimistic update
-- [ ] Tipovi zahteva i odgovora su eksplicitni, bez `any`
-- [ ] MSW handler kolokovan uz feature ([`12-testing.md`](12-testing.md))
-- [ ] Komponenta ne uvozi RTKQ hook direktno
-- [ ] Greške prolaze kroz `normalizeError`
-- [ ] Test: loading → success → error putanja
+| ❌                                               | ✅                                     |
+| ------------------------------------------------ | -------------------------------------- |
+| `fetch('/api/projects')` iz serverske komponente | direktan poziv servisa                 |
+| `useEffect(() => { fetch(…) })`                  | RTKQ hook u domenskom hooku            |
+| servis vraća `Date` iz keširane funkcije         | ISO string                             |
+| admin izmena bez `invalidate(tag)`               | svaka mutacija invalidira svoje tagove |
+| PATCH ruta sa `readJson(…, schema.partial())`    | `readPatch`                            |
+| `responseHandler: (r) => r.blob()` u RTKQ        | tekst ili object URL (serijalizabilno) |
+| `res.json(prismaRow)`                            | serializer koji nabraja polja          |
