@@ -305,7 +305,6 @@ const sr: Messages = {
         shipped: 'isporučenih proizvoda',
         years: 'godina iskustva',
       },
-      uptime: { label: 'uptime', period: 'poslednjih 90 dana', ok: 'svi sistemi rade' },
     },
     studio: {
       eyebrow: 'studio',

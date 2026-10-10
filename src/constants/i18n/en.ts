@@ -306,7 +306,6 @@ const en = {
         shipped: 'products shipped',
         years: 'years of experience',
       },
-      uptime: { label: 'uptime', period: 'last 90 days', ok: 'all systems operational' },
     },
     studio: {
       eyebrow: 'studio',
