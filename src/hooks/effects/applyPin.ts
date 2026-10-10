@@ -21,7 +21,7 @@ export const applyPin = (pin: HTMLElement) => {
     } else if (delta < 0) {
       const k = -delta
       card.style.transform = `translateY(${String(k * PIN.exitShiftPct)}%) rotate(${String(k * PIN.exitTiltDeg)}deg)`
-      card.style.opacity = String(1 - k * 0.6)
+      card.style.opacity = String(1 - k)
     } else {
       const k = Math.min(delta, PIN.maxStack)
       card.style.transform = `translateY(${String(-k * PIN.stackShiftPx)}px) scale(${String(1 - k * PIN.stackScale)})`
@@ -36,8 +36,8 @@ export const applyPin = (pin: HTMLElement) => {
   const active = Math.round(position)
   pin.querySelectorAll<HTMLElement>(`[${EFFECT_ATTRS.pinStep}]`).forEach((step) => {
     const index = Number(step.getAttribute(EFFECT_ATTRS.pinStep))
-    step.style.opacity = index === active ? '1' : index < active ? '.65' : '.35'
-    step.style.transform = index === active ? `translateX(${String(PIN.activeStepShiftPx)}px)` : 'none'
+    step.style.transform =
+      index === active ? `translateX(${String(PIN.activeStepShiftPx)}px)` : 'none'
     if (index === active) step.setAttribute('aria-current', 'step')
     else step.removeAttribute('aria-current')
   })

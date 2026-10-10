@@ -35,15 +35,26 @@ export const useRevealOnScroll = (enabled: boolean) => {
     )
 
     const scan = () => {
-      let index = 0
-      document.querySelectorAll<HTMLElement>(`[${EFFECT_ATTRS.reveal}]:not([${SEEN}])`).forEach((el) => {
+      const fresh = [
+        ...document.querySelectorAll<HTMLElement>(`[${EFFECT_ATTRS.reveal}]:not([${SEEN}])`),
+      ]
+      // Prvo SVA čitanja, pa upisi: čitanje posle upisa tera novi layout za svaki element (forced reflow)
+      const fold = window.innerHeight * REVEAL.skipAboveFold
+      const below = fresh.filter((el) => el.getBoundingClientRect().top >= fold)
+      fresh.forEach((el) => {
         el.setAttribute(SEEN, '')
-        if (el.getBoundingClientRect().top < window.innerHeight * REVEAL.skipAboveFold) return
-        const delay = (index++ % 4) * REVEAL.stagger
+      })
+      below.forEach((el, index) => {
+        const delay = (index % 4) * REVEAL.stagger
         const transition = ['opacity', 'transform', 'filter']
           .map((prop) => `${prop} ${String(REVEAL.durationS)}s ${EASE_OUT} ${String(delay)}s`)
           .join(', ')
-        Object.assign(el.style, { opacity: '0', transform: 'translateY(40px)', filter: 'blur(6px)', transition })
+        Object.assign(el.style, {
+          opacity: '0',
+          transform: 'translateY(40px)',
+          filter: 'blur(6px)',
+          transition,
+        })
         pending.add(el)
         observer.observe(el)
       })

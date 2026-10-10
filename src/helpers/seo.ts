@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 
+import { BRAND } from '@/constants/brand'
 import { SITE_URL } from '@/constants/env'
 import { DEFAULT_LOCALE, LOCALE_TAGS, OG_LOCALES, type Locale } from '@/constants/i18n'
 
@@ -17,7 +18,7 @@ interface PageMetadataInput {
   path: string
   title: string
   description: string
-  /** Apsolutna ili korenska adresa slike; bez nje ostaje `og.png` iz layout-a. */
+  /** Apsolutna ili korenska adresa slike; bez nje `og.png` (BRAND.ogImage). */
   image?: { url: string; width: number; height: number; alt: string } | null
   type?: 'website' | 'article'
   publishedTime?: string
@@ -31,9 +32,21 @@ interface PageMetadataInput {
  * prekidač jezika, ali Google prikazuje engleski. Filtrirane varijante (`?category=`) kanonski
  * pokazuju na osnovnu stranicu — page.tsx prosleđuje putanju bez query-ja.
  */
-export const buildPageMetadata = ({ locale, path, title, description, image, type = 'website', publishedTime, noindex = false }: PageMetadataInput): Metadata => {
+export const buildPageMetadata = ({
+  locale,
+  path,
+  title,
+  description,
+  image,
+  type = 'website',
+  publishedTime,
+  noindex = false,
+}: PageMetadataInput): Metadata => {
   const url = absoluteUrl(localizedPath(path, locale))
   const indexed = locale === DEFAULT_LOCALE && !noindex
+  // Next NE spaja `openGraph` sa layout-om (zamenjuje ceo objekat): bez ovoga stranica ostaje
+  // bez og:image i og:site_name, a Google uzima staru sličicu iz svog keša.
+  const ogImage = image ?? { url: BRAND.ogImage, width: 1200, height: 630, alt: title }
 
   return {
     title: { absolute: title },
@@ -45,16 +58,24 @@ export const buildPageMetadata = ({ locale, path, title, description, image, typ
       url,
       title,
       description,
+      siteName: BRAND.name,
       locale: OG_LOCALES[locale],
-      ...(image ? { images: [image] } : {}),
+      images: [ogImage],
       ...(publishedTime ? { publishedTime } : {}),
     },
-    twitter: { card: 'summary_large_image', title, description, ...(image ? { images: [image.url] } : {}) },
+    twitter: { card: 'summary_large_image', title, description, images: [ogImage.url] },
   }
 }
 
 /** JSON-LD studija kao `ProfessionalService` (početna). */
-export const studioJsonLd = ({ locale, name, description, email, sameAs, city }: {
+export const studioJsonLd = ({
+  locale,
+  name,
+  description,
+  email,
+  sameAs,
+  city,
+}: {
   locale: Locale
   name: string
   description: string
@@ -77,7 +98,16 @@ export const studioJsonLd = ({ locale, name, description, email, sameAs, city }:
 })
 
 /** JSON-LD studije slučaja: `CreativeWork` sa autorom, godinom i tehnologijama. */
-export const projectJsonLd = ({ locale, path, title, description, year, image, keywords, studio }: {
+export const projectJsonLd = ({
+  locale,
+  path,
+  title,
+  description,
+  year,
+  image,
+  keywords,
+  studio,
+}: {
   locale: Locale
   path: string
   title: string
@@ -112,7 +142,17 @@ export const breadcrumbJsonLd = (locale: Locale, items: { name: string; path: st
 })
 
 /** JSON-LD beleške: `BlogPosting` sa datumima i autorom (studio). */
-export const notePostingJsonLd = ({ locale, path, title, description, publishedAt, updatedAt, image, keywords, studio }: {
+export const notePostingJsonLd = ({
+  locale,
+  path,
+  title,
+  description,
+  publishedAt,
+  updatedAt,
+  image,
+  keywords,
+  studio,
+}: {
   locale: Locale
   path: string
   title: string
@@ -133,7 +173,11 @@ export const notePostingJsonLd = ({ locale, path, title, description, publishedA
   dateModified: updatedAt,
   inLanguage: LOCALE_TAGS[locale],
   author: { '@type': 'Organization', name: studio, url: absoluteUrl(localizedPath('/', locale)) },
-  publisher: { '@type': 'Organization', name: studio, logo: { '@type': 'ImageObject', url: absoluteUrl('/favicon.svg') } },
+  publisher: {
+    '@type': 'Organization',
+    name: studio,
+    logo: { '@type': 'ImageObject', url: absoluteUrl('/favicon.svg') },
+  },
   ...(image ? { image: image.startsWith('http') ? image : absoluteUrl(image) } : {}),
   ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
 })

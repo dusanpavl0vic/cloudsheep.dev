@@ -2,6 +2,8 @@ import 'server-only'
 
 import nodemailer, { type Transporter } from 'nodemailer'
 
+import { SITE_URL } from '@/constants/env'
+
 import { env } from '../env'
 
 /**
@@ -15,6 +17,9 @@ export const isMailConfigured = () =>
 
 export const getTransporter = (): Transporter => {
   transporter ??= nodemailer.createTransport({
+    // EHLO ime: domen koji pokazuje na server. Bez ovoga je to ime kontejnera (nasumičan heks),
+    // a to filteri boduju kao sumnjivo.
+    name: new URL(SITE_URL).hostname,
     host: env().SMTP_HOST,
     port: env().SMTP_PORT,
     // 465 je implicitni TLS; 587 je STARTTLS

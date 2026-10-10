@@ -5,20 +5,36 @@ import { expect, test } from '@playwright/test'
  * canonical + hreflang, sitemap iz baze, admin i API van indeksa, JSON-LD.
  */
 const slugsFrom = (xml: string, section: 'projects' | 'notes') =>
-  [...xml.matchAll(new RegExp(`<loc>[^<]*/${section}/([a-z0-9-]+)</loc>`, 'g'))].map((m) => m[1]).filter(Boolean)
+  [...xml.matchAll(new RegExp(`<loc>[^<]*/${section}/([a-z0-9-]+)</loc>`, 'g'))]
+    .map((m) => m[1])
+    .filter(Boolean)
 
 test('javne stranice su 200 na oba jezika', async ({ request }) => {
   const xml = await (await request.get('/sitemap.xml')).text()
   const project = slugsFrom(xml, 'projects')[0]
   const note = slugsFrom(xml, 'notes')[0]
-  const paths = ['/', '/sr', '/projects', '/sr/projects', '/notes', '/sr/notes', '/contact', '/sr/contact']
+  const paths = [
+    '/',
+    '/sr',
+    '/projects',
+    '/sr/projects',
+    '/notes',
+    '/sr/notes',
+    '/contact',
+    '/sr/contact',
+  ]
   if (project) paths.push(`/projects/${project}`, `/sr/projects/${project}`)
   if (note) paths.push(`/notes/${note}`, `/sr/notes/${note}`)
   for (const path of paths) expect((await request.get(path)).status(), path).toBe(200)
 })
 
 test('nepostojeće adrese su pravi 404 (ne 200 sa porukom)', async ({ request }) => {
-  for (const path of ['/projects/ne-postoji-e2e', '/notes/ne-postoji-e2e', '/nema-ove-stranice', '/sr/nema-ove-stranice']) {
+  for (const path of [
+    '/projects/ne-postoji-e2e',
+    '/notes/ne-postoji-e2e',
+    '/nema-ove-stranice',
+    '/sr/nema-ove-stranice',
+  ]) {
     expect((await request.get(path)).status(), path).toBe(404)
   }
 })
@@ -32,7 +48,10 @@ test('kosa crta na kraju i stara /uses adresa preusmeravaju trajno', async ({ re
   expect(uses.headers().location).toMatch(/\/#stack$/)
 })
 
-test('u pretrazi je samo engleski: /sr je noindex i bez hreflang-a (ADR 0012)', async ({ page, request }) => {
+test('u pretrazi je samo engleski: /sr je noindex i bez hreflang-a (ADR 0012)', async ({
+  page,
+  request,
+}) => {
   await page.goto('/sr/projects?category=fullStack')
   await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', /\/sr\/projects$/)
   await expect(page.locator('meta[name=robots]')).toHaveAttribute('content', /noindex/)
@@ -46,8 +65,13 @@ test('u pretrazi je samo engleski: /sr je noindex i bez hreflang-a (ADR 0012)', 
   expect((await request.get('/projects')).headers()['x-robots-tag']).toBeUndefined()
 })
 
-test('podrazumevani jezik je engleski — i za posetioca iz Srbije (bez preusmeravanja)', async ({ browser }) => {
-  const context = await browser.newContext({ locale: 'sr-RS', extraHTTPHeaders: { 'Accept-Language': 'sr-RS,sr;q=0.9' } })
+test('podrazumevani jezik je engleski — i za posetioca iz Srbije (bez preusmeravanja)', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    locale: 'sr-RS',
+    extraHTTPHeaders: { 'Accept-Language': 'sr-RS,sr;q=0.9' },
+  })
   const page = await context.newPage()
   const response = await page.goto('/')
   expect(response?.status()).toBe(200)
@@ -65,9 +89,36 @@ test('admin i API nisu za indeks', async ({ request }) => {
 
 test('sitemap ima samo engleske adrese', async ({ request }) => {
   const xml = await (await request.get('/sitemap.xml')).text()
-  for (const path of ['/projects', '/notes', '/contact']) expect(xml).toContain(`${path}</loc>`)
+  for (const path of ['/projects', '/contact']) expect(xml).toContain(`${path}</loc>`)
   expect(xml).not.toContain('/sr')
   expect(xml).not.toContain('hreflang')
+})
+
+test('prazne beleške: /notes je noindex i van sitemap-a; sa beleškom ulazi', async ({
+  page,
+  request,
+}) => {
+  const xml = await (await request.get('/sitemap.xml')).text()
+  const hasNotes = slugsFrom(xml, 'notes').length > 0
+  expect(xml.includes('/notes</loc>')).toBe(hasNotes)
+  await page.goto('/notes')
+  await expect(page.locator('meta[name=robots][content*="noindex"]')).toHaveCount(hasNotes ? 0 : 1)
+})
+
+test('svaka stranica ima og:image i og:site_name (Next ne spaja openGraph sa layout-om)', async ({
+  page,
+}) => {
+  for (const path of ['/', '/projects', '/contact']) {
+    await page.goto(path)
+    await expect(page.locator('meta[property="og:image"]'), path).toHaveAttribute(
+      'content',
+      /\/og\.png$/,
+    )
+    await expect(page.locator('meta[property="og:site_name"]'), path).toHaveAttribute(
+      'content',
+      'CloudSheep',
+    )
+  }
 })
 
 test('JSON-LD: studio na početnoj, delo na studiji slučaja', async ({ page, request }) => {

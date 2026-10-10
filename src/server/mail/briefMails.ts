@@ -96,7 +96,8 @@ export const sendAutoReply = async ({ brief, callAt }: BriefMail) => {
   await getTransporter().sendMail({
     from: { name: 'CloudSheep', address: env().SMTP_USER },
     to: brief.email,
-    replyTo: env().CONTACT_TO,
+    // Bez `replyTo`: odgovor ide na `From` (naš nalog). Reply-To na DRUGI besplatni sandučić od
+    // `From` filteri boduju kao krivotvorenje (FREEMAIL_FORGED_REPLYTO).
     subject: t('subject'),
     // RFC 3834: automatski odgovor — filteri ga ne vide kao masovnu poštu, a drugi
     // auto-responderi mu ne odgovaraju (bez ovoga se dva auto-odgovora dopisuju zauvek).

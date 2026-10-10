@@ -48,13 +48,13 @@ jer on ide u `DATABASE_URL`.
 
 **New Resource → Docker Image** (ne „Application → GitHub": tu bi Coolify gradio na serveru).
 
-| Polje | Vrednost |
-| --- | --- |
-| Image | `ghcr.io/dusanpavl0vic/cloudsheep.dev:prod` |
-| Ports Exposes | `3000` |
-| Health Check Path | `/api/health` |
-| Domains | `https://cloudsheep.dev,https://admin.cloudsheep.dev,https://api.cloudsheep.dev` |
-| www | uključi **redirect `www` → non-www** |
+| Polje             | Vrednost                                                                         |
+| ----------------- | -------------------------------------------------------------------------------- |
+| Image             | `ghcr.io/dusanpavl0vic/cloudsheep.dev:prod`                                      |
+| Ports Exposes     | `3000`                                                                           |
+| Health Check Path | `/api/health`                                                                    |
+| Domains           | `https://cloudsheep.dev,https://admin.cloudsheep.dev,https://api.cloudsheep.dev` |
+| www               | uključi **redirect `www` → non-www**                                             |
 
 Sva tri domena idu na isti kontejner:
 
@@ -66,10 +66,10 @@ Sva tri domena idu na isti kontejner:
 
 ### Resource Limits
 
-| Polje | Vrednost |
-| --- | --- |
-| Memory | `768m` |
-| Memory Swap | `768m` |
+| Polje       | Vrednost |
+| ----------- | -------- |
+| Memory      | `768m`   |
+| Memory Swap | `768m`   |
 
 Image postavlja `NODE_OPTIONS=--max-old-space-size=384`. Heap ostaje ispod ograničenja, pa
 GC radi pre nego što kernel ubije proces. Izmereno je u §6.
@@ -81,8 +81,8 @@ DATABASE_URL=<internal string iz koraka 1>
 JWT_SECRET=<openssl rand -base64 32>
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=465
-SMTP_USER=cloudsheep.dev016@gmail.com
-SMTP_PASS=<Google App Password, 16 znakova, bez razmaka>
+SMTP_USER=<lični Gmail sa istorijom — vidi „SMTP (Gmail)">
+SMTP_PASS=<Google App Password TOG naloga, 16 znakova, bez razmaka>
 CONTACT_TO=cloudsheep.dev016@gmail.com
 SEED_ADMIN_EMAIL=<tvoj mejl>
 SEED_ADMIN_PASSWORD=<bar 12 znakova>
@@ -100,11 +100,23 @@ SEED_ADMIN_NAME=<ime>
 
 ### SMTP (Gmail) — App Password
 
-`SMTP_PASS` je **App Password**, ne lozinka naloga:
+**Šalje se sa ličnog Gmail naloga koji se godinama koristi**, ne sa novog naloga napravljenog
+za sajt. Gmail ocenjuje pošiljaoca po istoriji naloga: nov nalog koji sa VPS-a šalje samo
+„potvrdi adresu" + link liči na ukraden nalog i ide u spam (prvi deploy, 2026-10-10).
 
-1. Google nalog `cloudsheep.dev016@gmail.com` → **Security** → uključi **2-Step Verification**.
+`SMTP_PASS` je **App Password tog istog naloga**, ne lozinka naloga:
+
+1. Google nalog iz `SMTP_USER` → **Security** → uključi **2-Step Verification**.
 2. **Security → App passwords** → ime `cloudsheep.dev` → **Create** → kopiraj 16 znakova.
 3. Upiši u `SMTP_PASS` (bez razmaka) i pokreni Restart.
+4. Pošalji probni upit na drugu adresu. Ako potvrda ipak stigne u spam: **Not spam** i dodaj
+   pošiljaoca u kontakte. Gmail u traci „Why is this message in spam?" piše tačan razlog.
+
+Lozinka iz drugog naloga ne radi (`535 Username and Password not accepted`). Kad se nalog
+promeni, napravi novu App Password, a staru obriši.
+
+Ako ni lični nalog ne pomogne, sledeći korak je slanje sa domena `cloudsheep.dev` (SPF, DKIM i
+DMARC preko servisa kao Resend). To traži nov nalog i DNS zapise, pa se radi tek ako treba.
 
 Bez SMTP-a **u produkciji upit ne prolazi** (503 `contact.errors.mailFailed`). Razlog je
 double opt-in (ADR 0016): bez mejla posetilac ne može da potvrdi adresu, pa se upit ni ne
@@ -154,10 +166,10 @@ node dist/seed.cjs
 
 GitHub → repo → **Settings → Secrets and variables → Actions**:
 
-| Secret | Odakle |
-| --- | --- |
-| `COOLIFY_WEBHOOK` | Coolify → aplikacija → **Webhooks** → Deploy Webhook URL |
-| `COOLIFY_TOKEN` | Coolify → **Keys & Tokens → API tokens** → novi token sa pravom „deploy" |
+| Secret            | Odakle                                                                   |
+| ----------------- | ------------------------------------------------------------------------ |
+| `COOLIFY_WEBHOOK` | Coolify → aplikacija → **Webhooks** → Deploy Webhook URL                 |
+| `COOLIFY_TOKEN`   | Coolify → **Keys & Tokens → API tokens** → novi token sa pravom „deploy" |
 
 CI posle novog `:prod` image-a pozove webhook, a Coolify povuče image i restartuje
 aplikaciju. Bez ovih secret-a CI samo objavi image, a deploy pokrećeš ručno (**Redeploy**).
@@ -193,14 +205,27 @@ aplikaciju. Bez ovih secret-a CI samo objavi image, a deploy pokrećeš ručno (
 
 ## 6. Memorija
 
-Izmereno lokalno sa istim ograničenjem (`infra/docker-compose.yml`, `mem_limit: 768m`),
-obilaskom javnih i admin stranica. Brojke su u PR opisu i u `DEPLOYMENT.md` §4. Na serveru:
+Izmereno 2026-10-10 lokalno, isti image sa istim ograničenjem (`infra/docker-compose.yml`,
+`mem_limit: 768m`, `NODE_OPTIONS=--max-old-space-size=384`):
+
+| Stanje                                                | RSS kontejnera                       |
+| ----------------------------------------------------- | ------------------------------------ |
+| posle starta (migracije + seed)                       | ~105–118 MiB                         |
+| ceo e2e paket + obilazak javnih i admin stranica      | najviše ~205 MiB                     |
+| 400 zahteva, 25 istovremeno (javne stranice, sitemap) | ~198 MiB, 0 neuspelih, najduži 1,4 s |
+
+Ograničenje od 768 MiB ostavlja više od 3× rezerve. CI (posao `image`) pri svakom build-u
+pokreće image sa `--memory=768m` nad praznom bazom.
+
+Poznato: prijava u admin (`bcryptjs`, cena 12, čist JS) drži glavnu nit ~0,5 s, pa zahtev
+koji stigne tačno tada čeka isto toliko. Za jednog admina to nije problem; ako ikad bude više
+korisnika, zameniti ga async heširanjem van glavne niti (npr. `crypto.scrypt`).
+
+Na serveru:
 
 ```bash
 docker stats --no-stream $(docker ps -q --filter "name=cloudsheep")
 ```
-
----
 
 ## 7. Rollback
 

@@ -7,6 +7,7 @@ import type { ReactNode } from 'react'
 
 import Document from '@/components/layout/Document'
 import RootLayout from '@/components/layout/RootLayout'
+import { BRAND } from '@/constants/brand'
 import { THEME_COOKIE } from '@/constants/cookies'
 import { SITE_URL } from '@/constants/env'
 import { OG_LOCALES } from '@/constants/i18n'
@@ -28,12 +29,22 @@ export const generateMetadata = async ({ params }: LocaleLayoutProps): Promise<M
   return {
     metadataBase: new URL(SITE_URL),
     applicationName: t('siteName'),
-    icons: { icon: '/favicon.svg' },
+    icons: {
+      icon: [
+        { url: '/favicon.svg', type: 'image/svg+xml' },
+        { url: '/favicon.ico', sizes: '16x16 32x32 48x48' },
+      ],
+      apple: '/apple-touch-icon.png',
+    },
+    // Velika sličica i pun isečak u Google rezultatu; `noindex` stranice ovo pregaze svojim robots-om
+    robots: {
+      googleBot: { 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
+    },
     openGraph: {
       type: 'website',
       siteName: t('siteName'),
       locale: OG_LOCALES[locale],
-      images: [{ url: '/og.png', width: 1200, height: 630, alt: t('ogAlt') }],
+      images: [{ url: BRAND.ogImage, width: 1200, height: 630, alt: t('ogAlt') }],
     },
     twitter: { card: 'summary_large_image' },
   }
