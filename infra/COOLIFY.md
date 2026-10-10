@@ -193,14 +193,27 @@ aplikaciju. Bez ovih secret-a CI samo objavi image, a deploy pokrećeš ručno (
 
 ## 6. Memorija
 
-Izmereno lokalno sa istim ograničenjem (`infra/docker-compose.yml`, `mem_limit: 768m`),
-obilaskom javnih i admin stranica. Brojke su u PR opisu i u `DEPLOYMENT.md` §4. Na serveru:
+Izmereno 2026-10-10 lokalno, isti image sa istim ograničenjem (`infra/docker-compose.yml`,
+`mem_limit: 768m`, `NODE_OPTIONS=--max-old-space-size=384`):
+
+| Stanje | RSS kontejnera |
+| --- | --- |
+| posle starta (migracije + seed) | ~105–118 MiB |
+| ceo e2e paket + obilazak javnih i admin stranica | najviše ~205 MiB |
+| 400 zahteva, 25 istovremeno (javne stranice, sitemap) | ~198 MiB, 0 neuspelih, najduži 1,4 s |
+
+Ograničenje od 768 MiB ostavlja više od 3× rezerve. CI (posao `image`) pri svakom build-u
+pokreće image sa `--memory=768m` nad praznom bazom.
+
+Poznato: prijava u admin (`bcryptjs`, cena 12, čist JS) drži glavnu nit ~0,5 s, pa zahtev
+koji stigne tačno tada čeka isto toliko. Za jednog admina to nije problem; ako ikad bude više
+korisnika, zameniti ga async heširanjem van glavne niti (npr. `crypto.scrypt`).
+
+Na serveru:
 
 ```bash
 docker stats --no-stream $(docker ps -q --filter "name=cloudsheep")
 ```
-
----
 
 ## 7. Rollback
 
