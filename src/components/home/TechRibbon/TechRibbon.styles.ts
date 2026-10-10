@@ -1,6 +1,6 @@
 import { styled } from 'next-yak'
 
-import { BRAND_SHADOWS, INVERSE, anim, fonts } from '@/styles/tokens.yak'
+import { BRAND_SHADOWS, INVERSE, anim, fonts, media } from '@/styles/tokens.yak'
 
 /** Kosa tamna traka koja nastavlja kosinu hero-a (dizajn: `rotate(-2deg)`, `margin: -58px -2%`). */
 export const Root = styled.section`
@@ -31,11 +31,17 @@ export const List = styled.ul`
 export const Item = styled.li`
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 26px;
+  gap: 10px;
+  padding: 0 18px;
   font-family: ${fonts.heading};
   font-weight: 600;
-  font-size: 17px;
+  font-size: 15px;
   color: ${INVERSE.soft};
   white-space: nowrap;
+
+  ${media.tablet} {
+    gap: 12px;
+    padding: 0 26px;
+    font-size: 17px;
+  }
 `

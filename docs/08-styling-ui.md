@@ -1,6 +1,6 @@
 # 08 — Stilovi i UI
 
-> Status: active | Last review: 2026-10-09
+> Status: active | Last review: 2026-10-10
 
 next-yak 9 (ADR 0015): styled-components API, ali se CSS izvlači u build-u — bez runtime-a i
 bez računanja stilova pri hidrataciji. Vizuelni jezik (staklo, aurora, animacije):
@@ -8,15 +8,15 @@ bez računanja stilova pri hidrataciji. Vizuelni jezik (staklo, aurora, animacij
 
 ## 1. Fajlovi
 
-| Fajl                     | Sadrži                                                                                                                 |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| `constants/theme/*.ts`   | vrednosti tokena: `PALETTE` (svetla/tamna), `SPACING`, `RADII`, `SHADOWS`, `BLUR`, `TYPOGRAPHY`, `MEDIA`, fontovi      |
+| Fajl                     | Sadrži                                                                                                                |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `constants/theme/*.ts`   | vrednosti tokena: `PALETTE` (svetla/tamna), `SPACING`, `RADII`, `SHADOWS`, `BLUR`, `TYPOGRAPHY`, `MEDIA`, fontovi     |
 | `styles/tokens.yak.ts`   | most do build-a: `colors`, `spacing`, `media`, `BRAND_COLORS`…, imena animacija (`anim`), pravila teme i `@font-face` |
-| `styles/global.ts`       | `globalStyle`: reset, `@font-face`, CSS promenljive za obe teme                                                         |
-| `styles/animations.ts`   | `globalStyle`: sve `@keyframes` (`cs-fade-up`, `cs-marquee`…)                                                          |
-| `styles/mixins.ts`       | statični `css` mixin-i: `focusRing`, `visuallyHidden`, `resetButton`, `glassSoft/Strong`, `typographyX`, `lineClamp3`  |
-| `<Komponenta>.styles.ts` | styled elementi te komponente                                                                                          |
-| `<Komponenta>.yak.ts`    | (opciono) vrednosti koje stil te komponente čita u build-u (`BUTTON_SIZES`, `RING`)                                     |
+| `styles/global.ts`       | `globalStyle`: reset, `@font-face`, CSS promenljive za obe teme                                                       |
+| `styles/animations.ts`   | `globalStyle`: sve `@keyframes` (`cs-fade-up`, `cs-marquee`…)                                                         |
+| `styles/mixins.ts`       | statični `css` mixin-i: `focusRing`, `visuallyHidden`, `resetButton`, `glassSoft/Strong`, `typographyX`, `lineClamp3` |
+| `<Komponenta>.styles.ts` | styled elementi te komponente                                                                                         |
+| `<Komponenta>.yak.ts`    | (opciono) vrednosti koje stil te komponente čita u build-u (`BUTTON_SIZES`, `RING`)                                   |
 
 `global.ts` i `animations.ts` uvozi `Document` (jednom za ceo sajt); u `package.json` su u
 `sideEffects`, inače bi ih tree-shaking izbacio.
@@ -41,20 +41,31 @@ bez računanja stilova pri hidrataciji. Vizuelni jezik (staklo, aurora, animacij
     `}
   ```
 
-- **Dinamička vrednost iz propa vraća jedinicu**: `` ${({ $size }) => `${String($size)}px`} `` —
+- **Dinamička vrednost iz propa vraća jedinicu**: ``${({ $size }) => `${String($size)}px`}`` —
   next-yak je pretvara u CSS promenljivu na elementu; `${…}px` bi dao `var(--x)px`.
 - **Nema `as` prop-a.** Element koji se bira prop-om: `styled(Slot)` + `component="h1"`.
 - **Izbor iz objekta css blokova (`variants[$variant]`) ne radi** — eksplicitni uslovi po
   vrednosti (vidi `Button.styles.ts`).
 - **Animacije su globalne**: `animation: ${anim.fadeUp} 0.9s …`. Nova animacija = ime u `anim`
-  + `@keyframes` u `styles/animations.ts`. LCP element se ne animira kroz `opacity` (koristi
-  `anim.slideUp`).
+  - `@keyframes` u `styles/animations.ts`. LCP element se ne animira kroz `opacity` (koristi
+    `anim.slideUp`).
 - **`.styles.ts` izvozi samo styled komponente**; vrednosti koje čita i TSX idu u `.constants.ts`
   ili `.yak.ts` (lint `no-restricted-syntax`).
 - **Boje samo iz tokena**; hex i `rgb()` u `.styles.ts` su lint greška (`@app/no-raw-colors`).
 - **Transient props** (`$variant`, `$active`) za sve što ide samo u stil.
 - **Komponenta prima `className`**, da bi mogla da se stilizuje spolja (`styled(Komponenta)`).
 - **Mobile-first**: osnovni stil je za telefon, `${media.tablet}`/`desktop`/`wide` dodaju.
+  Dva izuzetka, oba uska: `${media.tabletOnly}` (640–1023) za raspored koji se razlikuje i od
+  telefona i od desktopa (vodoravni paketi cena, proces 2×2), i `${media.phone}` /
+  `${media.belowDesktop}` kad roditelj menja TUĐU komponentu (dugme, `TechTile`) — mobile-first
+  bi tražio da se na većem ekranu vrati vrednost koju roditelj ne zna. JS čita isti prelom iz
+  `MEDIA_QUERY` (`window.matchMedia`).
+- **Raspored po širini se piše eksplicitno**, ne `repeat(auto-fit, minmax(…))` za mrežu sa
+  poznatim brojem stavki: auto-fit je na tabletu davao 3 + 1 (statistike), 2 + 1 (cene) i
+  jednu kolonu na 768 px (usluge). Broj kolona se bira po prelomu.
+- **`overflow-x: clip` je na okviru javnog sajta** (`PublicLayout`), ne `hidden` na `body`:
+  iOS Safari uz `hidden` i dalje pušta vodoravno pomeranje, a `clip` ne pravi kontejner za
+  skrol, pa `position: sticky` radi.
 - **CSS celog sajta je jedan fajl** (`next.config.ts`, webpack `cacheGroups.styles`).
 
 ## 3. Teme
@@ -84,12 +95,12 @@ za DM Sans i Space Grotesk (`Document`).
 
 ## Anti-patterns
 
-| ❌                                              | ✅                                                    |
-| ----------------------------------------------- | ----------------------------------------------------- |
-| `color: #0D47A1`                                | `color: ${colors.ink}`                                |
-| `@media (min-width: 1024px)`                    | `${media.desktop} { … }`                              |
-| `${({ $on }) => ($on ? colors.a : colors.b)}`   | podrazumevano + `${({ $on }) => $on && css\`…\`}`     |
-| `width: ${({ $w }) => $w}px`                    | `` width: ${({ $w }) => `${String($w)}px`} ``          |
-| `<Title as="h1">`                               | `styled(Slot)` + `<Title component="h1">`             |
-| `${variants[$variant]}`                         | uslov po varijanti                                    |
-| `'use client'` u `.styles.ts`                   | nema ga — stil radi na serveru                        |
+| ❌                                            | ✅                                                |
+| --------------------------------------------- | ------------------------------------------------- |
+| `color: #0D47A1`                              | `color: ${colors.ink}`                            |
+| `@media (min-width: 1024px)`                  | `${media.desktop} { … }`                          |
+| `${({ $on }) => ($on ? colors.a : colors.b)}` | podrazumevano + `${({ $on }) => $on && css\`…\`}` |
+| `width: ${({ $w }) => $w}px`                  | ``width: ${({ $w }) => `${String($w)}px`}``       |
+| `<Title as="h1">`                             | `styled(Slot)` + `<Title component="h1">`         |
+| `${variants[$variant]}`                       | uslov po varijanti                                |
+| `'use client'` u `.styles.ts`                 | nema ga — stil radi na serveru                    |

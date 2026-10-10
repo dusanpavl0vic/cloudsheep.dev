@@ -21,7 +21,7 @@ export const Card = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 24px;
+  padding: clamp(18px, 5vw, 24px);
   border-radius: 22px;
 `
 
@@ -38,7 +38,7 @@ export const Muted = styled.p`
 export const Days = styled.div`
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
+  gap: clamp(4px, 1.6vw, 8px);
 `
 
 export const Day = styled.div`
@@ -63,7 +63,7 @@ export const DayDate = styled.span`
 export const Slot = styled.button<{ $selected: boolean }>`
   ${resetButton};
   ${focusRing};
-  padding: 8px 0;
+  padding: 10px 0;
   border-radius: 10px;
   border: 1px solid ${colors.line2};
   background: ${colors.card};

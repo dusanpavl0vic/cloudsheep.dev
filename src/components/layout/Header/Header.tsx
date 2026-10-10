@@ -14,7 +14,17 @@ import { useMainNav } from '@/hooks/navigation'
 import { useThemeToggle } from '@/hooks/preferences'
 import { useModal } from '@/hooks/useModal'
 
-import { Actions, Bar, BelowDesktop, HomeLink, Nav, NavLink, OnTablet, Root } from './Header.styles'
+import {
+  Actions,
+  Bar,
+  BelowWide,
+  HomeLink,
+  Nav,
+  NavLink,
+  OnTablet,
+  OnWide,
+  Root,
+} from './Header.styles'
 
 /** Plutajući stakleni header javnog sajta (dizajn): navigacija, jezik, tema, CTA, napredak. */
 const Header = () => {
@@ -32,25 +42,34 @@ const Header = () => {
 
         <Nav aria-label={t('nav.label')}>
           {links.map((link) => (
-            <NavLink key={link.key} href={link.href} $active={link.isActive} aria-current={link.isActive ? 'location' : undefined}>
+            <NavLink
+              key={link.key}
+              href={link.href}
+              $active={link.isActive}
+              aria-current={link.isActive ? 'location' : undefined}
+            >
               {t(`nav.${link.key}`)}
             </NavLink>
           ))}
         </Nav>
 
         <Actions>
-          <OnTablet>
+          <OnWide>
             <LanguageSwitch />
-          </OnTablet>
-          <ThemeToggle isDark={isDark} onToggle={toggle} label={t(isDark ? 'theme.toLight' : 'theme.toDark')} />
+          </OnWide>
+          <ThemeToggle
+            isDark={isDark}
+            onToggle={toggle}
+            label={t(isDark ? 'theme.toLight' : 'theme.toDark')}
+          />
           <OnTablet>
             <Button href={ROUTES.CONTACT} size="s" iconRight="arrowRight">
               {t('common.primaryCta')}
             </Button>
           </OnTablet>
-          <BelowDesktop>
+          <BelowWide>
             <IconButton icon="menu" label={t('nav.openMenu')} onClick={() => mobileNav.open()} />
-          </BelowDesktop>
+          </BelowWide>
         </Actions>
 
         <ScrollProgress />

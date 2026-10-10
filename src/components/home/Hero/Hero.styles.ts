@@ -2,7 +2,16 @@ import { css, styled } from 'next-yak'
 
 import Button from '@/components/buttons/Button'
 import { focusRing, glassStrong } from '@/styles/mixins'
-import { EASE_OUT, HEADER_HEIGHT, anim, blur, colors, fonts, radii, spacing } from '@/styles/tokens.yak'
+import {
+  EASE_OUT,
+  HEADER_HEIGHT,
+  anim,
+  colors,
+  fonts,
+  media,
+  radii,
+  spacing,
+} from '@/styles/tokens.yak'
 import { BRAND_COLORS, GLOW } from '@/styles/tokens.yak'
 
 export const Root = styled.section`
@@ -10,55 +19,17 @@ export const Root = styled.section`
   isolation: isolate;
   min-height: 100svh;
   margin-top: -${HEADER_HEIGHT}px;
-  padding: 170px ${spacing[5]}px;
+  padding: 132px ${spacing[5]}px 150px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   overflow: hidden;
-`
 
-/** Staklena površina koja se završava kosinom — nastavlja je traka tehnologija. */
-export const Slant = styled.span`
-  position: absolute;
-  inset: 0;
-  z-index: -3;
-  background: ${colors.glass};
-  backdrop-filter: ${blur.soft};
-  -webkit-backdrop-filter: ${blur.soft};
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 52px), 0 100%);
-`
-
-export const Dots = styled.div`
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  pointer-events: none;
-  background-image: radial-gradient(${colors.line2} 1px, transparent 1px);
-  background-size: 22px 22px;
-  opacity: 0.6;
-  mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, transparent 35%, black 100%);
-`
-
-/** `--mx`/`--my` postavlja `PageEffects` (hero kursor). */
-export const CursorGlow = styled.div`
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image: radial-gradient(circle 360px at var(--mx, -600px) var(--my, -600px), ${GLOW.hero} 0%, transparent 70%);
-`
-
-export const Spine = styled.div`
-  position: absolute;
-  left: 50%;
-  top: 0;
-  z-index: -1;
-  width: 1px;
-  height: 40%;
-  background: linear-gradient(to bottom, transparent, ${colors.accent}, transparent);
-  opacity: 0.5;
+  ${media.tablet} {
+    padding: 170px ${spacing[5]}px;
+  }
 `
 
 export const Content = styled.div`
@@ -119,7 +90,14 @@ export const Word = styled.span<{ $delay: number }>`
 `
 
 export const Highlight = styled.span`
-  background: linear-gradient(90deg, ${BRAND_COLORS.deep}, ${BRAND_COLORS.blue}, ${BRAND_COLORS.sky}, ${BRAND_COLORS.blue}, ${BRAND_COLORS.deep});
+  background: linear-gradient(
+    90deg,
+    ${BRAND_COLORS.deep},
+    ${BRAND_COLORS.blue},
+    ${BRAND_COLORS.sky},
+    ${BRAND_COLORS.blue},
+    ${BRAND_COLORS.deep}
+  );
   background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -150,13 +128,23 @@ export const Description = styled.p`
   text-wrap: pretty;
 `
 
+/** Telefon: dva dugmeta iste širine, jedno ispod drugog · od tableta: u redu. */
 export const Actions = styled.div`
   animation: ${anim.fadeUp} 0.9s ${EASE_OUT} 1s backwards;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 14px;
+  display: grid;
+  width: 100%;
+  max-width: 340px;
+  gap: 12px;
   margin-top: 28px;
+
+  ${media.tablet} {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
+    max-width: none;
+    gap: 14px;
+  }
 `
 
 /** Glavni CTA sa odsjajem koji prelazi preko dugmeta (dizajn: `csShine`). */

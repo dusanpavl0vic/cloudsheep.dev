@@ -21,9 +21,13 @@ export const Bar = styled.div`
   margin: 0 auto;
   display: flex;
   align-items: center;
-  gap: 10px 18px;
+  gap: 10px;
   padding: 9px 10px 9px 14px;
   border-radius: ${radii.lg}px;
+
+  ${media.tablet} {
+    gap: 18px;
+  }
 `
 
 export const HomeLink = styled(Link)`
@@ -37,13 +41,17 @@ export const HomeLink = styled(Link)`
   }
 `
 
+/**
+ * Pun meni tek od `wide` (1200): osam stavki + jezik + tema + CTA traže ~1100 px, pa se na
+ * 1024 (iPad položeno, mali laptop) logo i meni preklapaju, a CTA ispada iz trake.
+ */
 export const Nav = styled.nav`
   display: none;
   flex: 1;
   justify-content: center;
   gap: 2px;
 
-  ${media.desktop} {
+  ${media.wide} {
     display: flex;
   }
 `
@@ -79,7 +87,7 @@ export const Actions = styled.div`
   gap: 8px;
   margin-left: auto;
 
-  ${media.desktop} {
+  ${media.wide} {
     margin-left: 0;
   }
 `
@@ -93,11 +101,20 @@ export const OnTablet = styled.span`
   }
 `
 
-/** Dugme menija samo ispod desktop širine. */
-export const BelowDesktop = styled.span`
+/** Jezik je u traci samo uz pun meni; ispod toga je u mobilnom meniju, da traka ostane čista. */
+export const OnWide = styled.span`
+  display: none;
+
+  ${media.wide} {
+    display: inline-flex;
+  }
+`
+
+/** Dugme menija dok pun meni ne stane u traku. */
+export const BelowWide = styled.span`
   display: inline-flex;
 
-  ${media.desktop} {
+  ${media.wide} {
     display: none;
   }
 `
