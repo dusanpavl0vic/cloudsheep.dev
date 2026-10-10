@@ -12,7 +12,7 @@ import type { AdminMessage, AdminMessageList, EmailCheckResult } from '@/types/c
 import { confirmLink, createConfirmToken, hashConfirmToken, linkCutoff, purgeCutoff } from '../confirmation'
 import { prisma } from '../db'
 import { verifyEmail } from '../email-verification'
-import { HttpError } from '../http'
+import { HttpError } from '../errors'
 import { log } from '../log'
 import { earliestBookable, freeSlotWhere } from './booking'
 import { sendAutoReply, sendStudioMail, type BriefMail } from '../mail/briefMails'

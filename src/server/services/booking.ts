@@ -16,7 +16,7 @@ import type { AdminBookingSlot, BookingSlot } from '@/types/booking'
 
 import { linkCutoff } from '../confirmation'
 import { prisma } from '../db'
-import { HttpError } from '../http'
+import { HttpError } from '../errors'
 
 const HOUR = 60 * 60 * 1000
 

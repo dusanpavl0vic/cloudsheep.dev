@@ -10,7 +10,7 @@ import type { AdminSubscriber } from '@/types/newsletter'
 
 import { confirmLink, createConfirmToken, hashConfirmToken, linkCutoff, purgeCutoff } from '../confirmation'
 import { prisma } from '../db'
-import { HttpError } from '../http'
+import { HttpError } from '../errors'
 import { log } from '../log'
 import { assertDeliverable } from './contact'
 import { sendNewsletterConfirmation } from '../mail/confirmMails'

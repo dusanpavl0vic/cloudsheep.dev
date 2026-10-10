@@ -12,7 +12,7 @@ import {
   signAccessToken,
 } from '../auth/tokens'
 import { prisma } from '../db'
-import { HttpError } from '../http'
+import { HttpError } from '../errors'
 
 /**
  * Heš za poređenje kad korisnik ne postoji — da odgovor za nepostojeći e-mail ne stigne

@@ -3,7 +3,7 @@ import 'server-only'
 import { HTTP_STATUS } from '@/constants/http'
 
 import { isTest } from './env'
-import { HttpError } from './http'
+import { HttpError } from './errors'
 
 interface Bucket {
   count: number
