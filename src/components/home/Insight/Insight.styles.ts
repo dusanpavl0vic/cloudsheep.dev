@@ -41,15 +41,3 @@ export const Label = styled.span`
   letter-spacing: 0.06em;
   color: ${colors.faint};
 `
-
-export const Uptime = styled.div`
-  width: 100%;
-  margin-top: 14px;
-  padding: 22px 24px;
-  border-radius: ${radii.lg}px;
-  background: ${colors.glass};
-  border: 1px solid ${colors.edge};
-  backdrop-filter: ${blur.soft};
-  -webkit-backdrop-filter: ${blur.soft};
-  text-align: left;
-`

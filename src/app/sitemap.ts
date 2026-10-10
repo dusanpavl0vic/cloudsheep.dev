@@ -30,7 +30,8 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   return [
     ...page(ROUTES.HOME, undefined, 1),
     ...page(ROUTES.PROJECTS, undefined, 0.9),
-    ...page(ROUTES.NOTES, undefined, 0.8),
+    // Prazna lista beleški nije u indeksu (`noindex` na stranici), pa ni u sitemap-u
+    ...(notes.length > 0 ? page(ROUTES.NOTES, undefined, 0.8) : []),
     ...page(ROUTES.CONTACT, undefined, 0.8),
     ...projects.flatMap((p) => page(projectHref(p.slug), p.updatedAt, 0.8)),
     ...notes.flatMap((n) => page(noteHref(n.slug), n.updatedAt, 0.6)),

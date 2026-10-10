@@ -7,18 +7,24 @@ import { EFFECT_ATTRS } from '@/constants/effects'
 import { HOME_SECTIONS } from '@/constants/routes'
 
 import { INSIGHT_STATS } from './Insight.constants'
-import { Label, Stat, Stats, Uptime, Value } from './Insight.styles'
-import UptimeBars from './UptimeBars'
+import { Label, Stat, Stats, Value } from './Insight.styles'
 
 const reveal = { [EFFECT_ATTRS.reveal]: '' }
 
-/** „Napravljeno da radi" — brojke studija i 90 dana uptime-a. */
+/** „Napravljeno da radi" — brojke studija. */
 const Insight = () => {
   const t = useTranslations('home.insight')
 
   return (
     <Section id={HOME_SECTIONS.INSIGHT} labelledBy="insight-title" align="center" spacing="loose">
-      <SectionHeader eyebrow={t('eyebrow')} title={t('title')} muted={t('muted')} lead={t('body')} titleId="insight-title" align="center" />
+      <SectionHeader
+        eyebrow={t('eyebrow')}
+        title={t('title')}
+        muted={t('muted')}
+        lead={t('body')}
+        titleId="insight-title"
+        align="center"
+      />
       <Stats {...reveal}>
         {INSIGHT_STATS.map((stat) => (
           <Stat key={stat.key}>
@@ -29,9 +35,6 @@ const Insight = () => {
           </Stat>
         ))}
       </Stats>
-      <Uptime {...reveal}>
-        <UptimeBars label={t('uptime.label')} period={t('uptime.period')} summary={t('uptime.ok')} />
-      </Uptime>
     </Section>
   )
 }

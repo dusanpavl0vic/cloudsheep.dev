@@ -1,5 +1,6 @@
 'use client'
 
+import VisuallyHidden from '@/components/foundations/VisuallyHidden'
 import { useTyper } from '@/hooks/useTyper'
 
 import { Caret, Prompt, Root, Text } from './HeroTerminal.styles'
@@ -13,7 +14,9 @@ const HeroTerminal = ({ phrases }: HeroTerminalProps) => {
   const text = useTyper(phrases)
 
   return (
-    <Root aria-label={phrases.join(' · ')}>
+    <Root>
+      {/* Ne `aria-label`: na `<p>` bez uloge je zabranjen (axe aria-prohibited-attr) */}
+      <VisuallyHidden>{phrases.join(' · ')}</VisuallyHidden>
       <Prompt aria-hidden="true">$</Prompt>
       <Text aria-hidden="true">{text}</Text>
       <Caret aria-hidden="true" />

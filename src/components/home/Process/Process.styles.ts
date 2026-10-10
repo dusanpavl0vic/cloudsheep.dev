@@ -47,34 +47,41 @@ export const Steps = styled.ol`
   margin-top: 8px;
 `
 
+/**
+ * Neaktivan korak je prigušen BOJOM, ne prozirnošću: tekst na 35–65 % prozirnosti pada ispod
+ * kontrasta 4.5:1 (Lighthouse). Aktivan dobija `aria-current` iz `applyPin`.
+ */
 export const Step = styled.li`
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 10px 0;
-  opacity: 0.4;
+  color: ${colors.faint};
   transition:
-    opacity 0.4s,
+    color 0.4s,
     transform 0.4s ${EASE_OUT};
+
+  &[aria-current='step'] {
+    color: ${colors.display};
+  }
+
   /* Bez JS-a i uz smanjeno kretanje: obična lista karata, bez kačenja. */
   ${media.staticFallback} {
-    opacity: 1;
+    color: ${colors.display};
   }
 `
 
-export const StepIndex = styled.span<{ $tone: string }>`
+export const StepIndex = styled.span`
   width: 34px;
   font-family: ${fonts.mono};
   font-size: 13px;
   font-weight: 600;
-  color: ${({ $tone }) => $tone};
 `
 
 export const StepTitle = styled.span`
   font-family: ${fonts.heading};
   font-weight: 600;
   font-size: clamp(18px, 2vw, 22px);
-  color: ${colors.display};
 `
 
 export const Progress = styled.div`
@@ -96,7 +103,12 @@ export const ProgressFill = styled.div`
   width: 0;
   height: 100%;
   border-radius: 2px;
-  background: linear-gradient(90deg, ${BRAND_COLORS.deep}, ${BRAND_COLORS.blue}, ${BRAND_COLORS.sky});
+  background: linear-gradient(
+    90deg,
+    ${BRAND_COLORS.deep},
+    ${BRAND_COLORS.blue},
+    ${BRAND_COLORS.sky}
+  );
   box-shadow: ${BRAND_SHADOWS.progress};
 `
 
@@ -161,13 +173,19 @@ export const BigNumber = styled.span<{ $tone: string }>`
   letter-spacing: -0.06em;
   color: ${({ $tone }) => $tone};
   opacity: 0.08;
+
+  /* Ukras je u pseudo-elementu: provera kontrasta ga tada ne broji kao tekst (8 % prozirnosti). */
+  &::before {
+    content: attr(data-number);
+  }
 `
 
-export const CardIndex = styled.span<{ $tone: string }>`
+/** Boja faze je ukras (traka, veliki broj); oznaka je u `primary` — čitljiva u obe teme. */
+export const CardIndex = styled.span`
   font-family: ${fonts.mono};
   font-size: 14px;
   font-weight: 600;
-  color: ${({ $tone }) => $tone};
+  color: ${colors.primary};
 `
 
 export const CardTitle = styled.h3`

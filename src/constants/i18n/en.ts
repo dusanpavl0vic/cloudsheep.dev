@@ -63,7 +63,7 @@ const en = {
         'Start a project with a product studio from Niš, Serbia. Reply within one working day.',
     },
     notFound: { title: 'Page not found — CloudSheep' },
-    ogAlt: 'CloudSheep — a sheep whose body is a cloud',
+    ogAlt: 'CloudSheep — whole products, built by one: design, web and mobile apps',
   },
   errors: {
     notFoundEyebrow: '404',
@@ -183,7 +183,8 @@ const en = {
     errors: {
       invalid: 'Some fields need attention.',
       slotTaken: 'That time was just booked. Pick another one.',
-      mailFailed: 'We could not send the confirmation email. Try again in a minute, or write directly to the address on this page.',
+      mailFailed:
+        'We could not send the confirmation email. Try again in a minute, or write directly to the address on this page.',
     },
   },
   mail: {
@@ -192,9 +193,11 @@ const en = {
       greeting: 'Hi {name},',
       greetingAnonymous: 'Hi,',
       lead: 'please confirm your email address — your brief reaches the studio as soon as you do.',
-      expiry: 'The link is valid for 24 hours. If you booked an intro call, the time is held until then.',
+      expiry:
+        'The link is valid for 24 hours. If you booked an intro call, the time is held until then.',
       button: 'Confirm and send the brief',
-      ignore: 'Did not fill in the form on cloudsheep.dev? Ignore this email — nothing will be sent.',
+      ignore:
+        'Did not fill in the form on cloudsheep.dev? Ignore this email — nothing will be sent.',
       signoff: 'Best, CloudSheep',
     },
     confirmNewsletter: {
@@ -202,7 +205,8 @@ const en = {
       greeting: 'Hi {name},',
       greetingAnonymous: 'Hi,',
       lead: 'please confirm that you want one note a month from the studio.',
-      expiry: 'The subscription becomes active once you confirm. Unsubscribe in one click from any note.',
+      expiry:
+        'The subscription becomes active once you confirm. Unsubscribe in one click from any note.',
       button: 'Confirm subscription',
       ignore: 'Did not sign up on cloudsheep.dev? Ignore this email — you will not hear from us.',
       signoff: 'Best, CloudSheep',
@@ -236,7 +240,8 @@ const en = {
     languageNames: { en: 'English', sr: 'Srpski' },
   },
   footer: {
-    tagline: 'Product studio from Niš, Serbia. Design, web and mobile apps from first sketch to launch.',
+    tagline:
+      'Product studio from Niš, Serbia. Design, web and mobile apps from first sketch to launch.',
     columns: { studio: 'Studio', work: 'Work', resources: 'Resources' },
     allProjects: 'All projects',
     citiesTitle: 'Clients in',
@@ -301,13 +306,13 @@ const en = {
         shipped: 'products shipped',
         years: 'years of experience',
       },
-      uptime: { label: 'uptime', period: 'last 90 days', ok: 'all systems operational' },
     },
     studio: {
       eyebrow: 'studio',
       title: 'One person,',
       muted: 'the whole product.',
-      headline: 'A senior engineer-designer leads every project, with a small bench of trusted specialists.',
+      headline:
+        'A senior engineer-designer leads every project, with a small bench of trusted specialists.',
       noDiploma: 'No diploma',
       previous: 'Previous team member',
       next: 'Next team member',
@@ -550,18 +555,36 @@ const en = {
       summary: '{name} · {type}',
       call: 'Intro call: {when}',
       button: 'Confirm and send',
-      confirmed: { title: 'Brief sent', body: 'Thanks — the lead replies within one working day. A copy is on its way to your inbox.' },
-      expired: { title: 'This link has expired', body: 'Links are valid for 24 hours. Send the brief again — it takes a minute.' },
-      invalid: { title: 'This link is not valid', body: 'It may have been used already or copied incompletely. Send the brief again if it did not arrive.' },
+      confirmed: {
+        title: 'Brief sent',
+        body: 'Thanks — the lead replies within one working day. A copy is on its way to your inbox.',
+      },
+      expired: {
+        title: 'This link has expired',
+        body: 'Links are valid for 24 hours. Send the brief again — it takes a minute.',
+      },
+      invalid: {
+        title: 'This link is not valid',
+        body: 'It may have been used already or copied incompletely. Send the brief again if it did not arrive.',
+      },
       again: 'Back to the brief',
     },
     newsletter: {
       title: 'Confirm your subscription',
       lead: 'One click and you will get one note a month from the studio.',
       button: 'Confirm subscription',
-      confirmed: { title: 'You are subscribed', body: 'See you in the next note. Unsubscribe in one click from any email.' },
-      expired: { title: 'This link has expired', body: 'Sign up again from the footer of any page.' },
-      invalid: { title: 'This link is not valid', body: 'It may have been used already. Sign up again from the footer of any page.' },
+      confirmed: {
+        title: 'You are subscribed',
+        body: 'See you in the next note. Unsubscribe in one click from any email.',
+      },
+      expired: {
+        title: 'This link has expired',
+        body: 'Sign up again from the footer of any page.',
+      },
+      invalid: {
+        title: 'This link is not valid',
+        body: 'It may have been used already. Sign up again from the footer of any page.',
+      },
       again: 'Back to the site',
     },
   },
@@ -634,9 +657,18 @@ const en = {
         times: 'Times',
         timesHint: 'Comma separated, e.g. 10:00, 14:30',
         submit: 'Add slots',
-        created: '{count, plural, =0 {No new slots — they already exist.} one {# slot added.} other {# slots added.}}',
+        created:
+          '{count, plural, =0 {No new slots — they already exist.} one {# slot added.} other {# slots added.}}',
       },
-      weekdays: { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' },
+      weekdays: {
+        mon: 'Mon',
+        tue: 'Tue',
+        wed: 'Wed',
+        thu: 'Thu',
+        fri: 'Fri',
+        sat: 'Sat',
+        sun: 'Sun',
+      },
     },
     newsletter: {
       lead: '{confirmed} confirmed · {pending} awaiting confirmation',
@@ -662,7 +694,13 @@ const en = {
       slugHint: 'Lowercase letters and numbers, e.g. nextjs',
       group: 'Group',
       logo: 'Logo',
-      groups: { frontend: 'Frontend', backend: 'Backend', mobile: 'Mobile', tooling: 'Tooling', design: 'Design' },
+      groups: {
+        frontend: 'Frontend',
+        backend: 'Backend',
+        mobile: 'Mobile',
+        tooling: 'Tooling',
+        design: 'Design',
+      },
       deleteConfirm: 'Delete {name}? Projects that use it lose the tag.',
     },
     testimonials: {
