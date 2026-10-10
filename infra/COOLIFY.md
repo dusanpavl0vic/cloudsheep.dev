@@ -177,7 +177,7 @@ aplikaciju. Bez ovih secret-a CI samo objavi image, a deploy pokrećeš ručno (
    curl -sI https://cloudsheep.dev/sr | grep -i x-robots     # noindex, follow
    curl -sI https://cloudsheep.dev/admin | grep -i x-robots  # noindex, nofollow
    curl -s https://cloudsheep.dev/sitemap.xml | head          # samo engleske adrese
-   curl -sI https://admin.cloudsheep.dev | grep -i location  # → https://cloudsheep.dev/admin
+   curl -sI https://admin.cloudsheep.dev | grep -i location  # 301 → https://cloudsheep.dev/admin
    ```
 
 3. Otvori `https://cloudsheep.dev/admin` i prijavi se postojećim nalogom.
@@ -185,7 +185,8 @@ aplikaciju. Bez ovih secret-a CI samo objavi image, a deploy pokrećeš ručno (
    tek posle klika na **Confirm and send** upit se pojavljuje u **Poruke** i stiže na
    `CONTACT_TO`.
 5. Izmeni nešto u admin-u (npr. objavi utisak). Promena se odmah vidi na sajtu, bez rebuild-a.
-6. Kad je sve zeleno, **ugasi stare resurse** `api`, `web` i `admin`, ali tek posle
+6. **Google Search Console** po [`SEARCH-CONSOLE.md`](SEARCH-CONSOLE.md).
+7. Kad je sve zeleno, **ugasi stare resurse** `api`, `web` i `admin`, ali tek posle
    prebacivanja slika (§2). Baza ostaje.
 
 ---

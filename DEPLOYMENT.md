@@ -77,6 +77,7 @@ prestaje da se koristi u sledećem i briše se u trećem.
   (`next.config.ts`). U pretrazi je samo engleski (ADR 0012).
 - `sitemap.xml` se renderuje po zahtevu iz baze, pa nov projekat ili beleška ulaze bez
   deploy-a. `robots.txt` je statičan.
+- Posle prvog deploy-a: Google Search Console po [`infra/SEARCH-CONSOLE.md`](infra/SEARCH-CONSOLE.md).
 
 ## 7. Rollback
 
