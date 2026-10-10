@@ -12,23 +12,20 @@ import {
   Badge,
   BadgeTld,
   Content,
-  CursorGlow,
   Description,
-  Dots,
   GlassButton,
   Highlight,
   Line,
   Root,
   ScrollHint,
   ShinyButton,
-  Slant,
-  Spine,
   Title,
   Underline,
   Word,
   WordMask,
 } from './Hero.styles'
 import type { HeroProps } from './Hero.types'
+import HeroBackdrop from './HeroBackdrop'
 import HeroTerminal from './HeroTerminal'
 import HeroThoughts from './HeroThoughts'
 
@@ -43,10 +40,7 @@ const Hero = ({ technologies }: HeroProps) => {
 
   return (
     <Root aria-labelledby="hero-title" {...{ [EFFECT_ATTRS.hero]: '' }}>
-      <Slant aria-hidden="true" />
-      <Dots aria-hidden="true" />
-      <CursorGlow aria-hidden="true" {...{ [EFFECT_ATTRS.heroGlow]: '' }} />
-      <Spine aria-hidden="true" />
+      <HeroBackdrop />
       <HeroThoughts technologies={technologies} />
 
       <Content {...{ [EFFECT_ATTRS.heroContent]: '' }}>
@@ -82,7 +76,13 @@ const Hero = ({ technologies }: HeroProps) => {
               <stop offset="1" stopColor={BRAND_COLORS.sky} />
             </linearGradient>
           </defs>
-          <path d="M4 16 C 80 4, 160 4, 220 12 S 340 22, 396 8" fill="none" stroke="url(#hero-underline)" strokeWidth={5} strokeLinecap="round" />
+          <path
+            d="M4 16 C 80 4, 160 4, 220 12 S 340 22, 396 8"
+            fill="none"
+            stroke="url(#hero-underline)"
+            strokeWidth={5}
+            strokeLinecap="round"
+          />
         </Underline>
         <Description>{t('description')}</Description>
         <HeroTerminal phrases={TERM_KEYS.map((key) => t(`terms.${key}`))} />

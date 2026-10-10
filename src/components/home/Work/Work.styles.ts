@@ -15,22 +15,39 @@ export const Head = styled.div`
 export const List = styled.ol`
   display: flex;
   flex-direction: column;
-  gap: 56px;
-  margin-top: 16px;
+  gap: 48px;
+  margin-top: 8px;
+
+  ${media.desktop} {
+    gap: 56px;
+    margin-top: 16px;
+  }
 `
 
+/**
+ * Telefon: slika iznad teksta · od tableta: slika i tekst jedno pored drugog (`auto-fit` sa
+ * 420 px je tablet ostavljao na slici preko cele širine i tekstu ispod nje).
+ */
 export const Row = styled.li`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
-  gap: 32px 56px;
+  gap: 20px;
   align-items: center;
+
+  ${media.tablet} {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 32px;
+  }
+
+  ${media.desktop} {
+    gap: 32px 56px;
+  }
 `
 
-/** Slika naizmenično levo/desno (`$flip`); na uskom ekranu uvek iznad teksta. */
+/** Slika naizmenično levo/desno (`$flip`); na telefonu uvek iznad teksta. */
 export const Media = styled.div<{ $flip: boolean }>`
   order: 0;
-  padding: 12px;
-  border-radius: 26px;
+  padding: 8px;
+  border-radius: 20px;
   background: ${colors.glass};
   border: 1px solid ${colors.edge};
   backdrop-filter: ${blur.soft};
@@ -38,8 +55,13 @@ export const Media = styled.div<{ $flip: boolean }>`
   box-shadow: ${BRAND_SHADOWS.featured};
   transition: transform 0.6s ${EASE_OUT};
 
-  ${media.desktop} {
+  ${media.tablet} {
     order: ${({ $flip }) => ($flip ? 2 : 0)};
+  }
+
+  ${media.desktop} {
+    padding: 12px;
+    border-radius: 26px;
   }
 
   ${media.hover} {
@@ -71,16 +93,27 @@ export const Index = styled.span`
 `
 
 export const Title = styled.h3`
-  font-size: clamp(2rem, 3.4vw, 2.8rem);
+  font-size: clamp(1.75rem, 3.4vw, 2.8rem);
   letter-spacing: -0.035em;
   color: ${colors.display};
 `
 
+/** Ispod desktopa sažetak staje u četiri reda — ceo opis je na stranici projekta. */
 export const Summary = styled.p`
   max-width: 46ch;
-  font-size: 17px;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 16px;
   line-height: 1.6;
   color: ${colors.ink2};
+
+  ${media.desktop} {
+    display: block;
+    overflow: visible;
+    font-size: 17px;
+  }
 `
 
 export const Metric = styled.p`

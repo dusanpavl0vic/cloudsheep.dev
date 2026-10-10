@@ -3,20 +3,29 @@
 import { useEffect } from 'react'
 
 import { EFFECT_ATTRS } from '@/constants/effects'
+import { MEDIA_QUERY } from '@/constants/theme'
 
-import { applyPin } from './applyPin'
+import { applyPin, resetPin } from './applyPin'
+
+const clear = (el: HTMLElement | null) => {
+  if (el) Object.assign(el.style, { transform: '', opacity: '' })
+}
 
 /**
  * Efekti vezani za skrol: hero sadržaj bledi i spušta se, proces se smenjuje u zakačenoj
- * sekciji, reč u podnožju izranja.
+ * sekciji (samo na desktopu — ispod njega su karte obična lista), reč u podnožju izranja.
  * Stil se piše direktno na element (rAF), bez React stanja — skrol ne rerenderuje ništa.
+ * Cleanup briše sve upisano: posle gašenja efekata sadržaj mora ostati vidljiv.
  */
 export const useScrollEffects = (enabled: boolean) => {
   // effect: scroll na window — transform/opacity na elementima sa data atributima
   useEffect(() => {
     if (!enabled) return
 
+    const desktop = window.matchMedia(MEDIA_QUERY.desktop)
+    let pinned = false
     let queued = false
+    let frame = 0
     const apply = () => {
       queued = false
       const y = window.scrollY
@@ -29,7 +38,13 @@ export const useScrollEffects = (enabled: boolean) => {
       }
 
       const pin = document.querySelector<HTMLElement>(`[${EFFECT_ATTRS.pin}]`)
-      if (pin) applyPin(pin)
+      if (pin && desktop.matches) {
+        applyPin(pin)
+        pinned = true
+      } else if (pin && pinned) {
+        resetPin(pin)
+        pinned = false
+      }
 
       const word = document.querySelector<HTMLElement>(`[${EFFECT_ATTRS.footword}]`)
       if (word) {
@@ -42,14 +57,21 @@ export const useScrollEffects = (enabled: boolean) => {
     const onScroll = () => {
       if (!queued) {
         queued = true
-        requestAnimationFrame(apply)
+        frame = requestAnimationFrame(apply)
       }
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
+    desktop.addEventListener('change', onScroll)
     apply()
     return () => {
+      cancelAnimationFrame(frame)
       window.removeEventListener('scroll', onScroll)
+      desktop.removeEventListener('change', onScroll)
+      const pin = document.querySelector<HTMLElement>(`[${EFFECT_ATTRS.pin}]`)
+      if (pin) resetPin(pin)
+      clear(document.querySelector<HTMLElement>(`[${EFFECT_ATTRS.heroContent}]`))
+      clear(document.querySelector<HTMLElement>(`[${EFFECT_ATTRS.footword}]`))
     }
   }, [enabled])
 }
