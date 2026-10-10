@@ -14,8 +14,9 @@ src/
   app/                       rutiranje (Next.js) — samo tanki fajlovi
     layout.tsx               <html>, fontovi, tema iz kolačića
     [locale]/
-      layout.tsx             StoreProvider, I18nProvider, ThemeProvider, RootLayout (ModalRoot, ToastContainer)
+      layout.tsx             StoreProvider, I18nProvider, RootLayout (javni ModalRoot)
       (public)/              javni sajt: header + footer
+        error.tsx            granica greške stranica (u (public), docs/07 §6a)
         page.tsx             → HomeView
         projects/page.tsx    → ProjectsView
         projects/[slug]/     → ProjectView (studija slučaja)
@@ -23,10 +24,11 @@ src/
         notes/[slug]/        → NoteView
         contact/page.tsx     → ContactView
       [...rest]/page.tsx     notFound() — lokalizovana 404 sa kodom 404
-      not-found.tsx · error.tsx
+      not-found.tsx
     admin/
+      layout.tsx             jezik iz kolačića, AdminModalRoot, ToastContainer, noindex
       (guest)/login/         samo gosti (AuthLayout)
-      (app)/…                samo ulogovani (AppShell + useRequireAuth)
+      (app)/…                samo ulogovani (AppShell + useRequireAdmin)
     api/**/route.ts          HTTP ulaz → server/services
     uploads/[...path]/route.ts   otpremljene slike sa diska
     sitemap.ts · robots.ts · global-error.tsx
