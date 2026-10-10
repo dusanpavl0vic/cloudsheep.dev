@@ -91,9 +91,14 @@ Desktop.ini
 
 # Izvezena uputstva. Izvor istine su `docs/` i `infra/*.md`; PDF je izvod koji
 # ne prati njihove izmene, pa se ne prati ni u gitu.
-*.pdf
-uploads/
-.test-uploads/
+# Pravila su usidrena (`/…`): `*.pdf` i `uploads/` su ranije hvatali i IZVORNI kod —
+# rutu `cv.pdf/route.ts` i foldere `src/app/uploads`, `src/server/uploads`.
+/*.pdf
+/docs/**/*.pdf
+/infra/**/*.pdf
+# Otpremljene slike (lokalni UPLOAD_DIR) i test otpremanja.
+/uploads/
+/.test-uploads/
 
 # Lokalne pomoćne skripte (snimci, probe) — nikad u repo
 *.tmp.mjs
